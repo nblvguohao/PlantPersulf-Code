@@ -134,6 +134,13 @@ The manifest must state `labels_created=false`,
 
 ## TDD and failure behavior
 
+Implementation is split into two evidence-preserving cycles. Cycle 1 freezes
+the exact Stage A selection, downloads and registers the real files, and emits
+the metadata-level inventory. Cycle 2 begins only after those registered bytes
+are available; its RED tests are written against the actual file schemas and
+then add the content evidence audit. This ordering prevents tests or parsers
+from assuming biological columns that have not been observed.
+
 RED tests use only registered real metadata caches and provenance-locked real
 fixtures. They must first demonstrate missing selection, missing inventory
 behavior, and rejection of unregistered or hash-mismatched inputs.
