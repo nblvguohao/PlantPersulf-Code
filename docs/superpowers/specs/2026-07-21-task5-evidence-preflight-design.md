@@ -115,6 +115,11 @@ repository checksum exists, the registry size remains mandatory. This handles
 compressed PRIDE objects whose API size describes a different representation
 without weakening provenance.
 
+For PXD035795 `peptides_1_1_0.mzid.gz`, the observed transfer size is 184107
+bytes and its decompressed size is exactly the PRIDE-declared 1967088 bytes.
+The official SHA1 applies to the compressed transfer. Both sizes and the
+compressed-byte SHA1/SHA256 remain recorded.
+
 ### Content evidence audit
 
 Format-specific readers may inspect SDRF, CSV/TSV, mzIdentML, and checksum text.
