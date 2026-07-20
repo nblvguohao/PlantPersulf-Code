@@ -26,6 +26,7 @@ DOWNLOAD_FIELDS = (
     "source_url",
     "download_url",
     "retrieved_at",
+    "registry_size_bytes",
     "size_bytes",
     "remote_checksum_algorithm",
     "remote_checksum",
@@ -209,7 +210,7 @@ def download_registered_files(
                 "file_class": item.file_class,
                 "source_url": item.source_url,
                 "download_url": canonical_download_url(item.source_url),
-                "size_bytes": str(item.size_bytes),
+                "registry_size_bytes": str(item.size_bytes),
                 "remote_checksum_algorithm": item.remote_checksum_algorithm,
                 "remote_checksum": item.remote_checksum,
                 "license_or_usage": license_or_usage,
@@ -225,7 +226,7 @@ def download_registered_files(
             existing_path = downloads_registry_path.parent / existing["path"]
             if (
                 not existing_path.is_file()
-                or existing_path.stat().st_size != item.size_bytes
+                or existing_path.stat().st_size != int(existing["size_bytes"])
                 or hash_file(existing_path, "sha256") != existing["sha256"]
                 or (
                     bool(item.remote_checksum)
@@ -246,7 +247,7 @@ def download_registered_files(
             DownloadRequest(
                 source_url=item.source_url,
                 destination=destination,
-                expected_size=item.size_bytes,
+                expected_size=(None if item.remote_checksum else item.size_bytes),
                 expected_checksum=item.remote_checksum,
                 expected_checksum_algorithm=item.remote_checksum_algorithm,
             )
@@ -268,6 +269,7 @@ def download_registered_files(
                 "source_url": item.source_url,
                 "download_url": canonical_download_url(item.source_url),
                 "retrieved_at": datetime.now(timezone.utc).isoformat(),
+                "registry_size_bytes": str(item.size_bytes),
                 "size_bytes": str(result.size_bytes),
                 "remote_checksum_algorithm": item.remote_checksum_algorithm,
                 "remote_checksum": item.remote_checksum,
@@ -360,7 +362,7 @@ def audit_downloaded_files(
             "file_class": item.file_class,
             "source_url": item.source_url,
             "download_url": canonical_download_url(item.source_url),
-            "size_bytes": str(item.size_bytes),
+            "registry_size_bytes": str(item.size_bytes),
             "remote_checksum_algorithm": item.remote_checksum_algorithm,
             "remote_checksum": item.remote_checksum,
             "license_or_usage": license_or_usage,
@@ -369,7 +371,10 @@ def audit_downloaded_files(
         if any(row[field] != value for field, value in expected_identity.items()):
             raise RuntimeError(f"download provenance mismatch: {item.file_name}")
         local_path = downloads_registry_path.parent / row["path"]
-        if not local_path.is_file() or local_path.stat().st_size != item.size_bytes:
+        if (
+            not local_path.is_file()
+            or local_path.stat().st_size != int(row["size_bytes"])
+        ):
             raise RuntimeError(f"downloaded file size mismatch: {item.file_name}")
         if hash_file(local_path, "sha256") != row["sha256"]:
             raise RuntimeError(f"downloaded file SHA256 mismatch: {item.file_name}")

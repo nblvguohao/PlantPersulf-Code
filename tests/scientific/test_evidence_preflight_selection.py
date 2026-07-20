@@ -3,7 +3,10 @@ from pathlib import Path
 import pytest
 import yaml
 
-from plantpersulf.download.registered import resolve_registered_selection
+from plantpersulf.download.registered import (
+    audit_downloaded_files,
+    resolve_registered_selection,
+)
 
 POLICY_PATH = Path("configs/evidence_preflight_v1.yaml")
 SELECTION_PATH = Path("configs/download_selection.yaml")
@@ -124,3 +127,21 @@ def test_stage_a_selection_resolves_exact_real_pride_files() -> None:
                     "arabidopsis_uniprot_072020_identified.fasta",
                 }
     assert observed == EXPECTED
+
+
+def test_stage_a_downloads_are_registered() -> None:
+    for accession, expected_count in (
+        ("PXD024061", 1),
+        ("PXD035795", 5),
+        ("PXD039999", 1),
+    ):
+        summary = audit_downloaded_files(
+            accession=accession,
+            selection_path=SELECTION_PATH,
+            files_registry_path=FILES_REGISTRY,
+            datasets_registry_path=Path("data/registry/datasets.tsv"),
+            downloads_registry_path=Path("data/registry/downloads.tsv"),
+        )
+        assert summary.selected_count == expected_count
+        assert summary.downloaded_count == expected_count
+        assert summary.cached_count == 0

@@ -102,7 +102,7 @@ def test_registered_download_writes_complete_provenance_manifest(
         f"cache/policy.json\t{metadata_sha256}\tcached\t"
         "2026-07-20T00:00:00+00:00\n"
         f"POLICYTEST\tPOLICY\tsource_file\tpolicy.txt\tPOLICY\t{source_url}\t"
-        f"{len(_RegisteredPayloadHandler.payload)}\t"
+        f"{len(_RegisteredPayloadHandler.payload) + 1}\t"
         f"{hashlib.sha1(_RegisteredPayloadHandler.payload).hexdigest()}\tSHA1\t"
         "\t\tremote_only\t2026-07-20T00:00:00+00:00\n",
         encoding="utf-8",
@@ -140,6 +140,10 @@ def test_registered_download_writes_complete_provenance_manifest(
     assert row["source_url"] == source_url
     assert row["download_url"] == source_url
     assert row["remote_checksum_algorithm"] == "SHA1"
+    assert row["registry_size_bytes"] == str(
+        len(_RegisteredPayloadHandler.payload) + 1
+    )
+    assert row["size_bytes"] == str(len(_RegisteredPayloadHandler.payload))
     assert len(row["sha256"]) == 64
     assert row["license_or_usage"] == "Software policy test only"
     assert row["downloader_version"] == "plantpersulf/0.0.0"

@@ -103,6 +103,14 @@ available; compute SHA256; then add its exact path, source URL, retrieval time,
 size, and SHA256 to `downloads.tsv`. Failed or partial downloads are not
 registered.
 
+The download registry preserves both `registry_size_bytes` from the official
+PRIDE metadata response and the actual transferred `size_bytes`. When an
+official repository checksum is present, the checksum is the byte-identity
+gate and a size difference is retained rather than silently corrected. When no
+repository checksum exists, the registry size remains mandatory. This handles
+compressed PRIDE objects whose API size describes a different representation
+without weakening provenance.
+
 ### Content evidence audit
 
 Format-specific readers may inspect SDRF, CSV/TSV, mzIdentML, and checksum text.
