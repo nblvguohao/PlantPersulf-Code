@@ -8,6 +8,8 @@ from dataclasses import asdict
 from pathlib import Path
 
 from plantpersulf.download.registered import audit_downloaded_files
+from plantpersulf.proteomics.peptide_parser import parse_proteomics_accession
+from plantpersulf.proteomics.site_normalizer import audit_site_output
 from plantpersulf.provenance.registry import audit_registry
 
 
@@ -43,6 +45,41 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("configs/download_selection.yaml"),
     )
+    parse_proteomics = subparsers.add_parser(
+        "parse-proteomics",
+        help="parse registered proteomics results without assigning labels",
+    )
+    parse_proteomics.add_argument("--accession", required=True)
+    parse_proteomics.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path("data/interim"),
+    )
+    parse_proteomics.add_argument(
+        "--registry-dir",
+        type=Path,
+        default=Path("data/registry"),
+    )
+    parse_proteomics.add_argument(
+        "--selection-config",
+        type=Path,
+        default=Path("configs/download_selection.yaml"),
+    )
+    audit_sites = subparsers.add_parser(
+        "audit-sites",
+        help="audit sequence-verified proteomics site coordinates",
+    )
+    audit_sites.add_argument("--accession", required=True)
+    audit_sites.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path("data/interim"),
+    )
+    audit_sites.add_argument(
+        "--registry-dir",
+        type=Path,
+        default=Path("data/registry"),
+    )
     return parser
 
 
@@ -64,6 +101,23 @@ def main(argv: list[str] | None = None) -> int:
             downloads_registry_path=arguments.registry_dir / "downloads.tsv",
         )
         print(json.dumps(asdict(file_summary), sort_keys=True))
+        return 0
+    if arguments.command == "parse-proteomics":
+        parse_summary = parse_proteomics_accession(
+            accession=arguments.accession,
+            output_root=arguments.output_root,
+            registry_dir=arguments.registry_dir,
+            selection_path=arguments.selection_config,
+        )
+        print(json.dumps(asdict(parse_summary), sort_keys=True))
+        return 0
+    if arguments.command == "audit-sites":
+        site_summary = audit_site_output(
+            accession=arguments.accession,
+            output_root=arguments.output_root,
+            registry_dir=arguments.registry_dir,
+        )
+        print(json.dumps(asdict(site_summary), sort_keys=True))
         return 0
     raise RuntimeError(f"unsupported command: {arguments.command}")
 

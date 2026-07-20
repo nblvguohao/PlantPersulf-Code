@@ -1,3 +1,4 @@
 * text=auto eol=lf
 tests/fixtures/real/** -text
 tests/fixtures/real/PXD006140/omssa_head_32.csv -diff
+data/registry/cache/uniprot/*.fasta -text -diff

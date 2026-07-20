@@ -25,7 +25,7 @@ reference proteome remains Task 7.
   after delimiters. Modified residues may be represented with lower-case
   letters in the `Peptide` field, while `Mods` retains the raw modification
   description.
-- OMSSA `Start` and `Stop` values are zero-based and inclusive for the two
+- OMSSA `Start` and `Stop` values are one-based and inclusive for the two
   target records checked against current official UniProt sequences:
   Q93VK9/`ETmASLGLICEK` and Q9ZW96/`RmSCNGCRVLR`.
 - The Task 3 fixture also contains a reversed Q9FKH0 record. It is a real decoy
@@ -132,7 +132,7 @@ Provides conservative protein and site normalization:
   without an exact registered sequence become conflicts;
 - checks `stop - start + 1 == len(peptide_sequence)`;
 - computes one-based peptide cysteine position as `offset + 1`;
-- computes one-based protein cysteine position as `start + offset + 1`;
+- computes one-based protein cysteine position as `start + offset`;
 - verifies the complete peptide slice and cysteine residue against the exact
   registered FASTA sequence before emitting `SiteEvidence`;
 - reports `sequence_unavailable`, `peptide_length_conflict`,
