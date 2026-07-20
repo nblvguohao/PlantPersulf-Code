@@ -8,6 +8,10 @@ from dataclasses import asdict
 from pathlib import Path
 
 from plantpersulf.download.registered import audit_downloaded_files
+from plantpersulf.evidence.preflight import (
+    audit_metadata_preflight,
+    build_metadata_preflight,
+)
 from plantpersulf.proteomics.peptide_parser import parse_proteomics_accession
 from plantpersulf.proteomics.site_normalizer import audit_site_output
 from plantpersulf.provenance.registry import audit_registry
@@ -80,6 +84,41 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("data/registry"),
     )
+    build_preflight = subparsers.add_parser(
+        "build-evidence-preflight",
+        help="build metadata-only evidence inventory without assigning labels",
+    )
+    build_preflight.add_argument("--version", choices=("v1",), required=True)
+    build_preflight.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path("data/interim"),
+    )
+    build_preflight.add_argument(
+        "--registry-dir",
+        type=Path,
+        default=Path("data/registry"),
+    )
+    build_preflight.add_argument(
+        "--policy",
+        type=Path,
+        default=Path("configs/evidence_preflight_v1.yaml"),
+    )
+    build_preflight.add_argument(
+        "--selection-config",
+        type=Path,
+        default=Path("configs/download_selection.yaml"),
+    )
+    audit_preflight = subparsers.add_parser(
+        "audit-evidence-preflight",
+        help="audit the metadata-only evidence inventory",
+    )
+    audit_preflight.add_argument("--version", choices=("v1",), required=True)
+    audit_preflight.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path("data/interim"),
+    )
     return parser
 
 
@@ -118,6 +157,23 @@ def main(argv: list[str] | None = None) -> int:
             registry_dir=arguments.registry_dir,
         )
         print(json.dumps(asdict(site_summary), sort_keys=True))
+        return 0
+    if arguments.command == "build-evidence-preflight":
+        preflight_summary = build_metadata_preflight(
+            policy_path=arguments.policy,
+            selection_path=arguments.selection_config,
+            registry_dir=arguments.registry_dir,
+            output_directory=(
+                arguments.output_root / "evidence_preflight_v1"
+            ),
+        )
+        print(json.dumps(asdict(preflight_summary), sort_keys=True))
+        return 0
+    if arguments.command == "audit-evidence-preflight":
+        audited_preflight = audit_metadata_preflight(
+            arguments.output_root / "evidence_preflight_v1"
+        )
+        print(json.dumps(asdict(audited_preflight), sort_keys=True))
         return 0
     raise RuntimeError(f"unsupported command: {arguments.command}")
 

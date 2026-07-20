@@ -93,6 +93,10 @@ download authority and is extended only with the Stage A file names and classes.
 deterministic inventory. It never infers an evidence class from a filename
 alone. Filename/category rules may assign `review_priority`, but
 `evidence_class` remains `unresolved` until content-level checks succeed.
+Exact reviewed filenames also take precedence over repository categories for
+download selection because PRIDE classifies PXD039999 `checksum.txt` as `RAW`.
+This exception applies only to that checksum filename and does not authorize any
+raw or peak payload.
 
 ### Registered downloader
 
