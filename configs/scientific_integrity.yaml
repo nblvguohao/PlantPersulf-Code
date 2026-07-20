@@ -1,0 +1,41 @@
+version: 1
+
+biological_data:
+  allow_synthetic: false
+  allow_random_values: false
+  allow_simulated_labels: false
+  require_registered_input: true
+
+labels:
+  unobserved_cysteine: unlabeled
+
+provenance:
+  require_file_sha256: true
+  required_dataset_fields:
+    - accession
+    - repository
+    - source_url
+    - scientific_role
+    - metadata_retrieved_at
+    - metadata_sha256
+  required_file_registry_fields:
+    - path
+    - sha256
+
+splits:
+  allow_test_tuning: false
+  allow_frozen_split_overwrite: false
+
+known_mechanisms:
+  allow_train_and_independent_validation: false
+
+prospective_validation:
+  allow_post_wetlab_reranking: false
+
+release:
+  allow_placeholder_results: false
+  forbidden_filename_terms:
+    - synthetic
+    - fake
+    - dummy
+    - mock_biology
