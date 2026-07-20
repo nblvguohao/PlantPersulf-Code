@@ -1,0 +1,14 @@
+{
+  "accession": "GSE163745",
+  "biological_values_modified": false,
+  "extraction_command": "python scripts/build_real_fixtures.py --accessions PXD006140,PXD051570,GSE163745",
+  "extraction_method": "byte_for_byte_copy",
+  "fixture_file": "GSE163745.metadata.json",
+  "fixture_sha256": "20f52bd62689003b8d7185167c6e18ec70b9e1178da3342134a447c138c5f228",
+  "schema_version": 1,
+  "source_file": "data/registry/cache/geo/GSE163745.json",
+  "source_registry": "data/registry/files.tsv",
+  "source_repository": "GEO",
+  "source_sha256": "20f52bd62689003b8d7185167c6e18ec70b9e1178da3342134a447c138c5f228",
+  "use": "tests_only"
+}

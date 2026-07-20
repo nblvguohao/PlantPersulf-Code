@@ -1,0 +1,14 @@
+{
+  "accession": "PXD051570",
+  "biological_values_modified": false,
+  "extraction_command": "python scripts/build_real_fixtures.py --accessions PXD006140,PXD051570,GSE163745",
+  "extraction_method": "byte_for_byte_copy",
+  "fixture_file": "PXD051570.metadata.json",
+  "fixture_sha256": "84a5d83e099910a780721a3984c753a35f1e25f781675f5a2e5097174a336168",
+  "schema_version": 1,
+  "source_file": "data/registry/cache/iprox/PXD051570.json",
+  "source_registry": "data/registry/files.tsv",
+  "source_repository": "iProX",
+  "source_sha256": "84a5d83e099910a780721a3984c753a35f1e25f781675f5a2e5097174a336168",
+  "use": "tests_only"
+}

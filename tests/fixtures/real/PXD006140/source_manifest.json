@@ -1,0 +1,14 @@
+{
+  "accession": "PXD006140",
+  "biological_values_modified": false,
+  "extraction_command": "python scripts/build_real_fixtures.py --accessions PXD006140,PXD051570,GSE163745",
+  "extraction_method": "binary_header_plus_32_lines",
+  "fixture_file": "omssa_head_32.csv",
+  "fixture_sha256": "10fce0b8ac26f564c7c16879b0d6e32cfa14a8ee1116f0f7911cbc758650b43f",
+  "schema_version": 1,
+  "source_file": "data/raw/PXD006140/omssa.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt",
+  "source_registry": "data/registry/downloads.tsv",
+  "source_repository": "PRIDE",
+  "source_sha256": "f8d052626f9f792495c785b7b42d657e2effb3a982c2f8ba561c7c320f37bdcb",
+  "use": "tests_only"
+}
