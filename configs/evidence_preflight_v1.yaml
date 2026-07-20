@@ -1,0 +1,22 @@
+version: 1
+
+studies:
+  - PXD006140
+  - PXD024061
+  - PXD035795
+  - PXD039999
+
+evidence_classes:
+  - site_ms
+  - site_mutagenesis
+  - site_biochemical
+  - protein_level_only
+  - identification_only
+  - unresolved
+
+large_file_threshold_bytes: 104857600
+
+prohibited_label_terms:
+  - positive
+  - unlabeled
+  - negative

@@ -7,3 +7,18 @@ approved:
     results:
       - omssa.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt
       - omssa.ne.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt
+  PXD024061:
+    checksums:
+      - checksum.txt
+  PXD035795:
+    design:
+      - SDRF.txt
+    results:
+      - peptide.csv
+      - peptides_1_1_0.mzid.gz
+      - proteins.csv
+    checksums:
+      - checksum.txt
+  PXD039999:
+    checksums:
+      - checksum.txt
