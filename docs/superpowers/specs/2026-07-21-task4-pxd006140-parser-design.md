@@ -43,7 +43,8 @@ reference proteome remains Task 7.
 Retrieve Q93VK9 and Q9ZW96 FASTA bytes from official UniProt REST endpoints,
 store them under `data/registry/cache/uniprot`, and register each file with its
 source URL, retrieval time, byte size, sequence version from the FASTA header,
-and SHA256. Scientific tests then run offline against registered bytes.
+and SHA256 in `data/registry/reference_sequences.tsv`. Scientific tests then
+run offline against registered bytes.
 
 This is reproducible and satisfies the Task 4 coordinate test without advancing
 the complete proteome acquisition assigned to Task 7.
@@ -64,16 +65,19 @@ has passed review.
 Task 4 consumes only inputs that pass `assert_registered_input`:
 
 1. Both PXD006140 OMSSA result files through `data/registry/downloads.tsv`.
-2. Q93VK9 and Q9ZW96 FASTA files through `data/registry/files.tsv`.
+2. Q93VK9 and Q9ZW96 FASTA files through
+   `data/registry/reference_sequences.tsv`.
 3. The PXD006140 tests-only fixture through its Task 3 source manifest.
 
-The two UniProt rows use `dataset_accession=PXD006140`,
-`repository=UniProt`, `record_type=reference_sequence`, and
-`file_category=coordinate_validation_sequence`. This describes their role as
-supporting reference inputs for the PXD006140 parser without registering them
-as independent proteomics studies. Their SHA256 values are calculated from the
-downloaded response bytes; a file is unusable until the corresponding registry
-row exists and its SHA256 audit passes.
+The dedicated reference registry has exact columns `study_accession`,
+`protein_accession`, `repository`, `source_url`, `retrieved_at`,
+`sequence_version`, `path`, `size_bytes`, `sha256`, and `scientific_use`. The two
+rows use `study_accession=PXD006140`, `repository=UniProt`, and
+`scientific_use=coordinate_validation_only`. This describes their role as
+supporting reference inputs without registering them as independent proteomics
+studies or modifying the Task 1 metadata registry. Their SHA256 values are
+calculated from the downloaded response bytes; a file is unusable until the
+corresponding registry row exists and its SHA256 audit passes.
 
 No unregistered fallback sequence, copied sequence literal, inferred residue,
 or alternate accession may be substituted after a retrieval or mapping failure.
@@ -264,8 +268,8 @@ git diff --check
 
 The generated interim tree is inspected for deterministic hashes and scientific
 scope but is not committed. The implementation commit contains source code,
-tests, registered UniProt cache bytes, their registry rows, and the implementation
-plan. Task 5 is not started.
+tests, registered UniProt cache bytes, the dedicated reference-sequence
+registry, and the implementation plan. Task 5 is not started.
 
 ## Known limitations and Task 5 gate
 
