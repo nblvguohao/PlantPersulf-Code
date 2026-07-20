@@ -1,0 +1,41 @@
+{
+  "fetch_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=sra&id=9772317%2C9772316%2C9772315%2C9772314%2C9772313%2C9772312&rettype=runinfo&retmode=text",
+  "query_accession": "SRP239046",
+  "repository": "SRA",
+  "retrieved_at": "2026-07-20T14:50:02.607330+00:00",
+  "runinfo_csv": "Run,ReleaseDate,LoadDate,spots,bases,spots_with_mates,avgLength,size_MB,AssemblyName,download_path,Experiment,LibraryName,LibraryStrategy,LibrarySelection,LibrarySource,LibraryLayout,InsertSize,InsertDev,Platform,Model,SRAStudy,BioProject,Study_Pubmed_id,ProjectID,Sample,BioSample,SampleType,TaxID,ScientificName,SampleName,g1k_pop_code,source,g1k_analysis_group,Subject_ID,Sex,Disease,Tumor,Affection_Status,Analyte_Type,Histological_Type,Body_Site,CenterName,Submission,dbgap_study_accession,Consent,RunHash,ReadHash\nSRR10803240,2020-04-15 16:59:20,2019-12-30 08:31:56,17967922,5390376600,17967922,300,1570,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos9/sra-pub-zq-922/SRR010/803/SRR10803240.sralite.1,SRX7477122,,RNA-Seq,cDNA,TRANSCRIPTOMIC,PAIRED,0,0,ILLUMINA,Illumina HiSeq 4000,SRP239046,PRJNA598113,3,598113,SRS5920752,SAMN13698533,simple,4081,Solanum lycopersicum,GSM4238143,,,,,,,no,,,,,GEO,SRA1017659,,public,B889951C2B28854728BD4AAD6F591247,4BA2F8A7AAEA5E9A92DE93EB291B5CFE\nSRR10803241,2020-04-15 16:59:20,2019-12-30 08:34:29,22345080,6703524000,22345080,300,2006,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos12/sra-pub-zq-1216/SRR010/803/SRR10803241.sralite.1,SRX7477123,,RNA-Seq,cDNA,TRANSCRIPTOMIC,PAIRED,0,0,ILLUMINA,Illumina HiSeq 4000,SRP239046,PRJNA598113,3,598113,SRS5920753,SAMN13698532,simple,4081,Solanum lycopersicum,GSM4238144,,,,,,,no,,,,,GEO,SRA1017659,,public,29A163C9B0AF2C2C61B34909466F7515,3B23FB33AF554DDB75D94C9F2FFE63D6\nSRR10803242,2020-04-15 16:59:20,2019-12-30 08:34:21,21933252,6579975600,21933252,300,1960,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos12/sra-pub-zq-1216/SRR010/803/SRR10803242.sralite.1,SRX7477124,,RNA-Seq,cDNA,TRANSCRIPTOMIC,PAIRED,0,0,ILLUMINA,Illumina HiSeq 4000,SRP239046,PRJNA598113,3,598113,SRS5920754,SAMN13698531,simple,4081,Solanum lycopersicum,GSM4238145,,,,,,,no,,,,,GEO,SRA1017659,,public,9D8B6C4EAA2B39A5680FFAAF89AA2FAF,BEEDC94FA0B0FD4FAD9B507A7B550FD8\nSRR10803243,2020-04-15 16:59:20,2019-12-30 08:33:11,19223768,5767130400,19223768,300,1677,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos12/sra-pub-zq-1216/SRR010/803/SRR10803243.sralite.1,SRX7477125,,RNA-Seq,cDNA,TRANSCRIPTOMIC,PAIRED,0,0,ILLUMINA,Illumina HiSeq 4000,SRP239046,PRJNA598113,3,598113,SRS5920755,SAMN13698530,simple,4081,Solanum lycopersicum,GSM4238146,,,,,,,no,,,,,GEO,SRA1017659,,public,A70C976AAB3F52161B15262A10BEC6FB,CF797222FC793BF2640024DF612584EA\nSRR10803244,2020-04-15 16:59:20,2019-12-30 08:33:45,17491904,5247571200,17491904,300,1549,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos9/sra-pub-zq-922/SRR010/803/SRR10803244.sralite.1,SRX7477126,,RNA-Seq,cDNA,TRANSCRIPTOMIC,PAIRED,0,0,ILLUMINA,Illumina HiSeq 4000,SRP239046,PRJNA598113,3,598113,SRS5920756,SAMN13698529,simple,4081,Solanum lycopersicum,GSM4238147,,,,,,,no,,,,,GEO,SRA1017659,,public,39EE746A012411B68BC4C0A06682B273,E45C1A37F38481A225A85255DFB57671\nSRR10803245,2020-04-15 16:59:20,2019-12-30 08:27:52,4187805,1256341500,4187805,300,357,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos9/sra-pub-zq-922/SRR010/803/SRR10803245.sralite.1,SRX7477126,,RNA-Seq,cDNA,TRANSCRIPTOMIC,PAIRED,0,0,ILLUMINA,Illumina HiSeq 4000,SRP239046,PRJNA598113,3,598113,SRS5920756,SAMN13698529,simple,4081,Solanum lycopersicum,GSM4238147,,,,,,,no,,,,,GEO,SRA1017659,,public,49289A9FD1B17401C7A614C26849AD61,105AA4710728015B448BBE512371999E\nSRR10803246,2020-04-15 16:59:20,2019-12-30 08:34:46,17850175,5355052500,17850175,300,1569,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos9/sra-pub-zq-922/SRR010/803/SRR10803246.sralite.1,SRX7477127,,RNA-Seq,cDNA,TRANSCRIPTOMIC,PAIRED,0,0,ILLUMINA,Illumina HiSeq 4000,SRP239046,PRJNA598113,3,598113,SRS5920757,SAMN13698528,simple,4081,Solanum lycopersicum,GSM4238148,,,,,,,no,,,,,GEO,SRA1017659,,public,CF2D27CB93BAD91E0593F7A7BE606A04,5494758024A72CABF8311CCE423966AA\n",
+  "runinfo_response_sha256": "f07f2c2bd0fa6f040b38eb5368097a2213b5a4a0af7dba761ef4e1102a8ba23a",
+  "schema_version": 1,
+  "search_response": {
+    "esearchresult": {
+      "count": "6",
+      "idlist": [
+        "9772317",
+        "9772316",
+        "9772315",
+        "9772314",
+        "9772313",
+        "9772312"
+      ],
+      "querytranslation": "SRP239046[ACCN]",
+      "retmax": "6",
+      "retstart": "0",
+      "translationset": [],
+      "translationstack": [
+        {
+          "count": "6",
+          "explode": "N",
+          "field": "ACCN",
+          "term": "SRP239046[ACCN]"
+        },
+        "GROUP"
+      ]
+    },
+    "header": {
+      "type": "esearch",
+      "version": "0.3"
+    }
+  },
+  "search_response_sha256": "302468698dd0e08453156060d60a804828065d8e43f25bfe2b92aa887e8524c0",
+  "search_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&term=SRP239046%5BACCN%5D&retmax=10000&retmode=json"
+}

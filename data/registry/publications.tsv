@@ -1,0 +1,11 @@
+dataset_accession	repository	identifier_type	identifier	doi	citation
+GSE142712	GEO	PubMed	32255501		
+GSE142713	GEO	PubMed	32255501		
+GSE163745	GEO	PubMed	33986762		
+GSE267238	GEO	PubMed	39698852		
+PXD006140	PRIDE	PubMed	28992305	10.1093/jxb/erx294	Aroca A, Benito JM, Gotor C, Romero LC. Persulfidation proteome reveals the regulation of protein function by hydrogen sulfide in diverse biological processes in Arabidopsis. J Exp Bot. 2017 68(17):4915-4927
+PXD024061	PRIDE	PubMed	0	10.3390/ANTIOX10040508	Jurado-Flores A, Romero LC, Gotor C. Label-Free Quantitative Proteomic Analysis of Nitrogen Starvation in Arabidopsis Root Reveals New Aspects of H2S Signaling by Protein Persulfidation.  Antioxidants (Basel). 2021 10(4):508
+PXD024061	PRIDE	PubMed	33805243	10.3390/antiox10040508	Jurado-Flores A, Romero LC, Gotor C. Label-Free Quantitative Proteomic Analysis of Nitrogen Starvation in Arabidopsis Root Reveals New Aspects of H<sub>2</sub>S Signaling by Protein Persulfidation. Antioxidants (Basel). 2021 10(4)
+PXD035795	PRIDE	PubMed	0	10.1111/NPH.18838	García-Calderón M, Vignane T, Filipovic MR, Ruiz MT, Romero LC, Márquez AJ, Gotor C, Aroca A. Persulfidation protects from oxidative stress under nonphotorespiratory conditions in Arabidopsis. New Phytol. 2023 238(4):1431-1445
+PXD039999	PRIDE	PubMed	37148339	10.1093/jxb/erad165	Jurado-Flores A, Aroca A, Romero LC, Gotor C. Sulfide promotes tolerance to drought through protein persulfidation in Arabidopsis. J Exp Bot. 2023 74(15):4654-4669
+PXD051570	iProX	PubMed	40489665		Tan J, Zhou Z, Feng H, Zhang J, Zhang R, Chen Z, Niu Y, Liu F, Deng Z. Proteome and Phosphoproteome of Tomato Fruit Identify REDUCED CHLOROPLAST COVERAGE 1a as A Ripening Regulator. Genomics Proteomics &amp; Bioinformatics. 2025 Jun 9;():qzaf050-. doi:10.1093/gpbjnl/qzaf050. 

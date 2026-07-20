@@ -1,0 +1,25 @@
+version: 1
+
+pride:
+  - accession: PXD006140
+    role: discovery_persulfidation
+  - accession: PXD024061
+    role: external_persulfidation
+  - accession: PXD035795
+    role: external_persulfidation
+  - accession: PXD039999
+    role: external_persulfidation
+
+iprox:
+  - accession: PXD051570
+    role: tomato_ripening_proteome_phosphoproteome
+
+geo:
+  - accession: GSE163745
+    role: tomato_ripening_transcriptome
+  - accession: GSE142713
+    role: tomato_ripening_transcriptome
+  - accession: GSE142712
+    role: tomato_ripening_chipseq
+  - accession: GSE267238
+    role: tomato_ripening_transcriptome

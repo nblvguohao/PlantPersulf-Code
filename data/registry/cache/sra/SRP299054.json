@@ -1,0 +1,43 @@
+{
+  "fetch_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=sra&id=12714475%2C12714474%2C12714473%2C12714472%2C12714471%2C12714470%2C12714469%2C12714468&rettype=runinfo&retmode=text",
+  "query_accession": "SRP299054",
+  "repository": "SRA",
+  "retrieved_at": "2026-07-20T14:49:59.280989+00:00",
+  "runinfo_csv": "Run,ReleaseDate,LoadDate,spots,bases,spots_with_mates,avgLength,size_MB,AssemblyName,download_path,Experiment,LibraryName,LibraryStrategy,LibrarySelection,LibrarySource,LibraryLayout,InsertSize,InsertDev,Platform,Model,SRAStudy,BioProject,Study_Pubmed_id,ProjectID,Sample,BioSample,SampleType,TaxID,ScientificName,SampleName,g1k_pop_code,source,g1k_analysis_group,Subject_ID,Sex,Disease,Tumor,Affection_Status,Analyte_Type,Histological_Type,Body_Site,CenterName,Submission,dbgap_study_accession,Consent,RunHash,ReadHash\nSRR13292593,2020-12-26 20:10:29,2020-12-23 10:59:33,16472509,840097959,0,51,280,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos8/sra-pub-zq-820/SRR013/13292/SRR13292593/SRR13292593.lite.1,SRX9721588,,RNA-Seq,cDNA,TRANSCRIPTOMIC,SINGLE,0,0,ILLUMINA,Illumina HiSeq 4000,SRP299054,PRJNA687418,3,687418,SRS7915157,SAMN17142455,simple,4081,Solanum lycopersicum,GSM4985033,,,,,,,no,,,,,GEO,SRA1177051,,public,FD9FF0EC6A5D6CA9C9FAE3D1AF9E971B,0DE6C1949F109208A65B7B5B6F1C442A\nSRR13292594,2020-12-26 20:10:29,2020-12-23 11:00:29,18910543,964437693,0,51,320,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos9/sra-pub-zq-924/SRR013/13292/SRR13292594/SRR13292594.lite.1,SRX9721589,,RNA-Seq,cDNA,TRANSCRIPTOMIC,SINGLE,0,0,ILLUMINA,Illumina HiSeq 4000,SRP299054,PRJNA687418,3,687418,SRS7915158,SAMN17142454,simple,4081,Solanum lycopersicum,GSM4985034,,,,,,,no,,,,,GEO,SRA1177051,,public,1554E1EF4937FA51382C22FFBCBE0FA3,BF09676F2876C118D83DCF665AF2328C\nSRR13292595,2020-12-26 20:10:29,2020-12-23 10:57:03,8463487,431637837,0,51,143,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos9/sra-pub-zq-924/SRR013/13292/SRR13292595/SRR13292595.lite.1,SRX9721582,,RNA-Seq,cDNA,TRANSCRIPTOMIC,SINGLE,0,0,ILLUMINA,Illumina HiSeq 4000,SRP299054,PRJNA687418,3,687418,SRS7915151,SAMN17142448,simple,4081,Solanum lycopersicum,GSM4985035,,,,,,,no,,,,,GEO,SRA1177051,,public,B546A9F6E44FEC807E8DC620783CE1C8,8DE159E159651D0EF4D503BCFB2EEF92\nSRR13292596,2020-12-26 20:10:29,2020-12-23 11:00:56,19625764,1000913964,0,51,336,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos9/sra-pub-zq-922/SRR013/13292/SRR13292596/SRR13292596.lite.1,SRX9721583,,RNA-Seq,cDNA,TRANSCRIPTOMIC,SINGLE,0,0,ILLUMINA,Illumina HiSeq 4000,SRP299054,PRJNA687418,3,687418,SRS7915152,SAMN17142447,simple,4081,Solanum lycopersicum,GSM4985036,,,,,,,no,,,,,GEO,SRA1177051,,public,81052ACC19FBF1EF12E77C1CE8037D9D,2443A4A1280DADB0C723B44B5C1DF596\nSRR13292597,2020-12-26 20:10:29,2020-12-23 10:59:54,17254163,879962313,0,51,293,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos9/sra-pub-zq-924/SRR013/13292/SRR13292597/SRR13292597.lite.1,SRX9721584,,RNA-Seq,cDNA,TRANSCRIPTOMIC,SINGLE,0,0,ILLUMINA,Illumina HiSeq 4000,SRP299054,PRJNA687418,3,687418,SRS7915153,SAMN17142446,simple,4081,Solanum lycopersicum,GSM4985037,,,,,,,no,,,,,GEO,SRA1177051,,public,113550DC7DC7914B9092FE3FBE2C2FFF,AA97FDEFC06F5A3CCAD240DC967986A4\nSRR13292598,2020-12-26 20:10:29,2020-12-23 10:59:50,15914784,811653984,0,51,269,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos9/sra-pub-zq-922/SRR013/13292/SRR13292598/SRR13292598.lite.1,SRX9721585,,RNA-Seq,cDNA,TRANSCRIPTOMIC,SINGLE,0,0,ILLUMINA,Illumina HiSeq 4000,SRP299054,PRJNA687418,3,687418,SRS7915154,SAMN17142452,simple,4081,Solanum lycopersicum,GSM4985038,,,,,,,no,,,,,GEO,SRA1177051,,public,F33AC36C0D3EF940ACAB405D90846A5C,331389117737C05AFE94367B21FAAA9C\nSRR13292599,2020-12-26 20:10:29,2020-12-23 10:59:52,18893008,963543408,0,51,320,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos9/sra-pub-zq-922/SRR013/13292/SRR13292599/SRR13292599.lite.1,SRX9721586,,RNA-Seq,cDNA,TRANSCRIPTOMIC,SINGLE,0,0,ILLUMINA,Illumina HiSeq 4000,SRP299054,PRJNA687418,3,687418,SRS7915155,SAMN17142451,simple,4081,Solanum lycopersicum,GSM4985039,,,,,,,no,,,,,GEO,SRA1177051,,public,403120B19D1CFD4BBEE3B9E09A834DC8,03B16908D9A38A2F4F3AC6E2318B119C\nSRR13292600,2020-12-26 20:10:29,2020-12-23 10:59:24,16596830,846438330,0,51,282,,https://sra-downloadb.be-md.ncbi.nlm.nih.gov/sos9/sra-pub-zq-922/SRR013/13292/SRR13292600/SRR13292600.lite.1,SRX9721587,,RNA-Seq,cDNA,TRANSCRIPTOMIC,SINGLE,0,0,ILLUMINA,Illumina HiSeq 4000,SRP299054,PRJNA687418,3,687418,SRS7915156,SAMN17142449,simple,4081,Solanum lycopersicum,GSM4985040,,,,,,,no,,,,,GEO,SRA1177051,,public,B08AEDE2526B6121A0A8C12AE38E3D80,8F06F31D40C8D2E2794BC0E21EABC957\n",
+  "runinfo_response_sha256": "922a567d396f1981dcf7f56e02dc68213e79833448dac85730ce043adf48b7b9",
+  "schema_version": 1,
+  "search_response": {
+    "esearchresult": {
+      "count": "8",
+      "idlist": [
+        "12714475",
+        "12714474",
+        "12714473",
+        "12714472",
+        "12714471",
+        "12714470",
+        "12714469",
+        "12714468"
+      ],
+      "querytranslation": "SRP299054[ACCN]",
+      "retmax": "8",
+      "retstart": "0",
+      "translationset": [],
+      "translationstack": [
+        {
+          "count": "8",
+          "explode": "N",
+          "field": "ACCN",
+          "term": "SRP299054[ACCN]"
+        },
+        "GROUP"
+      ]
+    },
+    "header": {
+      "type": "esearch",
+      "version": "0.3"
+    }
+  },
+  "search_response_sha256": "b572c0bcbc92276a46a32f80d96caa133e9572128730d9f9d3df86ec713b7f9e",
+  "search_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&term=SRP299054%5BACCN%5D&retmax=10000&retmode=json"
+}

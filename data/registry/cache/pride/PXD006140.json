@@ -1,0 +1,535 @@
+{
+  "accession": "PXD006140",
+  "files": [
+    {
+      "accession": "b65401cda2ea42df36c9be7f912e10d5e97b7c68cd68e61b462bb0b4b41f7a89",
+      "additionalAttributes": [],
+      "checksum": "632f498e234282fc99850631ac5310dc04814677",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000410",
+        "cvLabel": "PRIDE",
+        "name": "Other type file URI",
+        "value": "OTHER"
+      },
+      "fileName": "omssa.ne.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt",
+      "fileSizeBytes": 18392921,
+      "projectAccessions": [
+        "PXD006140"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2018/10/PXD006140/omssa.ne.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2018/10/PXD006140/omssa.ne.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt"
+        }
+      ],
+      "publicationDate": "2018-10-24T22:49:24.000+00:00",
+      "submissionDate": "2017-03-21T11:44:14.000+00:00",
+      "totalDownloads": 44,
+      "updatedDate": "2017-03-21T11:45:19.000+00:00"
+    },
+    {
+      "accession": "965a711cdcd45e7ea9ff8b569b81b22bca07282617fc2ab4eb2480ca328a299e",
+      "additionalAttributes": [],
+      "checksum": "a0abddfac84841dfa0b19f0593cf615c23b49167",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "F105505.AAroca.mods.dat",
+      "fileSizeBytes": 221237255,
+      "projectAccessions": [
+        "PXD006140"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2018/10/PXD006140/F105505.AAroca.mods.dat"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2018/10/PXD006140/F105505.AAroca.mods.dat"
+        }
+      ],
+      "publicationDate": "2018-10-24T22:49:24.000+00:00",
+      "submissionDate": "2017-03-21T11:44:14.000+00:00",
+      "totalDownloads": 68,
+      "updatedDate": "2017-03-21T11:45:19.000+00:00"
+    },
+    {
+      "accession": "ef8006ef1a5245f76f8e0d3b3803f8916ff6e55ad2b850a395bd3054c1a20c4d",
+      "additionalAttributes": [],
+      "checksum": "7abd860eeda7d15cacfc188ca9a93e768d9af646",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "F105506.AAroca.dat",
+      "fileSizeBytes": 219161084,
+      "projectAccessions": [
+        "PXD006140"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2018/10/PXD006140/F105506.AAroca.dat"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2018/10/PXD006140/F105506.AAroca.dat"
+        }
+      ],
+      "publicationDate": "2018-10-24T22:49:24.000+00:00",
+      "submissionDate": "2017-03-21T11:44:14.000+00:00",
+      "totalDownloads": 75,
+      "updatedDate": "2017-03-21T11:45:19.000+00:00"
+    },
+    {
+      "accession": "d3d46e5b7d6c4703de16ad9cfecc5275091b8c55311eb6ae9c5998415c987146",
+      "additionalAttributes": [],
+      "checksum": "45575a5c3b20888c6dcff1a0d5ee24e79b668bce",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000410",
+        "cvLabel": "PRIDE",
+        "name": "Other type file URI",
+        "value": "OTHER"
+      },
+      "fileName": "omssa.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt",
+      "fileSizeBytes": 18002787,
+      "projectAccessions": [
+        "PXD006140"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2018/10/PXD006140/omssa.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2018/10/PXD006140/omssa.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt"
+        }
+      ],
+      "publicationDate": "2018-10-24T22:49:24.000+00:00",
+      "submissionDate": "2017-03-21T11:44:14.000+00:00",
+      "totalDownloads": 54,
+      "updatedDate": "2017-03-21T11:45:19.000+00:00"
+    },
+    {
+      "accession": "b27669c8dcd7858acb1b2b7af5d7954df63a25d7a536ff796b9fd8b9eaa60374",
+      "additionalAttributes": [],
+      "checksum": "67697fea31495890439ada7dcb258ccc9b979a54",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000410",
+        "cvLabel": "PRIDE",
+        "name": "Other type file URI",
+        "value": "OTHER"
+      },
+      "fileName": "20150821_01_AAroca_TMT6plex.cmpd.mgf.K.2015_09_22_17_33_15.t.xml",
+      "fileSizeBytes": 367948757,
+      "projectAccessions": [
+        "PXD006140"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2018/10/PXD006140/20150821_01_AAroca_TMT6plex.cmpd.mgf.K.2015_09_22_17_33_15.t.xml"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2018/10/PXD006140/20150821_01_AAroca_TMT6plex.cmpd.mgf.K.2015_09_22_17_33_15.t.xml"
+        }
+      ],
+      "publicationDate": "2018-10-24T22:49:24.000+00:00",
+      "submissionDate": "2017-03-21T11:44:14.000+00:00",
+      "totalDownloads": 74,
+      "updatedDate": "2017-03-21T11:45:19.000+00:00"
+    },
+    {
+      "accession": "7a7aaa00da535d71f147ccb90f4bc11487ceb6cec3dbc5e654bdce5148b0dae6",
+      "additionalAttributes": [],
+      "checksum": "f7c7d4ff494aeaca669792a8ab8d4622335970f3",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000410",
+        "cvLabel": "PRIDE",
+        "name": "Other type file URI",
+        "value": "OTHER"
+      },
+      "fileName": "20150821_01_AAroca_TMT6plex.cmpd.mgf.K.2015_09_22_18_13_58.t.xml",
+      "fileSizeBytes": 370466629,
+      "projectAccessions": [
+        "PXD006140"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2018/10/PXD006140/20150821_01_AAroca_TMT6plex.cmpd.mgf.K.2015_09_22_18_13_58.t.xml"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2018/10/PXD006140/20150821_01_AAroca_TMT6plex.cmpd.mgf.K.2015_09_22_18_13_58.t.xml"
+        }
+      ],
+      "publicationDate": "2018-10-24T22:49:24.000+00:00",
+      "submissionDate": "2017-03-21T11:44:14.000+00:00",
+      "totalDownloads": 85,
+      "updatedDate": "2017-03-21T11:45:19.000+00:00"
+    },
+    {
+      "accession": "fd75a0993670d3f9e4aeac32115050d4d2259585a7039dde745c6667c67a4257",
+      "additionalAttributes": [],
+      "checksum": "41108c3e3f112be1f6deefd3c4c53098aa42e120",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000410",
+        "cvLabel": "PRIDE",
+        "name": "Other type file URI",
+        "value": "OTHER"
+      },
+      "fileName": "20150821_01_AAroca_TMT6plex.cmpd.mgf.T.2015_09_22_17_10_52.t.xml",
+      "fileSizeBytes": 221397438,
+      "projectAccessions": [
+        "PXD006140"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2018/10/PXD006140/20150821_01_AAroca_TMT6plex.cmpd.mgf.T.2015_09_22_17_10_52.t.xml"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2018/10/PXD006140/20150821_01_AAroca_TMT6plex.cmpd.mgf.T.2015_09_22_17_10_52.t.xml"
+        }
+      ],
+      "publicationDate": "2018-10-24T22:49:24.000+00:00",
+      "submissionDate": "2017-03-21T11:44:14.000+00:00",
+      "totalDownloads": 68,
+      "updatedDate": "2017-03-21T11:45:19.000+00:00"
+    },
+    {
+      "accession": "13b1f6875715ec6b1e292fede0c764b7f1254e40074dab625106ae802cb2e565",
+      "additionalAttributes": [],
+      "checksum": "4c1220e096e6a4d80e073496db47e1ed9b192a8a",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "20150821_01_AAroca_TMT6plex.cmpd.mzXML",
+      "fileSizeBytes": 199064608,
+      "projectAccessions": [
+        "PXD006140"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2018/10/PXD006140/20150821_01_AAroca_TMT6plex.cmpd.mzXML"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2018/10/PXD006140/20150821_01_AAroca_TMT6plex.cmpd.mzXML"
+        }
+      ],
+      "publicationDate": "2018-10-24T22:49:24.000+00:00",
+      "submissionDate": "2017-03-21T11:44:14.000+00:00",
+      "totalDownloads": 79,
+      "updatedDate": "2017-03-21T11:45:19.000+00:00"
+    },
+    {
+      "accession": "a6490dc2fba0bc0b7623b782604d7996afc75c027b3931305ed847f5d2437549",
+      "additionalAttributes": [],
+      "checksum": "c58e2009cdac90e2167bd66042177332eecea1b6",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000410",
+        "cvLabel": "PRIDE",
+        "name": "Other type file URI",
+        "value": "OTHER"
+      },
+      "fileName": "20150821_01_AAroca_TMT6plex.cmpd.mgf.T.2015_09_22_17_16_29.t.xml",
+      "fileSizeBytes": 223657020,
+      "projectAccessions": [
+        "PXD006140"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2018/10/PXD006140/20150821_01_AAroca_TMT6plex.cmpd.mgf.T.2015_09_22_17_16_29.t.xml"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2018/10/PXD006140/20150821_01_AAroca_TMT6plex.cmpd.mgf.T.2015_09_22_17_16_29.t.xml"
+        }
+      ],
+      "publicationDate": "2018-10-24T22:49:24.000+00:00",
+      "submissionDate": "2017-03-21T11:44:14.000+00:00",
+      "totalDownloads": 65,
+      "updatedDate": "2017-03-21T11:45:19.000+00:00"
+    }
+  ],
+  "files_response_sha256": "2cbaee23756031ec11d60e756b155060288e86415d9fbeb8288f50ea608110ea",
+  "files_url": "https://www.ebi.ac.uk/pride/ws/archive/v3/projects/PXD006140/files",
+  "project": {
+    "accession": "PXD006140",
+    "additionalAttributes": [],
+    "countries": [
+      "Spain"
+    ],
+    "dataProcessingProtocol": "Data acquisition was performed with a TripleTOF 5600 System (AB SCIEX). Data were acquired under the following parameters: ionspray voltage floating (ISVF), 2800 V; curtain gas (CUR), 20; interface heater temperature (IHT), 150; ion source gas 1 (GS1), 20; declustering potential (DP), 85 V. All data were acquired in information-dependent acquisition (IDA) mode with Analyst TF 1.5 software (AB SCIEX). For IDA parameters, a 0.25-s MS survey scan in the mass range of 350–1250 m/z followed by 30 MS/MS scans of 150 ms in the mass range of 100–1800 were performed. Switching criteria were set to ions greater than a mass-to-charge ratio (m/z) of 350 and smaller than m/z 1250, with a charge state of 2–5 and an abundance threshold of more than 70 counts (cps). Former target ions were excluded for 20 s. The IDA rolling collision energy (CE) parameters script was used to automatically control for CE.Label-based quantification was performed using Proteobotics S.L. (Madrid, Spain): MS/MS spectra were exported to mgf format using Peak View v1.2.0.3 and searched using Mascot Server 2.5.1, OMSSA 2.1.9, X!TANDEM 2013.02.01.1, X!TANDEM with k-score plug-in and Myrimatch 2.2.140 against a composite target/decoy database built from the 31551 sequences in the Arabidopsis thaliana reference proteome at Uniprot Knowledgebase together with commonly occurring contaminants. Search engines were configured to match potential peptide candidates with mass error tolerance of 25 ppm and fragment ion tolerance of 0.02Da, allowing for up to two missed tryptic cleavage sites and a maximum isotope error (13C) of 1, setting Methylthio (C) as fixed modification, and TMT-6plex (N-term, K, Y), acetyl (Protein N-term), Oxidation (M), Gln->pyro-Glu (N-term Q) and Glu->pyro-Glu (N-term E) as variable modifications. An additional OMSSA search allowed for no-enzyme cleavage. CN-Biotin-Na-Sulfide (C), CN-Biotin-Sulfide (C), Sulfide (C), Methylthio (C), and MSBT (C) were incorporated as variable modifications in additional MASCOT and X!TANDEM searches, in which Methylthio (C) was also considered variable modification. Score distribution models were used to compute peptide-spectrum match p-values (Ramos-Fernandez et al., 2008) and spectra recovered by a peptide-level FDR < 0.01 filter were selected for quantitative analysis. The approximately 1% of the signals with the lowest quality were removed prior to further analysis. Peptides modified with CN-Biotin-Na-Sulfide (C), CN-Biotin-Sulfide (C) or Sulfide (C) were quantified separately of their parent proteins. Differential regulation was measured using linear models (Lopez-Serra et al., 2014) and statistical significance was measured using q-value < 0.05]",
+    "diseases": [],
+    "doi": "",
+    "experimentTypes": [
+      {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000429",
+        "cvLabel": "PRIDE",
+        "name": "Shotgun proteomics"
+      }
+    ],
+    "identifiedPTMStrings": [
+      {
+        "@type": "CvParam",
+        "accession": "MOD:01720",
+        "cvLabel": "MOD",
+        "name": "TMT6plex-126 reporter+balance reagent acylated residue",
+        "value": ""
+      }
+    ],
+    "instruments": [
+      {
+        "@type": "CvParam",
+        "accession": "MS:1000932",
+        "cvLabel": "MS",
+        "name": "TripleTOF 5600",
+        "value": ""
+      }
+    ],
+    "keywords": [
+      "Cysteine",
+      "Post-translational modification",
+      "S-sulfhydration",
+      "Proteomic",
+      "Hydrogen sulfide",
+      "Mass spectrometry"
+    ],
+    "labPIs": [
+      {
+        "affiliation": "Instituto de Bioquimica Vegetal y Fotosintesis CSIC Americo Vespucio 49. 41092.  Seville (Spain) +34954489506",
+        "country": "",
+        "email": "lromero@ibvf.csic.es",
+        "firstName": "Luis Carlos Romero",
+        "id": "67160100",
+        "identifier": "67160100",
+        "lastName": "Gonzalez",
+        "name": "Luis Carlos Romero Gonzalez",
+        "orcid": "",
+        "title": "Dr"
+      }
+    ],
+    "license": "EBI terms of use",
+    "organismParts": [
+      {
+        "@type": "CvParam",
+        "accession": "BTO:0000713",
+        "cvLabel": "BTO",
+        "name": "Leaf",
+        "value": ""
+      },
+      {
+        "@type": "CvParam",
+        "accession": "CL:0000610",
+        "cvLabel": "CL",
+        "name": "Plant cell",
+        "value": ""
+      }
+    ],
+    "organisms": [
+      {
+        "@type": "CvParam",
+        "accession": "NEWT:3702",
+        "cvLabel": "NEWT",
+        "name": "Arabidopsis thaliana (mouse-ear cress)",
+        "value": ""
+      }
+    ],
+    "otherOmicsLinks": [
+      "pride.project:PXD005168",
+      "px:PXD005168"
+    ],
+    "projectDescription": "Hydrogen sulfide-mediated signaling pathways regulates many physiological and pathophysiological processes in mammalian and plant systems. The molecular mechanism by which hydrogen sulfide exerts its action involves the post-translational modification of cysteine residues to form a persulfidated thiol motif, named as protein S-sulfhydration or persulfidation. We have developed a comparative and quantitative proteomic analysis approach for the detection of endogenous S-sulfhydrated proteins in wild-type Arabidopsis and L-CYSTEINE DESULFHYDRASE 1 mutant leaves by using the tag-switch method. Bioinformatic analysis of the identified proteins revealed that S-sulfhydrated cysteines are part of a wide range of biological functions regulating important processes such as carbon metabolism, plant responses to abiotic and biotic stresses, plant growth and development, and RNA translation. Quantitative analysis in both genetic backgrounds reveals that protein sulfhydration is mainly involved in primary metabolic pathways such as tricarboxylic acid cycle, glycolysis or Calvin cycle, suggesting that this protein modification is a new regulatory component in these pathways",
+    "projectTags": [
+      "Biological"
+    ],
+    "publicationDate": "2018-10-24",
+    "quantificationMethods": [
+      {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000314",
+        "cvLabel": "PRIDE",
+        "name": "TMT"
+      }
+    ],
+    "references": [
+      {
+        "doi": "10.1093/jxb/erx294",
+        "pubmedID": 28992305,
+        "referenceLine": "Aroca A, Benito JM, Gotor C, Romero LC. Persulfidation proteome reveals the regulation of protein function by hydrogen sulfide in diverse biological processes in Arabidopsis. J Exp Bot. 2017 68(17):4915-4927"
+      }
+    ],
+    "sampleAttributes": [
+      {
+        "@type": "Tuple",
+        "key": {
+          "accession": "EFO:0000635",
+          "cvLabel": "EFO",
+          "name": "organism part"
+        },
+        "value": [
+          {
+            "accession": "CL:0000610",
+            "cvLabel": "CL",
+            "name": "plant cell",
+            "value": ""
+          },
+          {
+            "accession": "BTO:0000713",
+            "cvLabel": "BTO",
+            "name": "leaf",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "@type": "Tuple",
+        "key": {
+          "accession": "OBI:0100026",
+          "cvLabel": "EFO",
+          "name": "organism"
+        },
+        "value": [
+          {
+            "accession": "NEWT:3702",
+            "cvLabel": "NEWT",
+            "name": "Arabidopsis thaliana (Mouse-ear cress)",
+            "value": ""
+          }
+        ]
+      }
+    ],
+    "sampleProcessingProtocol": "The identification and quantification of S-sulfhydrated proteins using TMT sixplexTM were performed at the Proteomics Facility of the Centro Nacional de Biotecnología, Spain; the tryptic digestion was performed in solution as described previously. The resulting peptides were subsequently labeled using a TMT-sixplex Isobaric Mass Tagging Kit (Thermo Scientific) according to the manufacturer's instructions as follows: 126: wt-1; 127: des1-1; 128: wt-2; 129: des1-2; 130: wt-3; 131: des1-3. Three biological replicates for both conditions (wild type and des1) were analyzed in this study. A 1-µg aliquot of each sample was subjected to 1D-nano LC ESI-MSMS analysis using a nano liquid chromatography system (Eksigent Technologies nanoLC Ultra 1D plus, AB SCIEX) coupled to a high-speed Triple TOF 5600 mass spectrometer (AB SCIEX) with a Nanospray III source. The analytical column was a silica-based reversed phase column C18 ChromXP, 75 µm × 15 cm, 3-µm particle size and 120-Å pore size (Eksigent Technologies, AB SCIEX). The trap column was a C18 ChromXP (Eksigent Technologies, AB SCIEX), 3-µm particle diameter, 120-Å pore size, switched on-line with the analytical column. The loading pump delivered a solution of 0.1% formic acid in water at 2 µL/min. The nano-pump provided a flow-rate of 300 nL/min and was operated under gradient elution conditions. Peptides were separated using a 200-min gradient ranging from 2% to 90% mobile phase B (mobile phase A: 2% acetonitrile, 0.1% formic acid; mobile phase B: 100% acetonitrile, 0.1% formic acid). The injection volume was 5 µL.",
+    "softwares": [
+      {
+        "@type": "CvParam",
+        "accession": "MS:1001476",
+        "cvLabel": "MS",
+        "name": "X!Tandem"
+      },
+      {
+        "@type": "CvParam",
+        "accession": "MS:1001207",
+        "cvLabel": "MS",
+        "name": "Mascot"
+      }
+    ],
+    "submissionDate": "2017-03-21",
+    "submissionType": "PARTIAL",
+    "submitters": [
+      {
+        "affiliation": "IBVF-CSIC",
+        "country": "Spain",
+        "email": "angeles.aroca@ibvf.csic.es",
+        "firstName": "Angeles",
+        "id": "56230114",
+        "identifier": "56230114",
+        "lastName": "Aroca",
+        "name": "Angeles Aroca",
+        "orcid": "",
+        "title": "Mrs"
+      }
+    ],
+    "title": "Subproteome persulfidation reveals the regulation of protein function by hydrogen sulfide in diverse biological processes in Arabidopsis thaliana",
+    "totalFileDownloads": 843
+  },
+  "project_response_sha256": "8595bafef610071a358abca9f0cc3f8ffb8b8c748f46eb4499225081ea2f1c14",
+  "project_url": "https://www.ebi.ac.uk/pride/ws/archive/v3/projects/PXD006140",
+  "repository": "PRIDE",
+  "retrieved_at": "2026-07-20T14:41:10.993811+00:00",
+  "schema_version": 1
+}

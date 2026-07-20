@@ -23,6 +23,7 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+markers = ["network: tests that access official external repositories"]
 
 [tool.ruff]
 target-version = "py310"
