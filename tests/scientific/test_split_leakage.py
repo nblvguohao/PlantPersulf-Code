@@ -14,8 +14,11 @@ from pathlib import Path
 import pytest
 import yaml
 
-from plantpersulf.benchmark.splits import (  # RED: module missing
+from plantpersulf.benchmark.splits import (
+    BenchmarkSplitTable,
+    audit_no_cluster_leakage,
     build_splits,
+    build_study_splits,
 )
 
 
@@ -112,3 +115,56 @@ def test_missing_cluster_file_is_fatal(tmp_path: Path) -> None:
         )
     with pytest.raises((RuntimeError, OSError, FileNotFoundError)):
         build_splits(config)
+
+
+def test_study_split_holds_out_designated_study(tmp_path: Path) -> None:
+    """Proteins from the held-out study must be in the test set for that fold."""
+    positives = tmp_path / "sites.tsv"
+    positives.write_text(
+        "protein_accession\tcys_position_in_protein\tlabel\t"
+        "study_accession\tevidence_level\tsource_sha256\n"
+        "A\t1\tpositive\tPXD006140\tsite_ms\taaa\n"
+        "A\t2\tpositive\tPXD006140\tsite_ms\tbbb\n"
+        "B\t5\tpositive\tPXD024061\tsite_ms\tccc\n"
+        "C\t3\tunlabeled\t\t\t\n"
+        "D\t8\tunlabeled\t\t\t\n",
+        encoding="utf-8",
+    )
+    proteome = tmp_path / "mini.fasta"
+    proteome.write_text(
+        ">sp|A\nAAAA\n>sp|B\nBBBB\n>sp|C\nCCCC\n", encoding="utf-8"
+    )
+    folds = build_study_splits(positives, proteome)
+
+    assert set(folds) == {"leave_PXD006140_out", "leave_PXD024061_out"}
+    # In the fold that leaves PXD006140 out, protein A must be in test.
+    fold_006 = folds["leave_PXD006140_out"]
+    assert fold_006["A"] == "test"
+    assert fold_006["B"] == "train"
+    assert fold_006["C"] == "train"
+    # In the fold that leaves PXD024061 out, protein B must be in test.
+    fold_024 = folds["leave_PXD024061_out"]
+    assert fold_024["B"] == "test"
+    assert fold_024["A"] == "train"
+
+
+def test_audit_passes_when_no_cluster_leaks(tmp_path: Path) -> None:
+    clusters_path, config_path = _cluster_fixture(tmp_path)
+    table = build_splits(config_path)
+    audit_no_cluster_leakage(table)  # must not raise
+
+
+def test_audit_raises_when_cluster_leaks(tmp_path: Path) -> None:
+    from plantpersulf.benchmark.splits import SplitRow
+
+    # Artificially inject a leak: cluster 1 appears in two splits.
+    table = BenchmarkSplitTable(
+        rows=(
+            SplitRow("A", "1", "train"),
+            SplitRow("B", "1", "test"),
+        ),
+        seed=42,
+        known_mechanism_holdout=(),
+    )
+    with pytest.raises(RuntimeError, match="cluster 1 crosses"):
+        audit_no_cluster_leakage(table)

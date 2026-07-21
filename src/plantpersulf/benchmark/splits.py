@@ -122,3 +122,85 @@ def build_splits(config_path: Path) -> BenchmarkSplitTable:
     return BenchmarkSplitTable(
         rows=tuple(rows), seed=seed, known_mechanism_holdout=holdout
     )
+
+
+STUDY_FOLD_LABEL = "leave_{study}_out"
+
+
+def build_study_splits(
+    positive_sites_path: Path,
+    proteome_path: Path,
+) -> dict[str, dict[str, str]]:
+    """Return {fold_name: {protein_accession: split}} for leave-study-out.
+
+    Each fold holds out one persulfidation study entirely as a test set;
+    proteins that only appear in other studies are in the train set for
+    that fold. Unlabeled sites (from the proteome) go to every fold's
+    train set — they carry no study assignment.
+    """
+    import csv
+
+    studies: set[str] = set()
+    protein_studies: dict[str, set[str]] = {}
+    with positive_sites_path.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        for row in reader:
+            if row["label"] != "positive":
+                continue
+            acc = row["protein_accession"]
+            study = row["study_accession"]
+            studies.add(study)
+            protein_studies.setdefault(acc, set()).add(study)
+    if len(studies) < 2:
+        raise RuntimeError("leave-study-out requires at least two studies")
+
+    folds: dict[str, dict[str, str]] = {}
+    # Pre-populate all proteins from the proteome
+    all_proteins = set(_parse_fasta(proteome_path))
+    for study in sorted(studies):
+        fold_name = STUDY_FOLD_LABEL.format(study=study)
+        assignment: dict[str, str] = {}
+        for protein in sorted(all_proteins):
+            pstudies = protein_studies.get(protein, set())
+            if study in pstudies:
+                assignment[protein] = "test"
+            else:
+                assignment[protein] = "train"
+        folds[fold_name] = assignment
+    return folds
+
+
+def _parse_fasta(path: Path) -> dict[str, str]:
+    """Return {accession: sequence}."""
+    sequences: dict[str, str] = {}
+    cur_header = ""
+    cur_lines: list[str] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith(">"):
+            if cur_header:
+                acc = cur_header.strip().split("|")[1]
+                sequences[acc] = "".join(cur_lines)
+            cur_header = line
+            cur_lines = []
+        elif line:
+            cur_lines.append(line)
+    if cur_header:
+        acc = cur_header.strip().split("|")[1]
+        sequences[acc] = "".join(cur_lines)
+    return sequences
+
+
+def audit_no_cluster_leakage(
+    split_table: BenchmarkSplitTable,
+) -> None:
+    """Raise RuntimeError if any cluster appears in more than one split."""
+    cluster_splits: dict[str, str] = {}
+    for row in split_table.rows:
+        if row.cluster_id in cluster_splits:
+            if cluster_splits[row.cluster_id] != row.split:
+                raise RuntimeError(
+                    f"cluster {row.cluster_id} crosses split boundary: "
+                    f"{cluster_splits[row.cluster_id]} vs {row.split}"
+                )
+        else:
+            cluster_splits[row.cluster_id] = row.split
