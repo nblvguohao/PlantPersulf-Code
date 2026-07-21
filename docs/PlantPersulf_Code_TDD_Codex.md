@@ -93,6 +93,20 @@ Task 0 通过审查后再执行 Task 1。
 
 ---
 
+## 1.4 合作科学定位与项目增量
+
+基于已公开论文形成的项目工作判断如下：
+
+- 张华老师团队已经具备 LC-MS/MS 位点鉴定、硫巯基化检测、Cys 定点突变、CRISPR/过表达、蛋白互作、转录调控、PTM 串扰和番茄表型验证能力；
+- 本项目不以代做 RNA-seq、常规差异分析、富集分析或通用生信服务作为合作价值；
+- 本项目拟补充可追踪位点级证据整合、防泄漏跨研究预测、训练前候选冻结、匹配对照和前瞻性盲法验证；
+- 单独增加 AI 模型、随机交叉验证或候选排名表，不构成 Nature-family 级生物学创新；
+- 联合研究要从逐个单蛋白机制上升到可推广、可预测并经前瞻实验检验的植物硫巯基化规律。
+
+上述判断只用于项目设计，不评价团队未公开能力，也不保证任何期刊结果。
+
+---
+
 # 2. 科学完整性合同
 
 ## 2.1 数据等级
@@ -209,26 +223,29 @@ candidate_id
 - 若使用作者提供的 processed matrix，必须同时保存其处理说明；
 - 不同 ITAG/SL 基因组版本必须通过版本化映射表统一，禁止静默转换。
 
-## 3.3 张华老师团队已发表机制作为阳性控制
+## 3.3 张华老师团队已发表机制作为训练外阳性控制
 
-已发表机制只能作为 `known_positive_mechanism_card`，不能用于声称新发现：
+已发表机制只能作为 `known_positive_mechanism_card`，不能用于声称新发现，也不能用于解除训练 benchmark 的数据不足。
 
-- SlWRKY6 硫巯基化—磷酸化串扰；
-- SlERF.D2 Cys35 硫巯基化与乙烯通路；
-- BRG3 硫巯基化与泛素化功能；
-- 其他经过正式论文和补充材料验证的 H₂S/番茄机制。
+| 控制 | DOI | 控制类型 | 使用限制 |
+|---|---|---|---|
+| SlWRKY6 Cys396 | `10.1093/plphys/kiae271` | `strong_single_site_control` | 训练外单点回顾性恢复 |
+| SlERF.D2 Cys35 | `10.1111/tpj.70000` | `strong_single_site_control` | 训练外单点回顾性恢复 |
+| BRG3 Cys206/Cys212 | `10.1093/plphys/kiad070` | `conditional_site_group_control` | 无单点拆分证据时不得解释为两个独立功能阳性 |
+| ERF.D3 Cys115/Cys118 | `10.1093/plphys/kiae560` | `conditional_site_group_control` | 无单点拆分证据时不得解释为两个独立功能阳性 |
+
+磷酸化、泛素化和转录调控位点只能作为 PTM 串扰解释证据。2026 年 SlWRKY6–SlGRF1–SlGIF2 研究（`10.1093/plphys/kiag512`）复用同一 SlWRKY6/H₂S 机制链，不得重复计为新的 `independent_validation_unit`。
 
 处理规则：
 
-1. 自动下载论文补充材料；
-2. 记录 DOI、补充文件名和 SHA256；
-3. 从补充数据解析位点和实验信息；
-4. 人工复核一次并形成审计记录；
-5. 明确分配到：
-   - `positive_control_only`
-   - `retrospective_recovery_test`
-   - `excluded_from_training`
-6. 不得将同一位点同时用于训练和“独立恢复”结果。
+1. 登记正文或补充材料、DOI、官方 URL、文件名和 SHA256；
+2. 登记 canonical protein accession/version、位点映射、证据层级和冲突；
+3. 人工复核并记录复核状态；
+4. 登记 `control_type`、`mechanism_lineage_id` 和 `independent_validation_unit`；
+5. 所有控制标记 `positive_control_only`、`retrospective_recovery_test` 和 `excluded_from_training`；
+6. 控制身份、独立性分组和评价规则在训练前冻结；
+7. 控制排名不得用于特征、模型、阈值、超参数或停止条件选择；
+8. 同一蛋白、位点或机制谱系的后续论文不得重复计数。
 
 ## 3.4 参考序列和结构
 
