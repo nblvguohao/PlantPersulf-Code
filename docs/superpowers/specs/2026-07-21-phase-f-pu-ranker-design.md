@@ -48,6 +48,60 @@ satisfied by current public data, and the expected honest outcome is
   fail rather than being assumed — `validate_external.py` records gaps, never
   fills them.
 
+## Two-track evaluation policy: leave-study-out (primary) + Split A cluster
+## split (supplementary, literature-comparable)
+
+**Question this section answers**: published cysteine-PTM predictors (e.g.
+Sul-BertGRU, Bioinformatics 2025, doi:10.1093/bioinformatics/btaf078; pCysMod,
+Front Cell Dev Biol 2021, doi:10.3389/fcell.2021.617366) evaluate with a
+within-integrated-dataset split, not a cross-study split. Is our
+leave-study-out requirement self-imposed rigor with no basis, or a
+recognised concern?
+
+**It is a recognised concern, not self-imposed.** Evidence:
+
+- Whalen, Schreiber & Noble, *Nat Rev Genet* 2021 (doi:10.1038/s41576-021-00434-9),
+  "Navigating the pitfalls of applying machine learning in genomics" — the
+  field's own landmark review of how data structure (incl. homology) inflates
+  reported ML performance in genomics/proteomics.
+- Mahmood et al., *Hum Genomics* 2017 (doi:10.1186/s40246-017-0104-8) —
+  concrete empirical demonstration: variant-effect predictor AUCs collapse
+  from optimistic published numbers to 0.52–0.75 when re-evaluated on truly
+  independent, non-circular functional datasets.
+- iSNO-PseAAC, *PLoS ONE* 2013 (doi:10.1371/journal.pone.0055844) — even
+  cysteine-PTM prediction specifically has required an explicit
+  sequence-identity cutoff to control homology bias since at least 2013; this
+  is not a foreign constraint, it is the field's own accepted baseline
+  practice — we are applying a *stronger* version of it (cross-study/lab/
+  chemistry, not just cross-sequence-identity) because our benchmark's
+  specific weakness (only 2 studies, same lab) sits exactly at the level
+  sequence-identity dedup does not control for.
+- MD-HIT, *npj Comput Mater* 2024 (doi:10.1038/s41524-024-01468-1) — states
+  the general principle plainly: redundancy-controlled evaluation numbers
+  are lower, but "better reflect models' true prediction capability." A lower
+  number under a stricter split is not a worse model — it is a more honest one.
+
+**Resulting policy**: strictness should match the strength of the claim, not
+be maximised unconditionally.
+
+| Track | Split | Purpose | Admissible for Gate 2? |
+|---|---|---|---|
+| Primary | leave-study-out (`pu_ranker_v1.yaml`) | Judge cross-study predictive value | Yes — the only admissible source |
+| Supplementary | Split A cluster split (`pu_ranker_cluster_v1.yaml`) | Literature-comparable "is there any learnable signal" number, reported side-by-side with the primary track | **No, structurally never** |
+
+`scripts/validate_external.py::_parse_fold_study` only recognises model names
+of the shape `leave_<study>_out|...`; a cluster-split experiment's rows never
+match this pattern and are silently excluded from `_collect_fold_metrics` —
+this is locked in by
+`tests/release/test_gate2_ignores_within_dataset_split_metrics.py`, so Gate 2
+cannot ingest Split A numbers even if `--model-release` is pointed at the
+wrong experiment by mistake.
+
+**Reporting rule**: any manuscript/collaboration document may state the Split
+A number for literature comparison, but must accompany it with the
+`pu_ranker_cluster_v1.yaml` `limitation` text verbatim, and must never cite it
+as evidence for cross-study, cross-lab, or cross-species generalisation.
+
 ## Environment note
 
 `fair-esm` + ESM-2 weights are required for any ablation with `use_esm: true`
