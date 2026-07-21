@@ -127,17 +127,56 @@ def extract_esm2_embeddings(
     # Batch all sequences at once
     batch_data = [(acc, seq) for acc, seq in sequences]
     _, _, batch_tokens = batch_converter(batch_data)
-    batch_tokens = batch_tokens.to(device)
-    with torch.no_grad():
-        results = model(batch_tokens, repr_layers=[33], return_contacts=False)
-    # Move representations back to CPU before the per-element float conversion
-    # (element access on a GPU tensor would sync on every scalar).
-    token_representations = results["representations"][33].to("cpu")
 
-    # Map (protein, position) → embedding
+    def _forward(net: Any, tokens: Any, on_device: Any) -> Any:
+        with torch.no_grad():
+            out = net(tokens.to(on_device), repr_layers=[33], return_contacts=False)
+        return out["representations"][33].to("cpu")
+
+    token_representations: Any
+    try:
+        token_representations = _forward(model, batch_tokens, device)
+    except torch.cuda.OutOfMemoryError:
+        # ESM-2's O(L^2) attention can exceed even a 16GB GPU when several
+        # very long proteins land in the same padded batch (the Arabidopsis
+        # proteome has ~160 sequences >2000 aa, up to 5400 aa) — batching
+        # multiplies the padded length's memory cost by the batch size, even
+        # though any *one* of these sequences fits on the GPU alone. Rather
+        # than losing the whole chunk (and silently degrading downstream rows
+        # to a missing-embedding default), retry each sequence individually,
+        # re-tokenized alone so it carries no other sequence's padding. Only
+        # a sequence that is itself too long for the GPU falls further back
+        # to CPU. Every embedding here is still real ESM-2 output, just
+        # computed without the other sequences' padding overhead.
+        torch.cuda.empty_cache()
+        max_len = max(len(seq) for _, seq in sequences)
+        print(
+            f"    CUDA OOM on batch of {len(sequences)} (max protein "
+            f"length={max_len} aa); retrying sequences individually ...",
+            flush=True,
+        )
+        per_seq_reps = []
+        for acc, seq in sequences:
+            _, _, single_tokens = batch_converter([(acc, seq)])
+            try:
+                # [0] drops the batch-of-1 dim so each entry is (len+2, dim),
+                # matching the per-item shape the batch path yields via [i].
+                per_seq_reps.append(_forward(model, single_tokens, device)[0])
+            except torch.cuda.OutOfMemoryError:
+                torch.cuda.empty_cache()
+                cpu_model, _ = _get_esm_model(esm, torch.device("cpu"))
+                per_seq_reps.append(
+                    _forward(cpu_model, single_tokens, torch.device("cpu"))[0]
+                )
+        token_representations = per_seq_reps
+
+    # Map (protein, position) → embedding. token_representations is either a
+    # single (batch, max_len+2, dim) tensor or a list of one-sequence
+    # (len_i+2, dim) tensors; token_representations[i] is (len+2, dim) in
+    # both cases, so the same slicing works for both.
     embed_map: dict[tuple[str, int], tuple[float, ...]] = {}
     for i, (acc, seq) in enumerate(sequences):
-        rep = token_representations[i, 1 : len(seq) + 1]  # strip BOS/EOS
+        rep = token_representations[i][1 : len(seq) + 1]  # strip BOS/EOS
         for pos in range(1, len(seq) + 1):
             embed_map[(acc, pos)] = tuple(float(v) for v in rep[pos - 1])
 
