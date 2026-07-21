@@ -279,6 +279,19 @@ def _run_study_split_experiment(
 # shared baseline execution + result writing
 # ---------------------------------------------------------------------------
 
+def _load_proteome_fasta(path: Path) -> dict[str, str]:
+    seqs: dict[str, str] = {}
+    cur_header = ""; cur_lines: list[str] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith(">"):
+            if cur_header:
+                seqs[cur_header.split("|")[1]] = "".join(cur_lines)
+            cur_header = line; cur_lines = []
+        elif line: cur_lines.append(line)
+    if cur_header: seqs[cur_header.split("|")[1]] = "".join(cur_lines)
+    return seqs
+
+
 def _esm2_feature_vectors(
     rows: list[dict[str, str]],
     proteome_path: Path,
@@ -295,9 +308,11 @@ def _esm2_feature_vectors(
     for i, row in enumerate(rows):
         seen.setdefault(row["protein_accession"], []).append(i)
 
-    unique = sorted(seen)
+    # Sort by sequence length (shortest first) to minimise padding waste
+    proteome = _load_proteome_fasta(proteome_path)
+    unique = sorted(seen, key=lambda acc: len(proteome.get(acc, "")))
     lookup: dict[tuple[str, int], list[float]] = {}
-    chunk_size = 200
+    chunk_size = 15  # small chunks: RTX 3060 12GB
     for start in range(0, len(unique), chunk_size):
         chunk_prots = unique[start : start + chunk_size]
         chunk_rows = [
