@@ -152,18 +152,9 @@ def fetch_alphafold_structure(
     integrity failure raises ``RuntimeError`` (fail closed) and never leaves
     a partial or placeholder file behind.
     """
-    if is_isoform_accession(accession):
-        return AlphaFoldFetchResult(
-            accession=accession,
-            status=_STATUS_ISOFORM,
-            source_url="",
-            destination=None,
-            size_bytes=None,
-            sha256=None,
-            retrieved_at=None,
-        )
-
     # Use the provided URL, or discover the latest version via API.
+    # Do NOT pre-filter on "-" (isoform syntax): AlphaFold DB does host some
+    # UniProt isoform accessions (e.g. P27140-2 → AF-P27140-2-F1).
     if source_url is not None:
         resolved_url = source_url
         model_version = "custom"

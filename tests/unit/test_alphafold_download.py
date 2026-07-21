@@ -83,22 +83,12 @@ def test_alphafold_pdb_url_uses_official_api() -> None:
     )
 
 
-def test_isoform_accession_is_detected() -> None:
+def test_isoform_syntax_is_detected_but_not_hard_rejected() -> None:
+    # is_isoform_accession reports syntactic presence, but fetch_alphafold_structure
+    # no longer short-circuits on it — the API decides whether a dash-containing
+    # accession has a model (e.g. P27140-2 does).
     assert is_isoform_accession("P27140-2") is True
     assert is_isoform_accession("O03042") is False
-
-
-def test_isoform_accession_returns_clean_result_without_network(
-    tmp_path: Path,
-) -> None:
-    result = fetch_alphafold_structure(
-        "P27140-2",
-        tmp_path / "P27140-2.pdb",
-    )
-
-    assert result.status == "isoform_not_applicable"
-    assert result.destination is None
-    assert not (tmp_path / "P27140-2.pdb").exists()
 
 
 def test_404_response_is_explicit_missing_result(tmp_path: Path) -> None:
@@ -164,8 +154,17 @@ def test_successful_download_registers_full_provenance(tmp_path: Path) -> None:
 
 
 def test_only_a_downloaded_result_can_be_registered(tmp_path: Path) -> None:
-    missing = fetch_alphafold_structure("P27140-2", tmp_path / "x.pdb")
+    server = _run_server(_NotFoundHandler)
+    try:
+        missing = fetch_alphafold_structure(
+            "Q00000",
+            tmp_path / "Q00000.pdb",
+            source_url=f"http://127.0.0.1:{server.server_port}/nonexistent.pdb",
+        )
+    finally:
+        _stop_server(server)
 
+    assert missing.status == "not_found"
     with pytest.raises(RuntimeError, match="only a downloaded"):
         register_alphafold_structure(missing, tmp_path / "registry.tsv")
 
