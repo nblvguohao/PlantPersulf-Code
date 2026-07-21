@@ -166,6 +166,65 @@ def _read_scored(path: Path) -> list[tuple[float, str, str]]:
     return rows
 
 
+def _load_gate2_config(path: Path) -> tuple[bool, dict[str, Any]]:
+    import yaml
+
+    if not path.is_file():
+        return False, {}
+    loaded = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return (
+        bool(loaded.get("studies_are_independent", False)),
+        dict(loaded.get("thresholds", {})),
+    )
+
+
+def _evaluate_gate2(
+    validation: ExternalValidation,
+    bootstrap: dict[str, Any],
+    permutation: dict[str, Any],
+) -> Any:
+    """Build the Gate-2 evidence dict from the report and judge it mechanically.
+
+    Evidence not (yet) demonstrated — a bootstrap CI on the effect, a structure
+    ablation gain, cluster-level robustness — is passed as ``None``/conservative
+    defaults, so unproven conditions fail rather than being assumed."""
+    from plantpersulf.evaluation.conclusion_gate import evaluate_gate2
+
+    independent, thresholds = _load_gate2_config(Path("configs/gate2_v1.yaml"))
+
+    per_study: list[dict[str, Any]] = []
+    for fold in validation.fold_metrics:
+        full = [x for x in fold.test_ap if x == x]
+        base = [x for x in fold.baseline_test_ap if x == x]
+        if not full or not base:
+            continue
+        per_study.append(
+            {
+                "study": fold.holdout_study,
+                "full_ap": sum(full) / len(full),
+                "baseline_ap": sum(base) / len(base),
+            }
+        )
+
+    delta_ci_lower = bootstrap.get("lower") if "lower" in bootstrap else None
+    perm_p = permutation.get("p_value") if "p_value" in permutation else None
+    # Cluster-level robustness is only demonstrated once a cluster bootstrap CI
+    # has actually been computed; until then treat as single-cluster-driven.
+    single_cluster_driven = "lower" not in bootstrap
+
+    evidence: dict[str, Any] = {
+        "studies_are_independent": independent,
+        "per_study": per_study,
+        "delta_ci_lower": delta_ci_lower,
+        "permutation_p": perm_p,
+        "control_leakage": validation.control_leakage,
+        "independent_units": validation.independent_units,
+        "structure_gain": None,
+        "single_cluster_driven": single_cluster_driven,
+    }
+    return evaluate_gate2(evidence, thresholds)
+
+
 def run_external_validation(
     release: str,
     benchmark_path: Path,
@@ -247,9 +306,16 @@ def run_external_validation(
         limitation=LIMITATION,
     )
 
+    # --- Gate 2 conclusion gate (mechanical, honest) ---
+    gate2 = _evaluate_gate2(validation, bootstrap, permutation)
+
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "external_validation.json").write_text(
         json.dumps(validation.to_dict(), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    (output_dir / "gate2_decision.json").write_text(
+        json.dumps(gate2.to_dict(), indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
     with (output_dir / "control_recovery.tsv").open(
@@ -274,6 +340,10 @@ def run_external_validation(
         f"External validation written to {output_dir} "
         f"(folds={len(fold_metrics)}, independent_units={units})"
     )
+    print(f"Gate 2 decision: {gate2.decision}")
+    for cond in gate2.conditions:
+        mark = "PASS" if cond.passed else "FAIL"
+        print(f"  [{mark}] {cond.name}: {cond.detail}")
     return validation
 
 

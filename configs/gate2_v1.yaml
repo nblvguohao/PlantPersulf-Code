@@ -1,0 +1,23 @@
+# Frozen Gate 2 conclusion-gate thresholds (Codex 10.结论闸门).
+#
+# Gate 2 decides whether a cross-study *predictive* claim is permitted. All
+# five conditions must hold; otherwise the mandated downgrade statement applies
+# and no outward text may claim predictive value.
+#
+# studies_are_independent is set FALSE and frozen: the only two studies with
+# site-level positives (PXD006140, PXD024061) are from the same laboratory
+# (Romero/Gotor, U. Sevilla), the same tag-switch chemistry, and the same
+# species (Arabidopsis). They are therefore NOT independent held-out studies,
+# so condition 1 cannot be satisfied by the current public data. Raising this
+# flag to true requires genuinely independent studies (different lab / chemistry
+# / species) to enter the benchmark first.
+
+version: 1
+
+studies_are_independent: false
+
+thresholds:
+  min_independent_studies: 2
+  min_ap_margin: 0.0
+  max_permutation_p: 0.05
+  min_structure_gain: 0.0
