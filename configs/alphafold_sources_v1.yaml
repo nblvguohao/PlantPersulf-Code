@@ -1,0 +1,24 @@
+version: 1
+
+# Candidate real UniProt accessions this project cycle is allowed to fetch
+# AlphaFold DB predicted structures for (Task 7, Phase A pilot batch). This
+# list only approves *which* accessions may be downloaded; it deliberately
+# does not pre-declare an expected file size or SHA256 the way
+# configs/supplementary_sources_v1.yaml does, because those values are
+# legitimately unknown before a real transfer completes (the supplement
+# registry pins a *specific already-retrieved* file snapshot; this registry
+# instead governs a live per-accession fetch that has not run yet in this
+# environment because of a network outage — see docs task report).
+#
+# P27140-2 is a UniProt isoform accession. AlphaFold DB never hosts
+# isoform-specific models, so it is included here specifically to exercise
+# the explicit "isoform_not_applicable" missing-structure path, not as a
+# download target.
+accessions:
+  - O03042
+  - Q9SLA0
+  - A0A1P8B1I9
+  - A0A1P8APX1
+  - Q8VZF1
+  - Q944G9
+  - P27140-2
