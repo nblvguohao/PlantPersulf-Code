@@ -1,0 +1,45 @@
+# Frozen experiment config — ESM-2 1280-dim embedding PU baselines.
+#
+# Uses frozen esm2_t33_650M_UR50D per-residue embeddings as the feature
+# set. This is Baseline 2 per the TDD Codex (ESM embedding + linear head)
+# and is expected to show the strongest signal among all baselines because
+# the 1280-dim embeddings capture evolutionary and structural context far
+# beyond the 2-dim hydrophobicity+density sequence features.
+#
+# Embeddings are extracted only for proteins appearing in the subsampled
+# experiment rows (not the full 54k proteome), keeping CPU runtime
+# tractable. All Baseline-1 learned models (LR, RF, XGBoost) are run on
+# the same embeddings alongside the dedicated ESM linear head.
+
+version: 1
+
+experiment:
+  name: baseline_esm2_v1
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  mode: cluster
+  cluster_file: data/processed/clusters/protein_clusters_v1.tsv
+  split_config: configs/splits/split_config_v1.yaml
+
+features:
+  - name: esm2
+    module: plantpersulf.features.esm2
+
+models:
+  - logistic
+  - pu_logistic
+  - random_forest
+  - xgboost
+  - esm_linear_head
+
+evaluation:
+  seeds: [0, 1, 2, 3, 4]
+
+subsample:
+  unlabeled_per_positive: 20
+  seed: 12345
+
+output:
+  directory: results/experiments/baseline_esm2_v1

@@ -279,6 +279,33 @@ def _run_study_split_experiment(
 # shared baseline execution + result writing
 # ---------------------------------------------------------------------------
 
+def _esm2_feature_vectors(
+    rows: list[dict[str, str]],
+    proteome_path: Path,
+    scratch_dir: Path,
+    tag: str,
+) -> list[list[float]]:
+    """Extract 1280-dim ESM-2 per-residue embeddings for the unique proteins
+    in ``rows`` (not the full proteome), then map back per cysteine row."""
+    from plantpersulf.features.esm2 import extract_esm2_embeddings
+
+    labels_path = scratch_dir / f"{tag}_esm2_labels.tsv"
+    _write_labels_tsv(rows, labels_path)
+    emb_rows = extract_esm2_embeddings(labels_path, proteome_path)
+    lookup: dict[tuple[str, int], list[float]] = {
+        (r.protein_accession, r.cys_position): list(r.embedding)
+        for r in emb_rows
+    }
+    default = [0.0] * 1280
+    return [
+        lookup.get(
+            (r["protein_accession"], int(r["cys_position_in_protein"])),
+            default,
+        )
+        for r in rows
+    ]
+
+
 def _resolve_feature_fn(
     cfg: dict[str, Any],
 ) -> Any:
@@ -286,6 +313,8 @@ def _resolve_feature_fn(
     feature_names = [f["name"] for f in cfg["features"]]
     if "structure" in feature_names:
         return _structure_feature_vectors
+    if "esm2" in feature_names:
+        return _esm2_feature_vectors
     return _sequence_feature_vectors
 
 
