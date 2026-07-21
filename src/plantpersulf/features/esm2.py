@@ -26,6 +26,25 @@ BENCHMARK_FIELDS = (
 )
 
 
+def _select_device(torch_mod: object) -> object:
+    """Pick the compute device for ESM inference.
+
+    ``PLANTPERSULF_DEVICE`` (e.g. ``cuda``, ``cuda:0``, ``cpu``) overrides
+    auto-detection; otherwise CUDA is used when available, else CPU. The frozen
+    embeddings are model-checkpoint deterministic; note that CPU and GPU results
+    can differ in the last floating-point digits, so a benchmark should be
+    embedded on a single device class.
+    """
+    import os
+
+    forced = os.environ.get("PLANTPERSULF_DEVICE")
+    if forced:
+        return torch_mod.device(forced)  # type: ignore[attr-defined]
+    if torch_mod.cuda.is_available():  # type: ignore[attr-defined]
+        return torch_mod.device("cuda")  # type: ignore[attr-defined]
+    return torch_mod.device("cpu")  # type: ignore[attr-defined]
+
+
 @dataclass(frozen=True)
 class ESM2FeatureRow:
     protein_accession: str
@@ -84,7 +103,7 @@ def extract_esm2_embeddings(
         warnings.simplefilter("ignore")
         model, alphabet = esm.pretrained.esm2_t33_650M_UR50D()
     model.eval()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = _select_device(torch)
     model = model.to(device)
     batch_converter = alphabet.get_batch_converter()
 
@@ -94,7 +113,9 @@ def extract_esm2_embeddings(
     batch_tokens = batch_tokens.to(device)
     with torch.no_grad():
         results = model(batch_tokens, repr_layers=[33], return_contacts=False)
-    token_representations = results["representations"][33]
+    # Move representations back to CPU before the per-element float conversion
+    # (element access on a GPU tensor would sync on every scalar).
+    token_representations = results["representations"][33].to("cpu")
 
     # Map (protein, position) → embedding
     embed_map: dict[tuple[str, int], tuple[float, ...]] = {}

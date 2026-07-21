@@ -305,7 +305,20 @@ def _forward_scores(
             tensors["seq"], tensors["esm"], tensors["struct"],
             tensors["struct_active"], tensors["study"], tensors["study_active"],
         )
-        return torch.sigmoid(logits)
+        return torch.sigmoid(logits).to("cpu")
+
+
+def _select_ranker_device(torch_mod: object) -> torch.device:
+    """Device for ranker training. ``PLANTPERSULF_DEVICE`` (e.g. ``cuda``)
+    opts in to the GPU; otherwise CPU is used by default so a model release
+    stays bit-for-bit reproducible across machines (GPU reductions are not
+    guaranteed bit-identical to CPU)."""
+    import os
+
+    forced = os.environ.get("PLANTPERSULF_DEVICE")
+    if forced:
+        return torch_mod.device(forced)  # type: ignore[attr-defined,no-any-return]
+    return torch_mod.device("cpu")  # type: ignore[attr-defined,no-any-return]
 
 
 # ---------------------------------------------------------------------------
@@ -351,16 +364,21 @@ def structure_ranker_scores(
 
     torch.manual_seed(seed)
     torch.use_deterministic_algorithms(True, warn_only=True)
+    device = _select_ranker_device(torch)
 
     vocab = _study_vocab(train)
     scalers = _BranchScalers.fit(train, ablation)
     train_s = scalers.apply(train)
     predict_s = scalers.apply(predict)
-    train_t = _to_tensors(train_s, vocab, ablation)
-    predict_t = _to_tensors(predict_s, vocab, ablation)
+    train_t = {
+        k: v.to(device) for k, v in _to_tensors(train_s, vocab, ablation).items()
+    }
+    predict_t = {
+        k: v.to(device) for k, v in _to_tensors(predict_s, vocab, ablation).items()
+    }
     s_labels = torch.tensor(
         [1.0 if y == "positive" else 0.0 for y in train_y], dtype=torch.float32
-    )
+    ).to(device)
 
     d_seq = len(train.sequence[0])
     d_esm = len(train.esm[0])
@@ -376,15 +394,17 @@ def structure_ranker_scores(
     fit_idx = [i for i in range(train.n_rows()) if i not in holdout]
 
     def _subset(t: dict[str, torch.Tensor], idx: list[int]) -> dict[str, torch.Tensor]:
-        sel = torch.tensor(idx, dtype=torch.long)
+        sel = torch.tensor(idx, dtype=torch.long, device=device)
         return {k: v.index_select(0, sel) for k, v in t.items()}
 
     fit_t = _subset(train_t, fit_idx)
-    fit_s = s_labels.index_select(0, torch.tensor(fit_idx, dtype=torch.long))
+    fit_s = s_labels.index_select(
+        0, torch.tensor(fit_idx, dtype=torch.long, device=device)
+    )
     unit_w = torch.ones_like(fit_s)
 
     # --- Pass A: non-traditional classifier (positive vs unlabeled) ---
-    net_a = _build_network(d_seq, d_esm, d_str, d_study, hidden, dropout)
+    net_a = _build_network(d_seq, d_esm, d_str, d_study, hidden, dropout).to(device)
     _train_network(net_a, fit_t, fit_s, unit_w, seed, epochs, lr)
 
     holdout_idx = sorted(holdout)
@@ -396,10 +416,10 @@ def structure_ranker_scores(
     fit_scores = [float(x) for x in _forward_scores(net_a, fit_t).tolist()]
     is_labeled_positive = [train_y[i] == "positive" for i in fit_idx]
     weights = pu_example_weights(fit_scores, is_labeled_positive, c)
-    weight_t = torch.tensor(weights, dtype=torch.float32)
+    weight_t = torch.tensor(weights, dtype=torch.float32).to(device)
 
     # --- Pass B: reweighted refit -> final model ---
-    net_b = _build_network(d_seq, d_esm, d_str, d_study, hidden, dropout)
+    net_b = _build_network(d_seq, d_esm, d_str, d_study, hidden, dropout).to(device)
     _train_network(net_b, fit_t, fit_s, weight_t, seed, epochs, lr)
 
     net_b.eval()
