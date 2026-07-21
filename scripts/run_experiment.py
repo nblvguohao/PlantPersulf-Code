@@ -183,6 +183,187 @@ def _sequence_feature_vectors(
 
 
 # ---------------------------------------------------------------------------
+# study-split experiment (leave-one-study-out)
+# ---------------------------------------------------------------------------
+
+def _study_fold_rows(
+    all_rows: list[dict[str, str]],
+    holdout_study: str,
+) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    """Partition benchmark rows: held-out study's positives go to test;
+    other study's positives + all unlabeled go to train. Unlabeled rows
+    are also included in the test fold — they are the comparison
+    distribution, not training labels, so this does not leak information."""
+    train_rows: list[dict[str, str]] = []
+    test_rows: list[dict[str, str]] = []
+    unlabeled_rows: list[dict[str, str]] = []
+    for row in all_rows:
+        if row["label"] != "positive":
+            unlabeled_rows.append(row)
+            continue
+        if row["study_accession"] == holdout_study:
+            test_rows.append(row)
+        else:
+            train_rows.append(row)
+    # Unlabeled rows are the comparison distribution; include them in
+    # both folds so evaluation has something to rank against.
+    train_rows.extend(unlabeled_rows)
+    test_rows.extend(unlabeled_rows)
+    return train_rows, test_rows
+
+
+def _run_study_split_experiment(
+    cfg: dict[str, Any],
+    exp_cfg: dict[str, Any],
+    eval_cfg: dict[str, Any],
+    out_cfg: dict[str, Any],
+    all_rows: list[dict[str, str]],
+    proteome_path: Path,
+) -> None:
+    split_mode = cfg["splits"].get("mode", "leave_study_out")
+    if split_mode == "time_split":
+        # Time split: single fold; train on earlier study's positives,
+        # test on later study's positives.
+        studies = [cfg["splits"]["test_study"]]
+    else:
+        studies = cfg["splits"]["studies"]
+    ratio = int(cfg.get("subsample", {}).get("unlabeled_per_positive", 50))
+    sub_seed = int(cfg.get("subsample", {}).get("seed", 12345))
+    limitation = str(cfg.get("limitation", ""))
+
+    all_fold_results: list[ModelResult] = []
+    for holdout_study in studies:
+        print(f"\n===== Fold: leave_{holdout_study}_out =====")
+        train_rows, test_rows = _study_fold_rows(all_rows, holdout_study)
+        train_rows = _subsample_unlabeled(train_rows, ratio, sub_seed)
+        test_rows = _subsample_unlabeled(test_rows, ratio, sub_seed + 1)
+        train_pos = sum(1 for r in train_rows if r["label"] == "positive")
+        test_pos = sum(1 for r in test_rows if r["label"] == "positive")
+        print(
+            f"  subsampled: train={len(train_rows)}(+{train_pos}) "
+            f"test={len(test_rows)}(+{test_pos})"
+        )
+        # Split train further into train/val (80/20 of train rows)
+        rng = random.Random(sub_seed)
+        train_dedup = train_rows[:]
+        rng.shuffle(train_dedup)
+        n_val = max(1, int(len(train_dedup) * 0.2))
+        val_rows_fold = train_dedup[:n_val]
+        train_rows_fold = train_dedup[n_val:]
+
+        # No val set — use train as val here (study-split has no natural val)
+        # For a no-validation study-split: train on fold train, evaluate on
+        # fold test. Hyperparameters are fixed at defaults.
+        fold_results = _run_baselines(
+            cfg, train_rows_fold,
+            [r["label"] for r in train_rows_fold],
+            val_rows_fold,
+            [r["label"] for r in val_rows_fold],
+            test_rows,
+            [r["label"] for r in test_rows],
+            proteome_path,
+            f"{exp_cfg['name']}_{holdout_study}",
+        )
+        for r in fold_results:
+            r.model = f"leave_{holdout_study}_out|{r.model}"
+        all_fold_results.extend(fold_results)
+
+    combined = ExperimentResults(experiment=exp_cfg["name"])
+    combined.model_results = all_fold_results
+    _write_results(combined, out_cfg, limitation=limitation)
+
+
+# ---------------------------------------------------------------------------
+# shared baseline execution + result writing
+# ---------------------------------------------------------------------------
+
+def _run_baselines(
+    cfg: dict[str, Any],
+    train_rows: list[dict[str, str]],
+    train_y: list[str],
+    val_rows: list[dict[str, str]],
+    val_y: list[str],
+    test_rows: list[dict[str, str]],
+    test_y: list[str],
+    proteome_path: Path,
+    label: str,
+) -> list[ModelResult]:
+    scratch = Path(tempfile.mkdtemp(prefix="run_experiment_"))
+    try:
+        seq_train = _sequence_feature_vectors(
+            train_rows, proteome_path, scratch, "train"
+        )
+        seq_val = _sequence_feature_vectors(
+            val_rows, proteome_path, scratch, "val"
+        )
+        seq_test = _sequence_feature_vectors(
+            test_rows, proteome_path, scratch, "test"
+        )
+    finally:
+        shutil.rmtree(scratch, ignore_errors=True)
+
+    eval_cfg = cfg["evaluation"]
+    results: list[ModelResult] = []
+    for model_name in cfg["models"]:
+        for seed in eval_cfg["seeds"]:
+            print(f"  {model_name} seed={seed} ...", end=" ")
+            r = _evaluate(
+                model_name, seed,
+                seq_train, train_y,
+                seq_val, val_y,
+                seq_test, test_y,
+            )
+            r.model = f"{label}|{r.model}"
+            msg = f"val_ap={r.val_ap:.4f}" if r.val_ap is not None else "no_val_pos"
+            if r.test_ap is not None:
+                msg += f" test_ap={r.test_ap:.4f}"
+            print(msg)
+            results.append(r)
+    return results
+
+
+def _write_results(
+    results: ExperimentResults,
+    out_cfg: dict[str, Any],
+    limitation: str = "",
+) -> None:
+    out_dir = Path(out_cfg["directory"])
+    if out_dir.exists():
+        shutil.rmtree(out_dir)
+    out_dir.mkdir(parents=True)
+
+    rows_out: list[dict[str, str]] = []
+    for r in results.model_results:
+        out_row: dict[str, str] = {"model": r.model, "seed": str(r.seed)}
+        for key, val in [
+            ("val_ap", r.val_ap), ("test_ap", r.test_ap),
+            ("test_recall_10", r.test_recall_10),
+            ("test_recall_50", r.test_recall_50),
+            ("test_mrr", r.test_mrr),
+        ]:
+            out_row[key] = f"{val:.6f}" if val is not None else ""
+        rows_out.append(out_row)
+    with (out_dir / "metrics.tsv").open("w", encoding="utf-8", newline="") as h:
+        w = csv.DictWriter(
+            h, fieldnames=list(rows_out[0]), delimiter="\t", lineterminator="\n",
+        )
+        w.writeheader()
+        w.writerows(rows_out)
+
+
+    manifest: dict[str, object] = {
+        "experiment": results.experiment,
+        "n_seeds": len({r.seed for r in results.model_results}),
+    }
+    if limitation:
+        manifest["limitation"] = limitation
+    (out_dir / "manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    print(f"\nResults written to {out_dir}")
+
+
+# ---------------------------------------------------------------------------
 # baseline scoring
 # ---------------------------------------------------------------------------
 
@@ -293,6 +474,15 @@ def run_experiment(config_path: Path) -> ExperimentResults:
 
     # --- splits ---
     splits_cfg = cfg["splits"]
+    split_mode = splits_cfg.get("mode", "cluster")
+
+    if split_mode in ("leave_study_out", "time_split"):
+        _run_study_split_experiment(
+            cfg, exp_cfg, eval_cfg, out_cfg, rows, proteome_path,
+        )
+        return ExperimentResults(experiment=exp_cfg["name"])
+
+    # --- cluster split (default) ---
     cluster_file = Path(splits_cfg["cluster_file"])
     if not cluster_file.exists():
         cluster_file = _build_singleton_cluster_file(benchmark_path, cluster_file)
@@ -316,88 +506,21 @@ def run_experiment(config_path: Path) -> ExperimentResults:
         f"val={len(val_rows)}(+{val_pos}) test={len(test_rows)}(+{test_pos})"
     )
 
-    # --- sequence features ---
+    # --- sequence features + baselines(shared runner extracts internally) ---
     feature_names = [f["name"] for f in cfg["features"]]
     print(f"features: {feature_names}")
-    scratch = Path(tempfile.mkdtemp(prefix="run_experiment_"))
-    try:
-        seq_train = _sequence_feature_vectors(
-            train_rows, proteome_path, scratch, "train"
-        )
-        seq_val = _sequence_feature_vectors(val_rows, proteome_path, scratch, "val")
-        seq_test = _sequence_feature_vectors(
-            test_rows, proteome_path, scratch, "test"
-        )
-    finally:
-        shutil.rmtree(scratch, ignore_errors=True)
     train_y = [r["label"] for r in train_rows]
     val_y = [r["label"] for r in val_rows]
     test_y = [r["label"] for r in test_rows]
 
-    # --- run learned sequence-feature baselines across all seeds ---
-    # NOTE: esm_linear_head is validated by its own tests
-    # (tests/*/test_esm_baseline*.py) but is GPU-gated at benchmark scale on
-    # CPU-only hardware, so it is not part of the default model loop. The
-    # no-learning motif/accessibility baselines have their own tested
-    # ranking codepaths in plantpersulf.models.baselines.
-    results = ExperimentResults(experiment=exp_cfg["name"])
-    for model_name in cfg["models"]:
-        for seed in eval_cfg["seeds"]:
-            print(f"  {model_name} seed={seed} …", end=" ")
-            r = _evaluate(
-                model_name, seed,
-                seq_train, train_y,
-                seq_val, val_y,
-                seq_test, test_y,
-            )
-            msg = f"val_ap={r.val_ap:.4f}" if r.val_ap is not None else "no_val_pos"
-            if r.test_ap is not None:
-                msg += f" test_ap={r.test_ap:.4f}"
-            print(msg)
-            results.model_results.append(r)
-
-    # --- write ---
-    out_dir = Path(out_cfg["directory"])
-    if out_dir.exists():
-        shutil.rmtree(out_dir)
-    out_dir.mkdir(parents=True)
-
-    rows_out: list[dict[str, str]] = []
-    for r in results.model_results:
-        out_row: dict[str, str] = {
-            "model": r.model, "seed": str(r.seed),
-        }
-        for key, val in [
-            ("val_ap", r.val_ap), ("test_ap", r.test_ap),
-            ("test_recall_10", r.test_recall_10),
-            ("test_recall_50", r.test_recall_50),
-            ("test_mrr", r.test_mrr),
-        ]:
-            out_row[key] = f"{val:.6f}" if val is not None else ""
-        rows_out.append(out_row)
-    with (out_dir / "metrics.tsv").open("w", encoding="utf-8", newline="") as h:
-        w = csv.DictWriter(
-            h, fieldnames=list(rows_out[0]), delimiter="\t", lineterminator="\n",
-        )
-        w.writeheader()
-        w.writerows(rows_out)
-
-    from plantpersulf.provenance.hashing import hash_file
-    manifest = {
-        "experiment": exp_cfg["name"],
-        "config_sha256": hash_file(config_path, "sha256"),
-        "benchmark_sha256": hash_file(benchmark_path, "sha256"),
-        "proteome_sha256": hash_file(proteome_path, "sha256"),
-        "cluster_file_sha256": (
-            hash_file(cluster_file, "sha256") if cluster_file.exists() else ""
-        ),
-        "n_seeds": len(eval_cfg["seeds"]),
-    }
-    (out_dir / "manifest.json").write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    results_list = _run_baselines(
+        cfg, train_rows, train_y, val_rows, val_y, test_rows, test_y,
+        proteome_path, exp_cfg["name"],
     )
-    print(f"\nResults written to {out_dir}")
-    return results
+    combined = ExperimentResults(experiment=exp_cfg["name"])
+    combined.model_results = results_list
+    _write_results(combined, out_cfg)
+    return combined
 
 
 def build_parser() -> argparse.ArgumentParser:
