@@ -539,7 +539,8 @@ def _evaluate_motif(
                 out.append((model.score(win), r_["label"]))
             return out
 
-        vs = _sc(val_rows); ts = _sc(test_rows)
+        vs = _sc(val_rows)
+        ts = _sc(test_rows)
         return ModelResult(
             model=f"{label}|motif_frequency", seed=seed,
             val_ap=ap(vs) if vs else None,
@@ -650,7 +651,12 @@ def _run_baselines(
                         train_rows, train_y, val_rows, val_y,
                         test_rows, test_y, proteome_path, label, seed,
                     )
-                    print(f"  motif seed={seed}  val_ap={r.val_ap or 'NA'} test_ap={r.test_ap or 'NA'}")
+                    msg = (
+                        f"motif seed={seed} "
+                        f"val_ap={r.val_ap or 'NA'} "
+                        f"test_ap={r.test_ap or 'NA'}"
+                    )
+                    print(msg)
                     results.append(r)
                 continue
             if model_name == RANKER_MODEL:
