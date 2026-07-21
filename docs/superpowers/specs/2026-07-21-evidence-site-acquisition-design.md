@@ -338,6 +338,33 @@ register the two extracted members with their own SHA256 (parent archive SHA1 as
 container provenance) and re-derive sites under TDD with the localization-prob
 threshold, decoy/contaminant exclusion, and UniProt residue check.
 
+### 5.7 Full-scale validation (2026-07-21) — **Gate 1 = GO** on real data
+
+Both TDD-built parsers were run at full scale on the complete real inputs, with
+coordinates validated against 355 UniProt sequences (one combined reference
+bundle, SHA256 `479ca0ad…`). Results:
+
+| Study | class-I `site_ms` (distinct protein,Cys) | conflicts / excluded (transparently routed) |
+|---|---|---|
+| **PXD006140** (Dataset S3, 58,569 rows) | **320** sites across 286 proteins (405 spectra) | 54 conflicts: 51 isoform multi-map + 2 sequence-unavailable (obsolete accessions F4JUN7/O23499) + 1 peptide/sequence mismatch |
+| **PXD024061** (Sulfide + CianoBiotin) | **73** sites | 8 low-confidence (flagged), 5 razor conflicts, 2 contaminants excluded |
+| **Total** | **~393 sites across 2 studies** | — |
+
+**Gate 1 decision: GO** — distinct studies with site-level evidence = 2 (≥ 2
+required). The parsers proved *more* conservative than the headline reconnaissance
+count (320 vs 356): isoform multi-maps, obsolete accessions, and one sequence
+mismatch were routed to conflicts rather than forced into sites — the integrity
+contract working as designed, not a regression.
+
+Caveat (unchanged): both studies are same-lab/same-chemistry (Romero/Gotor
+tag-switch, Arabidopsis); method independence still requires collaborator data.
+
+Note on obsolete accessions and version drift: 3 PXD006140 spectra failed the
+UniProt cross-check (2 obsolete accessions, 1 slice mismatch). A production
+pipeline should pin the authors' own search-database FASTA (PXD024061 deposited
+`arabidopsis_uniprot_072020_identified.fasta`) or a versioned UniProt release to
+eliminate drift; the current bundle is a UniProt snapshot pinned by SHA256.
+
 ---
 
 ## 6. Provenance registration plan
