@@ -1,0 +1,40 @@
+# Frozen experiment config v1 — sequence-only PU baselines.
+# This is the first complete experiment config; it uses only sequence
+# features (motif + flanking-window hydrophobicity/density) and trains
+# every baseline in the Task 8 list on the same frozen benchmark and
+# cluster split, across 5 fixed seeds. No structure features yet —
+# those go into structure_v1 or pu_ranker_v1.
+
+version: 1
+
+experiment:
+  name: baseline_sequence_v1
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  cluster_file: data/processed/clusters/protein_clusters_v1.tsv
+  split_config: configs/splits/split_config_v1.yaml
+  holdout_studies:
+    - PXD006140
+    - PXD024061
+
+features:
+  - name: motif
+    module: plantpersulf.features.sequence
+  - name: esm2
+    module: plantpersulf.features.esm2
+
+models:
+  - motif_frequency
+  - logistic
+  - pu_logistic
+  - random_forest
+  - xgboost
+  - esm_linear_head
+
+evaluation:
+  seeds: [0, 1, 2, 3, 4]
+
+output:
+  directory: results/experiments/baseline_sequence_v1
