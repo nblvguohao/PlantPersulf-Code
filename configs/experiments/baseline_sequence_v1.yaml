@@ -26,15 +26,24 @@ features:
     module: plantpersulf.features.esm2
 
 models:
-  - motif_frequency
+  # Learned sequence-feature baselines. The no-learning motif and
+  # accessibility baselines have their own tested ranking codepaths in
+  # plantpersulf.models.baselines and are not part of this experiment
+  # loop. esm_linear_head is validated by its own tests but is GPU-gated
+  # at benchmark scale on CPU-only hardware.
   - logistic
   - pu_logistic
   - random_forest
   - xgboost
-  - esm_linear_head
 
 evaluation:
   seeds: [0, 1, 2, 3, 4]
+
+subsample:
+  # Matched-negative subsampling (deterministic, fixed seed). For every
+  # positive cysteine, include this many randomly-sampled unlabeled rows.
+  unlabeled_per_positive: 50
+  seed: 12345
 
 output:
   directory: results/experiments/baseline_sequence_v1

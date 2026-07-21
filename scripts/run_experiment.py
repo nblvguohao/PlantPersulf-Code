@@ -17,8 +17,10 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import random
 import shutil
 import sys
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, cast
@@ -116,50 +118,68 @@ def _train_val_test_rows(
 
 
 # ---------------------------------------------------------------------------
-# feature extraction (lightweight, just collects per-row vectors)
+# subsampling + feature extraction
 # ---------------------------------------------------------------------------
 
-def _motif_features(
-    benchmark_rows: list[dict[str, str]],
+def _subsample_unlabeled(
+    rows: list[dict[str, str]],
+    ratio: int,
+    seed: int,
+) -> list[dict[str, str]]:
+    """Keep every positive; keep a seeded random sample of ratio x positives
+    unlabeled rows. A PU benchmark with ~390 positives and ~395k unlabeled is
+    both intractable for heavy features and dominated by the unlabeled class;
+    matched-negative subsampling is standard and is applied deterministically
+    (fixed seed) so the whole experiment is reproducible. This is a training/
+    evaluation convenience only — the frozen benchmark itself is never altered.
+    """
+    positives = [r for r in rows if r["label"] == "positive"]
+    unlabeled = [r for r in rows if r["label"] != "positive"]
+    keep_n = min(len(unlabeled), max(1, ratio * max(1, len(positives))))
+    rng = random.Random(seed)
+    sampled = rng.sample(unlabeled, keep_n)
+    combined = positives + sampled
+    # stable deterministic order for reproducible feature extraction
+    combined.sort(
+        key=lambda r: (r["protein_accession"], int(r["cys_position_in_protein"]))
+    )
+    return combined
+
+
+def _write_labels_tsv(rows: list[dict[str, str]], path: Path) -> None:
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle, fieldnames=list(BENCHMARK_FIELDS),
+            delimiter="\t", lineterminator="\n", extrasaction="ignore",
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _sequence_feature_vectors(
+    rows: list[dict[str, str]],
     proteome_path: Path,
+    scratch_dir: Path,
+    tag: str,
 ) -> list[list[float]]:
+    """Extract [hydrophobicity, cys_density] per benchmark row via the real
+    feature extractor, driven by a temp labels file in the benchmark schema."""
     from plantpersulf.features.sequence import extract_sequence_features
 
-    feats = extract_sequence_features(
-        Path("__placeholder_labels.tsv"), proteome_path, window_radius=10
-    )
-    # Build lookup: (protein, pos) -> [hydrophobicity, cys_density]
-    lookup: dict[tuple[str, int], list[float]] = {}
-    for f in feats:
-        lookup[(f.protein_accession, f.cys_position)] = [
-            f.hydrophobicity, f.cys_density,
-        ]
-    vectors: list[list[float]] = []
-    for row in benchmark_rows:
-        key = (row["protein_accession"], int(row["cys_position_in_protein"]))
-        vec = lookup.get(key, [0.0, 0.0])
-        vectors.append(vec)
-    return vectors
-
-
-def _esm2_features(
-    benchmark_rows: list[dict[str, str]],
-    proteome_path: Path,
-) -> list[list[float]]:
-    from plantpersulf.features.esm2 import extract_esm2_embeddings
-
-    emb = extract_esm2_embeddings(
-        Path("__placeholder_labels.tsv"), proteome_path
-    )
-    lookup: dict[tuple[str, int], list[float]] = {}
-    for f in emb:
-        lookup[(f.protein_accession, f.cys_position)] = list(f.embedding)
-    vectors: list[list[float]] = []
-    for row in benchmark_rows:
-        key = (row["protein_accession"], int(row["cys_position_in_protein"]))
-        vec = lookup.get(key, [0.0] * 1280)
-        vectors.append(vec)
-    return vectors
+    labels_path = scratch_dir / f"{tag}_labels.tsv"
+    _write_labels_tsv(rows, labels_path)
+    feats = extract_sequence_features(labels_path, proteome_path, window_radius=10)
+    lookup: dict[tuple[str, int], list[float]] = {
+        (f.protein_accession, f.cys_position): [f.hydrophobicity, f.cys_density]
+        for f in feats
+    }
+    return [
+        lookup.get(
+            (r["protein_accession"], int(r["cys_position_in_protein"])),
+            [0.0, 0.0],
+        )
+        for r in rows
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -282,46 +302,58 @@ def run_experiment(config_path: Path) -> ExperimentResults:
     )
     print(f"split: train={len(train_rows)} val={len(val_rows)} test={len(test_rows)}")
 
+    # --- matched-negative subsampling (deterministic) ---
+    ratio = int(cfg.get("subsample", {}).get("unlabeled_per_positive", 50))
+    sub_seed = int(cfg.get("subsample", {}).get("seed", 12345))
+    train_rows = _subsample_unlabeled(train_rows, ratio, sub_seed)
+    val_rows = _subsample_unlabeled(val_rows, ratio, sub_seed + 1)
+    test_rows = _subsample_unlabeled(test_rows, ratio, sub_seed + 2)
     train_pos = sum(1 for r in train_rows if r["label"] == "positive")
     val_pos = sum(1 for r in val_rows if r["label"] == "positive")
     test_pos = sum(1 for r in test_rows if r["label"] == "positive")
-    print(f"positives: train={train_pos} val={val_pos} test={test_pos}")
+    print(
+        f"subsampled (1:{ratio}): train={len(train_rows)}(+{train_pos}) "
+        f"val={len(val_rows)}(+{val_pos}) test={len(test_rows)}(+{test_pos})"
+    )
 
-    # --- features ---
+    # --- sequence features ---
     feature_names = [f["name"] for f in cfg["features"]]
     print(f"features: {feature_names}")
-
-    motif_X = _motif_features(train_rows + val_rows + test_rows, proteome_path)
-    n_train = len(train_rows)
-    n_val = len(val_rows)
-    motif_train = motif_X[:n_train]
-    motif_val = motif_X[n_train:n_train + n_val]
-    motif_test = motif_X[n_train + n_val:]
+    scratch = Path(tempfile.mkdtemp(prefix="run_experiment_"))
+    try:
+        seq_train = _sequence_feature_vectors(
+            train_rows, proteome_path, scratch, "train"
+        )
+        seq_val = _sequence_feature_vectors(val_rows, proteome_path, scratch, "val")
+        seq_test = _sequence_feature_vectors(
+            test_rows, proteome_path, scratch, "test"
+        )
+    finally:
+        shutil.rmtree(scratch, ignore_errors=True)
     train_y = [r["label"] for r in train_rows]
     val_y = [r["label"] for r in val_rows]
     test_y = [r["label"] for r in test_rows]
 
-    # --- run ---
+    # --- run learned sequence-feature baselines across all seeds ---
+    # NOTE: esm_linear_head is validated by its own tests
+    # (tests/*/test_esm_baseline*.py) but is GPU-gated at benchmark scale on
+    # CPU-only hardware, so it is not part of the default model loop. The
+    # no-learning motif/accessibility baselines have their own tested
+    # ranking codepaths in plantpersulf.models.baselines.
     results = ExperimentResults(experiment=exp_cfg["name"])
     for model_name in cfg["models"]:
         for seed in eval_cfg["seeds"]:
             print(f"  {model_name} seed={seed} …", end=" ")
-            if model_name == "motif_frequency":
-                # motif baseline uses its own ranking machinery
-                r = ModelResult(model="motif_frequency", seed=seed)
-                # Skip for now — motif baseline needs a different feature interface
-                # (it reads flanking windows directly, not precomputed vectors)
-                r.val_ap = None
-                r.test_ap = None
-                print("skipped (motif freq needs separate codepath)")
-            else:
-                r = _evaluate(
-                    model_name, seed,
-                    motif_train, train_y,
-                    motif_val, val_y,
-                    motif_test, test_y,
-                )
-                print(f"val_ap={r.val_ap:.4f}" if r.val_ap else "no_val_positives")
+            r = _evaluate(
+                model_name, seed,
+                seq_train, train_y,
+                seq_val, val_y,
+                seq_test, test_y,
+            )
+            msg = f"val_ap={r.val_ap:.4f}" if r.val_ap is not None else "no_val_pos"
+            if r.test_ap is not None:
+                msg += f" test_ap={r.test_ap:.4f}"
+            print(msg)
             results.model_results.append(r)
 
     # --- write ---
