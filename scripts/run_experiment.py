@@ -468,6 +468,87 @@ def _concat_branches(a: Any, b: Any) -> Any:
     )
 
 
+def _evaluate_motif(
+    train_rows: list[dict[str, str]],
+    train_y: list[str],
+    val_rows: list[dict[str, str]],
+    val_y: list[str],
+    test_rows: list[dict[str, str]],
+    test_y: list[str],
+    proteome_path: Path,
+    label: str,
+    seed: int,
+) -> ModelResult:
+    """Fit the motif-frequency baseline on train, score val/test."""
+    import csv as _csv
+    import shutil as _sh
+    import tempfile as _tf
+
+    from plantpersulf.evaluation.metrics import average_precision as ap
+    from plantpersulf.models.baselines import train_motif_baseline
+
+    tmp = Path(_tf.mkdtemp(prefix="motif_"))
+    try:
+        sp = tmp / "splits.csv"
+        with sp.open("w", encoding="utf-8", newline="") as h:
+            w = _csv.writer(h, delimiter=",", lineterminator="\n")
+            w.writerow(("protein_accession", "cys_position", "label", "split"))
+            pairs = [
+                (train_rows, "train"), (val_rows, "val"), (test_rows, "test")
+            ]
+            for rs, sn in pairs:
+                for r in rs:
+                    w.writerow(
+                        (r["protein_accession"], r["cys_position_in_protein"],
+                         r["label"], sn)
+                    )
+
+        model = train_motif_baseline(sp, proteome_path, window_radius=10)
+
+        proteome: dict[str, str] = {}
+        ch = ""
+        cl: list[str] = []
+        for ln_ in proteome_path.read_text(encoding="utf-8").splitlines():
+            if ln_.startswith(">"):
+                if ch:
+                    proteome[ch.split("|")[1]] = "".join(cl)
+                ch = ln_
+                cl = []
+            elif ln_:
+                cl.append(ln_)
+        if ch:
+            proteome[ch.split("|")[1]] = "".join(cl)
+
+        def _sc(rows_):
+            out = []
+            for r_ in rows_:
+                seq = proteome.get(r_["protein_accession"], "")
+                if not seq or not seq.strip():
+                    out.append((float("-inf"), r_["label"]))
+                    continue
+                pos = int(r_["cys_position_in_protein"])
+                if pos < 1 or pos > len(seq):
+                    out.append((float("-inf"), r_["label"]))
+                    continue
+                r_rad = 10
+                lp = max(0, r_rad - (pos - 1))
+                rp = max(0, r_rad - (len(seq) - pos))
+                st = max(0, pos - 1 - r_rad)
+                ed = min(len(seq), pos + r_rad)
+                win = "X" * lp + seq[st:ed] + "X" * rp
+                out.append((model.score(win), r_["label"]))
+            return out
+
+        vs = _sc(val_rows); ts = _sc(test_rows)
+        return ModelResult(
+            model=f"{label}|motif_frequency", seed=seed,
+            val_ap=ap(vs) if vs else None,
+            test_ap=ap(ts) if ts else None,
+        )
+    finally:
+        _sh.rmtree(tmp, ignore_errors=True)
+
+
 def _evaluate_ranker(
     ablation_name: str,
     ablation: Any,
@@ -563,6 +644,15 @@ def _run_baselines(
     results: list[ModelResult] = []
     for model_name in models:
         for seed in eval_cfg["seeds"]:
+            if model_name == "motif_frequency":
+                for seed in eval_cfg["seeds"]:
+                    r = _evaluate_motif(
+                        train_rows, train_y, val_rows, val_y,
+                        test_rows, test_y, proteome_path, label, seed,
+                    )
+                    print(f"  motif seed={seed}  val_ap={r.val_ap or 'NA'} test_ap={r.test_ap or 'NA'}")
+                    results.append(r)
+                continue
             if model_name == RANKER_MODEL:
                 for spec in _ablation_specs(cfg):
                     ab_name = str(spec.get("name", "full"))

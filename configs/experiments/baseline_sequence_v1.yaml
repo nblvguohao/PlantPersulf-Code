@@ -26,11 +26,7 @@ features:
     module: plantpersulf.features.esm2
 
 models:
-  # Learned sequence-feature baselines. The no-learning motif and
-  # accessibility baselines have their own tested ranking codepaths in
-  # plantpersulf.models.baselines and are not part of this experiment
-  # loop. esm_linear_head is validated by its own tests but is GPU-gated
-  # at benchmark scale on CPU-only hardware.
+  - motif_frequency
   - logistic
   - pu_logistic
   - random_forest
