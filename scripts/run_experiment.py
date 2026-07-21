@@ -231,6 +231,7 @@ def _run_study_split_experiment(
     sub_seed = int(cfg.get("subsample", {}).get("seed", 12345))
     limitation = str(cfg.get("limitation", ""))
 
+    feature_fn = _resolve_feature_fn(cfg)
     all_fold_results: list[ModelResult] = []
     for holdout_study in studies:
         print(f"\n===== Fold: leave_{holdout_study}_out =====")
@@ -263,6 +264,7 @@ def _run_study_split_experiment(
             [r["label"] for r in test_rows],
             proteome_path,
             f"{exp_cfg['name']}_{holdout_study}",
+            feature_fn=feature_fn,
         )
         for r in fold_results:
             r.model = f"leave_{holdout_study}_out|{r.model}"
@@ -277,6 +279,53 @@ def _run_study_split_experiment(
 # shared baseline execution + result writing
 # ---------------------------------------------------------------------------
 
+def _resolve_feature_fn(
+    cfg: dict[str, Any],
+) -> Any:
+    """Return the feature-extraction function based on the config."""
+    feature_names = [f["name"] for f in cfg["features"]]
+    if "structure" in feature_names:
+        return _structure_feature_vectors
+    return _sequence_feature_vectors
+
+
+def _structure_feature_vectors(
+    rows: list[dict[str, str]],
+    proteome_path: Path,
+    scratch_dir: Path,
+    tag: str,
+) -> list[list[float]]:
+    """Extract [contact_number_proxy, plddt] per benchmark row from real
+    AlphaFold/SWISS-MODEL structures. Rows without a registered structure
+    get a zero-filled vector (the downstream scaler will handle this)."""
+    from plantpersulf.download.alphafold import audit_alphafold_structures
+    from plantpersulf.features.structure import extract_cys_structure_features
+
+    # Build a lookup: (accession) -> pdb_text (cached, one read per protein)
+    sources = audit_alphafold_structures()
+    pdb_cache: dict[str, str] = {}
+    for s in sources:
+        pdb_cache[s.accession] = s.local_path.read_text(encoding="utf-8")
+
+    vectors: list[list[float]] = []
+    for row in rows:
+        acc = row["protein_accession"]
+        pos = int(row["cys_position_in_protein"])
+        pdb = pdb_cache.get(acc)
+        if pdb is None:
+            vectors.append([0.0, 0.0])
+            continue
+        feats = extract_cys_structure_features(pdb, acc, [pos])
+        f = feats[0]
+        if not f.has_structure:
+            vectors.append([0.0, 0.0])
+        else:
+            contact = f.contact_number_proxy or 0.0
+            plddt = f.plddt or 0.0
+            vectors.append([contact, plddt])
+    return vectors
+
+
 def _run_baselines(
     cfg: dict[str, Any],
     train_rows: list[dict[str, str]],
@@ -287,18 +336,15 @@ def _run_baselines(
     test_y: list[str],
     proteome_path: Path,
     label: str,
+    feature_fn: Any | None = None,
 ) -> list[ModelResult]:
+    if feature_fn is None:
+        feature_fn = _sequence_feature_vectors
     scratch = Path(tempfile.mkdtemp(prefix="run_experiment_"))
     try:
-        seq_train = _sequence_feature_vectors(
-            train_rows, proteome_path, scratch, "train"
-        )
-        seq_val = _sequence_feature_vectors(
-            val_rows, proteome_path, scratch, "val"
-        )
-        seq_test = _sequence_feature_vectors(
-            test_rows, proteome_path, scratch, "test"
-        )
+        feat_train = feature_fn(train_rows, proteome_path, scratch, "train")
+        feat_val = feature_fn(val_rows, proteome_path, scratch, "val")
+        feat_test = feature_fn(test_rows, proteome_path, scratch, "test")
     finally:
         shutil.rmtree(scratch, ignore_errors=True)
 
@@ -309,9 +355,9 @@ def _run_baselines(
             print(f"  {model_name} seed={seed} ...", end=" ")
             r = _evaluate(
                 model_name, seed,
-                seq_train, train_y,
-                seq_val, val_y,
-                seq_test, test_y,
+                feat_train, train_y,
+                feat_val, val_y,
+                feat_test, test_y,
             )
             r.model = f"{label}|{r.model}"
             msg = f"val_ap={r.val_ap:.4f}" if r.val_ap is not None else "no_val_pos"
@@ -513,9 +559,11 @@ def run_experiment(config_path: Path) -> ExperimentResults:
     val_y = [r["label"] for r in val_rows]
     test_y = [r["label"] for r in test_rows]
 
+    feature_fn = _resolve_feature_fn(cfg)
     results_list = _run_baselines(
         cfg, train_rows, train_y, val_rows, val_y, test_rows, test_y,
         proteome_path, exp_cfg["name"],
+        feature_fn=feature_fn,
     )
     combined = ExperimentResults(experiment=exp_cfg["name"])
     combined.model_results = results_list
