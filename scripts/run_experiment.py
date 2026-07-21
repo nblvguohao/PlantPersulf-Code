@@ -285,17 +285,31 @@ def _esm2_feature_vectors(
     scratch_dir: Path,
     tag: str,
 ) -> list[list[float]]:
-    """Extract 1280-dim ESM-2 per-residue embeddings for the unique proteins
-    in ``rows`` (not the full proteome), then map back per cysteine row."""
+    """Extract 1280-dim ESM-2 per-residue embeddings in chunks of ~50
+    unique proteins to avoid OOM on CPU (a single 5000-protein batch
+    can allocate >100 GB)."""
     from plantpersulf.features.esm2 import extract_esm2_embeddings
 
-    labels_path = scratch_dir / f"{tag}_esm2_labels.tsv"
-    _write_labels_tsv(rows, labels_path)
-    emb_rows = extract_esm2_embeddings(labels_path, proteome_path)
-    lookup: dict[tuple[str, int], list[float]] = {
-        (r.protein_accession, r.cys_position): list(r.embedding)
-        for r in emb_rows
-    }
+    # Deduplicate proteins
+    seen: dict[str, list[int]] = {}
+    for i, row in enumerate(rows):
+        seen.setdefault(row["protein_accession"], []).append(i)
+
+    unique = sorted(seen)
+    lookup: dict[tuple[str, int], list[float]] = {}
+    chunk_size = 50
+    for start in range(0, len(unique), chunk_size):
+        chunk_prots = unique[start : start + chunk_size]
+        chunk_rows = [
+            r for r in rows
+            if r["protein_accession"] in chunk_prots
+        ]
+        labels_path = scratch_dir / f"{tag}_esm2_{start}.tsv"
+        _write_labels_tsv(chunk_rows, labels_path)
+        emb_rows = extract_esm2_embeddings(labels_path, proteome_path)
+        for r in emb_rows:
+            lookup[(r.protein_accession, r.cys_position)] = list(r.embedding)
+
     default = [0.0] * 1280
     return [
         lookup.get(
