@@ -12,6 +12,7 @@ import csv
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 ESM_MODEL_NAME = "esm2_t33_650M_UR50D"
 EMBEDDING_DIM = 1280
@@ -24,6 +25,26 @@ BENCHMARK_FIELDS = (
     "evidence_level",
     "source_sha256",
 )
+
+
+# Cache the 650M model+alphabet per device: the runner extracts embeddings in
+# many small chunks (hundreds per experiment), and reloading the checkpoint from
+# disk and re-moving it to the GPU each time would dominate the runtime.
+_ESM_MODEL_CACHE: dict[str, tuple[Any, Any]] = {}
+
+
+def _get_esm_model(esm_mod: Any, device: Any) -> tuple[Any, Any]:
+    key = str(device)
+    cached = _ESM_MODEL_CACHE.get(key)
+    if cached is not None:
+        return cached
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        model, alphabet = esm_mod.pretrained.esm2_t33_650M_UR50D()
+    model.eval()
+    model = model.to(device)
+    _ESM_MODEL_CACHE[key] = (model, alphabet)
+    return model, alphabet
 
 
 def _select_device(torch_mod: object) -> object:
@@ -99,12 +120,8 @@ def extract_esm2_embeddings(
     if not sequences:
         return ()
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        model, alphabet = esm.pretrained.esm2_t33_650M_UR50D()
-    model.eval()
     device = _select_device(torch)
-    model = model.to(device)
+    model, alphabet = _get_esm_model(esm, device)
     batch_converter = alphabet.get_batch_converter()
 
     # Batch all sequences at once
