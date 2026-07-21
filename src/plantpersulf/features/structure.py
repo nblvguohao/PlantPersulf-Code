@@ -106,6 +106,105 @@ def parse_alphafold_pdb(pdb_text: str) -> tuple[ResidueStructure, ...]:
     return tuple(residues)
 
 
+def parse_mmcif(text: str) -> tuple[ResidueStructure, ...]:
+    """Parse C-alpha atoms from an mmCIF ``_atom_site`` loop.
+
+    AlphaFold Server produces ModelCIF/mmCIF (``.cif``) which stores
+    per-residue pLDDT in the ``B_iso_or_equiv`` column, same semantics as
+    the PDB B-factor column. Only CA atoms are retained.
+    """
+    lines = text.splitlines()
+    col_start: int | None = None
+    col_end: int | None = None
+    for i, line in enumerate(lines):
+        if line.startswith("_atom_site.") and col_start is None:
+            col_start = i
+        if _end_of_atom_site(col_start, i, line):
+            col_end = i
+            break
+    if col_start is None or col_end is None:
+        return ()
+    cols = [
+        ln.split(".")[1].strip()
+        for ln in lines[col_start:col_end]
+        if ln.startswith("_atom_site.")
+    ]
+
+    def _ci(name: str) -> int | None:
+        for j, c in enumerate(cols):
+            if c == name:
+                return j
+        return None
+
+    i_seq = _ci("label_seq_id")
+    i_comp = _ci("label_comp_id")
+    i_atom = _ci("label_atom_id")
+    i_chain = _ci("label_asym_id")
+    i_B = _ci("B_iso_or_equiv")
+    i_x = _ci("Cartn_x")
+    i_y = _ci("Cartn_y")
+    i_z = _ci("Cartn_z")
+    if None in (i_seq, i_comp, i_atom, i_B, i_x, i_y, i_z):
+        return ()
+    assert i_seq is not None and i_comp is not None and i_atom is not None
+    assert i_B is not None and i_x is not None and i_y is not None and i_z is not None
+
+    row_start = col_end
+    while row_start < len(lines) and (
+        lines[row_start].startswith("#") or lines[row_start].strip() == ""
+    ):
+        row_start += 1
+    row_end = row_start
+    while row_end < len(lines) and not lines[row_end].startswith(
+        "#"
+    ) and lines[row_end].strip():
+        row_end += 1
+
+    residues: list[ResidueStructure] = []
+    for line in lines[row_start:row_end]:
+        parts = line.split()
+        try:
+            if parts[i_atom] != "CA":
+                continue
+            chain = parts[i_chain] if i_chain is not None else "A"
+            residues.append(
+                ResidueStructure(
+                    chain_id=chain,
+                    res_seq=int(parts[i_seq]),
+                    res_name=parts[i_comp],
+                    plddt=float(parts[i_B]),
+                    x=float(parts[i_x]),
+                    y=float(parts[i_y]),
+                    z=float(parts[i_z]),
+                )
+            )
+        except (ValueError, IndexError):
+            continue
+    return tuple(residues)
+
+
+def _end_of_atom_site(
+    col_start: int | None, i: int, line: str,
+) -> bool:
+    return (
+        col_start is not None
+        and i > col_start
+        and bool(line.strip())
+        and not line.startswith(("_atom_site.", "#"))
+    )
+
+
+def _parse_structure_text(
+    text: str,
+) -> tuple[ResidueStructure, ...]:
+    """Auto-detect PDB vs mmCIF and parse. Prefers PDB if both signatures
+    are present; falls back to mmCIF."""
+    residues = parse_alphafold_pdb(text)
+    if residues:
+        return residues
+    return parse_mmcif(text)
+
+
 def missing_structure_feature(
     protein_accession: str,
     cys_position: int,
@@ -155,7 +254,7 @@ def extract_cys_structure_features(
     structure model but the caller is expected to retain it in any
     sequence-only model, per the Task 7 spec.
     """
-    residues = parse_alphafold_pdb(pdb_text)
+    residues = _parse_structure_text(pdb_text)
     by_seq = {residue.res_seq: (i, residue) for i, residue in enumerate(residues)}
     features: list[CysStructureFeature] = []
     for position in cys_positions:
