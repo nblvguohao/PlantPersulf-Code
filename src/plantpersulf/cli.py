@@ -8,6 +8,10 @@ from dataclasses import asdict
 from pathlib import Path
 
 from plantpersulf.download.registered import audit_downloaded_files
+from plantpersulf.evidence.content import (
+    audit_content_output,
+    build_content_audit,
+)
 from plantpersulf.evidence.methods import (
     acquire_method_source,
     audit_method_sources,
@@ -157,6 +161,26 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("data/registry/evidence_methods.tsv"),
     )
+    build_content = subparsers.add_parser(
+        "build-evidence-content-audit",
+        help="build a label-free content audit from registered real files",
+    )
+    build_content.add_argument("--version", choices=("v1",), required=True)
+    build_content.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path("data/interim"),
+    )
+    audit_content = subparsers.add_parser(
+        "audit-evidence-content",
+        help="rehash and verify the label-free evidence content audit",
+    )
+    audit_content.add_argument("--version", choices=("v1",), required=True)
+    audit_content.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path("data/interim"),
+    )
     return parser
 
 
@@ -244,6 +268,18 @@ def main(argv: list[str] | None = None) -> int:
                 sort_keys=True,
             )
         )
+        return 0
+    if arguments.command == "build-evidence-content-audit":
+        content_summary = build_content_audit(
+            output_directory=arguments.output_root / "evidence_preflight_v1"
+        )
+        print(json.dumps(asdict(content_summary), sort_keys=True))
+        return 0
+    if arguments.command == "audit-evidence-content":
+        content_summary = audit_content_output(
+            arguments.output_root / "evidence_preflight_v1"
+        )
+        print(json.dumps(asdict(content_summary), sort_keys=True))
         return 0
     raise RuntimeError(f"unsupported command: {arguments.command}")
 
