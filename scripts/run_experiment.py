@@ -307,18 +307,20 @@ def _esm2_feature_vectors(
     proteome = _load_proteome_fasta(proteome_path)
     unique = sorted(seen, key=lambda acc: len(proteome.get(acc, "")))
     lookup: dict[tuple[str, int], list[float]] = {}
-    chunk_size = 15  # small chunks: RTX 3060 12GB
-    for start in range(0, len(unique), chunk_size):
+    chunk_size = 5
+    total = len(unique)
+    for start in range(0, total, chunk_size):
         chunk_prots = unique[start : start + chunk_size]
         chunk_rows = [
-            r for r in rows
-            if r["protein_accession"] in chunk_prots
+            r for r in rows if r["protein_accession"] in chunk_prots
         ]
         labels_path = scratch_dir / f"{tag}_esm2_{start}.tsv"
         _write_labels_tsv(chunk_rows, labels_path)
         emb_rows = extract_esm2_embeddings(labels_path, proteome_path)
         for r in emb_rows:
             lookup[(r.protein_accession, r.cys_position)] = list(r.embedding)
+        if (start // chunk_size) % 50 == 0:
+            print(f"    ESM2 chunk {start // chunk_size}/{total // chunk_size} ...")
 
     default = [0.0] * 1280
     return [
