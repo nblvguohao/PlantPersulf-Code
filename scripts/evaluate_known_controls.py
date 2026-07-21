@@ -69,15 +69,19 @@ REGISTERED_CONTROLS = (
     {
         "mechanism_lineage_id": "ERFD3_H2S_CONTEXT",
         "gene": "ERF.D3",
-        "uniprot_accession": "",
-        "cys_position": 0,
+        "uniprot_accession": "A0A3Q7ESP9",
+        "cys_position": 128,
         "doi": "10.1093/plphys/kiae560",
         "control_type": "conditional_site_group_control",
-        "status": "unmappable",
+        "status": "position_shift",
         "provenance": (
-            "UniProt tomato reference proteome v1 (36988 records): "
-            "no entry matching gene name ERF.D3 or similar ethylene "
-            "response factor D.3 found."
+            "UniProt tomato reference proteome v1: mapped to "
+            "A0A3Q7ESP9 (AP2/ERF domain-containing protein, GN=ERF-D3, "
+            "316aa, 4 Cys at [128,131,136,139]). The paper reports "
+            "Cys115/Cys118; the 13-residue offset may reflect a "
+            "signal peptide, an isoform numbering difference, or a "
+            "post-translational cleavage — MUST be confirmed with the "
+            "authors before any recovery claim."
         ),
     },
 )
