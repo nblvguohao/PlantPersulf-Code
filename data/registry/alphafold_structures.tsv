@@ -1,5 +1,6 @@
 accession	model_version	source_url	local_path	retrieved_at	size_bytes	sha256	downloader_version
 A0A1P8APX1	v6	https://alphafold.ebi.ac.uk/files/AF-A0A1P8APX1-F1-model_v6.pdb	../raw/alphafold/AF-A0A1P8APX1-F1-model_v6.pdb	2026-07-21T08:40:06.275450+00:00	902501	b1890516223111e964d91933d99aa0a3dd585b38c1becdf1f931d3f8deedb5f7	plantpersulf/0.0.0
+A0A1P8B1I9	swissmodel-homology-2kcl.1.A	https://swissmodel.expasy.org/repository/uniprot/A0A1P8B1I9.pdb	../raw/alphafold/A0A1P8B1I9_swissmodel.pdb	2026-07-21T08:46:48.791377+00:00	56441	5268ccbe4e2fb9556c2618a4885cfb679808c6403fa4c47d03de00effc6f8f1c	plantpersulf/0.0.0
 O03042	v6	https://alphafold.ebi.ac.uk/files/AF-O03042-F1-model_v6.pdb	../raw/alphafold/AF-O03042-F1-model_v6.pdb	2026-07-21T08:40:06.275450+00:00	309419	5ff0f9cd536c368937bb83d9c0cfc296d5cd7851651d3fa0e0b1a0c2900a8a21	plantpersulf/0.0.0
 P27140-2	v6	https://alphafold.ebi.ac.uk/files/AF-P27140-2-F1-model_v6.pdb	../raw/alphafold/AF-P27140-2-F1-model_v6.pdb	2026-07-21T08:43:36.367270+00:00	211976	51e6bc5f1bb809dfd2505bf66a326574bf188ed197861e44ac552a9a1bdbb81b	plantpersulf/0.0.0
 Q8VZF1	v6	https://alphafold.ebi.ac.uk/files/AF-Q8VZF1-F1-model_v6.pdb	../raw/alphafold/AF-Q8VZF1-F1-model_v6.pdb	2026-07-21T08:40:06.275450+00:00	366524	6e18f58798f67b8d4767cd42a8d5098f90260785a6dd6a2077f08d9a0397d56c	plantpersulf/0.0.0
