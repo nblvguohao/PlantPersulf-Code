@@ -77,9 +77,9 @@ def _stop_server(server: ThreadingHTTPServer) -> None:
     server.server_close()
 
 
-def test_alphafold_pdb_url_uses_official_v4_pattern() -> None:
+def test_alphafold_pdb_url_uses_official_api() -> None:
     assert alphafold_pdb_url("O03042") == (
-        "https://alphafold.ebi.ac.uk/files/AF-O03042-F1-model_v4.pdb"
+        "https://alphafold.ebi.ac.uk/api/prediction/O03042"
     )
 
 
