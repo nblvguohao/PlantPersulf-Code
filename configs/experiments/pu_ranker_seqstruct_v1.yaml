@@ -1,0 +1,74 @@
+# Frozen experiment config — structure-aware PU ranker, ESM-free variant.
+#
+# Identical machinery to pu_ranker_v1.yaml but restricted to the ablations
+# that do NOT require the frozen ESM-2 branch, so it runs on environments
+# without fair-esm / cached ESM-2 weights (the ESM branch is fed a zero
+# placeholder and stays disabled). Use pu_ranker_v1.yaml for the full matrix.
+#
+# Same MANDATORY LIMITATION as pu_ranker_v1: both studies are same-lab,
+# same-chemistry, same-species; leave-study-out is method-level only.
+
+version: 1
+
+experiment:
+  name: pu_ranker_seqstruct_v1
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  mode: leave_study_out
+  studies:
+    - PXD006140
+    - PXD024061
+
+features:
+  - name: sequence
+    module: plantpersulf.features.sequence
+  - name: structure
+    module: plantpersulf.features.structure
+
+models:
+  - structure_ranker
+
+ablations:
+  - name: sequence_only
+    use_esm: false
+    use_structure: false
+    use_study_context: false
+  - name: seq_structure
+    use_esm: false
+    use_study_context: false
+  - name: seq_structure_study
+    use_esm: false
+  - name: no_plddt
+    use_esm: false
+    use_plddt: false
+  - name: no_accessibility
+    use_esm: false
+    use_accessibility: false
+
+ranker:
+  hidden: 16
+  dropout: 0.2
+  epochs: 200
+  lr: 0.05
+  n_mc_dropout: 16
+
+evaluation:
+  seeds: [0, 1, 2, 3, 4]
+
+subsample:
+  unlabeled_per_positive: 20
+  seed: 12345
+
+output:
+  directory: results/experiments/pu_ranker_seqstruct_v1
+
+limitation: |
+  Both training studies are from the same laboratory (Romero/Gotor,
+  Universidad de Sevilla), use the same tag-switch persulfidation
+  chemistry, and are in the same species (Arabidopsis thaliana).
+  Leave-study-out results validate method-level generalisation within
+  this specific experimental framework; they do NOT demonstrate
+  chemically, laboratory-, or species-independent predictive value.
+  This ESM-free variant additionally omits the frozen-ESM branch.

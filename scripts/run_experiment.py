@@ -347,15 +347,17 @@ def _resolve_feature_fn(
     return _sequence_feature_vectors
 
 
-def _structure_feature_vectors(
+def _structure_feature_vectors_with_mask(
     rows: list[dict[str, str]],
     proteome_path: Path,
     scratch_dir: Path,
     tag: str,
-) -> list[list[float]]:
-    """Extract [contact_number_proxy, plddt] per benchmark row from real
-    AlphaFold/SWISS-MODEL structures. Rows without a registered structure
-    get a zero-filled vector (the downstream scaler will handle this)."""
+) -> tuple[list[list[float]], list[bool]]:
+    """Extract [contact_number_proxy, plddt] per benchmark row plus a
+    per-row ``has_structure`` mask, from real AlphaFold/SWISS-MODEL
+    structures. Rows without a resolvable structure get a zero vector and a
+    ``False`` mask — the mask (not a placeholder value) is what downstream
+    consumers must honour."""
     from plantpersulf.download.alphafold import audit_alphafold_structures
     from plantpersulf.features.structure import extract_cys_structure_features
 
@@ -366,22 +368,156 @@ def _structure_feature_vectors(
         pdb_cache[s.accession] = s.local_path.read_text(encoding="utf-8")
 
     vectors: list[list[float]] = []
+    mask: list[bool] = []
     for row in rows:
         acc = row["protein_accession"]
         pos = int(row["cys_position_in_protein"])
         pdb = pdb_cache.get(acc)
         if pdb is None:
             vectors.append([0.0, 0.0])
+            mask.append(False)
             continue
         feats = extract_cys_structure_features(pdb, acc, [pos])
         f = feats[0]
         if not f.has_structure:
             vectors.append([0.0, 0.0])
+            mask.append(False)
         else:
             contact = f.contact_number_proxy or 0.0
             plddt = f.plddt or 0.0
             vectors.append([contact, plddt])
+            mask.append(True)
+    return vectors, mask
+
+
+def _structure_feature_vectors(
+    rows: list[dict[str, str]],
+    proteome_path: Path,
+    scratch_dir: Path,
+    tag: str,
+) -> list[list[float]]:
+    """Flat-feature view of the structure branch (for the traditional
+    baselines): the [contact, plddt] vectors only, missing rows zero-filled."""
+    vectors, _ = _structure_feature_vectors_with_mask(
+        rows, proteome_path, scratch_dir, tag
+    )
     return vectors
+
+
+RANKER_MODEL = "structure_ranker"
+
+
+def _build_branch_features(
+    rows: list[dict[str, str]],
+    proteome_path: Path,
+    scratch_dir: Path,
+    tag: str,
+    need_esm: bool = True,
+) -> Any:
+    """Assemble a multi-branch ``BranchFeatures`` (sequence + frozen-ESM +
+    structure + missingness mask + study context) for the structure-aware
+    ranker, reusing the same real feature extractors as the flat baselines.
+
+    ESM extraction (which loads the 650M model) is skipped when no ablation in
+    the run uses the ESM branch; a 1-dim zero placeholder is substituted so the
+    (disabled) branch still has a consistent shape."""
+    from plantpersulf.models.structure_ranker import BranchFeatures
+
+    seq = _sequence_feature_vectors(rows, proteome_path, scratch_dir, tag)
+    if need_esm:
+        esm = _esm2_feature_vectors(rows, proteome_path, scratch_dir, tag)
+    else:
+        esm = [[0.0] for _ in rows]
+    struct, mask = _structure_feature_vectors_with_mask(
+        rows, proteome_path, scratch_dir, tag
+    )
+    study_ids = [r.get("study_accession") or "__unlabeled__" for r in rows]
+    return BranchFeatures(
+        sequence=seq, esm=esm, structure=struct,
+        structure_mask=mask, study_ids=study_ids,
+    )
+
+
+def _ablation_from_spec(spec: dict[str, Any]) -> Any:
+    """Build an AblationConfig from a config dict; unspecified flags default
+    to enabled (True)."""
+    from plantpersulf.models.structure_ranker import AblationConfig
+
+    return AblationConfig(
+        use_esm=bool(spec.get("use_esm", True)),
+        use_structure=bool(spec.get("use_structure", True)),
+        use_plddt=bool(spec.get("use_plddt", True)),
+        use_accessibility=bool(spec.get("use_accessibility", True)),
+        use_study_context=bool(spec.get("use_study_context", True)),
+    )
+
+
+def _ablation_specs(cfg: dict[str, Any]) -> list[dict[str, Any]]:
+    specs = cfg.get("ablations")
+    if not specs:
+        return [{"name": "full"}]
+    return [dict(s) for s in specs]
+
+
+def _concat_branches(a: Any, b: Any) -> Any:
+    from plantpersulf.models.structure_ranker import BranchFeatures
+
+    return BranchFeatures(
+        sequence=a.sequence + b.sequence,
+        esm=a.esm + b.esm,
+        structure=a.structure + b.structure,
+        structure_mask=a.structure_mask + b.structure_mask,
+        study_ids=(a.study_ids or []) + (b.study_ids or []),
+    )
+
+
+def _evaluate_ranker(
+    ablation_name: str,
+    ablation: Any,
+    seed: int,
+    branch_train: Any,
+    train_y: list[str],
+    branch_val: Any,
+    val_y: list[str],
+    branch_test: Any,
+    test_y: list[str],
+    ranker_params: dict[str, Any] | None = None,
+) -> ModelResult:
+    """Train the ranker once and score val+test in a single forward pass
+    (val and test are concatenated then split), so the model is fit exactly
+    once per (ablation, seed)."""
+    from plantpersulf.evaluation.metrics import (
+        average_precision,
+        mean_reciprocal_rank,
+        recall_at_k,
+    )
+    from plantpersulf.models.structure_ranker import structure_ranker_scores
+
+    result = ModelResult(model=ablation_name, seed=seed)
+    params = ranker_params or {}
+
+    n_val = branch_val.n_rows()
+    combined = _concat_branches(branch_val, branch_test)
+    out = structure_ranker_scores(
+        branch_train, train_y, combined, seed=seed, ablation=ablation,
+        hidden=int(params.get("hidden", 16)),
+        dropout=float(params.get("dropout", 0.2)),
+        epochs=int(params.get("epochs", 200)),
+        lr=float(params.get("lr", 0.05)),
+        n_mc_dropout=int(params.get("n_mc_dropout", 16)),
+    )
+    val_scores = out.scores[:n_val]
+    test_scores = out.scores[n_val:]
+
+    val_scored = list(zip(val_scores, val_y, strict=True))
+    result.val_ap = average_precision(val_scored)
+    if test_scores:
+        test_scored = list(zip(test_scores, test_y, strict=True))
+        result.test_ap = average_precision(test_scored)
+        result.test_recall_10 = recall_at_k(test_scored, 10)
+        result.test_recall_50 = recall_at_k(test_scored, 50)
+        result.test_mrr = mean_reciprocal_rank(test_scored)
+    return result
 
 
 def _run_baselines(
@@ -398,18 +534,60 @@ def _run_baselines(
 ) -> list[ModelResult]:
     if feature_fn is None:
         feature_fn = _sequence_feature_vectors
+    models = list(cfg["models"])
+    needs_flat = any(m != RANKER_MODEL for m in models)
+    needs_branch = RANKER_MODEL in models
+
     scratch = Path(tempfile.mkdtemp(prefix="run_experiment_"))
+    feat_train = feat_val = feat_test = None
+    branch_train = branch_val = branch_test = None
     try:
-        feat_train = feature_fn(train_rows, proteome_path, scratch, "train")
-        feat_val = feature_fn(val_rows, proteome_path, scratch, "val")
-        feat_test = feature_fn(test_rows, proteome_path, scratch, "test")
+        if needs_flat:
+            feat_train = feature_fn(train_rows, proteome_path, scratch, "train")
+            feat_val = feature_fn(val_rows, proteome_path, scratch, "val")
+            feat_test = feature_fn(test_rows, proteome_path, scratch, "test")
+        if needs_branch:
+            need_esm = any(
+                _ablation_from_spec(s).use_esm for s in _ablation_specs(cfg)
+            )
+            branch_train = _build_branch_features(
+                train_rows, proteome_path, scratch, "train", need_esm
+            )
+            branch_val = _build_branch_features(
+                val_rows, proteome_path, scratch, "val", need_esm
+            )
+            branch_test = _build_branch_features(
+                test_rows, proteome_path, scratch, "test", need_esm
+            )
     finally:
         shutil.rmtree(scratch, ignore_errors=True)
 
     eval_cfg = cfg["evaluation"]
     results: list[ModelResult] = []
-    for model_name in cfg["models"]:
+    for model_name in models:
         for seed in eval_cfg["seeds"]:
+            if model_name == RANKER_MODEL:
+                for spec in _ablation_specs(cfg):
+                    ab_name = str(spec.get("name", "full"))
+                    print(f"  {RANKER_MODEL}[{ab_name}] seed={seed} ...", end=" ")
+                    r = _evaluate_ranker(
+                        f"{RANKER_MODEL}:{ab_name}",
+                        _ablation_from_spec(spec), seed,
+                        branch_train, train_y,
+                        branch_val, val_y,
+                        branch_test, test_y,
+                        ranker_params=cfg.get("ranker", {}),
+                    )
+                    r.model = f"{label}|{r.model}"
+                    msg = (
+                        f"val_ap={r.val_ap:.4f}"
+                        if r.val_ap is not None else "no_val_pos"
+                    )
+                    if r.test_ap is not None:
+                        msg += f" test_ap={r.test_ap:.4f}"
+                    print(msg)
+                    results.append(r)
+                continue
             print(f"  {model_name} seed={seed} ...", end=" ")
             r = _evaluate(
                 model_name, seed,
