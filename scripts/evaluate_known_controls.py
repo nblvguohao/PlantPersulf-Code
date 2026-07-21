@@ -270,7 +270,7 @@ def run_control_evaluation(
             )
             continue
 
-        acc = str(ctrl["uniprot_accession"])  # type: ignore[arg-type]  # noqa: mypy
+        acc = str(ctrl["uniprot_accession"])  # type: ignore[arg-type]
         pos = int(ctrl["cys_position"])  # type: ignore[arg-type]
         score, detail = _score_control(acc, pos, proteome_path)
         pct = _percentile_rank(score, unlabeled_scores)
