@@ -12,3 +12,6 @@ data/external/
 data/interim/
 data/processed/
 results/
+
+# Vendored third-party tool binaries (MMseqs2), reproduced by download.
+mmseqs/

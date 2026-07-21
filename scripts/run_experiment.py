@@ -190,26 +190,17 @@ def _study_fold_rows(
     all_rows: list[dict[str, str]],
     holdout_study: str,
 ) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
-    """Partition benchmark rows: held-out study's positives go to test;
-    other study's positives + all unlabeled go to train. Unlabeled rows
-    are also included in the test fold — they are the comparison
-    distribution, not training labels, so this does not leak information."""
-    train_rows: list[dict[str, str]] = []
-    test_rows: list[dict[str, str]] = []
-    unlabeled_rows: list[dict[str, str]] = []
-    for row in all_rows:
-        if row["label"] != "positive":
-            unlabeled_rows.append(row)
-            continue
-        if row["study_accession"] == holdout_study:
-            test_rows.append(row)
-        else:
-            train_rows.append(row)
-    # Unlabeled rows are the comparison distribution; include them in
-    # both folds so evaluation has something to rank against.
-    train_rows.extend(unlabeled_rows)
-    test_rows.extend(unlabeled_rows)
-    return train_rows, test_rows
+    """Partition benchmark rows for one leave-study-out fold.
+
+    Delegates to the canonical, unit-tested
+    ``plantpersulf.evaluation.external_validation.partition_leave_study_out``
+    so the runner and the external-validation report share one definition of
+    "held-out study positives never appear in train"."""
+    from plantpersulf.evaluation.external_validation import (
+        partition_leave_study_out,
+    )
+
+    return partition_leave_study_out(all_rows, holdout_study)
 
 
 def _run_study_split_experiment(
