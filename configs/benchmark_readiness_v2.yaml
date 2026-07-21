@@ -1,0 +1,11 @@
+version: 2
+studies:
+  - PXD006140
+  - PXD024061
+eligible_site_evidence_levels:
+  - site_ms
+minimum_distinct_site_evidence_studies: 2
+prohibited_record_labels:
+  - positive
+  - unlabeled
+  - negative
