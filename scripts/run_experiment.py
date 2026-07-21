@@ -297,7 +297,7 @@ def _esm2_feature_vectors(
 
     unique = sorted(seen)
     lookup: dict[tuple[str, int], list[float]] = {}
-    chunk_size = 50
+    chunk_size = 200
     for start in range(0, len(unique), chunk_size):
         chunk_prots = unique[start : start + chunk_size]
         chunk_rows = [

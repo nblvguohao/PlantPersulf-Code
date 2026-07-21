@@ -84,11 +84,14 @@ def extract_esm2_embeddings(
         warnings.simplefilter("ignore")
         model, alphabet = esm.pretrained.esm2_t33_650M_UR50D()
     model.eval()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
     batch_converter = alphabet.get_batch_converter()
 
     # Batch all sequences at once
     batch_data = [(acc, seq) for acc, seq in sequences]
     _, _, batch_tokens = batch_converter(batch_data)
+    batch_tokens = batch_tokens.to(device)
     with torch.no_grad():
         results = model(batch_tokens, repr_layers=[33], return_contacts=False)
     token_representations = results["representations"][33]
