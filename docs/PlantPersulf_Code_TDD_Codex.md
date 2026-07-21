@@ -1195,7 +1195,11 @@ git commit -m "feat: add structure-aware persulfidation PU ranker"
 - 失败位点和不可映射位点；
 - 模型适用域；
 - 与所有 baseline 的效应量和 CI；
-- 所有 seed 的结果，不只最佳 seed。
+- 所有 seed 的结果，不只最佳 seed；
+- 每个控制的 percentile rank、applicability-domain 状态和不确定性；
+- 每个控制与无学习、传统模型和 ESM 基线的并列结果；
+- `mechanism_lineage_id` 和独立验证单元状态；
+- 所有未恢复、不可映射和证据不足的控制，不得只展示成功案例。
 
 ### 结论闸门
 
@@ -1210,6 +1214,16 @@ git commit -m "feat: add structure-aware persulfidation PU ranker"
 否则必须写：
 
 > 当前公开数据不足以证明跨研究预测能力，模型仅用于候选组织与假设生成。
+
+### 未来 RED 规格
+
+1. `test_known_control_cannot_be_training_and_recovery`：控制同时进入训练并被报告为独立恢复时失败；
+2. `test_duplicate_mechanism_lineage_is_not_independent`：同一机制谱系被计为多个独立验证单元时失败；
+3. `test_control_rank_is_not_used_for_model_selection`：控制排名参与模型或超参数选择时失败；
+4. `test_predictive_claim_requires_gate2_go`：Gate 2 为 `STOP` 时声称通用预测价值时失败；
+5. `test_failed_and_unmappable_controls_are_reported`：失败或不可映射控制被遗漏时失败。
+
+测试只能使用已登记真实控制记录或纯软件策略文本，不得创建虚构位点。
 
 ### 验收
 
@@ -1407,7 +1421,19 @@ git commit -m "feat: add decircularized tomato candidate prioritization"
 7. 不成功结果完整返回；
 8. 冻结候选后不得因实验结果重新排序并冒充前瞻预测；
 9. 记录批次、操作者、抗体、仪器、原始文件和排除标准；
-10. 数据返回后新增 `prospective_validation_v1`，不覆盖原发布包。
+10. 湿实验前冻结 `frozen_analysis_plan`，声明终点、命中定义、排除标准、匹配变量、统计比较和失败处理；
+11. `blind_id` 是实验人员可见的唯一候选标识，排名和 Tier 保持隐藏；
+12. 高排名候选、matched controls 和已知阳性使用一致检测与排除规则；
+13. 系统主张依赖多个独立新位点或蛋白的整体富集，不得只挑一个成功案例；
+14. 深入机制对象可从真实命中中选择，但不得回写或重排 `candidate_release_v1`；
+15. 数据返回后新增 `prospective_validation_v1`，不覆盖原发布包。
+
+### 未来 RED 规格
+
+1. `test_nature_readiness_requires_prospective_blind_validation`：无冻结候选、匹配对照和盲法结果时，不得标记 Nature-family ready；
+2. `test_candidate_release_cannot_be_reranked_after_wetlab`：湿实验后修改顺序或覆盖原发布包时失败；
+3. `test_unsuccessful_candidates_are_retained`：失败候选被删除时失败；
+4. `test_prediction_is_not_causal_mechanism`：模型排名、位点修饰和因果表型混为同一证据层级时失败。
 
 ### 验收
 
