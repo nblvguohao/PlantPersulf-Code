@@ -272,14 +272,18 @@ def _run_study_split_experiment(
 
 def _load_proteome_fasta(path: Path) -> dict[str, str]:
     seqs: dict[str, str] = {}
-    cur_header = ""; cur_lines: list[str] = []
+    cur_header = ""
+    cur_lines: list[str] = []
     for line in path.read_text(encoding="utf-8").splitlines():
         if line.startswith(">"):
             if cur_header:
                 seqs[cur_header.split("|")[1]] = "".join(cur_lines)
-            cur_header = line; cur_lines = []
-        elif line: cur_lines.append(line)
-    if cur_header: seqs[cur_header.split("|")[1]] = "".join(cur_lines)
+            cur_header = line
+            cur_lines = []
+        elif line:
+            cur_lines.append(line)
+    if cur_header:
+        seqs[cur_header.split("|")[1]] = "".join(cur_lines)
     return seqs
 
 
