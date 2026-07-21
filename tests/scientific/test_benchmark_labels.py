@@ -28,7 +28,9 @@ _LABELS_CACHE: BenchmarkLabels | None = None
 
 
 @pytest.fixture(scope="module")
-def cached_data(tmp_path_factory: pytest.TempPathFactory) -> tuple[BenchmarkLabels, Path]:
+def cached_data(
+    tmp_path_factory: pytest.TempPathFactory,
+) -> tuple[BenchmarkLabels, Path]:
     """Build once, return (labels, site_output_root)."""
     global _LABELS_CACHE, _SITE_CACHE
     if _LABELS_CACHE is not None:
@@ -54,7 +56,9 @@ def real_benchmark(cached_data: tuple[BenchmarkLabels, Path]) -> BenchmarkLabels
     return cached_data[0]
 
 
-def test_labels_are_exclusively_positive_or_unlabeled(real_benchmark: BenchmarkLabels) -> None:
+def test_labels_are_exclusively_positive_or_unlabeled(
+    real_benchmark: BenchmarkLabels,
+) -> None:
     labels = real_benchmark
 
     observed = {labels.sites[i].label for i in range(len(labels))}
@@ -65,7 +69,9 @@ def test_labels_are_exclusively_positive_or_unlabeled(real_benchmark: BenchmarkL
     assert labels.unlabeled_count > 0
 
 
-def test_every_positive_has_traceable_experimental_evidence(real_benchmark: BenchmarkLabels) -> None:
+def test_every_positive_has_traceable_experimental_evidence(
+    real_benchmark: BenchmarkLabels,
+) -> None:
     labels = real_benchmark
 
     positives = [(i, s) for i, s in enumerate(labels) if s.label == "positive"]
@@ -78,7 +84,9 @@ def test_every_positive_has_traceable_experimental_evidence(real_benchmark: Benc
         assert site.cys_position_in_protein > 0
 
 
-def test_unlabeled_sites_have_no_experimental_evidence_claim(real_benchmark: BenchmarkLabels) -> None:
+def test_unlabeled_sites_have_no_experimental_evidence_claim(
+    real_benchmark: BenchmarkLabels,
+) -> None:
     labels = real_benchmark
 
     unlabeled = [(i, s) for i, s in enumerate(labels) if s.label == "unlabeled"]

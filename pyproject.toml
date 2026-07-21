@@ -16,6 +16,12 @@ dev = [
   "ruff>=0.12,<1",
   "types-PyYAML>=6,<7",
 ]
+models = [
+  "scikit-learn>=1.5,<2",
+  "xgboost>=2,<4",
+  "torch>=2,<3",
+  "fair-esm>=2,<3",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
