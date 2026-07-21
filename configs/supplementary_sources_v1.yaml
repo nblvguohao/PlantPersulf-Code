@@ -1,0 +1,33 @@
+version: 1
+
+sources:
+  - study_accession: PXD006140
+    member: erx294_suppl_supplementary_data_set_s3.xlsx
+    publication_doi: 10.1093/jxb/erx294
+    source_kind: paper_supplement
+    container: Europe PMC PMC5853657 supplementaryFiles
+    container_url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5853657/supplementaryFiles
+    destination: supplements/PXD006140/erx294_suppl_supplementary_data_set_s3.xlsx
+    expected_size_bytes: 13918329
+    data_level: C
+    scientific_use: persulfidation_site_evidence
+  - study_accession: PXD024061
+    member: txt_persulfproject/Sulfide(C)Sites.txt
+    publication_doi: 10.3390/antiox10040508
+    source_kind: deposited_search_output
+    container: PRIDE txt_persulfproject.zip (SHA1 d0cbe145397569a685adb004ff25018edae81f88)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2021/09/PXD024061/txt_persulfproject.zip
+    destination: supplements/PXD024061/Sulfide_C_Sites.txt
+    expected_size_bytes: 151666
+    data_level: C
+    scientific_use: persulfidation_site_evidence
+  - study_accession: PXD024061
+    member: txt_persulfproject/CianoBiotin(C)Sites.txt
+    publication_doi: 10.3390/antiox10040508
+    source_kind: deposited_search_output
+    container: PRIDE txt_persulfproject.zip (SHA1 d0cbe145397569a685adb004ff25018edae81f88)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2021/09/PXD024061/txt_persulfproject.zip
+    destination: supplements/PXD024061/CianoBiotin_C_Sites.txt
+    expected_size_bytes: 17083
+    data_level: C
+    scientific_use: persulfidation_site_evidence
