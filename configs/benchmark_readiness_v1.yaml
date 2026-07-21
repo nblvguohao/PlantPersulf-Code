@@ -1,0 +1,17 @@
+version: 1
+studies:
+  - PXD006140
+  - PXD024061
+  - PXD035795
+  - PXD039999
+eligible_site_evidence_levels:
+  - site_ms
+  - site_mutagenesis
+  - site_biochemical
+coordinate_only_evidence_levels:
+  - psm_coordinate_only
+minimum_distinct_site_evidence_studies: 2
+prohibited_record_labels:
+  - positive
+  - unlabeled
+  - negative
