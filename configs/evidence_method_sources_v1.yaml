@@ -1,0 +1,13 @@
+version: 1
+
+sources:
+  - study_accession: PXD035795
+    identifier_type: DOI
+    identifier: 10.1111/nph.18838
+    repository: University of Seville IDUS
+    repository_record_id: ce5a8e5e-6bf0-4564-a0d5-c6dcb4eeaa6f
+    official_url: https://idus.us.es/server/api/core/bitstreams/de6bc2aa-507d-4578-9636-ec963cbf3777/content
+    destination: methods/PXD035795/Persulfidation_protects.pdf
+    expected_size_bytes: 11657462
+    method_scope: dimedone_switch_lc_ms_ms
+    data_use_status: method_audit_only

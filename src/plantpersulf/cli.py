@@ -8,6 +8,10 @@ from dataclasses import asdict
 from pathlib import Path
 
 from plantpersulf.download.registered import audit_downloaded_files
+from plantpersulf.evidence.methods import (
+    acquire_method_source,
+    audit_method_sources,
+)
 from plantpersulf.evidence.preflight import (
     audit_metadata_preflight,
     build_metadata_preflight,
@@ -119,6 +123,40 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("data/interim"),
     )
+    acquire_method = subparsers.add_parser(
+        "acquire-evidence-method",
+        help="download and register an exact reviewed experimental method source",
+    )
+    acquire_method.add_argument("--accession", required=True)
+    acquire_method.add_argument(
+        "--config",
+        type=Path,
+        default=Path("configs/evidence_method_sources_v1.yaml"),
+    )
+    acquire_method.add_argument(
+        "--registry",
+        type=Path,
+        default=Path("data/registry/evidence_methods.tsv"),
+    )
+    acquire_method.add_argument(
+        "--raw-root",
+        type=Path,
+        default=Path("data/raw"),
+    )
+    audit_methods = subparsers.add_parser(
+        "audit-evidence-methods",
+        help="rehash all registered experimental method sources",
+    )
+    audit_methods.add_argument(
+        "--config",
+        type=Path,
+        default=Path("configs/evidence_method_sources_v1.yaml"),
+    )
+    audit_methods.add_argument(
+        "--registry",
+        type=Path,
+        default=Path("data/registry/evidence_methods.tsv"),
+    )
     return parser
 
 
@@ -174,6 +212,38 @@ def main(argv: list[str] | None = None) -> int:
             arguments.output_root / "evidence_preflight_v1"
         )
         print(json.dumps(asdict(audited_preflight), sort_keys=True))
+        return 0
+    if arguments.command == "acquire-evidence-method":
+        source = acquire_method_source(
+            accession=arguments.accession,
+            config_path=arguments.config,
+            registry_path=arguments.registry,
+            raw_root=arguments.raw_root,
+        )
+        print(
+            json.dumps(
+                {
+                    "study_accession": source.study_accession,
+                    "identifier": source.identifier,
+                    "local_path": source.local_path.as_posix(),
+                    "size_bytes": source.size_bytes,
+                    "sha256": source.sha256,
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
+    if arguments.command == "audit-evidence-methods":
+        sources = audit_method_sources(arguments.config, arguments.registry)
+        print(
+            json.dumps(
+                {
+                    "source_count": len(sources),
+                    "studies": [source.study_accession for source in sources],
+                },
+                sort_keys=True,
+            )
+        )
         return 0
     raise RuntimeError(f"unsupported command: {arguments.command}")
 
