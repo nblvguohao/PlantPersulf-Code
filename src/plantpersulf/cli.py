@@ -7,6 +7,10 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 
+from plantpersulf.benchmark.readiness import (
+    audit_benchmark_readiness,
+    build_benchmark_readiness,
+)
 from plantpersulf.download.registered import audit_downloaded_files
 from plantpersulf.evidence.content import (
     audit_content_output,
@@ -181,6 +185,41 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("data/interim"),
     )
+    build_readiness = subparsers.add_parser(
+        "build-benchmark-readiness",
+        help="audit whether real site evidence permits benchmark construction",
+    )
+    build_readiness.add_argument("--version", choices=("v1",), required=True)
+    build_readiness.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path("data/interim"),
+    )
+    build_readiness.add_argument(
+        "--registry-dir",
+        type=Path,
+        default=Path("data/registry"),
+    )
+    build_readiness.add_argument(
+        "--policy",
+        type=Path,
+        default=Path("configs/benchmark_readiness_v1.yaml"),
+    )
+    build_readiness.add_argument(
+        "--selection-config",
+        type=Path,
+        default=Path("configs/download_selection.yaml"),
+    )
+    audit_readiness = subparsers.add_parser(
+        "audit-benchmark-readiness",
+        help="rehash and verify the fail-closed benchmark readiness decision",
+    )
+    audit_readiness.add_argument("--version", choices=("v1",), required=True)
+    audit_readiness.add_argument(
+        "--output-root",
+        type=Path,
+        default=Path("data/interim"),
+    )
     return parser
 
 
@@ -280,6 +319,35 @@ def main(argv: list[str] | None = None) -> int:
             arguments.output_root / "evidence_preflight_v1"
         )
         print(json.dumps(asdict(content_summary), sort_keys=True))
+        return 0
+    if arguments.command == "build-benchmark-readiness":
+        parse_proteomics_accession(
+            accession="PXD006140",
+            output_root=arguments.output_root,
+            registry_dir=arguments.registry_dir,
+            selection_path=arguments.selection_config,
+        )
+        content_directory = arguments.output_root / "evidence_preflight_v1"
+        build_content_audit(
+            registry_dir=arguments.registry_dir,
+            output_directory=content_directory,
+        )
+        readiness_summary = build_benchmark_readiness(
+            policy_path=arguments.policy,
+            parser_output_root=arguments.output_root,
+            content_output_directory=content_directory,
+            output_directory=(
+                arguments.output_root / "benchmark_readiness_v1"
+            ),
+            registry_dir=arguments.registry_dir,
+        )
+        print(json.dumps(asdict(readiness_summary), sort_keys=True))
+        return 0
+    if arguments.command == "audit-benchmark-readiness":
+        readiness_summary = audit_benchmark_readiness(
+            arguments.output_root / "benchmark_readiness_v1"
+        )
+        print(json.dumps(asdict(readiness_summary), sort_keys=True))
         return 0
     raise RuntimeError(f"unsupported command: {arguments.command}")
 

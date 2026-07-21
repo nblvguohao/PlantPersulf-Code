@@ -143,3 +143,17 @@ def test_readiness_audit_rejects_output_tampering(tmp_path: Path) -> None:
 
     with pytest.raises(RuntimeError, match="output SHA256 mismatch"):
         audit_benchmark_readiness(output)
+
+
+def test_cli_exposes_benchmark_readiness_without_building_benchmark() -> None:
+    from plantpersulf.cli import build_parser
+
+    build = build_parser().parse_args(
+        ["build-benchmark-readiness", "--version", "v1"]
+    )
+    audit = build_parser().parse_args(
+        ["audit-benchmark-readiness", "--version", "v1"]
+    )
+
+    assert build.command == "build-benchmark-readiness"
+    assert audit.command == "audit-benchmark-readiness"
