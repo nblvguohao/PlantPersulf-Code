@@ -1,0 +1,63 @@
+{
+  "accession": "PXD024061",
+  "publication_doi": "10.3390/antiox10040508",
+  "parent_archive": "txt_persulfproject.zip",
+  "parent_archive_pride_sha1": "d0cbe145397569a685adb004ff25018edae81f88",
+  "extraction_method": "HTTP Range read of the zip central directory + targeted member extraction (2.42 GB archive not materialized), then column subset to the parser-required MaxQuant Sites fields.",
+  "sources": [
+    {
+      "member": "txt_persulfproject/Sulfide(C)Sites.txt",
+      "modification_name": "Sulfide",
+      "member_sha256": "e9a1abfb5b38a75fe64626f707a0fc04917d628d1f3437d807982065891003d8",
+      "subset_file": "sulfide_sites_subset.tsv",
+      "subset_sha256": "42363d7af45dc6f92ee22530d3e026f98a9dcf6632d3eb68ef95a4f2be9d769a"
+    },
+    {
+      "member": "txt_persulfproject/CianoBiotin(C)Sites.txt",
+      "modification_name": "CN-Biotin-Sulfide",
+      "member_sha256": "a98a49e91ad41dbfa53f91a5de32629a7591b51f59d209f2f696e6b9365d00fb",
+      "subset_file": "cianobiotin_sites_subset.tsv",
+      "subset_sha256": "de6e831a10bf9993e6e5ad48dd43cb77ceee43e8398329344ec0b3e69f7ef1b0"
+    }
+  ],
+  "columns_kept": [
+    "Proteins",
+    "Leading proteins",
+    "Positions within proteins",
+    "Position",
+    "Amino acid",
+    "Localization prob",
+    "Reverse",
+    "Potential contaminant",
+    "Sequence window"
+  ],
+  "row_selection": "class-I single-protein site (prob>=0.75), a just-above-threshold site, a low-probability site (0.5), a razor multi-protein site, a potential-contaminant row, and one CianoBiotin site.",
+  "reference_fastas": [
+    {
+      "accession": "A0A1I9LQH7",
+      "file": "A0A1I9LQH7.fasta",
+      "repository": "UniProt",
+      "sha256": "a8b83066565cfecbaf24a7fa4bbdb7541cdd38e1c42ffd9808d1f10d670969d2"
+    },
+    {
+      "accession": "A0A1P8APX1",
+      "file": "A0A1P8APX1.fasta",
+      "repository": "UniProt",
+      "sha256": "22446af0c9969e16c2b252be74e3162e1edf08c191d197a671f5648681f31bb8"
+    },
+    {
+      "accession": "A0A1P8B1I9",
+      "file": "A0A1P8B1I9.fasta",
+      "repository": "UniProt",
+      "sha256": "6e022be4696ea49ef45d8fb4578842bbadc62185781ffc10c54ee48d85b2e7b1"
+    },
+    {
+      "accession": "Q8VZF1",
+      "file": "Q8VZF1.fasta",
+      "repository": "UniProt",
+      "sha256": "f5baf36cea8be4d5677f3418488ddd27d16ca01ead41fc91945854ea5de34ced"
+    }
+  ],
+  "scientific_use": "tests_only",
+  "biological_values_modified": false
+}

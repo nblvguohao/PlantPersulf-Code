@@ -16,6 +16,7 @@ from __future__ import annotations
 import csv
 import re
 from collections.abc import Mapping
+from dataclasses import dataclass
 from pathlib import Path
 
 from plantpersulf.proteomics.metadata import (
@@ -177,3 +178,192 @@ def parse_dataset_s3_sites(
                 )
             )
     return SiteNormalization(tuple(sites), tuple(conflicts))
+
+
+MAXQUANT_PARSER_VERSION = "maxquant_sites_persulfidation_v1"
+MAXQUANT_STUDY_ACCESSION = "PXD024061"
+MAXQUANT_CLASS_I_THRESHOLD = 0.75
+MAXQUANT_LOCALIZATION_UNIT = "maxquant_localization_prob"
+MAXQUANT_REQUIRED_COLUMNS = (
+    "Proteins",
+    "Leading proteins",
+    "Positions within proteins",
+    "Position",
+    "Amino acid",
+    "Localization prob",
+    "Reverse",
+    "Potential contaminant",
+    "Sequence window",
+)
+
+
+@dataclass(frozen=True)
+class MaxquantPersulfidationSites:
+    sites: tuple[SiteEvidence, ...]
+    low_confidence: tuple[SiteEvidence, ...]
+    conflicts: tuple[ParseIssue, ...]
+    excluded: tuple[ParseIssue, ...]
+
+
+def _maxquant_issue(row: Mapping[str, str], reason: str, detail: str) -> ParseIssue:
+    return ParseIssue(
+        source_file="",
+        spectrum_id="",
+        protein_accession_raw=row["Leading proteins"],
+        modified_sequence=row["Sequence window"],
+        reason=reason,
+        detail=detail,
+    )
+
+
+def _sequence_window_matches(
+    window: str,
+    position: int,
+    reference: ReferenceSequence,
+) -> bool:
+    """Verify a MaxQuant sequence window against the registered sequence.
+
+    The window is centred on the modified residue; out-of-range flanks are
+    padded with ``_`` and are skipped. Every non-padded residue must equal the
+    reference residue at its computed protein coordinate.
+    """
+    if not window:
+        return False
+    center = len(window) // 2
+    if window[center] != "C":
+        return False
+    for index, residue in enumerate(window):
+        if residue == "_":
+            continue
+        protein_position = position + index - center
+        if (
+            protein_position < 1
+            or protein_position > len(reference.sequence)
+            or reference.sequence[protein_position - 1] != residue
+        ):
+            return False
+    return True
+
+
+def parse_maxquant_persulfidation_sites(
+    source_tsv: Path,
+    references: Mapping[str, ReferenceSequence],
+    source_sha256: str,
+    modification_name: str,
+    study_accession: str = MAXQUANT_STUDY_ACCESSION,
+) -> MaxquantPersulfidationSites:
+    """Extract persulfidation sites from one MaxQuant PTM-site table.
+
+    Class-I sites (localization prob >= threshold) are emitted as ``site_ms``;
+    lower-probability sites are retained in a flagged tier; razor multi-protein
+    rows are conflicts; decoy/contaminant rows are excluded.
+    """
+    with source_tsv.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        fieldnames = tuple(reader.fieldnames or ())
+        if not set(MAXQUANT_REQUIRED_COLUMNS).issubset(fieldnames):
+            raise RuntimeError(
+                f"MaxQuant site table lacks required columns: {source_tsv}"
+            )
+        rows = [
+            {column: row[column] for column in MAXQUANT_REQUIRED_COLUMNS}
+            for row in reader
+        ]
+    if any(None in row or any(value is None for value in row.values()) for row in rows):
+        raise RuntimeError(f"MaxQuant site table has malformed row: {source_tsv}")
+
+    sites: list[SiteEvidence] = []
+    low_confidence: list[SiteEvidence] = []
+    conflicts: list[ParseIssue] = []
+    excluded: list[ParseIssue] = []
+    for row in rows:
+        if row["Amino acid"] != "C":
+            continue
+        if row["Reverse"] == "+":
+            excluded.append(_maxquant_issue(row, "reverse_decoy", "decoy hit"))
+            continue
+        if row["Potential contaminant"] == "+":
+            excluded.append(
+                _maxquant_issue(row, "potential_contaminant", "contaminant hit")
+            )
+            continue
+        if ";" in row["Proteins"]:
+            conflicts.append(
+                _maxquant_issue(
+                    row,
+                    "razor_multi_mapping",
+                    "site maps to multiple proteins",
+                )
+            )
+            continue
+        protein = row["Proteins"]
+        reference = references.get(protein)
+        if reference is None:
+            conflicts.append(
+                _maxquant_issue(
+                    row,
+                    (
+                        "isoform_sequence_unavailable"
+                        if "-" in protein
+                        else "sequence_unavailable"
+                    ),
+                    "exact registered protein sequence is unavailable",
+                )
+            )
+            continue
+        try:
+            position = int(row["Position"])
+            localization = float(row["Localization prob"])
+        except ValueError:
+            conflicts.append(
+                _maxquant_issue(
+                    row,
+                    "invalid_site_field",
+                    "Position and Localization prob must be numeric",
+                )
+            )
+            continue
+        window = row["Sequence window"]
+        if (
+            position < 1
+            or position > len(reference.sequence)
+            or reference.sequence[position - 1] != "C"
+            or not _sequence_window_matches(window, position, reference)
+        ):
+            conflicts.append(
+                _maxquant_issue(
+                    row,
+                    "cysteine_coordinate_conflict",
+                    "site position/window does not verify against the sequence",
+                )
+            )
+            continue
+        site = SiteEvidence(
+            study_accession=study_accession,
+            sample_id="",
+            source_file=source_tsv.as_posix(),
+            spectrum_id="",
+            peptide_sequence=window,
+            modified_sequence=window,
+            protein_accession_raw=protein,
+            protein_accession_canonical="" if "-" in protein else protein,
+            cys_position_in_peptide=len(window) // 2 + 1,
+            cys_position_in_protein=position,
+            modification_name_raw=modification_name,
+            evidence_level=EVIDENCE_LEVEL,
+            quant_value=row["Localization prob"],
+            quant_unit=MAXQUANT_LOCALIZATION_UNIT,
+            parser_version=MAXQUANT_PARSER_VERSION,
+            source_sha256=source_sha256,
+            reference_source_sha256=reference.source_sha256,
+        )
+        if localization >= MAXQUANT_CLASS_I_THRESHOLD:
+            sites.append(site)
+        else:
+            low_confidence.append(site)
+    return MaxquantPersulfidationSites(
+        tuple(sites),
+        tuple(low_confidence),
+        tuple(conflicts),
+        tuple(excluded),
+    )
