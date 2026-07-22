@@ -131,3 +131,58 @@ def parse_pxd063170_sites(
         dropped_coordinate_mismatch=dropped_mismatch,
         dropped_missing_accession=dropped_missing,
     )
+
+
+def build_cross_species_eval_rows(
+    table: PXD063170SiteTable,
+    proteome: dict[str, str],
+    study_accession: str = "PXD063170",
+    source_sha256: str = "",
+) -> tuple[dict[str, str], ...]:
+    """Benchmark-schema evaluation rows for the cross-species transfer track.
+
+    Every parsed site becomes a ``positive`` row (with study/evidence/source
+    provenance); every OTHER cysteine in the proteome becomes an ``unlabeled``
+    row. PU semantics: unlabeled means "not detected", never a hard negative,
+    and downstream consumers must not train on it as one. Rows are sorted by
+    (accession, position) so the output is deterministic; every positive key
+    is cysteine-verified by the parser, so the row count equals the proteome
+    cysteine count exactly.
+    """
+    positive_keys = {(s.protein_accession, s.cys_position) for s in table.sites}
+    rows: list[dict[str, str]] = []
+    n_positive = 0
+    for accession in sorted(proteome):
+        sequence = proteome[accession]
+        for position, residue in enumerate(sequence, start=1):
+            if residue != "C":
+                continue
+            if (accession, position) in positive_keys:
+                n_positive += 1
+                rows.append(
+                    {
+                        "protein_accession": accession,
+                        "cys_position_in_protein": str(position),
+                        "label": "positive",
+                        "study_accession": study_accession,
+                        "evidence_level": "site_ms",
+                        "source_sha256": source_sha256,
+                    }
+                )
+            else:
+                rows.append(
+                    {
+                        "protein_accession": accession,
+                        "cys_position_in_protein": str(position),
+                        "label": "unlabeled",
+                        "study_accession": "",
+                        "evidence_level": "",
+                        "source_sha256": "",
+                    }
+                )
+    if n_positive != len(table.sites):
+        raise RuntimeError(
+            "cross-species eval rows lost positives: "
+            f"{n_positive} emitted vs {len(table.sites)} parsed"
+        )
+    return tuple(rows)
