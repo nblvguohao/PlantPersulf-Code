@@ -156,6 +156,9 @@ class ExternalValidation:
     independent_units: int = 0
     control_leakage: list[str] = field(default_factory=list)
     limitation: str = ""
+    effect: dict[str, Any] = field(default_factory=dict)
+    structure_gain: dict[str, Any] = field(default_factory=dict)
+    cluster_dominance: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -176,4 +179,7 @@ class ExternalValidation:
             "independent_units": self.independent_units,
             "control_leakage": self.control_leakage,
             "limitation": self.limitation,
+            "effect": self.effect,
+            "structure_gain": self.structure_gain,
+            "cluster_dominance": self.cluster_dominance,
         }
