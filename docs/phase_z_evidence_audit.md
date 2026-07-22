@@ -1,9 +1,11 @@
 # 植物硫巯基化数据资源与系统性证据审计(Phase Z)
 
-> 版本: v1 | 日期: 2026-07-22 | 分支: phase-a-persulfidation-site-evidence
+> 版本: v2 | 日期: 2026-07-22 | 分支: phase-a-persulfidation-site-evidence
 > 路线: Gate 2 = **GATE2_STOP** → 按 roadmap 降级路线产出的数据资源交付物
 > 机器可核验判定: `results/external_validation/pu_ranker_v1/gate2_decision.json`
 > 完整判定记录: `docs/phase_f_gate2_decision.md`
+> v2 变更: 新增 §5.2 跨物种迁移轨道首跑结果(PXD063170);候选 B(PXD038309)
+> 经核查降级(无发表位点表)。
 
 **约束措辞(对所有引用本文的外部文本具有约束力)**:
 
@@ -187,8 +189,8 @@ Seville 研究均为单蛋白机制研究(各含 1–2 个验证位点)。
 
 | 数据集 | 物种 | 实验室 | 化学 | 位点级规模 | 沉积 | 判定 |
 |---|---|---|---|---|---|---|
-| PXD063170(Nat Commun 2025) | 稻瘟菌 M. oryzae | Xiao-Lin Chen(独立) | IAA-PEO-biotin | 全蛋白质组位点级 | PRIDE ✓ | **跨物种外部验证候选 A** |
-| PXD038309(Nat Chem Biol 2023) | 人(MPST 研究) | Dick, Heidelberg(独立) | DCP-Bio1 | 全蛋白质组位点级 | PRIDE ✓ | **跨物种外部验证候选 B** |
+| PXD063170(Nat Commun 2025) | 稻瘟菌 M. oryzae | Xiao-Lin Chen(独立) | IAA-PEO-biotin | 全蛋白质组位点级 | PRIDE ✓ | **候选 A → 已建成并首跑(§5.2)** |
+| PXD038309(Nat Chem Biol 2023) | 人(MPST 研究) | Dick, Heidelberg(独立) | DCP-Bio1 | 蛋白级补充表(70 蛋白)+ PSM 级 .msf(2.8GB);**无发表位点表** | PRIDE ✓ | 候选 B → **降级**:位点需 Route M 式 .msf 派生(§5.2) |
 | PXD0701xx(Extremophiles 2026) | 深海古菌 T. aciditolerans | J. Yang(独立) | 化学蛋白组 | 204 位点/171 蛋白 | iProX ✓ | 跨域压力测试(生物学偏远,备选) |
 | PXD043969(New Phytol 2023) | 拟南芥+番茄 G6PD | Jisheng Li, 西北农林(独立) | MS 验证 | 2 个验证位点(AtG6PD6 Cys159、SlG6PDC Cys155) | iProX ✓ | 不足作研究级证据;**AtG6PD6 Cys159 可登记为同物种、独立实验室、生化验证的新控制位点** |
 | 小麦 TaATG6c(Stress Biol 2026) | 小麦 | Xiaojing Wang, 西北农林(独立) | LC-MS/MS | 2 个验证位点 | **无数据库沉积** | 不可用 |
@@ -198,11 +200,57 @@ Seville 研究均为单蛋白机制研究(各含 1–2 个验证位点)。
 文献整合集——再次印证"非 Seville 植物位点级数据"在全领域都稀缺,
 SOTA 同样依赖混合物种文献位点。
 
-**使用建议**:候选 A/B 构成一条新的"跨物种外部验证"轨道(拟南芥 PU 训练
-→ 对真菌/人蛋白组 Cys 打分 → 回收其 persulfidation 位点)。这**不**直接
-解锁条件 1 的"植物跨研究"原义;它证明的是"所学决定因素的跨物种迁移",
-措辞必须如此表述,Gate 2 v2 配置需逐轴记录独立性(实验室✓ 化学✓ 物种✓)。
-植物跨研究声明在真正的独立植物数据集出现前维持 STOP 与降级措辞。
+**执行状态(2026-07-22)**:候选 A 的"跨物种迁移"轨道已建成并首跑
+(拟南芥 PU 训练 → 对真菌蛋白组 Cys 打分 → 回收其 persulfidation 位点;
+设计、登记、结果与如实解读见 §5.2);候选 B 经核查无发表位点表,降级
+(§5.2)。该轨道**不**直接解锁条件 1 的"植物跨研究"原义;它测量的是
+"所学决定因素的跨物种迁移",措辞必须如此表述,Gate 2 v2 配置需逐轴
+记录独立性(实验室✓ 化学✓ 物种✓)。植物跨研究声明在真正的独立植物
+数据集出现前维持 STOP 与降级措辞。
+
+### 5.2 跨物种迁移轨道:PXD063170 首跑结果(2026-07-22)
+
+**设计**(`scripts/validate_cross_species.py`,CPU 确定性;全部输入经
+supplementary 注册表 SHA256 核验,xlsx 为登记真源、TSV 为其派生物):
+
+- **训练**:全量拟南芥 benchmark_v1(390 阳性 + 1:20 未标记子采样,
+  seed 12345;无内部留出——评估完全在外部物种上进行)。模型 = 冻结发布臂
+  `structure_ranker:seq_structure`;基线 = `pu_logistic`;5 个固定 seed(0–4)。
+- **评估**:PXD063170 发表的 CSE_OE/WT 位点表(Nat Commun 2025 MOESM3),
+  经 MG8 参考蛋白组(EnsemblFungi release-62)逐残基坐标核验:
+  **1,482 位点全部通过、0 丢弃**。背景 = MG8 蛋白组全部 71,823 个
+  半胱氨酸(PU 语义,从不作硬阴性),1:20 子采样(seed 12346)→
+  31,122 行,基准率 4.76%。
+- **结构分支**:MG8 无登记结构,31,122/31,122 行全部 mask——本轨道测的
+  是"序列表示 + 结构门控"的跨物种迁移,不涉及结构增益归因。
+
+**结果**(`results/cross_species/pxd063170_transfer_v1/`):
+
+| 指标 | seq_structure(发布臂) | pu_logistic(基线) |
+|---|---|---|
+| 逐 seed AP(seed 0–4) | 0.041 / 0.038 / 0.067 / 0.071 / 0.035 | 0.048(全部 5 seed) |
+| seed 集成 AP | **0.0635**(基准率 1.33 倍;置换 p=0.001) | 0.0482(≈基准率) |
+| 配对蛋白级 bootstrap 差值(集成) | **+0.0153 [+0.0115, +0.0198],不含零** | — |
+| recall@50 / recall@500 | **0.0** / 0.8% | — |
+
+**如实解读**:
+
+1. **信号非随机但弱**:集成层面相对基线的优势经蛋白级重采样后 CI 不含零,
+   置换检验 p=0.001;但绝对富集仅为基准率 1.33 倍(同框架留一研究为
+   2.1 倍),且 top-50 回收为零。
+2. **逐 seed 不稳定**:5 个 seed 中 3 个(0、1、4)模型低于基线——集成
+   优势由少数 seed 贡献,不得表述为"模型在真菌上稳定有效"。
+3. **与 Gate 2 判定一致**:同实验室、同化学、同物种框架内学到的信号,
+   迁移到不同物种 + 不同化学(IAA-PEO-biotin)后大幅衰减。该结果支持
+   维持 STOP 与降级措辞,不构成任何跨研究/跨物种声明的证据。
+4. **轨道价值定位**:候选组织信号的负向/弱向边界测量;评估机器(解析器、
+   注册、核验、打分)已就位,未来独立数据出现即可复用。
+
+**候选 B(PXD038309)降级依据(同日核查)**:逐一检查其 Nature 附件
+MOESM3–8,均为图 1–6 源数据(roGFP2 OxD 时间序列、蛋白级丰度表等),
+**不含位点级 persulfidation 表**;PRIDE 档案仅 4 个 .raw + 1 个 2.8GB
+.msf(Proteome Discoverer)。位点表须从 .msf 按 Route M 式"标签→位点"
+映射规则自行派生并经受审阅,在规则审阅完成前不入轨。
 
 ---
 
@@ -222,9 +270,14 @@ python scripts/validate_external.py --model-release pu_ranker_v1 \
     --scored-baseline results/external_validation/pu_ranker_v1/scored/baseline.tsv \
     --scored-ablated  results/external_validation/pu_ranker_v1/scored/ablated.tsv \
     --recovery results/known_controls/recovery_v1.json
+# 跨物种迁移轨道(PXD063170,CPU 确定性,措辞=跨物种迁移,非 Gate 2 证据)
+python scripts/validate_cross_species.py \
+    --output-dir results/cross_species/pxd063170_transfer_v1
 ```
 
 全部输入 SHA256 记录于 `results/external_validation/pu_ranker_v1/manifest.json`;
+跨物种轨道输入 SHA256 记录于
+`results/cross_species/pxd063170_transfer_v1/cross_species_summary.json`;
 硬件限制(>2500 aa 蛋白跳过 ESM 提取,影响 ≤3 阳性、0.8%)见判定记录。
 
 ## 7. 措辞约束
@@ -234,3 +287,6 @@ python scripts/validate_external.py --model-release pu_ranker_v1 \
 - Split A(补充轨道)数字可用于文献口径对比,但必须附带
   `pu_ranker_cluster_v1.yaml` 的 limitation 原文与 §3.3 的 singleton 说明,
   且不得作为跨研究/跨实验室/跨物种外推的证据。
+- 跨物种迁移轨道(§5.2)数字只能以"cross-species transfer(跨物种迁移)"
+  表述,并同时给出逐 seed 不稳定与 recall@50=0 的事实;不得据此声称
+  模型在真菌/其他物种上"有效",不得作为 Gate 2 任何条件的证据。
