@@ -29,12 +29,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from plantpersulf.proteomics.metadata import ReferenceSequence
 from plantpersulf.proteomics.persulfidation_sites import (  # RED: module missing
     PERSULFIDATION_MODS,
     parse_dataset_s3_sites,
 )
-
-from plantpersulf.proteomics.metadata import ReferenceSequence
 from plantpersulf.provenance.hashing import hash_file
 
 FIXTURE = Path("tests/fixtures/real/PXD006140_dataset_s3")
