@@ -104,3 +104,28 @@ def test_hydrophobicity_is_frame_centered_on_cys(tmp_path: Path) -> None:
     p2 = [r for r in rows if r.protein_accession == "P2"][0]
     assert len(p2.flanking_window) == 3
     assert p2.flanking_window[1] == "C"
+
+
+def test_proteome_loader_accepts_non_uniprot_headers(tmp_path: Path) -> None:
+    """EnsemblFungi-style headers (first whitespace token = accession, no
+    pipe fields) must load too — the cross-species track scores Magnaporthe
+    sites against the MG8 proteome."""
+    proteome = tmp_path / "ensembl.fasta"
+    proteome.write_text(
+        ">MGG_00001T0 pep chromosome:MG8:1:100:200:1 gene:MGG_00001\n"
+        "MACDEFGHIK\n"
+        ">MGG_00002T0 pep chromosome:MG8:1:300:400:-1\n"
+        "MADEFGCCLM\n",
+        encoding="utf-8",
+    )
+    labels = tmp_path / "sites.tsv"
+    labels.write_text(
+        "protein_accession\tcys_position_in_protein\tlabel\t"
+        "study_accession\tevidence_level\tsource_sha256\n"
+        "MGG_00001T0\t3\tpositive\tPXD063170\tsite_ms\tccc\n",
+        encoding="utf-8",
+    )
+    rows = extract_sequence_features(labels, proteome)
+    assert [(r.protein_accession, r.cys_position) for r in rows] == [
+        ("MGG_00001T0", 3)
+    ]

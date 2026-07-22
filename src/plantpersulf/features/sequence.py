@@ -48,6 +48,16 @@ def _load_labels(path: Path) -> list[dict[str, str]]:
         return [dict(row) for row in reader]
 
 
+def _header_accession(header: str) -> str:
+    """Accession from a fasta header: UniProt-style ``>sp|ACC|...`` takes the
+    second pipe field; anything else (e.g. EnsemblFungi ``>MGG_07573T0 pep
+    chromosome:...``) takes the first whitespace-separated token."""
+    parts = header.strip().split("|")
+    if len(parts) >= 2 and parts[1]:
+        return parts[1]
+    return header.strip().lstrip(">").split()[0]
+
+
 def _load_proteome(path: Path) -> dict[str, str]:
     sequences: dict[str, str] = {}
     cur_header = ""
@@ -55,15 +65,13 @@ def _load_proteome(path: Path) -> dict[str, str]:
     for line in path.read_text(encoding="utf-8").splitlines():
         if line.startswith(">"):
             if cur_header:
-                acc = cur_header.strip().split("|")[1]
-                sequences[acc] = "".join(cur_lines)
+                sequences[_header_accession(cur_header)] = "".join(cur_lines)
             cur_header = line
             cur_lines = []
         elif line:
             cur_lines.append(line)
     if cur_header:
-        acc = cur_header.strip().split("|")[1]
-        sequences[acc] = "".join(cur_lines)
+        sequences[_header_accession(cur_header)] = "".join(cur_lines)
     return sequences
 
 
