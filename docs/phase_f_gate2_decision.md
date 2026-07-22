@@ -171,6 +171,12 @@ mask-gated like any other missing branch. See
   + collaboration data-request list (per roadmap, Gate 2 STOP route). The
   measured condition-2 fragility and the condition-4 subset caveat are
   first-class inputs to the audit.
-- **P1 (data expansion)**: deep-parse independent PRIDE datasets
-  (PXD035795 / PXD039999 candidates); the only path that can flip
-  condition 1 and reopen Gate 2.
+- **P1 (data expansion)**: search for genuinely independent (non-Seville)
+  site-level persulfidation datasets — the only path that can flip
+  condition 1 and reopen Gate 2. Note: both already-registered PRIDE
+  candidates fail independence — PXD039999 is the same laboratory
+  (Jurado-Flores/Aroca/Romero/Gotor 2023, protein-level public material);
+  PXD035795's method record is hosted at IDUS Seville (same group
+  ecosystem) and its site-level route requires a reviewed DCP/NBF→site
+  mapping rule. Zhang-lab tomato data or a freshly discovered external
+  dataset are the real unlocks.
