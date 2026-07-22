@@ -33,6 +33,12 @@ EXPECTED = {
     ("PXD024061", "txt_persulfproject/CianoBiotin(C)Sites.txt"): (
         "a98a49e91ad41dbfa53f91a5de32629a7591b51f59d209f2f696e6b9365d00fb"
     ),
+    ("PXD063170", "41467_2025_61582_MOESM3_ESM.xlsx"): (
+        "5da579af1560819863b45c1af6966a53746725b20d5546b115212381b86bec49"
+    ),
+    ("PXD063170", "Magnaporthe_oryzae.MG8.pep.all.fa"): (
+        "0466bf3d2af6fa6a6d44cf74d72a6aa717dc948963ef8b52f7224e70f0470293"
+    ),
 }
 
 

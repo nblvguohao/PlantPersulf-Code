@@ -124,8 +124,10 @@ def test_load_ensembl_fungi_proteome(tmp_path: Path) -> None:
 
 # --- real-data test: runs against the registered downloads -----------------
 
-REAL_TSV = Path("data/raw/PXD063170/PXD063170_sites_moesm3.tsv")
-REAL_PROTEOME = Path("data/raw/PXD063170/Magnaporthe_oryzae.MG8.pep.all.fa")
+REAL_TSV = Path("data/raw/supplements/PXD063170/PXD063170_sites_moesm3.tsv")
+REAL_PROTEOME = Path(
+    "data/raw/supplements/PXD063170/Magnaporthe_oryzae.MG8.pep.all.fa"
+)
 
 
 @pytest.mark.skipif(

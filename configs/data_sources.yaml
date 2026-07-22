@@ -9,6 +9,10 @@ pride:
     role: external_persulfidation
   - accession: PXD039999
     role: external_persulfidation
+  - accession: PXD063170
+    role: cross_species_persulfidation_external
+  - accession: PXD038309
+    role: cross_species_persulfidation_external
 
 iprox:
   - accession: PXD051570

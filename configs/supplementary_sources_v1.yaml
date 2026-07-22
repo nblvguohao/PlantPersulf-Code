@@ -31,3 +31,23 @@ sources:
     expected_size_bytes: 17083
     data_level: C
     scientific_use: persulfidation_site_evidence
+  - study_accession: PXD063170
+    member: 41467_2025_61582_MOESM3_ESM.xlsx
+    publication_doi: 10.1038/s41467-025-61582-8
+    source_kind: paper_supplement
+    container: Nature Communications supplementary information (s41467-025-61582-8)
+    container_url: https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-025-61582-8/MediaObjects/41467_2025_61582_MOESM3_ESM.xlsx
+    destination: supplements/PXD063170/41467_2025_61582_MOESM3_ESM.xlsx
+    expected_size_bytes: 916083
+    data_level: C
+    scientific_use: persulfidation_site_evidence
+  - study_accession: PXD063170
+    member: Magnaporthe_oryzae.MG8.pep.all.fa
+    publication_doi: 10.1038/s41467-025-61582-8
+    source_kind: reference_proteome
+    container: EnsemblFungi release-62 Magnaporthe_oryzae.MG8.pep.all.fa.gz
+    container_url: https://ftp.ensemblgenomes.ebi.ac.uk/pub/fungi/release-62/fasta/magnaporthe_oryzae/pep/Magnaporthe_oryzae.MG8.pep.all.fa.gz
+    destination: supplements/PXD063170/Magnaporthe_oryzae.MG8.pep.all.fa
+    expected_size_bytes: 8747102
+    data_level: C
+    scientific_use: cross_species_coordinate_validation
