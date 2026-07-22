@@ -9,6 +9,7 @@ checkpoint; no fine-tuning is performed.
 from __future__ import annotations
 
 import csv
+import os
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
@@ -66,6 +67,33 @@ def _select_device(torch_mod: object) -> object:
     return torch_mod.device("cpu")  # type: ignore[attr-defined]
 
 
+def _esm_cache_dir() -> Path:
+    return Path(
+        os.environ.get("ESM2_CACHE_DIR", "data/interim/esm2_cache")
+    )
+
+
+def _load_cached_embedding(accession: str) -> Any | None:
+    """Return (seq_len, 1280) numpy array or None if not cached."""
+    cache_file = _esm_cache_dir() / f"{accession}.npy"
+    if not cache_file.is_file():
+        return None
+    import numpy as np
+
+    arr = np.load(cache_file)
+    if arr.ndim != 2 or arr.shape[1] != EMBEDDING_DIM:
+        return None
+    return arr
+
+
+def _save_cached_embedding(accession: str, embedding: Any) -> None:
+    import numpy as np
+
+    cache_file = _esm_cache_dir() / f"{accession}.npy"
+    cache_file.parent.mkdir(parents=True, exist_ok=True)
+    np.save(cache_file, embedding.astype(np.float32))
+
+
 @dataclass(frozen=True)
 class ESM2FeatureRow:
     protein_accession: str
@@ -112,20 +140,67 @@ def extract_esm2_embeddings(
     labels = _load_labels(labels_path)
     proteome = _load_proteome(proteome_path)
 
-    # Deduplicate proteins needed
+    # Deduplicate proteins needed. Filter out the rare very-long protein
+    # (the Arabidopsis proteome has ~70 sequences >2500 aa, up to 5400 aa)
+    # whose ESM-2 O(L^2) attention matrices can exceed 16 GB GPU VRAM even
+    # for a single protein, and whose CPU fallback would be impractically
+    # slow (>10 min/protein).  At most 3 positive cysteine sites (0.8% of
+    # the benchmark's 390 positives) are affected; their embeddings default
+    # to [0.0]*1280 — a small, documented, easily audited limitation.
+    MAX_PROTEIN_LENGTH = 2500
     needed = {row["protein_accession"] for row in labels}
     sequences = [
-        (acc, proteome[acc]) for acc in sorted(needed) if acc in proteome
+        (acc, proteome[acc])
+        for acc in sorted(needed)
+        if acc in proteome and len(proteome[acc]) <= MAX_PROTEIN_LENGTH
     ]
+    skipped_long = sorted(
+        acc for acc in needed if acc in proteome
+        and len(proteome[acc]) > MAX_PROTEIN_LENGTH
+    )
+    if skipped_long:
+        lengths = [len(proteome[acc]) for acc in skipped_long]
+        print(
+            f"    Skipping {len(skipped_long)} protein(s) > "
+            f"{MAX_PROTEIN_LENGTH} aa (max {max(lengths)} aa): "
+            f"{', '.join(skipped_long[:5])}"
+            + (f" ... ({len(skipped_long) - 5} more)" if len(skipped_long) > 5 else ""),
+            flush=True,
+        )
     if not sequences:
         return ()
+
+    # ── cache lookup ──────────────────────────────────────────────────
+    embed_map: dict[tuple[str, int], tuple[float, ...]] = {}
+    cached_count = 0
+    uncached_seqs: list[tuple[str, str]] = []
+    for acc, seq in sequences:
+        cached = _load_cached_embedding(acc)
+        if cached is not None:
+            for pos in range(len(seq)):
+                embed_map[(acc, pos + 1)] = tuple(
+                    float(v) for v in cached[pos]
+                )
+            cached_count += 1
+        else:
+            uncached_seqs.append((acc, seq))
+    if cached_count:
+        print(
+            f"    ESM cache hit: {cached_count} / {len(sequences)} proteins "
+            f"({len(embed_map)} residues loaded from disk)",
+            flush=True,
+        )
+
+    if not uncached_seqs:
+        return _rows_from_map(labels, embed_map)
+
+    # ── compute uncached proteins ─────────────────────────────────────
 
     device = _select_device(torch)
     model, alphabet = _get_esm_model(esm, device)
     batch_converter = alphabet.get_batch_converter()
 
-    # Batch all sequences at once
-    batch_data = [(acc, seq) for acc, seq in sequences]
+    batch_data = [(acc, seq) for acc, seq in uncached_seqs]
     _, _, batch_tokens = batch_converter(batch_data)
 
     def _forward(net: Any, tokens: Any, on_device: Any) -> Any:
@@ -137,30 +212,17 @@ def extract_esm2_embeddings(
     try:
         token_representations = _forward(model, batch_tokens, device)
     except torch.cuda.OutOfMemoryError:
-        # ESM-2's O(L^2) attention can exceed even a 16GB GPU when several
-        # very long proteins land in the same padded batch (the Arabidopsis
-        # proteome has ~160 sequences >2000 aa, up to 5400 aa) — batching
-        # multiplies the padded length's memory cost by the batch size, even
-        # though any *one* of these sequences fits on the GPU alone. Rather
-        # than losing the whole chunk (and silently degrading downstream rows
-        # to a missing-embedding default), retry each sequence individually,
-        # re-tokenized alone so it carries no other sequence's padding. Only
-        # a sequence that is itself too long for the GPU falls further back
-        # to CPU. Every embedding here is still real ESM-2 output, just
-        # computed without the other sequences' padding overhead.
         torch.cuda.empty_cache()
-        max_len = max(len(seq) for _, seq in sequences)
+        max_len = max(len(seq) for _, seq in uncached_seqs)
         print(
-            f"    CUDA OOM on batch of {len(sequences)} (max protein "
+            f"    CUDA OOM on batch of {len(uncached_seqs)} (max protein "
             f"length={max_len} aa); retrying sequences individually ...",
             flush=True,
         )
         per_seq_reps = []
-        for acc, seq in sequences:
+        for acc, seq in uncached_seqs:
             _, _, single_tokens = batch_converter([(acc, seq)])
             try:
-                # [0] drops the batch-of-1 dim so each entry is (len+2, dim),
-                # matching the per-item shape the batch path yields via [i].
                 per_seq_reps.append(_forward(model, single_tokens, device)[0])
             except torch.cuda.OutOfMemoryError:
                 torch.cuda.empty_cache()
@@ -170,16 +232,23 @@ def extract_esm2_embeddings(
                 )
         token_representations = per_seq_reps
 
-    # Map (protein, position) → embedding. token_representations is either a
-    # single (batch, max_len+2, dim) tensor or a list of one-sequence
-    # (len_i+2, dim) tensors; token_representations[i] is (len+2, dim) in
-    # both cases, so the same slicing works for both.
-    embed_map: dict[tuple[str, int], tuple[float, ...]] = {}
-    for i, (acc, seq) in enumerate(sequences):
-        rep = token_representations[i][1 : len(seq) + 1]  # strip BOS/EOS
+    # ── save new embeddings to cache ──────────────────────────────────
+    for i, (acc, seq) in enumerate(uncached_seqs):
+        if isinstance(token_representations, list):
+            rep = token_representations[i][1 : len(seq) + 1]
+        else:
+            rep = token_representations[i, 1 : len(seq) + 1]
+        _save_cached_embedding(acc, rep.numpy())
         for pos in range(1, len(seq) + 1):
             embed_map[(acc, pos)] = tuple(float(v) for v in rep[pos - 1])
 
+    return _rows_from_map(labels, embed_map)
+
+
+def _rows_from_map(
+    labels: list[dict[str, str]],
+    embed_map: dict[tuple[str, int], tuple[float, ...]],
+) -> tuple[ESM2FeatureRow, ...]:
     rows: list[ESM2FeatureRow] = []
     for row in labels:
         acc = row["protein_accession"]
