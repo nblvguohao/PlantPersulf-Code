@@ -1,7 +1,7 @@
 # Phase F — Gate 2 decision record
 
-**Date**: 2026-07-22
-**Decision**: **`GATE2_STOP`** (1/5 conditions passed)
+**Date**: 2026-07-22 (updated after the P2 statistical wiring)
+**Decision**: **`GATE2_STOP`** (3/5 conditions passed)
 **Evidence release**: `pu_ranker_v1` (leave-study-out), supplementary track
 `pu_ranker_cluster_v1` (Split A cluster split — literature-comparable,
 structurally excluded from Gate 2)
@@ -22,20 +22,44 @@ pass on current public data regardless of model quality.
 > ability; the model is used only for candidate organisation and hypothesis
 > generation.
 
-## Gate 2 conditions
+## Gate 2 conditions (after P2 statistical wiring)
 
-| # | Condition | Result | Detail (from gate2_decision.json) |
+Release arm: `structure_ranker:seq_structure`; baseline arm: `pu_logistic`;
+structure-ablated arm: `structure_ranker:sequence_only`. Per-site scores
+regenerated deterministically on CPU by `scripts/score_release.py` under the
+frozen config (same partition/subsample/split as the release run); paired
+statistics in `src/plantpersulf/evaluation/effect_size.py`.
+
+| # | Condition | Result | Detail (from gate2_decision.json / external_validation.json) |
 |---|---|---|---|
-| 1 | independent_studies_beat_baseline | FAIL | studies_independent=False, beats_baseline=2/2, need>=2 |
-| 2 | effect_ci_excludes_zero | FAIL (unmeasured) | delta_ci_lower=None — `--scored` bootstrap not wired |
+| 1 | independent_studies_beat_baseline | FAIL (structural) | studies_independent=False, beats_baseline=2/2, need>=2 |
+| 2 | effect_ci_excludes_zero | FAIL (**measured**) | delta_ci_lower=−0.0032 — paired cluster-bootstrap delta vs `pu_logistic`, min over folds: PXD006140 +0.0395 [−0.0032, +0.0947] crosses zero; PXD024061 +0.0766 [+0.0115, +0.1538] excludes zero |
 | 3 | recovery_is_not_training_leakage | **PASS** | control_leakage=[], independent_units=2 |
-| 4 | structure_gain_on_structured_subset | FAIL (unmeasured) | structure_gain=None — ablation-delta wiring not connected |
-| 5 | not_driven_by_single_cluster | FAIL (unmeasured) | single_cluster_driven=True, permutation_p=None |
+| 4 | structure_gain_on_structured_subset | **PASS** | structure_gain=+0.0239 (paired per-fold×seed deltas seq_structure−sequence_only, mean +0.0441, 95% CI [+0.0239, +0.0637]) |
+| 5 | not_driven_by_single_cluster | **PASS** | single_cluster_driven=False (top cluster = 7 rows, removal retains 77.2% of AP), permutation_p=0.001 |
 
-Conditions 2, 4 and 5 fail because the statistical wiring was not connected,
-**not** because the effect was measured and found absent. Wiring them is
-tracked as follow-up P2; the decision stays STOP either way because condition
-1 is structurally locked by data provenance.
+Reading of the 3/5: the two failing conditions are different in kind.
+Condition 1 is a **data-provenance lock** (frozen config, same lab) that only
+new independent studies can open. Condition 2 is a **measured fragility**:
+the ranker's margin over the PU baseline is positive in 10/10 runs but does
+not survive cluster-level resampling in the PXD006140 fold — the margin
+depends on cluster composition, not only on the model.
+
+Condition-4 nuance (reported, not gated): on the structure-covered subset
+itself (16 test rows, 14 positives — only 7 AlphaFold structures cover the
+benchmark) the paired delta is +0.009 with CI [−0.087, +0.056] —
+inconclusive at that n. The run-level gain is real, but it cannot be
+attributed to the 14 covered positives alone; the masked structure branch
+also acts as a regulariser on the 96% of rows without structures.
+
+## Per-site score regeneration (P2)
+
+`scripts/score_release.py` (CPU, deterministic) re-trains all three arms per
+fold×seed and writes aligned per-site scores to
+`results/external_validation/pu_ranker_v1/scored/{model,ablated,baseline}.tsv`.
+Sanity: regenerated mean test APs match `metrics.tsv` within device tolerance
+(e.g. PXD024061 fold 0.1205 CPU vs 0.1208 GPU). Seed-ensembled pooled AP
+0.097, cluster bootstrap 95% CI [0.049, 0.108].
 
 ## Primary track — leave-study-out (Gate 2 evidence)
 
@@ -73,17 +97,25 @@ dataset splits are the norm in published cysteine-PTM predictors); the
 at 0.7155 while the other four seeds sit at 0.031–0.047. It is not signal and
 is not admissible evidence in either track.
 
-## Known-control recovery (from control_recovery.tsv)
+## Known-control recovery (from control_recovery.tsv + recovery_v1.json)
 
-| mechanism_lineage_id | gene | status | independent unit |
-|---|---|---|---|
-| SLWRKY6_H2S_PHOSPHORYLATION | SlWRKY6 (Cys396) | mapped | yes |
-| SLERFD2_H2S_ETHYLENE | SlERF.D2 (Cys35) | mapped | yes |
-| BRG3_H2S_UBIQUITINATION | BRG3 | unmappable | no |
-| ERFD3_H2S_CONTEXT | ERF.D3 | unmappable | no |
+Percentile ranks use the repaired shared-PU-scorer procedure in
+`scripts/evaluate_known_controls.py` (the original single-class logistic
+stand-in was degenerate and could not run; the registry and integrity rules
+are unchanged).
 
-No registered control appeared in training (leakage list empty). Percentile
-ranks were not computed (requires `--scored`); follow-up P2.
+| mechanism_lineage_id | gene | status | percentile | independent unit |
+|---|---|---|---|---|
+| SLWRKY6_H2S_PHOSPHORYLATION | SlWRKY6 (Cys396) | mapped | 18.8% (not recovered) | yes |
+| SLERFD2_H2S_ETHYLENE | SlERF.D2 (Cys35) | mapped | 96.4% (recovered) | yes |
+| BRG3_H2S_UBIQUITINATION | BRG3 | unmappable | — | no |
+| ERFD3_H2S_CONTEXT | ERF.D3 | position_shift (unconfirmed) | — | no |
+
+No registered control appeared in training (leakage list empty). Recovery is
+mixed — 1/2 mapped controls above the 50th percentile of the unlabeled
+reference — and is reported as-is; the sequence-only PU scorer carries no
+structure or species-specific features, so low recovery of SlWRKY6 is
+informative about the feature set, not evidence against the mechanism.
 
 ## Interpretation
 
@@ -116,13 +148,15 @@ mask-gated like any other missing branch. See
 
 ## Follow-ups
 
-- **P2 (statistical wiring)**: connect `--scored` cluster-bootstrap CI
-  (condition 2), ablation-delta structure gain (condition 4), permutation
-  test (condition 5), and control percentile ranks. Expected to move the
-  record from 1/5 to ~4/5 passed, with condition 1 remaining the sole
-  structural blocker — the strongest possible basis for a data request.
+- **P2 (statistical wiring) — DONE (this update).** Cluster-bootstrap effect
+  CI, run-level structure gain, top-cluster dominance, permutation test and
+  control percentile ranks are all wired and measured; the record moved from
+  1/5 (four unmeasured) to 3/5 (one measured fragility + one structural
+  lock).
 - **P0 (Phase Z)**: data-resource and systematic evidence-audit deliverable
-  + collaboration data-request list (per roadmap, Gate 2 STOP route).
+  + collaboration data-request list (per roadmap, Gate 2 STOP route). The
+  measured condition-2 fragility and the condition-4 subset caveat are
+  first-class inputs to the audit.
 - **P1 (data expansion)**: deep-parse independent PRIDE datasets
   (PXD035795 / PXD039999 candidates); the only path that can flip
   condition 1 and reopen Gate 2.
