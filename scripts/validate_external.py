@@ -130,11 +130,9 @@ def _collect_fold_metrics(
 
 
 def _control_records(recovery_path: Path | None) -> list[ControlRecord]:
-    """Build ControlRecords from the registered Zhang-lab controls, attaching
-    percentile ranks from a prior recovery run if one is available."""
-    from evaluate_known_controls import (
-        REGISTERED_CONTROLS,  # type: ignore[import-not-found]
-    )
+    """Build ControlRecords from the registered known-mechanism controls,
+    attaching percentile ranks from a prior recovery run if one is available."""
+    from plantpersulf.evaluation.known_controls import REGISTERED_CONTROLS
 
     ranks: dict[str, float] = {}
     if recovery_path is not None and recovery_path.is_file():
@@ -146,15 +144,14 @@ def _control_records(recovery_path: Path | None) -> list[ControlRecord]:
 
     records: list[ControlRecord] = []
     for ctrl in REGISTERED_CONTROLS:
-        lineage = str(ctrl["mechanism_lineage_id"])
         records.append(
             ControlRecord(
-                mechanism_lineage_id=lineage,
-                gene=str(ctrl["gene"]),
-                uniprot_accession=str(ctrl["uniprot_accession"]),
-                cys_position=int(ctrl["cys_position"]),
-                status=str(ctrl["status"]),
-                percentile_rank=ranks.get(lineage),
+                mechanism_lineage_id=ctrl.mechanism_lineage_id,
+                gene=ctrl.gene,
+                uniprot_accession=ctrl.uniprot_accession,
+                cys_position=ctrl.cys_position,
+                status=ctrl.status,
+                percentile_rank=ranks.get(ctrl.mechanism_lineage_id),
             )
         )
     return records
@@ -176,8 +173,14 @@ def _training_positives(benchmark_path: Path) -> set[tuple[str, int]]:
 # ---------------------------------------------------------------------------
 
 _SCORED_RICH_COLUMNS = (
-    "fold", "seed", "protein_accession", "cys_position",
-    "label", "cluster_id", "has_structure", "score",
+    "fold",
+    "seed",
+    "protein_accession",
+    "cys_position",
+    "label",
+    "cluster_id",
+    "has_structure",
+    "score",
 )
 
 
@@ -218,8 +221,7 @@ def _ensemble_by_fold(
     out: dict[str, list[dict[str, Any]]] = {}
     for fold, seed_groups in sorted(by_fold_seed.items()):
         seed_keys = {
-            seed: [r["key"] for r in group]
-            for seed, group in seed_groups.items()
+            seed: [r["key"] for r in group] for seed, group in seed_groups.items()
         }
         ref_seed = sorted(seed_keys)[0]
         ref = seed_keys[ref_seed]
@@ -276,9 +278,7 @@ def _per_seed_fold_aps(
 
     groups: dict[tuple[str, int], list[tuple[float, str]]] = {}
     for r in rows:
-        groups.setdefault((r["fold"], r["seed"]), []).append(
-            (r["score"], r["label"])
-        )
+        groups.setdefault((r["fold"], r["seed"]), []).append((r["score"], r["label"]))
     out: dict[tuple[str, int], float] = {}
     for key, scored in groups.items():
         ap = average_precision(scored)
@@ -315,9 +315,7 @@ def _effect_evidence(
         model_cl, base_cl = _align_arms(
             model_folds[fold], baseline_folds[fold], "baseline"
         )
-        ci = paired_cluster_bootstrap_delta_ci(
-            model_cl, base_cl, n_boot=1000, seed=0
-        )
+        ci = paired_cluster_bootstrap_delta_ci(model_cl, base_cl, n_boot=1000, seed=0)
         per_fold.append(
             {
                 "fold": fold,
@@ -347,9 +345,7 @@ def _structure_gain_evidence(
     model_aps = _per_seed_fold_aps(model_rich)
     ablated_aps = _per_seed_fold_aps(ablated_rich)
     deltas = [
-        model_aps[k] - ablated_aps[k]
-        for k in sorted(model_aps)
-        if k in ablated_aps
+        model_aps[k] - ablated_aps[k] for k in sorted(model_aps) if k in ablated_aps
     ]
     ci = paired_delta_ci(deltas, n_boot=2000, seed=0) if deltas else None
 
@@ -488,8 +484,7 @@ def run_external_validation(
         inputs["baseline_metrics_sha256"] = _sha256(baseline_metrics)
     else:
         print(
-            f"NOTE: release metrics {release_metrics} not found — "
-            "fold metrics skipped."
+            f"NOTE: release metrics {release_metrics} not found — fold metrics skipped."
         )
 
     # --- bootstrap + permutation on per-site scores if provided ---
@@ -508,15 +503,20 @@ def run_external_validation(
         scored = _as_clustered(pooled)
         ci = cluster_bootstrap_ci(scored, average_precision, n_boot=1000, seed=0)
         bootstrap = {
-            "metric": "average_precision", "point": ci.point,
-            "lower": ci.lower, "upper": ci.upper, "n_boot": ci.n_boot,
+            "metric": "average_precision",
+            "point": ci.point,
+            "lower": ci.lower,
+            "upper": ci.upper,
+            "n_boot": ci.n_boot,
         }
         perm = permutation_test(
             [(s, y) for s, y, _ in scored], average_precision, n_perm=1000, seed=0
         )
         permutation = {
-            "metric": "average_precision", "observed": perm.observed,
-            "p_value": perm.p_value, "n_perm": perm.n_perm,
+            "metric": "average_precision",
+            "observed": perm.observed,
+            "p_value": perm.p_value,
+            "n_perm": perm.n_perm,
         }
         inputs["scored_sha256"] = _sha256(scored_path)
 
@@ -591,7 +591,10 @@ def run_external_validation(
         "w", encoding="utf-8", newline=""
     ) as handle:
         writer = csv.DictWriter(
-            handle, fieldnames=list(report[0]), delimiter="\t", lineterminator="\n",
+            handle,
+            fieldnames=list(report[0]),
+            delimiter="\t",
+            lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(report)
@@ -620,11 +623,13 @@ def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="strict external validation report")
     p.add_argument("--model-release", default="pu_ranker_v1")
     p.add_argument(
-        "--benchmark", type=Path,
+        "--benchmark",
+        type=Path,
         default=Path("data/processed/benchmark_v1/sites.tsv"),
     )
     p.add_argument(
-        "--clusters", type=Path,
+        "--clusters",
+        type=Path,
         default=Path("data/processed/clusters/protein_clusters_v1.tsv"),
     )
     p.add_argument("--baseline-tag", default="pu_logistic")

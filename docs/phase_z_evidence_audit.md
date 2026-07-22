@@ -1,11 +1,14 @@
 # 植物硫巯基化数据资源与系统性证据审计(Phase Z)
 
-> 版本: v2 | 日期: 2026-07-22 | 分支: phase-a-persulfidation-site-evidence
+> 版本: v3 | 日期: 2026-07-22 | 分支: phase-a-persulfidation-site-evidence
 > 路线: Gate 2 = **GATE2_STOP** → 按 roadmap 降级路线产出的数据资源交付物
 > 机器可核验判定: `results/external_validation/pu_ranker_v1/gate2_decision.json`
 > 完整判定记录: `docs/phase_f_gate2_decision.md`
 > v2 变更: 新增 §5.2 跨物种迁移轨道首跑结果(PXD063170);候选 B(PXD038309)
 > 经核查降级(无发表位点表)。
+> v3 变更: AtG6PD6 Cys159(PXD043969,西北农林)登记为同物种独立实验室
+> 控制位点(§3.6);控制登记表迁入 src 并新增同物种语义;Gate 2 条件 3
+> 独立验证单元 2 → 3(判定不变,STOP)。
 
 **约束措辞(对所有引用本文的外部文本具有约束力)**:
 
@@ -105,7 +108,7 @@ seed 离群(std 0.305,其余 4 个 seed 0.031–0.047),非信号。
 |---|---|---|---|
 | 1 | ≥2 独立研究优于基线 | **FAIL(结构性)** | 两折均优于基线(2/2),但研究不独立(配置冻结) |
 | 2 | 效应 CI 不含零 | **FAIL(实测)** | 相对 pu_logistic 的配对簇 bootstrap 差值:PXD006140 折 +0.0395 [−0.0032, +0.0947] 跨零;PXD024061 折 +0.0766 [+0.0115, +0.1538] 不含零 |
-| 3 | 机制恢复非训练泄漏 | PASS | 0 泄漏,2 个独立验证单元 |
+| 3 | 机制恢复非训练泄漏 | PASS | 0 泄漏,3 个独立验证单元(新增同物种 AtG6PD6) |
 | 4 | 结构增益 | PASS | 配对运行级差值均值 +0.044,CI [+0.024, +0.064];但子集层面不可归因(§3.2) |
 | 5 | 非单簇驱动 | PASS | 最大"簇"=7 行(单蛋白),移除后保留 77% AP;置换 p=0.001;蛋白粒度警告见 §3.3 |
 
@@ -119,18 +122,23 @@ seed 离群(std 0.305,其余 4 个 seed 0.031–0.047),非信号。
 (`scripts/evaluate_known_controls.py`:一个 pu_logistic 同时给未标记参照
 与控制位点打分;旧的单类别 logistic 程序在数学上退化、无法运行,其在
 `docs/zhang_collaboration_brief.md` 第 1 页留下的百分位表**作废**,以本
-表为准):
+表为准)。控制登记表位于 `src/plantpersulf/evaluation/known_controls.py`
+(2026-07-22 自脚本迁入 src,登记语义新增 `control_species` 与
+`in_benchmark_as` 两列)。
 
 | 控制 | 状态 | 百分位 | 判定 |
 |---|---|---|---|
-| SlWRKY6 Cys396 | mapped | 18.8% | 未恢复 |
-| SlERF.D2 Cys35 | mapped | 96.4% | 恢复 |
+| SlWRKY6 Cys396 | mapped(跨物种) | 18.9% | 未恢复 |
+| SlERF.D2 Cys35 | mapped(跨物种) | 96.6% | 恢复 |
+| AtG6PD6 Cys159 | mapped(**同物种**,西北农林独立实验室,doi:10.1111/nph.19188) | 28.5% | 未恢复 |
 | BRG3 | unmappable(番茄蛋白组无匹配) | — | — |
 | ERF.D3 | position_shift(编号偏移 13 位,待作者确认) | — | — |
 
-零训练泄漏(训练阳性全部拟南芥)。1/2 恢复率为如实结果:该打分器只有
-2 维序列特征,SlWRKY6 低恢复反映的是特征集信息量的边界,不构成对该机制
-的否定。旧表中 SlWRKY6 81.9% 的数字出自无法复现的退化程序,不得再引用。
+零训练泄漏(AtG6PD6 Cys159 在 benchmark_v1 中为 unlabeled 行,登记前已
+核验;同物种控制在打分前从打分器训练样本中显式剔除——番茄百分位因参照
+重采样位移 ≤0.2)。1/3 恢复率为如实结果:该打分器只有 2 维序列特征,
+SlWRKY6 与 AtG6PD6 低恢复反映的是特征集信息量的边界,不构成对机制的
+否定。旧表中 SlWRKY6 81.9% 的数字出自无法复现的退化程序,不得再引用。
 
 ### 3.7 统计稳健性发现汇总
 
@@ -192,7 +200,7 @@ Seville 研究均为单蛋白机制研究(各含 1–2 个验证位点)。
 | PXD063170(Nat Commun 2025) | 稻瘟菌 M. oryzae | Xiao-Lin Chen(独立) | IAA-PEO-biotin | 全蛋白质组位点级 | PRIDE ✓ | **候选 A → 已建成并首跑(§5.2)** |
 | PXD038309(Nat Chem Biol 2023) | 人(MPST 研究) | Dick, Heidelberg(独立) | DCP-Bio1 | 蛋白级补充表(70 蛋白)+ PSM 级 .msf(2.8GB);**无发表位点表** | PRIDE ✓ | 候选 B → **降级**:位点需 Route M 式 .msf 派生(§5.2) |
 | PXD0701xx(Extremophiles 2026) | 深海古菌 T. aciditolerans | J. Yang(独立) | 化学蛋白组 | 204 位点/171 蛋白 | iProX ✓ | 跨域压力测试(生物学偏远,备选) |
-| PXD043969(New Phytol 2023) | 拟南芥+番茄 G6PD | Jisheng Li, 西北农林(独立) | MS 验证 | 2 个验证位点(AtG6PD6 Cys159、SlG6PDC Cys155) | iProX ✓ | 不足作研究级证据;**AtG6PD6 Cys159 可登记为同物种、独立实验室、生化验证的新控制位点** |
+| PXD043969(New Phytol 2023) | 拟南芥+番茄 G6PD | Jisheng Li, 西北农林(独立) | MS 验证 | 2 个验证位点(AtG6PD6 Cys159、SlG6PDC Cys155) | iProX ✓ | 不足作研究级证据;**AtG6PD6 Cys159 已登记为同物种、独立实验室、生化验证控制位点(§3.6,2026-07-22)** |
 | 小麦 TaATG6c(Stress Biol 2026) | 小麦 | Xiaojing Wang, 西北农林(独立) | LC-MS/MS | 2 个验证位点 | **无数据库沉积** | 不可用 |
 | 小鼠限食 persulfidome(Nat Commun 2021) | 小鼠多组织 | Bithi et al.(独立) | — | 全蛋白质组 | 沉积号未确认 | 候选 C(确认沉积后可并入) |
 

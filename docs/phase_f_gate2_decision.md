@@ -34,7 +34,7 @@ statistics in `src/plantpersulf/evaluation/effect_size.py`.
 |---|---|---|---|
 | 1 | independent_studies_beat_baseline | FAIL (structural) | studies_independent=False, beats_baseline=2/2, need>=2 |
 | 2 | effect_ci_excludes_zero | FAIL (**measured**) | delta_ci_lower=−0.0032 — paired cluster-bootstrap delta vs `pu_logistic`, min over folds: PXD006140 +0.0395 [−0.0032, +0.0947] crosses zero; PXD024061 +0.0766 [+0.0115, +0.1538] excludes zero |
-| 3 | recovery_is_not_training_leakage | **PASS** | control_leakage=[], independent_units=2 |
+| 3 | recovery_is_not_training_leakage | **PASS** | control_leakage=[], independent_units=3 |
 | 4 | structure_gain_on_structured_subset | **PASS** | structure_gain=+0.0239 (paired per-fold×seed deltas seq_structure−sequence_only, mean +0.0441, 95% CI [+0.0239, +0.0637]) |
 | 5 | not_driven_by_single_cluster | **PASS** | single_cluster_driven=False (top cluster = 7 rows, removal retains 77.2% of AP), permutation_p=0.001 |
 
@@ -116,20 +116,27 @@ is not admissible evidence in either track.
 Percentile ranks use the repaired shared-PU-scorer procedure in
 `scripts/evaluate_known_controls.py` (the original single-class logistic
 stand-in was degenerate and could not run; the registry and integrity rules
-are unchanged).
+are unchanged). 2026-07-22: the registry moved to
+`src/plantpersulf/evaluation/known_controls.py` and gained the first
+same-species (Arabidopsis) independent-lab control; same-species controls
+are excluded from the scorer's training unlabeled sample before scoring,
+which shifted the tomato percentiles by ≤0.2 points (reference resample).
 
 | mechanism_lineage_id | gene | status | percentile | independent unit |
 |---|---|---|---|---|
-| SLWRKY6_H2S_PHOSPHORYLATION | SlWRKY6 (Cys396) | mapped | 18.8% (not recovered) | yes |
-| SLERFD2_H2S_ETHYLENE | SlERF.D2 (Cys35) | mapped | 96.4% (recovered) | yes |
+| SLWRKY6_H2S_PHOSPHORYLATION | SlWRKY6 (Cys396) | mapped | 18.9% (not recovered) | yes |
+| SLERFD2_H2S_ETHYLENE | SlERF.D2 (Cys35) | mapped | 96.6% (recovered) | yes |
+| ATG6PD6_H2S_G6PD_SALT | AtG6PD6 (Cys159) | mapped (same-species, NWAFU) | 28.5% (not recovered) | yes |
 | BRG3_H2S_UBIQUITINATION | BRG3 | unmappable | — | no |
 | ERFD3_H2S_CONTEXT | ERF.D3 | position_shift (unconfirmed) | — | no |
 
-No registered control appeared in training (leakage list empty). Recovery is
-mixed — 1/2 mapped controls above the 50th percentile of the unlabeled
-reference — and is reported as-is; the sequence-only PU scorer carries no
-structure or species-specific features, so low recovery of SlWRKY6 is
-informative about the feature set, not evidence against the mechanism.
+No registered control appeared in training (leakage list empty; AtG6PD6
+Cys159 is an unlabeled PU-pool row in benchmark_v1, verified before
+registration). Recovery is mixed — 1/3 mapped controls above the 50th
+percentile of the unlabeled reference — and is reported as-is; the
+sequence-only PU scorer carries no structure or species-specific features,
+so low recovery of SlWRKY6 and AtG6PD6 is informative about the feature
+set, not evidence against either mechanism.
 
 ## Interpretation
 
