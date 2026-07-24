@@ -27,6 +27,7 @@ from plantpersulf.evaluation.known_controls import (  # RED: module missing
 BENCHMARK = Path("data/processed/benchmark_v1/sites.tsv")
 PROTEOME = Path("data/raw/references/arabidopsis_ref_proteome_v1.fasta")
 AT_G6PD6 = ("Q9FJI5", 159)
+AT_PAD3 = ("Q9LW27", 440)
 
 
 def _control(lineage: str):
@@ -40,6 +41,17 @@ def test_atg6pd6_control_is_registered_with_same_species_semantics() -> None:
     assert (ctrl.uniprot_accession, ctrl.cys_position) == AT_G6PD6
     assert ctrl.gene == "AtG6PD6"
     assert ctrl.doi == "10.1111/nph.19188"
+    assert ctrl.status == "mapped"
+    assert ctrl.control_species == "Arabidopsis thaliana"
+    assert ctrl.in_benchmark_as == "unlabeled"
+    assert scores_against_benchmark_proteome(ctrl)
+
+
+def test_pad3_control_is_registered_with_same_species_semantics() -> None:
+    ctrl = _control("PAD3_H2S_HCN_OSMOTIC")
+    assert (ctrl.uniprot_accession, ctrl.cys_position) == AT_PAD3
+    assert ctrl.gene == "PAD3"
+    assert ctrl.doi == "10.1111/pce.70593"
     assert ctrl.status == "mapped"
     assert ctrl.control_species == "Arabidopsis thaliana"
     assert ctrl.in_benchmark_as == "unlabeled"
@@ -81,6 +93,15 @@ def test_atg6pd6_cys159_is_cysteine_in_reference_proteome() -> None:
     assert sequence[158] == "C"
 
 
+@pytest.mark.skipif(not PROTEOME.is_file(), reason="reference proteome missing")
+def test_pad3_cys440_is_cysteine_in_reference_proteome() -> None:
+    from plantpersulf.features.sequence import _load_proteome
+
+    proteome = _load_proteome(PROTEOME)
+    sequence = proteome["Q9LW27"]
+    assert sequence[439] == "C"
+
+
 @pytest.mark.skipif(not BENCHMARK.is_file(), reason="benchmark missing")
 def test_atg6pd6_cys159_is_unlabeled_never_positive_in_benchmark() -> None:
     labels = []
@@ -91,4 +112,17 @@ def test_atg6pd6_cys159_is_unlabeled_never_positive_in_benchmark() -> None:
     by_pos = dict(labels)
     assert by_pos[159] == "unlabeled"
     # And no G6PD6 cysteine is a training positive (self-recovery guard).
+    assert set(by_pos.values()) == {"unlabeled"}
+
+
+@pytest.mark.skipif(not BENCHMARK.is_file(), reason="benchmark missing")
+def test_pad3_cys440_is_unlabeled_never_positive_in_benchmark() -> None:
+    labels = []
+    with BENCHMARK.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle, delimiter="\t"):
+            if row["protein_accession"] == "Q9LW27":
+                labels.append((int(row["cys_position_in_protein"]), row["label"]))
+    by_pos = dict(labels)
+    assert by_pos[440] == "unlabeled"
+    # And no PAD3 cysteine is a training positive (self-recovery guard).
     assert set(by_pos.values()) == {"unlabeled"}

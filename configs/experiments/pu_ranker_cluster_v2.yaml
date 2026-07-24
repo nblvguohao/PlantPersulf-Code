@@ -1,0 +1,93 @@
+# Frozen experiment config — structure-aware PU ranker under Split A
+# (protein-family cluster split), NOT leave-study-out.
+#
+# WHY THIS CONFIG EXISTS (do not delete, do not feed into Gate 2):
+# Same rationale as pu_ranker_cluster_v1.yaml (see that file's header for the
+# full explanation). v2 exists ONLY because pu_ranker_cluster_v1 used a
+# singleton cluster placeholder (protein_clusters_v1.tsv — one cluster per
+# protein, no real homology grouping; real MMseqs2 clustering required a
+# Linux host, which was not available at the time). v2 uses real MMseqs2
+# clusters (30% identity, >=50% coverage) computed via the A100 remote-hop
+# workflow (docs/ops/remote_a100_via_lab_jump_host.md), so it can actually
+# detect homology-family-level optimism that the v1 singleton file could not.
+#
+# MANDATORY LIMITATION (record with every reported number from this config):
+# This is a within-dataset cluster split (Split A, TDD Codex sect. 4.3): train/
+# val/test are drawn from the SAME pool of studies (PXD006140 + PXD024061),
+# just non-overlapping protein clusters. It does not cross a study, a
+# laboratory, a chemistry, or a species boundary, so it cannot support any
+# cross-study generalisation claim. Report it side-by-side with the
+# leave-study-out numbers, never as a replacement for them.
+
+version: 1
+
+experiment:
+  name: pu_ranker_cluster_v2
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  mode: cluster
+  cluster_file: data/processed/clusters/protein_clusters_v2.tsv
+  split_config: configs/splits/split_config_v2.yaml
+
+features:
+  - name: sequence
+    module: plantpersulf.features.sequence
+  - name: esm2
+    module: plantpersulf.features.esm2
+  - name: structure
+    module: plantpersulf.features.structure
+
+models:
+  - structure_ranker
+
+# Same Codex Task 9 ablation matrix as pu_ranker_v1.yaml / pu_ranker_cluster_v1.yaml,
+# so all three splits are directly comparable ablation-for-ablation.
+ablations:
+  - name: sequence_only
+    use_esm: false
+    use_structure: false
+    use_study_context: false
+  - name: seq_esm
+    use_structure: false
+    use_study_context: false
+  - name: seq_structure
+    use_esm: false
+    use_study_context: false
+  - name: full
+  - name: no_plddt
+    use_plddt: false
+  - name: no_accessibility
+    use_accessibility: false
+  - name: no_study_context
+    use_study_context: false
+
+ranker:
+  hidden: 16
+  dropout: 0.2
+  epochs: 200
+  lr: 0.05
+  n_mc_dropout: 16
+
+evaluation:
+  seeds: [0, 1, 2, 3, 4]
+
+subsample:
+  unlabeled_per_positive: 20
+  seed: 12345
+
+output:
+  directory: results/experiments/pu_ranker_cluster_v2
+
+limitation: |
+  SPLIT A (within-dataset protein-cluster split, REAL MMseqs2 clusters) — NOT
+  cross-study validation. Train/val/test are non-overlapping protein clusters
+  (30% sequence identity, >=50% coverage) drawn from the SAME pool of studies
+  (PXD006140 + PXD024061). This number is reported only to be comparable with
+  published cysteine-PTM predictors that use a similar within-dataset
+  evaluation regime (e.g. Sul-BertGRU, pCysMod); it must never be used to
+  support a cross-study, cross-laboratory, or cross-species predictive claim,
+  and must never be substituted into the Gate 2 conclusion-gate evidence
+  (which requires independent held-out studies; see configs/gate2_v1.yaml and
+  pu_ranker_v1.yaml).

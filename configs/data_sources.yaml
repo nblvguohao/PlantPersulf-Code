@@ -13,6 +13,10 @@ pride:
     role: cross_species_persulfidation_external
   - accession: PXD038309
     role: cross_species_persulfidation_external
+  - accession: PXD072089
+    role: cross_species_persulfidation_external
+  - accession: PXD072300
+    role: recombinant_protein_control_evidence
 
 iprox:
   - accession: PXD051570

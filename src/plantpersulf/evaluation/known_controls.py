@@ -122,6 +122,32 @@ REGISTERED_CONTROLS: tuple[KnownControl, ...] = (
             "control row excluded from the scorer's training sample."
         ),
     ),
+    KnownControl(
+        mechanism_lineage_id="PAD3_H2S_HCN_OSMOTIC",
+        gene="PAD3",
+        uniprot_accession="Q9LW27",
+        cys_position=440,
+        doi="10.1111/pce.70593",
+        control_type="strong_single_site_control",
+        status="mapped",
+        control_species="Arabidopsis thaliana",
+        in_benchmark_as="unlabeled",
+        provenance=(
+            "Arabidopsis reference proteome v1 — Q9LW27 (C71BF_ARATH, "
+            "camalexin synthase CYP71B15/PAD3, 490aa) residue 440 "
+            "verified as Cys; benchmark row (Q9LW27,440) is unlabeled, "
+            "not a training positive. Zhang et al. 2026 (Plant, Cell & "
+            "Environment, doi:10.1111/pce.70593; Pei/Jin lab — no "
+            "author overlap with the Seville Romero/Gotor/Aroca network "
+            "across their >20 independent H2S-signaling papers since "
+            "2013): biotin-switch-assay-confirmed persulfidation of "
+            "PAD3 at Cys440 enhances its HCN-synthase activity under "
+            "osmotic stress. Second same-species, independent-lab "
+            "control — scored against the Arabidopsis unlabeled "
+            "reference with the control row excluded from the scorer's "
+            "training sample."
+        ),
+    ),
 )
 
 
