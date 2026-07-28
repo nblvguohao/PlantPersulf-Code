@@ -1,0 +1,20 @@
+version: 1
+
+reference_bundle:
+  path: data/raw/references/persulfidation_sites_refs_v1.fasta
+  sha256: 479ca0ad2be15d15111b1c499caea5e13d441dc44a5d9c0df5f0370fc2eb0ee4
+  record_count: 355
+
+studies:
+  PXD006140:
+    parser: dataset_s3
+    source_member: erx294_suppl_supplementary_data_set_s3.xlsx
+    ident_peptides_path: data/raw/supplements/PXD006140_dataset_s3_ident_peptides.tsv
+    ident_peptides_sha256: 6ab329f0a32bfc417d3f0d3f6a583797f545bd4fd2d25035cb5311f48c624dfd
+  PXD024061:
+    parser: maxquant_sites
+    members:
+      - source_member: txt_persulfproject/Sulfide(C)Sites.txt
+        modification_name: Sulfide
+      - source_member: txt_persulfproject/CianoBiotin(C)Sites.txt
+        modification_name: CN-Biotin-Sulfide

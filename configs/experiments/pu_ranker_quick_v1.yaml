@@ -1,0 +1,56 @@
+# True quick test — ESM-FREE, 1 seed, 2 ablations, 2 folds.
+# Runs in ~1 minute (no ESM extraction), validates the pipeline end-to-end
+# before the full ESM-requiring pu_ranker_v1 run.
+#
+# NOT a scientific result. For full experiment use pu_ranker_v1.yaml.
+
+version: 1
+
+experiment:
+  name: pu_ranker_quick_v1
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  mode: leave_study_out
+  studies:
+    - PXD006140
+    - PXD024061
+
+features:
+  - name: sequence
+    module: plantpersulf.features.sequence
+  - name: structure
+    module: plantpersulf.features.structure
+
+models:
+  - structure_ranker
+
+ablations:
+  - name: sequence_only
+    use_esm: false
+    use_structure: false
+    use_study_context: false
+  - name: seq_structure
+    use_esm: false
+    use_study_context: false
+
+ranker:
+  hidden: 16
+  dropout: 0.2
+  epochs: 50
+  lr: 0.05
+  n_mc_dropout: 16
+
+evaluation:
+  seeds: [0]
+
+subsample:
+  unlabeled_per_positive: 5
+  seed: 12345
+
+output:
+  directory: results/experiments/pu_ranker_quick_v1
+
+limitation: |
+  QUICK TEST ONLY (ESM-free, 1 seed) — not a scientific result.

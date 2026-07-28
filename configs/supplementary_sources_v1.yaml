@@ -1,0 +1,263 @@
+version: 1
+
+sources:
+  - study_accession: PXD006140
+    member: erx294_suppl_supplementary_data_set_s3.xlsx
+    publication_doi: 10.1093/jxb/erx294
+    source_kind: paper_supplement
+    container: Europe PMC PMC5853657 supplementaryFiles
+    container_url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC5853657/supplementaryFiles
+    destination: supplements/PXD006140/erx294_suppl_supplementary_data_set_s3.xlsx
+    expected_size_bytes: 13918329
+    data_level: C
+    scientific_use: persulfidation_site_evidence
+  - study_accession: PXD024061
+    member: txt_persulfproject/Sulfide(C)Sites.txt
+    publication_doi: 10.3390/antiox10040508
+    source_kind: deposited_search_output
+    container: PRIDE txt_persulfproject.zip (SHA1 d0cbe145397569a685adb004ff25018edae81f88)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2021/09/PXD024061/txt_persulfproject.zip
+    destination: supplements/PXD024061/Sulfide_C_Sites.txt
+    expected_size_bytes: 151666
+    data_level: C
+    scientific_use: persulfidation_site_evidence
+  - study_accession: PXD024061
+    member: txt_persulfproject/CianoBiotin(C)Sites.txt
+    publication_doi: 10.3390/antiox10040508
+    source_kind: deposited_search_output
+    container: PRIDE txt_persulfproject.zip (SHA1 d0cbe145397569a685adb004ff25018edae81f88)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2021/09/PXD024061/txt_persulfproject.zip
+    destination: supplements/PXD024061/CianoBiotin_C_Sites.txt
+    expected_size_bytes: 17083
+    data_level: C
+    scientific_use: persulfidation_site_evidence
+  - study_accession: PXD063170
+    member: 41467_2025_61582_MOESM3_ESM.xlsx
+    publication_doi: 10.1038/s41467-025-61582-8
+    source_kind: paper_supplement
+    container: Nature Communications supplementary information (s41467-025-61582-8)
+    container_url: https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-025-61582-8/MediaObjects/41467_2025_61582_MOESM3_ESM.xlsx
+    destination: supplements/PXD063170/41467_2025_61582_MOESM3_ESM.xlsx
+    expected_size_bytes: 916083
+    data_level: C
+    scientific_use: persulfidation_site_evidence
+  - study_accession: PXD063170
+    member: Magnaporthe_oryzae.MG8.pep.all.fa
+    publication_doi: 10.1038/s41467-025-61582-8
+    source_kind: reference_proteome
+    container: EnsemblFungi release-62 Magnaporthe_oryzae.MG8.pep.all.fa.gz
+    container_url: https://ftp.ensemblgenomes.ebi.ac.uk/pub/fungi/release-62/fasta/magnaporthe_oryzae/pep/Magnaporthe_oryzae.MG8.pep.all.fa.gz
+    destination: supplements/PXD063170/Magnaporthe_oryzae.MG8.pep.all.fa
+    expected_size_bytes: 8747102
+    data_level: C
+    scientific_use: cross_species_coordinate_validation
+  - study_accession: PXD072089
+    member: pnas.2608150123.sd01.xlsx
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: paper_supplement
+    container: PNAS supplementary information (pnas.2608150123)
+    container_url: https://www.pnas.org/doi/suppl/10.1073/pnas.2608150123
+    destination: supplements/PXD072089/pnas.2608150123.sd01.xlsx
+    expected_size_bytes: 151192
+    data_level: C
+    scientific_use: persulfidation_site_evidence
+  - study_accession: PXD072089
+    member: pnas.2608150123.sd02.xlsx
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: paper_supplement
+    container: PNAS supplementary information (pnas.2608150123)
+    container_url: https://www.pnas.org/doi/suppl/10.1073/pnas.2608150123
+    destination: supplements/PXD072089/pnas.2608150123.sd02.xlsx
+    expected_size_bytes: 301486
+    data_level: C
+    scientific_use: arabidopsis_ortholog_mapping
+  - study_accession: PXD072089
+    member: pnas.2608150123.sd03.xlsx
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: paper_supplement
+    container: PNAS supplementary information (pnas.2608150123)
+    container_url: https://www.pnas.org/doi/suppl/10.1073/pnas.2608150123
+    destination: supplements/PXD072089/pnas.2608150123.sd03.xlsx
+    expected_size_bytes: 659013
+    data_level: C
+    scientific_use: quantitative_proteomics
+  - study_accession: PXD072089
+    member: pnas.2608150123.sd04.xlsx
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: paper_supplement
+    container: PNAS supplementary information (pnas.2608150123)
+    container_url: https://www.pnas.org/doi/suppl/10.1073/pnas.2608150123
+    destination: supplements/PXD072089/pnas.2608150123.sd04.xlsx
+    expected_size_bytes: 63699
+    data_level: C
+    scientific_use: persulfidation_site_evidence
+  - study_accession: PXD072089
+    member: pnas.2608150123.sd05.xlsx
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: paper_supplement
+    container: PNAS supplementary information (pnas.2608150123)
+    container_url: https://www.pnas.org/doi/suppl/10.1073/pnas.2608150123
+    destination: supplements/PXD072089/pnas.2608150123.sd05.xlsx
+    expected_size_bytes: 59422
+    data_level: C
+    scientific_use: cross_species_alignment
+  - study_accession: PXD072089
+    member: pnas.2608150123.sd06.xlsx
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: paper_supplement
+    container: PNAS supplementary information (pnas.2608150123)
+    container_url: https://www.pnas.org/doi/suppl/10.1073/pnas.2608150123
+    destination: supplements/PXD072089/pnas.2608150123.sd06.xlsx
+    expected_size_bytes: 340606
+    data_level: C
+    scientific_use: extended_protein_info
+  - study_accession: PXD072089
+    member: uniprot_rice_v1.fasta
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: reference_proteome
+    container: UniProtKB Oryza sativa species-level (taxon 4530)
+    container_url: https://rest.uniprot.org/uniprotkb/stream?format=fasta&query=%28taxonomy_id%3A4530%29
+    destination: references/rice_proteome_v1/uniprot_rice_v1.fasta
+    expected_size_bytes: 47194059
+    data_level: C
+    scientific_use: cross_species_coordinate_validation
+  - study_accession: PXD072089
+    member: SS-all-peptides.tsv
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: deposited_search_output
+    container: PRIDE PXD072089 (MaxQuant peptides.txt export, submitter-deposited)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/SS-all-peptides.tsv
+    destination: supplements/PXD072089/SS-all-peptides.tsv
+    expected_size_bytes: 2625176
+    data_level: C
+    scientific_use: persulfidation_site_evidence
+  - study_accession: PXD072300
+    member: Persulfidation_MDHAR5.csv
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: deposited_search_output
+    container: PRIDE PXD072300 (PEAKS search output, recombinant protein persulfidation)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR5.csv
+    destination: supplements/PXD072300/Persulfidation_MDHAR5.csv
+    expected_size_bytes: 162112
+    data_level: C
+    scientific_use: recombinant_protein_control_evidence
+  - study_accession: PXD072300
+    member: Persulfidation_ALDP.csv
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: deposited_search_output
+    container: PRIDE PXD072300 (PEAKS search output, recombinant protein persulfidation)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_ALDP.csv
+    destination: supplements/PXD072300/Persulfidation_ALDP.csv
+    expected_size_bytes: 128282
+    data_level: C
+    scientific_use: recombinant_protein_control_evidence
+  - study_accession: PXD072300
+    member: Persulfidation_PFP.csv
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: deposited_search_output
+    container: PRIDE PXD072300 (PEAKS search output, recombinant protein persulfidation)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_PFP.csv
+    destination: supplements/PXD072300/Persulfidation_PFP.csv
+    expected_size_bytes: 346853
+    data_level: C
+    scientific_use: recombinant_protein_control_evidence
+  - study_accession: PXD072300
+    member: Persulfidation_FBA1.csv
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: deposited_search_output
+    container: PRIDE PXD072300 (PEAKS search output, recombinant protein persulfidation)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_FBA1.csv
+    destination: supplements/PXD072300/Persulfidation_FBA1.csv
+    expected_size_bytes: 120644
+    data_level: C
+    scientific_use: recombinant_protein_control_evidence
+  - study_accession: PXD072300
+    member: Persulfidation_MDHAR4.csv
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: deposited_search_output
+    container: PRIDE PXD072300 (PEAKS search output, recombinant protein persulfidation)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR4.csv
+    destination: supplements/PXD072300/Persulfidation_MDHAR4.csv
+    expected_size_bytes: 107158
+    data_level: C
+    scientific_use: recombinant_protein_control_evidence
+  - study_accession: PXD072300
+    member: Persulfidation_TKT.csv
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: deposited_search_output
+    container: PRIDE PXD072300 (PEAKS search output, recombinant protein persulfidation)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_TKT.csv
+    destination: supplements/PXD072300/Persulfidation_TKT.csv
+    expected_size_bytes: 297607
+    data_level: C
+    scientific_use: recombinant_protein_control_evidence
+  - study_accession: PXD072300
+    member: Persulfidation_RPI.csv
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: deposited_search_output
+    container: PRIDE PXD072300 (PEAKS search output, recombinant protein persulfidation)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_RPI.csv
+    destination: supplements/PXD072300/Persulfidation_RPI.csv
+    expected_size_bytes: 151059
+    data_level: C
+    scientific_use: recombinant_protein_control_evidence
+  - study_accession: PXD072300
+    member: Persulfidation_FBA3.csv
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: deposited_search_output
+    container: PRIDE PXD072300 (PEAKS search output, recombinant protein persulfidation)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_FBA3.csv
+    destination: supplements/PXD072300/Persulfidation_FBA3.csv
+    expected_size_bytes: 117083
+    data_level: C
+    scientific_use: recombinant_protein_control_evidence
+  - study_accession: PXD072300
+    member: Persulfidation_MDHAR3.csv
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: deposited_search_output
+    container: PRIDE PXD072300 (PEAKS search output, recombinant protein persulfidation)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR3.csv
+    destination: supplements/PXD072300/Persulfidation_MDHAR3.csv
+    expected_size_bytes: 91648
+    data_level: C
+    scientific_use: recombinant_protein_control_evidence
+  - study_accession: PXD072300
+    member: Persulfidation_TAL.csv
+    publication_doi: 10.1073/pnas.2608150123
+    source_kind: deposited_search_output
+    container: PRIDE PXD072300 (PEAKS search output, recombinant protein persulfidation)
+    container_url: https://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_TAL.csv
+    destination: supplements/PXD072300/Persulfidation_TAL.csv
+    expected_size_bytes: 147365
+    data_level: C
+    scientific_use: recombinant_protein_control_evidence
+  - study_accession: PANTHERDB_ORTHOLOGY
+    member: panther_arabidopsis_taxon3702.tsv
+    publication_doi: 10.1093/nar/gkaa1106
+    source_kind: reference_annotation
+    container: UniProtKB PANTHER cross-reference stream (taxonomy_id:3702)
+    container_url: https://rest.uniprot.org/uniprotkb/stream?query=%28taxonomy_id%3A3702%29&fields=accession,xref_panther&format=tsv
+    destination: references/panther_annotations_v1/panther_arabidopsis_taxon3702.tsv
+    expected_size_bytes: 1584582
+    data_level: C
+    scientific_use: cross_species_ortholog_conservation
+  - study_accession: PANTHERDB_ORTHOLOGY
+    member: panther_rice_taxon4530.tsv
+    publication_doi: 10.1093/nar/gkaa1106
+    source_kind: reference_annotation
+    container: UniProtKB PANTHER cross-reference stream (taxonomy_id:4530)
+    container_url: https://rest.uniprot.org/uniprotkb/stream?query=%28taxonomy_id%3A4530%29&fields=accession,xref_panther&format=tsv
+    destination: references/panther_annotations_v1/panther_rice_taxon4530.tsv
+    expected_size_bytes: 2611727
+    data_level: C
+    scientific_use: cross_species_ortholog_conservation
+  - study_accession: PANTHERDB_ORTHOLOGY
+    member: panther_magnaporthe_taxon242507.tsv
+    publication_doi: 10.1093/nar/gkaa1106
+    source_kind: reference_annotation
+    container: UniProtKB PANTHER cross-reference stream (taxonomy_id:242507, ORF gene names included)
+    container_url: https://rest.uniprot.org/uniprotkb/stream?query=%28taxonomy_id%3A242507%29&fields=accession,gene_orf,xref_panther&format=tsv
+    destination: references/panther_annotations_v1/panther_magnaporthe_taxon242507.tsv
+    expected_size_bytes: 417667
+    data_level: C
+    scientific_use: cross_species_ortholog_conservation

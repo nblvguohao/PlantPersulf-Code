@@ -1,0 +1,54 @@
+# Frozen experiment config — leave-study-out PU baselines.
+#
+# This is the strictest anti-leakage evaluation: each fold holds out one
+# entire published study (all of its positive sites) as test, and trains
+# on the other study's positives plus all unlabeled sites. Two folds:
+#   fold 1: train PXD024061 (+ all unlabeled), test PXD006140
+#   fold 2: train PXD006140 (+ all unlabeled), test PXD024061
+#
+# MANDATORY LIMITATION (recorded in every output):
+# Both studies are same lab (Romero/Gotor, Seville), same tag-switch
+# chemistry, same species (Arabidopsis). Leave-study-out is method-
+# level validation, NOT chemically independent validation. This caveat
+# must accompany every downstream claim.
+
+version: 1
+
+experiment:
+  name: baseline_leave_study_out_v1
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  mode: leave_study_out
+  studies:
+    - PXD006140
+    - PXD024061
+
+features:
+  - name: sequence
+    module: plantpersulf.features.sequence
+
+models:
+  - logistic
+  - pu_logistic
+  - random_forest
+  - xgboost
+
+evaluation:
+  seeds: [0, 1, 2, 3, 4]
+
+subsample:
+  unlabeled_per_positive: 50
+  seed: 12345
+
+output:
+  directory: results/experiments/baseline_leave_study_out_v1
+
+limitation: |
+  Both training studies are from the same laboratory (Romero/Gotor,
+  Universidad de Sevilla), use the same tag-switch persulfidation
+  chemistry, and are in the same species (Arabidopsis thaliana).
+  Leave-study-out results validate method-level generalisation within
+  this specific experimental framework; they do NOT demonstrate
+  chemically, laboratory-, or species-independent predictive value.

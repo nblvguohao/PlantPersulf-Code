@@ -1,0 +1,13 @@
+version: 1
+
+cluster_split:
+  cluster_file: data/processed/clusters/protein_clusters_v1.tsv
+  train_fraction: 0.6
+  validation_fraction: 0.2
+  test_fraction: 0.2
+  seed: 42
+
+known_mechanism_holdout:
+  - SlWRKY6
+  - SlERF.D2
+  - BRG3

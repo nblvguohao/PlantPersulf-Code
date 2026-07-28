@@ -1,0 +1,52 @@
+# Frozen experiment config — time-split PU baselines.
+#
+# Training on the earlier published study (PXD006140, 2018-10-24),
+# testing on the later published study (PXD024061, 2021-09-09). This is
+# a prospective evaluation: the model sees only data published before
+# the test study existed, preventing any information leakage through
+# shared lab practices, data processing pipelines, or community
+# annotation that evolved between the two publication dates.
+#
+# MANDATORY LIMITATION (recorded in every output):
+# Same as leave-study-out — same lab, same chemistry, same species.
+# The time split removes temporal leakage within this framework but
+# does not add chemical independence.
+
+version: 1
+
+experiment:
+  name: baseline_time_split_v1
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  mode: time_split
+  train_study: PXD006140   # 2018-10-24
+  test_study: PXD024061    # 2021-09-09
+
+features:
+  - name: sequence
+    module: plantpersulf.features.sequence
+
+models:
+  - logistic
+  - pu_logistic
+  - random_forest
+  - xgboost
+
+evaluation:
+  seeds: [0, 1, 2, 3, 4]
+
+subsample:
+  unlabeled_per_positive: 50
+  seed: 12345
+
+output:
+  directory: results/experiments/baseline_time_split_v1
+
+limitation: |
+  Same-lab, same-chemistry limitation applies (Romero/Gotor tag-switch,
+  Arabidopsis). This time split eliminates temporal leakage (the model
+  cannot see PXD024061's processing decisions or annotations when
+  trained on PXD006140 only) but does NOT provide chemical or species
+  independence.

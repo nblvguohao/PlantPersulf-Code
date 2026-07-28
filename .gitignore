@@ -12,3 +12,14 @@ data/external/
 data/interim/
 data/processed/
 results/
+
+# Vendored third-party tool binaries (MMseqs2), reproduced by download.
+mmseqs/
+
+# Remote-server credential files (plaintext, local-only; see docs/ops/).
+/A100
+/LAB_HOST
+*_credentials.txt
+
+# Scratch / transient working files (not project artifacts).
+tmp/
