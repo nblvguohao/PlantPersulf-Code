@@ -20,3 +20,6 @@ mmseqs/
 /A100
 /LAB_HOST
 *_credentials.txt
+
+# Scratch / transient working files (not project artifacts).
+tmp/
