@@ -67,18 +67,31 @@ REGISTERED_CONTROLS: tuple[KnownControl, ...] = (
     KnownControl(
         mechanism_lineage_id="BRG3_H2S_UBIQUITINATION",
         gene="BRG3",
-        uniprot_accession="",
-        cys_position=0,
+        uniprot_accession="A0A3Q7EW23",
+        cys_position=206,
         doi="10.1093/plphys/kiad070",
         control_type="conditional_site_group_control",
-        status="unmappable",
+        status="mapped",
         control_species="Solanum lycopersicum",
         in_benchmark_as="absent",
         provenance=(
-            "UniProt tomato reference proteome v1 (36988 records): "
-            "no entry matching gene name BRG3 found at the expected "
-            "protein length (Cys206/Cys212 positions exceed the only "
-            "matched entry K4BRG3, which is 143aa)."
+            "Resolved (2026-07-28): the prior gene-name search for "
+            "'BRG3' matched only the unrelated 143aa K4BRG3 entry. The "
+            "paper's own Accession numbers section gives NCBI GeneID "
+            "LOC101267168 ('probable BOI-related E3 ubiquitin-protein "
+            "ligase 3', Solanum lycopersicum chr1). That GeneID maps to "
+            "UniProt A0A3Q7EW23 (RING-type domain-containing protein, "
+            "GN=LOC101267168, 243aa) in the tomato reference proteome. "
+            "Both Cys206 and Cys212 are verified as true Cys residues "
+            "at the expected positions in this sequence "
+            "(...KSCNSRSSCMICLPCRH... and ...SSCMICLPCRHLSSCKT..., "
+            "1-based); the paper's BRG3-Cys-Ala mutant targets both "
+            "sites jointly (conditional_site_group_control). Cys206 is "
+            "registered as the representative scored position, "
+            "consistent with the single-position-per-lineage "
+            "convention used for ERF.D3's paired Cys115/Cys118 site "
+            "group below; Cys212 is the second site in the same group "
+            "and is not scored separately."
         ),
     ),
     KnownControl(
