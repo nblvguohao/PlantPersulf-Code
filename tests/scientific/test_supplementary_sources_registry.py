@@ -93,6 +93,15 @@ EXPECTED = {
     ("PXD072300", "Persulfidation_TAL.csv"): (
         "67fea3ed43243ecd31f1871f5ffa5aa196a3c1db0b7d8fb8cd46c06d5054b761"
     ),
+    ("KIAE271_SUPPL", "kiae271_DSs.xlsx"): (
+        "a437f1a941a348ccf15d538bcea193d9feefe29019c5162f0427551416b1b98a"
+    ),
+    ("GOANNOT_TOMATO", "tomato_go_taxon4081.tsv"): (
+        "aef1eb8cd827bb6abd5591fe6b7a68a437963c5756b4cc3b7fc6f66caeea294c"
+    ),
+    ("PANTHERDB_ORTHOLOGY", "panther_tomato_taxon4081.tsv"): (
+        "58cd0b4b3f610e8f54c6a8063f0c914c317e21e226be095b5b2f19de3d03c432"
+    ),
     ("PANTHERDB_ORTHOLOGY", "panther_arabidopsis_taxon3702.tsv"): (
         "859156896af8d70d2c3262df31af6da7cd7411e56564b23b2958428348203dde"
     ),

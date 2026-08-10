@@ -1,0 +1,1496 @@
+https://doi.org/10.1093/plphys/kiad100 PLANT PHYSIOLOGY 2023: 192: 2185–2202
+Persulfidation of transcription factor MYB10 inhibits 
+anthocyanin synthesis in red-skinned pear
+Gaifang Yao 
+ ,1,*,† Shasha Gou 
+ ,1,† Tingying Zhong,1,† Shuwei Wei,2 Xin An,1 Hongye Sun 
+ ,1 Chen Sun,1 
+Kangdi Hu 
+ 1 and Hua Zhang 
+ 1,*
+1 School of Food and Biological Engineering, Hefei University of Technology, Hefei 230009, China
+2 Shandong Institute of Pomology, Tai’an 271000, China
+*Author for correspondence: hzhanglab@hfut.edu.cn (H.Z.), yaogaifang@hfut.edu.cn (G.Y.)
+†These authors contributed equally to this work.
+The author responsible for distribution of materials integral to the findings presented in this article in accordance with the policy described in the 
+Instructions for Authors (https://academic.oup.com/plphys/pages/general-instructions) are: Hua Zhang and Gaifang Yao.
+Abstract
+Hydrogen sulfide (H 2S) is a gaseous signaling molecule that delays color change during fruit ripening. Whether H 2S affects 
+anthocyanin biosynthesis in red-skinned pears (Pyrus L.) remains unclear. Here, we found that H2S substantially inhibits antho-
+cyanin accumulation in red-skinned pears and the expression of several genes encoding transcription factors is affected in re -
+sponse to H2S signaling. For example, PyMYB10 and PyMYB73 were down-regulated, whereas PyMYB114 and PyMYB6 were up- 
+regulated. Bioinformatics analysis showed that PyMYB73 and PyMYB6, each containing an EAR motif, may negatively regulate 
+anthocyanin accumulation. Transient expression analysis showed that PyMYB73 substantially promotes anthocyanin biosyn -
+thesis by co-transforming with PyMYB10/PyMYB114 + PybHLH3
+; however, PyMYB6 inhibited anthocyanin biosynthesis in 
+strawberry (Fragaria vesca) receptacles and pear fruits, and PyMYB73 interacted with PyMYB10 and PyMYB6 but not 
+PyMYB114 or PybHLH3. Further investigation showed that Cys194 and Cys218 of PyMYB10 were modified by persulfidation 
+and that PyMYB10
+Cys218Ala substantially increased anthocyanin accumulation by a transient transformation system. Co-trans -
+formation of PyMYB10Cys218Ala + PyMYB73/PyMYB6 also promoted anthocyanin accumulation in pear fruits. Yeast two-hybrid 
+assays showed that the mutation of PyMYB10 did not affect the interaction between PyMYB10 and PyMYB73, but it inhibited 
+interaction with PyMYB6. Moreover, H
+2S weakened the interaction between PyMYB10 and PyMYB73 but enhanced the inter -
+action with PyMYB6. Thus, we provided a model in which PyMYB10 undergoes persulfidation at Cys218, enhancing the inter -
+action with PyMYB6 and reducing the interaction with PyMYB73. These subsequently results in lower expression of the 
+anthocyanin biosynthesis-related genes Pyrus dihydroflavonol 4-reductase (PyDFR)
+, Pyrus anthocyanidin synthase (PyANS), 
+Pyrus UDP-glucose: flavonoid 3-glucosyl transferase (PyUFGT) and Pyrus glutathione S-transferase (PyGST), thereby inhibiting 
+anthocyanin accumulation in red-skinned pears. Our findings provided a molecular mechanism for H2S-mediated anthocyanin 
+biosynthesis in red-skinned pears.
+Received November 08, 2022. Accepted January 19, 2023. Advance access publication February 17, 2023
+© American Society of Plant Biologists 2023. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com
+Research Article 
+Introduction
+Pear (Pyrus L.) is an important economic fruit in temperate 
+regions. Recently, red-skinned pear has been widely accepted 
+by consumers around the world because of its bright color 
+and abundant nutritional value (Tao et al. 2018). The red col-
+or of pear skin is due to anthocyanin accumulation ( Zhang 
+et al. 2020 ), which is largely synthesized in plants and pro -
+vides various colors and protection due to components 
+and complex environments for cell activities. Besides, antho -
+cyanins have remarkable antioxidant activity and underlying 
+benefits to human health, such as decreasing the risk of can -
+cer, coronary atherosclerosis, and inflammation (Butelli et al. 
+2008; Sun et al. 2014).
+Anthocyanins are final products of the flavonoid pathway. 
+Anthocyanin biosynthesis is mediated by a sequence of en -
+zymes, incorporating cinnamate 4-hydroxylase (C4H), 
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+2186 | PLANT PHYSIOLOGY 2023: 192; 2185–2202                                                                                                              Yao et al.
+chalcone synthase (CHS), chalcone isomerase (CHI), fla -
+vonoid 3-hydroxylase (F3’H), dihydroflavonol4-reductase 
+(DFR), anthocyanidin synthase (ANS), UDP-glucose fla -
+vonoid 3-O-glucosyltransferase (UFGT) and glutathione 
+S-transferase (GST) (
+Borevitz et al. 2000; Gonzalez et al. 
+2008). These enzymes are relatively conserved among 
+plant species. These structural genes of anthocyanin bio -
+synthesis are regulated by a complex comprising R2R3- 
+Myeloblastosis (MYB), basic helix-loop-helix (bHLH), and 
+tryptophan-aspartic acid repeat (WDR) proteins (MBW) 
+(
+Xu et al. 2015). Notably, R2R3-MYB transcription factors 
+(TFs) are the primary component in the MBW complex 
+(Davies et al. 2012).
+MYBs, a large transcription factor family, involved in regu -
+lating phenylpropanoid pathway structural genes have been 
+identified. Among them, many MYB members share the con-
+served MYB DNA-binding domain at the N-terminus ( Wu 
+et al. 2022). The domain generally includes up to four about 
+52 amino acid sequence repeats (R), each forming three 
+ɑ
+-helices (Ogata et al. 1996). According to the number of ad-
+jacent MYB repeats, MYBs can be classified into several differ-
+ent subfamilies ( Du et al. 2012). R2R3-MYBs are the most 
+common in the plant kingdom (Jiang et al. 2004). In pear, there 
+were 231 MYB proteins. Among them, 185 typical R2R3-MYB 
+proteins (Li et al. 2016
+). Until now, several PyMYB
+s are in -
+volved in regulating proanthocyanin, flavonoid, and antho -
+cyanin accumulation in pears ( Zhai et al. 2016; Yao et al. 
+2017). For example, PyMYB114 acts as an activator to regulate 
+anthocyanin accumulation when it couples with
+PybHLH3 and 
+Pyrus ethylene response factor 3(PyERF3) (Yao et al. 2017 ). A 
+TT2-type MYB PyMYB9 not only could bind to the PyANR 
+promoter to induct pro-anthocyanidin synthesis, but also ac-
+tivate the synthesis of flavonols and anthocyanins by binding 
+to the PyUFGT1 promoter (
+Zhai et al. 2016). PyMYB10 phys-
+ically interacts with PyHY5 to positively regulate anthocyanin 
+biosynthesis in pear by binding to G-box motifs ( Wang et al. 
+2020). In other species, it was reported that the association 
+of MdMYBA or MdMYB1 and MdMYB10 regulated anthocya-
+nin biosynthesis in Rosaceae (Lin et al. 2010 ). AtMYB113
+, 
+AtMYB75, and AtMYB114 in Arabidopsis, VvMYBA1 and 
+VvMYBA2 in grapevine (Vitis vinifera L.), PpMYB10.1 as activa-
+tors have been reported to regulate flavonoid, anthocyanin, 
+and proanthocyanin biosynthesis in peach (
+Prunus persica) 
+(Rahim et al. 2014).
+Besides MYB activators, MYB TFs also acted as a negative 
+regulator in anthocyanin accumulation. Such inhibitors prevent 
+excessive or inappropriate anthocyanin accumulation (Ma and 
+Constabel 2019). There are two different MYB types that inhibit 
+anthocyanin biosynthesis: R2R3-MYB and R3-MYB repressors, 
+which have one or two repeats of the MYB domain region re-
+spectively (Albert et al. 2014 ). The R2R3-MYB repressors are 
+identified by two conserved domains of C1 (LlsrGIDPx T⁄N HR) 
+and C2/EAR motif (LxLxL or DLNxxP) in their C terminus essen-
+tial for their repressive activity (Kranz et al. 1998; Kagale and 
+Rozwadowski 2011). The C2/EAR motif is one of the most 
+dominant repression motifs identified in plants. Such MYB 
+repressors including the FaMYB44.2 (R2R3-MYB) in strawberry 
+(
+Fragaria vesca), CmMYB7 (R3-MYB) in chrysanthemum 
+(Chrysanthemum morifolium Ramat.), StMYB44 (R2R3-MYB) 
+in potato (Solanum tuberosum L.) and PhMYB4 and PhMYB17 
+in petunia (Petunia ×atkinsiana) (Albert et al. 2011; Wei et al. 
+2018; Xiang et al. 2019; Zhou et al. 2019). These TFs could regu-
+late anthocyanin biosynthesis by binding sites of bHLH and/or 
+anthocyanin structural genes. However, it is not clear whether 
+these two motifs are the sole determinants of inhibitory activity 
+since the TLLFR motif at the C terminal of Arabidopsis thaliana 
+MYBL2 (
+AtMYBL2) has also been reported to have inhibitory ac-
+tivity (Matsui et al. 2008). In contrast to MYBL2, CPC and TRY 
+did not contain any repression motif in the C-terminal region, 
+but negatively regulated flavonoid accumulation (Tominaga 
+et al. 2007; Wang et al. 2008; Wester et al. 2009). In red-skinned 
+pear, it is unclear whether or not MYBs as repressors to regulate 
+anthocyanin accumulation.
+Hydrogen sulfide (H 2S), a gaseous signaling molecule, has 
+important effects on physiological functions, such as root for-
+mation, flower opening, stress response, and color change 
+during fruit ripening ( Yao et al. 2018; Shen et al. 2020; Ma 
+et al. 2021; Zhang et al. 2021). In tomatoes (
+Solanum lycoper-
+sicum
+), H2S could repress the fruit ripening process and color 
+change by the H 2S production enzyme SlLCD1 ( Hu et al. 
+2020). H 2S-mediated persulfidation of the target protein is 
+considered to be a type of post-translational protein modifi -
+cation. In Arabidopsis
+, it was reported that nearly 5% of pro -
+teins were modified by replacing the thiol group (-SH) at 
+cysteine residues with the persulfidation group (-SSH), and 
+most of the persulfidation proteins change the structure 
+and function in activity or subcellular localization. 
+Accumulative evidences showed that H2S control autophagy, 
+stomatal closure, and response stress by persulfidating modi-
+fication (Laureano-Marín et al. 2020; Shen et al. 2020; Zhang 
+et al. 2021; Zhou et al. 2021); In horticultural crops, H 2S per-
+sulfured BraFLC1/3 to inhibit its binding activity to down -
+stream target gene promoters, resulted in the flowering 
+process in Chinese cabbage (
+Ma et al. 2021). Thus, 
+H2S-mediated persulfidation involved in many aspects of 
+plant development, but the post-translational modification 
+whether or not regulated anthocyanin accumulation in red- 
+skinned pear remains unclear.
+In this study, to explore the relationship between H 2S and 
+anthocyanin accumulation in red-skinned pear, exogenous 
+H2S treated ‘Aohong No 1’ red-skinned pears during the fruit ri-
+pening and analyzed anthocyanin contents and gene expres -
+sions that responded to H 2S signaling, two MYB genes 
+PyMYB73 with partial EAR motif (LxLxP) and PyMYB6 with com-
+plete EAR motif (LxLxL) were screened. Co-expression of 
+PyMYB73
+/PyMYB6 with PyMYB10-PybHLH3 in strawberry and 
+pear fruits, anthocyanin contents markedly increased/decreased 
+by transient transformation system. To elucidate the finely regu-
+latory pattern of H2S-mediated the post-transcriptional modifi-
+cations of anthocyanin-related proteins, we identified the 
+modification site of PyMYB10, PyMYB73, and PyMYB6 by modi-
+fied biotin switching methods, western blot, and LC-MS/MS. 
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+PyMYB10 persulfidation inhibits red pear color                                                       PLANT PHYSIOLOGY 2023: 192; 2185–2202 | 2187
+Interestingly, it was found that PyMYB10 exists in sulfhydrylation 
+modification at Cys194 and Cys218. Transient expression system 
+combined with amino acid mutation technology proved that 
+PyMYB10Cys218Ala S-sulfhydrylation substantially inhibits antho-
+cyanin accumulation in strawberry and pear fruits, and it also 
+promoted the interaction with PyMYB6, but weakened the 
+interaction with PyMYB73 by Y2H and luciferase complementa-
+tion experiment. Thus, our findings provided a molecular mech-
+anism for H 2S-mediated anthocyanin biosynthesis in 
+red-skinned pears.
+Results
+PyMYB73 and PyMYB6 were screened by exogenous 
+H2S-treated ‘Aohong No.1’ and transcriptome of 
+‘Hongzaosu’ and ‘Zaosu’ pear
+To investigate the relationship between gaseous signal mol -
+ecule H 2S and the coloration of red-skinned pear, distilled 
+water and NaHS solutions (as the donor of H 2S) of different 
+concentrations (0.3, 0.6, 0.9 mM) were used to treat bagged 
+‘Aohong No.1’ pear without color during the fruit mature 
+period, and three different treatment times (1, 2, 3 d) and 
+three different light times (3, 6, 9 d) were set. The result 
+showed that compared with the control group (CK), the fruit 
+gradually accumulated anthocyanin with the extension of 
+light time. At the same time, with the increase of H 2S treat-
+ment concentration, the degree of pigment deposition in the 
+fruit epidermis decreased continuously, and the change of 
+anthocyanin contents was largely, especially at the light ir -
+radiation for 9 d (L9D), anthocyanin contents were two times 
+in 0.9 mM for 3 d H 2S than those of CK (P < 0.05) (Fig. 1, A 
+and B). In addition, we detected the endogenous H2S produc-
+tion after dark treatment with H 2S at different concentra -
+tions for 2 d and then irradiated for 9 d using the lead 
+sulfide method. As shown in Supplemental Fig. S1A, with 
+the increase of H 2S concentration, the color on the lead 
+Figure 1. Screening of candidate MYB genes responding to H2S signal in red-skinned pears. A) The phenotypic results of ‘Aohong No.1’ pear fruits treated 
+with different concentrations of H2S (0.0, 0.3, 0.6, and 0.9 mM) for 1, 2, and 3 d and then lighted for 3, 6, and 9 d. The scale bars in the figure represent 2 cm. 
+B) Determination of the total anthocyanin contents. Error bars represent the mean values ± SD from three biological replicate reactions. Statistical analysis 
+was carried out with Student’s t-test or Duncan’s multiple range tests, bars with different letters are significantly different at the P < 0.05 level. C) Analysis of 
+the relationship between the expression pattern of transcription factors that are related to anthocyanin synthesis and the anthocyanin content with dif-
+ferent concentrations of H2S for 2 d and lighting for three days. D) The phylogenetic tree of MYB TFs was constructed from pears and other species. E) 
+Amino acid sequence analysis of MYB TFs from different species which regulated anthocyanin biosynthesis. “LXLXL” indicates the EAR motif.
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+2188 | PLANT PHYSIOLOGY 2023: 192; 2185–2202                                                                                                              Yao et al.
+acetate filter paper gradually deepened. Subsequently, the 
+Luminance (L*) (Supplemental Fig. S1B) and color change 
+(a*/b*) (Supplemental Fig. S1C
+) of the lead acetate filter pa -
+per were measured via colorimeter, and similar results were 
+obtained (
+P < 0.05). In addition, the anthocyanin contents 
+of the sample were measured and found that its trend was 
+contrary to the generation of endogenous H 2S (P < 0.05) 
+(Supplemental Fig. S1D). Thus, the above results suggest 
+that H 2S could inhibit anthocyanin biosynthesis in a 
+concentration-dependent manner in red-skinned pears.
+To further explore the effect of H 2S on anthocyanin syn -
+thesis in red-skinned pear, we screened a series of differential-
+ly expressed transcription factors involved in anthocyanin 
+biosynthesis by analyzing the transcriptome data of 
+‘Hongzaosu’ and ‘Zaosu’ at 60 d after full blooming (DAFB), 
+which listed in Supplemental Table S1 . Then these differen -
+tially expressed genes with known MYB TFs in pears and 
+other species were analyzed through the evolutionary tree 
+and amino acid residue sequence alignment. PyMYB73 and 
+PyMYB6 are related to FaMYB44.2 by a phylogenetic analysis, 
+which acts as a transcriptional repressor in strawberries 
+(Fig. 1D ). Thus, we speculated that these PyMYB73 and 
+PyMYB6 may also involve in regulating anthocyanin biosyn -
+thesis in pear. Then, we analyzed the derived amino acid 
+alignment of PyMYB73
+, PyMYB6, and other MYB genes re -
+lated to the anthocyanin biosynthesis, such as MYB TFs, re -
+vealing the presence of R2R3 or R3 domain in all these 
+genes, PyMYB6 has complete EAR motif (LxLxL) whereas 
+PyMYB73 include an uncomplete amino acid residue (LxLxP) 
+with the phenylalanine “P” replaced to the leucine “L” 
+(
+Fig. 1E ). In addition, we found that the close relatives of 
+Pbr012310.1 and Pbr015309.1 screened from the transcrip -
+tome were PyMYB73 and PyMYB6
+, respectively. Therefore, 
+we performed RT-qPCR to analyze the four candidate genes 
+and other genes related to anthocyanin synthesis in ‘Zaosu’ 
+and ‘Hongzaosu’ at different stages after flowering and found 
+that the expression patterns of genes related to anthocyanin 
+synthesis in Pbr012310.1 and Pbr015309.1 were different. 
+However, the expression pattern of PyMYB73 is similar to 
+that of PyMYB10, PyMYB114, and PybHLH3, which have been 
+reported to regulate anthocyanins, while PyMYB6 was oppos-
+ite ( Supplemental Fig. S2 ). It may imply that PyMYB73 and 
+PyMYB6 have different functions in anthocyanin biosynthesis. 
+To further explore the relationship between H2S with antho-
+cyanin biosynthesis-related genes, we also performed the 
+RT-qPCR in the red-skinned pears from H2S treated for 2 d un-
+der light for 3 d. The expression levels of transcription factors 
+and structural genes such as PyMYB114
+, PyMYB10, PyWRKY26, 
+PyANS, PyDFR, and PyUFGT, which have been reported to be 
+related to anthocyanin biosynthesis, were determined and 
+heatmaps were analyzed. It was found that the expression pat-
+tern of PyMYB73 was similar to that of PyMYB10 and antho-
+cyanin contents, while that of PyMYB6 was the opposite 
+(Fig. 1C). It also showed that PyMYB73 and PyMYB6 could re-
+spond to H2S signal and play different roles in regulating the 
+biosynthesis of anthocyanins.
+Co-transformation of PyMYB73/PyMYB6 with 
+PyMYB10/PyMYB114 thereby affecting anthocyanin 
+synthesis in strawberry receptacles
+To prove the function of PyMYB73 and PyMYB6 in antho -
+cyanin synthesis, we carried out a transient expression assay 
+in strawberry receptacles via agroinfiltration. As shown in 
+Fig. 2A , the pSAK277 was injected as the negative control, 
+when PyMYB73
+/PyMYB6 alone was injected, which did 
+not show any pigmentation. Co-injection of PyMYB10 or 
+PyMYB114 with PybHLH3 could be observed weak pigmen -
+tation, and obvious color change could be observed when 
+PyMYB10
+-PybHLH3-PyMYB73 were co-injected. Similar pig -
+mentation could be observed when PyMYB114
+-PybHLH3 
+-PyMYB73 were co-transformed. However, the accumulation 
+of anthocyanin was substantially lower when PyMYB10- 
+PybHLH3-PyMYB6 or PyMYB114-PybHLH3-PyMYB6 were co- 
+injected. The total anthocyanin content of co-injecting 
+PyMYB10/PyMYB114-PybHLH3-PyMYB73 in a strawberry was 
+significantly higher than that with only the co-transformation 
+of PyMYB10/PyMYB114 and PybHLH3 (P < 0.05). However, 
+when PyMYB6 was co-injected with PyMYB10/PyMYB114- 
+PybHLH3, the opposite results for the anthocyanin contents 
+were obtained (P < 0.05) (
+Fig. 2B). Besides, the changes of a* va-
+lue were affected by the pigmentation of the strawberry recep-
+tacles (
+P < 0.05) ( Fig. 2C ). Overall, co-transformation of 
+PyMYB73 with PyMYB10
+/PyMYB114-PybHLH3 can obviously 
+enhance the anthocyanin biosynthesis, whereas PyMYB6 weak-
+en that in strawberry receptacles.
+To appraise the role of PyMYB73 and PyMYB6 in regulating 
+the anthocyanin biosynthesis, we analyze four structural genes 
+FvDFR
+, FvANS, FvUFGT, and FvGST, which are related to antho-
+cyanin biosynthesis in strawberry receptacles by RT-qPCR. As 
+shown in Fig. 2, D to G, cotransformation of PyMYB10
+/ 
+PyMYB114-PybHLH3-PyMYB73 significantly promoted the 
+expression levels of FvDFR, FvANS, FvUFGT and FvGST (P <  
+0.05). However, PyMYB6 had a strong inhibitory role. We con-
+cluded that co-transformation of PyMYB73
+-PyMYB10/ 
+PyMYB114-PybHLH3 can promote the anthocyanin synthesis 
+by upregulating the expression of the FvDFR, FvANS, 
+FvUFGT, and FvGST, but the effect of PyMYB6 is just the op -
+posite, which is consistent with the previous results.
+PyMYB73/PyMYB6 regulates anthocyanin 
+accumulation by competitive combination the 
+regulatory complex of PyMYB10/PyMYB114-PybHLH3
+To further identify the role of PyMYB73/PyMYB6 in antho -
+cyanin biosynthesis, different ratios of PyMYB73/PyMYB6 
+(1:1/2:1/1:2) with PyMYB10/PyMYB114 and PybHLH3 were 
+co-transformed into pear peels. We performed the transient 
+transformation in mature pear fruits at 90 DAFB. The pig -
+mentation in fruit peels could be observed at the injection 
+regions at 5 d postinfiltration. The pattern of change was 
+similar to that of strawberry receptacles. As shown in 
+Fig. 3A, no pigmentation was observed when the pSAK277 
+was infiltrated. Apparent pigmentation accumulation could 
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+PyMYB10 persulfidation inhibits red pear color                                                       PLANT PHYSIOLOGY 2023: 192; 2185–2202 | 2189
+be observed when PyMYB73-PyMYB10/PyMYB114-PybHLH3 
+were co-injected. Furthermore, the results showed that an 
+obvious color change could be observed when the 
+PyMYB73/PyMYB6 ratio increased from 1:1 to 2:1. However, 
+PyMYB6 could weaken pigmentation accumulation when it 
+was co-transformed with PyMYB10/PyMYB114 + PybHLH3 
+in pear fruit, and the pigmentation accumulation diminished 
+with the decreasing ratio of PyMYB73/PyMYB6 (1:1 to 1:2). As 
+the proportion of PyMYB6 continues to increase, the total 
+anthocyanin contents and a* values declined significantly 
+(P < 0.05). This is the opposite of the role of PyMYB73, and 
+their changes were in accordance to the phenotypes of the 
+pear peel mentioned above (Fig. 3, B and C). Thus, when co- 
+transformed with PyMYB73/PyMYB6 and PyMYB10/ 
+PyMYB114 + PybHLH3, a transcriptional complex may be 
+formed to competitively regulate anthocyanin accumulation.
+To further explore the mechanism of PyMYB73 and 
+PyMYB6 in regulating anthocyanin synthesis. RT-qPCR was 
+conducted to analyze the expression of PyDFR
+, PyANS, 
+PyUFGT, and PyGST, which were related to anthocyanin bio -
+synthesis and transport in pear fruit. Consistent with the 
+phenotypes of the pear peel, PyMYB73 could significantly 
+increase the relative expression of PyDFR , PyANS, PyUFGT, 
+and PyGST when it was co-transformed with PyMYB10/ 
+PyMYB114-PybHLH3, and as the proportion of PyMYB73 in-
+creased, this effect was continuously enhanced (
+P < 0.05). 
+However, PyMYB6 could inhibit the relative expression levels 
+of PyDFR, PyANS, PyUFGT, and PyGST when it was mixed with 
+PyMYB73 and PyMYB10/PyMYB114-PybHLH3, and the inhibi-
+tory effect showed a certain concentration dependence (
+P <  
+0.05) (Fig. 3, D to G). Furthermore, we designed transient ex-
+pression experiments to verify whether the interaction be -
+tween PyMYB73 and PyMYB6 affected the biosynthesis of 
+anthocyanins in pears. As shown in Supplemental Fig. S3A , 
+compared with pSAK277, the transformation of PyMYB73 
+could substantially promote the accumulation of anthocya -
+nin, while PyMYB6 had no obvious staining. In addition, 
+anthocyanin accumulation existed when PyMYB73 and 
+PyMYB6 were co-transformed at different ratios (1: 1/2:1/ 
+1:2). When PyMYB73 and PyMYB6 were injected at the ratio 
+of (2:1), the anthocyanin accumulation was significantly 
+higher than that of (1:1/1:2). When PyMYB73 and PyMYB6 
+were injected at the ratio of (1:2), the accumulation of antho-
+cyanin was significantly weaker than that of (1:1/2:1). As the 
+Figure 2. Coinjection of PyMYB73/PyMYB6 and related TFs by transient expression assay in strawberry receptacles. A) The phenotype of strawberry 
+receptacles 5 d after infiltration: a, pSAK277; b, PyMYB73; c, PyMYB6; d, PyMYB10 + PybHLH3; e, PyMYB10 + PybHLH3 + PyMYB73; f, PyMYB10 +  
+PybHLH3 + PyMYB6; g, PyMYB114 + PybHLH3; h, PyMYB114 + PybHLH3 + PyMYB73; i, PyMYB114 + PybHLH3 + PyMYB6. The scale bars represent 
+1 cm. B) Total anthocyanin contents were measured in transformed strawberry receptacles. Data are presented as means ± SD (n = 5). C) 
+Measurement of the chromatism changes of the injecting regions in strawberry receptacles. “a” represents the range from red to green. Data are 
+presented as means ± SD (n = 6). D–G) RT-qPCR analysis of the relative expression of FvDFR, FvANS FvUFGT, and FvGST. Error bars show the 
+mean values ± SD (n = 3). Statistical analysis was carried out with Student’s t-test, and significance was marked with different letters (P < 0.05).
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+2190 | PLANT PHYSIOLOGY 2023: 192; 2185–2202                                                                                                              Yao et al.
+proportion of PyMYB73 continues to increase, the total 
+anthocyanin contents and a* values increased 
+substantially(P < 0.05), and there was an opposite result 
+when the proportion of PyMYB6 continues to increase 
+(P < 0.05) (Supplemental Fig. S3, B and C). In addition, we 
+analyzed the expression of PyDFR, PyANS, PyUFGT, and 
+PyGST by RT-qPCR. Consistent with the phenotypes of the 
+pear peel, PyMYB73 could significantly increase the relative 
+expression levels of PyDFR, PyANS, PyUFGT, and PyGST. 
+When it was co-transformed with PyMYB6, and with the 
+Figure 3. The functional analysis of PyMYB73/PyMYB6 cotransformed with its partners thereby effecting anthocyanin biosynthesis by transient ex-
+pression assays in pear skins. (a) the phenotype changes of ‘Zaosu’ pears at 7 d after infiltration; a, pSAK277; b, PyMYB10 + PybHLH3; c, (PyMYB10 +  
+PybHLH3) + PyMYB73; d, (PyMYB10 + PybHLH3) + PyMYB6; e, (PyMYB10 + PybHLH3) + PyMYB73:PyMYB6(1:1); f, (PyMYB10 + PybHLH3) +  
+PyMYB73:PyMYB6(2:1); g, (PyMYB10 + PybHLH3) + PyMYB73:PyMYB6(1:2); h, PyMYB114 + PybHLH3; i, (PyMYB114 + PybHLH3) + PyMYB73; j, 
+(PyMYB114 + PybHLH3) + PyMYB6; k, (PyMYB114 + PybHLH3) + PyMYB73:PyMYB6(1:1); l, (PyMYB114 + PybHLH3)+PyMYB73:PyMYB6(2:1); m, 
+(PyMYB114 + PybHLH3)+PyMYB73:PyMYB6(1:2). The scale bars in the figure represent 2 cm. B) The total anthocyanin contents were determined 
+in pear peels. Error bars represent the mean values ± SD from five replicate reactions. C) Determination of color change in pear peels by chromatism 
+analysis. “a” represents the range from red to green. Error bars represent the mean values ± SD from six replicate reactions. D–G) The relative ex -
+pression levels of PyDFR
+, PyANS, PyUFGT, and PyGST were analyzed by RT-qPCR. Error bars show the mean values ± SD (n = 3). Statistical analysis was 
+carried out with Student’s t-test, and significance was marked with different letters (P < 0.05).
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+PyMYB10 persulfidation inhibits red pear color                                                       PLANT PHYSIOLOGY 2023: 192; 2185–2202 | 2191
+proportion of PyMYB73 increased, this effect was continu -
+ously enhanced (
+P < 0.05). However, PyMYB6 could inhibit 
+the relative expression levels of PyDFR, PyANS, PyUFGT, and 
+PyGST. When it was co-transformed with PyMYB73 the in -
+hibitory effect showed a certain concentration dependence 
+(
+P < 0.05) (Supplemental Fig. S3, D to G).
+Identify the interaction between PyMYB73, PyMYB6 
+and other genes by Y2H
+Cloning PyMYB73/PyMYB6 as a coding sequence (CDS), or 
+with amino acid residues removal of the C- or N-terminal, 
+and inserting into pGBKT7. The CDS of PyMYB10, 
+PyMYB73, PyMYB114, and PybHLH3 were also recombined 
+into pGADT7 to test its interaction with PyMYB73/ 
+PyMYB6. The results indicated that the full sequences (III) 
+and the C-terminal 69 (residues 170 to 239; IV) of 
+PyMYB73 represented reporter activity, with two 
+N-terminal fragments, PyMYB73 1–100 (I) and PyMYB73 1–170 
+(II), and the C-end fragment PyMYB73 100–239 (V), represent-
+ing no reporter activity. When the co-conversion of the 
+C-terminal 139 amino acids (V) of PyMYB73 with 
+PyMYB10 representing that both growth on double defi
+-
+ciency and four deficiency screening media. Therefore, the 
+interaction site of PyMYB73 and PyMYB10 was within the 
+N-end 139 amino acids (V) (
+Fig. 4, A and B ). When 
+PyMYB73 with PyMYB114 were co-converted into yeast, ex -
+cept for the complete amino acid sequences (III) and the 
+C-end 69 amino acids (residues 170 to 239; IV), no other 
+reported activity was represented ( Supplemental Fig. S4A). 
+The same result occurs when PyMYB73 and PybHLH3 were 
+co-converted into yeast (Supplemental Fig. S4B ). Moreover, 
+seven fragments of PyMYB6 (I-VII) showing no reporter ac -
+tivity. The co-conversion of the N-terminal 117 amino acids 
+(II) of PyMYB6 with PyMYB10 showed both growth on dou -
+ble deficiency and four deficiency screening media. Thus, the 
+interaction sites of PyMYB6 and PyMYB10 in the regions of 
+the N-terminal 117 amino acids (II) ( Fig. 4, C and E ). In add-
+ition, when the complete amino acid sequences of PyMYB6 
+with PyMYB73 were co-transformed into yeast, it showed re-
+porter activity on double deficiency media and four defi -
+ciency media ( Fig. 4D). Co-conversion of the amino acid 
+sequences (I)-(VII) of PyMYB6 with PyMYB114 and 
+PybHLH3 did not obvious reporter activity on four deficiency 
+screening media. It suggested that PyMYB6 was unable to 
+interact with PyMYB114 or PybHLH3 at the protein level 
+(Supplemental Fig. S4, C and D). In summary, it was 
+Figure 4. Verifying the regulatory pattern of PyMYB73/PyMYB6 and PyMYB10 in vivo. A) The roman numerals I-V indicated different amino acid 
+residues of PyMYB73. B) Validation of interaction between PyMYB73 and PyMYB10 in vivo. C) The roman numerals I-VII indicated different amino 
+acid residues of PyMYB6. D) Validation of interaction between PyMYB73 and PyMYB6 in vivo. E) Validation of interaction between PyMYB6 and 
+PyMYB10 in vivo. F) Model of the NLuc, CLuc, and NLuc/CLuc constructs. G and H) The interactions between PyMYB10, PyMYB6, and PyMYB73 
+were verified using leaflet Nicotiana benthamiana. Bars represent mean values ± SD from five biological replicates. I) Verifying of PyMYB10, PybHLH3, 
+and PyMYB73 or PyMYB6 cotransformation activates the PyANS promoters, and the LUC/REN value indicated promoter activity by the dual luci -
+ferase reporter (DLR) assay. Error bars show the mean values ± SD (n = 5). Statistical analysis was carried out with Student’s t-test, and significance 
+was marked with different letters (P < 0.05).
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+2192 | PLANT PHYSIOLOGY 2023: 192; 2185–2202                                                                                                              Yao et al.
+concluded that PyMYB73/PyMYB6 can interact with 
+PyMYB10, and PyMYB73 also can interact with PyMYB6 in 
+yeast.
+To further prove the interaction between PyMYB10 and 
+PyMYB73/PyMYB6, the luciferase complementary experi -
+ment was conducted. PyMYB73/PyMYB6 was recombined 
+into the firefly luciferase (NLuc)’s N-terminal regions, and 
+PyMYB10 and PyMYB73 were inserted into the firefly lucifer-
+ase (CLuc)’s C-terminal regions (Fig. 4F). Co-expression of the 
+NLuc-PyMYB73 or NLuc-PyMYB6 and CLuc-PyMYB10 re -
+combination indicated significant luciferase enzyme activity 
+(
+P < 0.05). Co-expression of the NLuc-PyMYB6 and 
+CLuc-PyMYB73 recombination indicated obvious luciferase 
+enzyme activity as well (P < 0.05). On the contrary, there 
+was no apparent luciferase enzyme activity in any control 
+groups (
+Fig. 4, G and H ). In general, it was concluded that 
+there existed an interaction between PyMYB73, PyMYB6, 
+and PyMYB10. These implied that a transcriptional regula -
+tory complex of PyMYB73-PyMYB6-PyMYB10 regulated 
+anthocyanin biosynthesis in pear.
+The dual luciferase reporter assay (DLR) the 
+cotransformation of PyMYB73/PyMYB6 affecting the 
+activity of PyDFR, PyANS, and PyUFGT promoters
+Performing a DLR in Nicotiana benthamiana to confirm the ac-
+tivation for PyDFR
+, PyANS, and PyUFGT via co-injecting 
+PyMYB73/PyMYB6-PyMYB10-PybHLH3. The results indicated 
+that PyMYB73/PyMYB6 effected these promoters’ activation. 
+Co-transformation of PyMYB73 or PyMYB6 could improve the 
+activation of the PyANS promoters with PyMYB10-PybHLH3 
+(P < 0.05), and there is a significant difference in co- 
+transformation of various ratios of PyMYB73/PyMYB6 (1:1/2:1/ 
+1:2) and PyMYB10 +PybHLH3 (P < 0.05) ( Fig. 4I ). However, 
+PyMYB73 with PyMYB6 co-transformation showed no signifi-
+cant activation to PyDFR and PyUFGT (Supplemental Fig. S4, 
+E and F). It appears that PyMYB73 and PyMYB6 can form regu-
+latory complex PyMYB73-PyMYB10-PybHLH3-PyMYB6 to regu-
+late the transcription of anthocyanin biosynthetic genes 
+PyDFR and PyUFGT
+.
+Identification of persulfidation modification at 
+Cys194 and Cys218 of PyMYB10
+From the above analysis, we found that PyMYB73 and 
+PyMYB10 showed similar expression patterns after being 
+treated with different concentrations of exogenous H 2S for 
+2 d and exposed to light for 2 d, both of which were down -
+regulated with the increase of treatment concentration, 
+but the expression level of PyMYB6 showed was opposite. 
+At the same time, we found that PyMYB73 and PyMYB6 
+played a different role in regulating anthocyanin synthesis 
+in strawberry and pear fruits. We speculate that the reason 
+for this phenomenon may be the proteins were modified per-
+sulfidation through H 2S. First, we expressed and purified 
+PyMYB73, PyMYB10, and PyMYB6 proteins from 
+Escherichia coli. The expression and purification results of 
+PyMYB10 are shown in Fig. 5, A and B. The expression and 
+purification results of PyMYB6 and PyMYB73 are shown in 
+Supplemental Fig. S5, A to D . Then we used a modified 
+biotin-switch method (MBSM) to detect the signal of persul-
+fidation (Chen et al. 2021). As shown in Fig. 5, C and D, NaHS 
+induced persulfidation of PyMYB10 in a dose-dependent 
+manner, and when dithiothreitol (DTT) was added, which 
+could eliminate the persulfidation, we did not observe any 
+signals of persulfidation in PyMYB73 and PyMYB6 
+(Supplemental Fig. S5, E and F ). To further verify this result, 
+we performed liquid chromatography–tandem mass spec -
+trometry (LC–MS/MS) to analyze the recombinant 
+PyMYB10 protein. It was determined that the Cys194 and 
+Cys218 residues had acquired a sulfhydryl modification 
+(Fig. 5, E and F).
+Mutations at Cys194 and Cys218 of PyMYB10 can 
+positively regulate the biosynthesis of anthocyanins 
+in strawberry receptacles
+To determine whether the two cysteine residues of PyMYB10 
+could affect anthocyanin synthesis, we mutated Cys194 and 
+Cys218 of PyMYB10 to alanine (Fig. 5G). Then we carried out 
+transient transformation in strawberry receptacles via 
+agroinfiltration. As shown in Fig. 6A, except pSAK277, other 
+combinations had obvious pigment deposition on the straw-
+berry fruit epidermis, and it was worth noting that the pig -
+ment accumulation was deepened after the mutation of 
+two cysteine residues of PyMYB10, especially 
+PyMYB10Cys218Ala.The total anthocyanin content and a * va-
+lue were analyzed, which were the same as the visual obser -
+vations (
+P < 0.05) (Fig. 6, B and C). To explore the mechanism 
+of PyMYB10 in regulating anthocyanin synthesis, we de -
+tected the expression levels of anthocyanin biosynthesis- 
+related genes by RT-qPCR analysis. It could be seen from 
+Fig. 6, D to G, which except pSAK277, other combinations 
+could improve the expression levels of anthocyanin 
+biosynthesis-related genes, especially PyMYB10 Cys194Ala, 
+PyMYB10Cys218Ala and PyMYB10 Cys194AlaCys218Ala could sig -
+nificantly improve (
+P < 0.05). These results suggested that 
+mutations of PyMYB10 Cys194Ala or PyMYB10 Cys218Ala would 
+increase anthocyanins accumulation, and it seems that 
+Cys218 might play a more important role by comparing 
+with Cys194.
+H2S inhibits the function of PyMYB10 through 
+persulfidation at Cys194 and Cys218 in pears
+Through heterologous expression in strawberries, we 
+preliminarily infer that the mutation of PyMYB10 Cys194Ala 
+or PyMYB10 Cys218Ala would increase anthocyanins 
+accumulation. To verify this result again, we performed the tran-
+sient transformation in mature pear fruits (90 DAFB) and treated 
+a group with 0.9 mM NaHS. Fruit color could be noticed at the 
+infiltration sites after 5 d. As shown in Fig. 7A, after 0.9 mM NaHS 
+treatment, the pigment deposition of PyMYB10 was weakened, 
+the pigment deposition of PyMYB10 Cys194Ala and double 
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+PyMYB10 persulfidation inhibits red pear color                                                       PLANT PHYSIOLOGY 2023: 192; 2185–2202 | 2193
+mutations PyMYB10Cys194AlaCys218Ala had no substantial differ-
+ence, while PyMYB10Cys218Ala was enhanced. The results of total 
+anthocyanin content and a* value supported the visual observa-
+tions (
+P < 0.05) (Fig. 7, B and C). Then, we also conducted 
+RT-qPCR to analyze the relative expression levels of anthocyanin 
+biosynthesis-related genes in pears. The results demonstrated 
+that in the H 2S treatment group, PyMYB10 decreased 
+the expression levels of anthocyanin biosynthesis-related 
+genes (PyDFR, PyANS, PyUFGT, and PyGST), while after the 
+mutation of PyMYB10 Cys194Ala, PyMYB10 Cys218Ala, and 
+PyMYB10Cys194AlaCys218Ala were injected, the expression levels 
+of these genes increased except PyANS, especially the expression 
+levels of PyDFR, PyUFGT, and PyGST in PyMYB10Cys218Ala were 
+significantly higher than those of other combinations (P <  
+0.05) (Fig. 7, Dto G). Then we conducted a DLR assay to explore 
+the activation activity of PyMYB10 on the promoters of PyDFR, 
+PyANS, and PyUFGT. The results displayed that PyMYB10 might 
+regulate anthocyanin synthesis by activating PyDFR (P < 0.05) 
+(Supplemental Fig. S6, A to C). In addition, it was determined 
+the effect of H 2S in regulating PyMYB10 activating PyDFR 
+promoter. We found that H2S could decrease the activation ac-
+tivity of PyMYB10 on the promoter, PyMYB10Cys194AlaCys218Ala no 
+activation activity change, while the activation activity of 
+PyMYB10Cys194Ala and PyMYB10Cys218Ala increased, especially 
+PyMYB10Cys218Ala (P < 0.05) ( Supplemental Fig. S6D). In a 
+word, H2S inhibits anthocyanin synthesis by persulfidation at 
+Cys194 and Cys218 of PyMYB10 to weaken the activation for 
+downstream target genes.
+Mutations at Cys194/Cys218 of PyMYB10 increased 
+anthocyanin biosynthesis by co-transforming with 
+PyMYB73/PyMYB6 in pear
+Through transient expression in strawberries and pears, we 
+found that mutations of Cys194Ala, Cys218Ala, and 
+Cys194AlaCys218Ala in PyMYB10 could promote anthocya -
+nin synthesis. However, for further exploring the effect of 
+PyMYB10 mutation on its interaction factor PyMYB73/ 
+Figure 5. Identification of PyMYB10 persulfidation modification sites. A) The expression of PyMYB10 protein. M, marker of protein molecular 
+weight; 1, before induction; 2, after induction. B) Purification of PyMYB10 protein. 1–3 indicated the number of protein elution. C) In vitro 
+PyMYB10 persulfidation was detected using the biotin-switch assay. Proteins were treated with different concentration of NaHS or NaHS + DTT 
+(1 mM) for 30 min. D) Quantification of the degree of persulfidation shown in C). Error bars are presented as means ± SD (n = 3). Statistical analysis 
+was carried out with Student’s t-test, and significance was marked with different letters (P < 0.05). E and F) Mass spectrometric analysis of the per-
+sulfidation modification sites of PyMYB10 protein. LC–MS/MS spectrum implied that the peptide, RAA C
+194PSIELEEELFTTFWFDDRL and 
+RSC
+218
+ANFPEEGQSRS are persulfidated under control conditions. G) Schematic diagram of PyMYB10 sulfhydrylation modification sites by 
+Cys-Ala. The red letters indicate sulfhydrylation of amino acids at 218 and 194 sites, respectively. The letters on the yellow background represent 
+the CDS sequence corresponding to the amino acid sequence, where in the “TGT” on the red background represents the corresponding codon of the 
+194 and 218 amino acids, respectively, and the “GCG” on the red background represents the codon after the “TGT” mutation to Alanine (Ala).
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+2194 | PLANT PHYSIOLOGY 2023: 192; 2185–2202                                                                                                              Yao et al.
+PyMYB6, we co-transformed PyMYB10 mutations with 
+PyMYB73/PyMYB6 into pear fruit for transient expression. It 
+can be observed that all combinations showed pigment 
+accumulation, which was higher than that of the control group. 
+From the phenotype, total anthocyanin content, and a* value, it 
+can be concluded that PyMYB10 with the Cys218Ala mutation, 
+is higher than other groups (P < 0.05) (Fig. 8, Ato C). RT-qPCR 
+was constructed to determine the expression patterns of antho-
+cyanin biosynthesis-related genes. When PyMYB10Cys218Ala co- 
+transformed with PyMYB73, the expression levels of PyDFR, 
+PyANS, PyUFGT, and PyGST were higher than those of unmu-
+tated ones, as was PyMYB6 (
+P < 0.05) (Fig. 8, D to G). It sug-
+gested that the Cys218 site of PyMYB10 played an important 
+role in affecting anthocyanin synthesis.
+Validation of the interaction between PyMYB73/ 
+PyMYB6 and mutations of Cys194Ala, Cys218Ala or 
+Cys194AlaCys218Ala in PyMYB10
+The yeast two-hybrid experiments were used to verify the 
+interaction between PyMYB10 contained the sites of 
+Cys194Alaor Cys218Alaor Cys194AlaCys218Ala with 
+PyMYB73/PyMYB6 segments and full-length. It can be seen 
+from Fig. 9, A to C, after the PyMYB10 Cys194Ala, 
+PyMYB10Cys218Ala, and PyMYB10 Cys194AlaCys218Ala mutation, it 
+still interacted with PyMYB73 that with the N-terminal 139 
+amino acids (V), but there is no interaction effect with 
+PyMYB6. For further identification of the interaction 
+between PyMYB10
+Cys194Ala, PyMYB10 Cys218Ala, and 
+PyMYB10Cys194AlaCys218Ala with PyMYB73/PyMYB6 by an FLC as-
+say in N. benthamiana
+. It can be concluded that PyMYB10 with 
+the Cys194, Cys218, and Cys194Cys218 mutation, were inserted 
+into the firefly luciferase (CLuc)’s C-terminal region, which co- 
+expression with the NLuc-PyMYB73 displayed the capability 
+to luciferase enzyme activity. However, Nluc-PyMYB6 turned 
+out to be the opposite. In addition, we found that compared 
+with CK, when treated with exogenous H2S, the luciferase en-
+zyme activity of Cluc-PyMYB10 and Nluc-PyMYB73 decreased 
+to a certain extent, while the luciferase enzyme activity of 
+Nluc-PyMYB6 and Cluc-PyMYB10 increased significantly (
+P <  
+0.05), but the luciferase enzyme activity of Cluc-PyMYB10, 
+which contained two cysteine mutation, with Nluc-PyMYB73/ 
+PyMYB6 did not change substantially ( Fig. 9G). It suggested 
+that H2S may enhance the interaction between PyMYB10 and 
+PyMYB6, weaken the interaction between PyMYB10 and 
+PyMYB73 and H
+2S may inhibit anthocyanin biosynthesis by af-
+fecting the interaction between PyMYB10 and PyMYB73/ 
+PyMYB6.
+Figure 6. Effect of the two cysteine mutations of PyMYB10 on anthocyanin synthesis, by transient expression assay in strawberry receptacles. A) The 
+phenotype of strawberry receptacles at 5 d after infiltration: a and b, pSAK277; c and d, PyMYB10; e and f, PyMYB10 Cys194Ala; g and h, 
+PyMYB10Cys218Ala; i and j, PyMYB10 Cys194AlaCys218Ala. The scale bars represent 1 cm. B) Total anthocyanin contents were determined in strawberry 
+receptacles. Data are presented as means ± SD (n = 5). C) Chromatism analysis of the injection regions in strawberry receptacles. “a” represented the 
+range from red to green. Data are presented as means ± SD (n = 6). D–G) RT-qPCR analysis of the expression levels of the genes, FvDFR, FvANS, 
+FvUFGT, and FvGST. Error bars show the mean values ± SD (n = 3). Statistical analysis was carried out with Student’s t-test, and significance was 
+marked with different letters (P < 0.05).
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+PyMYB10 persulfidation inhibits red pear color                                                       PLANT PHYSIOLOGY 2023: 192; 2185–2202 | 2195
+Discussions
+A complete EAR motif is essential to repress 
+anthocyanin biosynthesis in red-skinned pear
+Red-skinned pear has been widely cultivated and accepted by 
+consumers around the world because of its attractive color 
+and underlying nutritional value. However, the coloration 
+of fruits is influenced by a series of factors, including tran
+-
+scription factors MYBs, ERFs, ethylene, H 2S, and other hor -
+mones ( Yao et al. 2017, 2018; Tao et al. 2018; Hu et al. 
+2020; Ni et al. 2021 ). It may imply that they have different 
+regulatory mechanisms and complex regulatory networks. 
+In our present study, we have observed that there was dom -
+inant anthocyanin deposition in red-skinned pear 
+‘Hongzaosu’ compared with ‘Zaosu’ during the fruit develop
+-
+ment stages. Subsequently, a pear MYB gene, namely 
+PyMYB73
+, was screened from the transcriptome data for 
+the upregulated expression in red-skinned pear peels, which 
+may involve in anthocyanin biosynthesis ( Supplemental 
+Table S1 ). Then we found another MYB that belongs to 
+the same branch as PyMYB73
+, namely PyMYB6, which con-
+tains a complete C2/EAR motif (LxLxL) located in the C ter -
+minus, and PyMYB73 has an incomplete EAR motif (LxLxP) 
+(Fig. 1, D and E). Further identification showed that 
+PyMYB73 could enhance anthocyanin accumulation in 
+strawberry receptacles and pear fruit, especially when co- 
+transformed with other TFs (Fig. 3A and 4A). However, 
+PyMYB6 including an “LxLxL” motif resulted in weakening 
+anthocyanin accumulation, it is different from the function 
+of PyMYB73. The repressors usually contain a C2/EAR 
+(LxLxL or DLNxxP) negative repressor motif located in the 
+C-terminal region, which is essential to the repressive effect 
+(Zheng et al. 2019). According to recent reports, flesh- 
+specific StMYB44 represses the biosynthesis of anthocyanin 
+in potato flesh (Liu et al. 2019). In peach, PpMYB18 as a nega-
+tive R2R3-MYB regulator competitively inhibits the inter -
+action of MYB activators with bHLHs, resulting in a 
+decrease in anthocyanin content ( Zhou et al. 2019. 
+Figure 7. Effect of the two cysteine mutations of PyMYB10 on anthocyanin synthesis with H2S treatment by transient expression assays in pears. A) 
+The phenotypic results of the pear cultivar ‘Zaosu’ at 4 d after infiltration. CK: dark treat for 24 h and light for 4 d; H2S:(dark and 0.9 mM NaHS) treat 
+for 24 h and light for 4 d. a and f: pSAK277; b and g: PyMYB10; c and h: PyMYB10 Cys194Ala; d and i: PyMYB10 Cys218Ala; e and j: 
+PyMYB10Cys194AlaCys218Ala. The scale bars in the figure represent 2 cm. B) The total anthocyanin contents were determined in pear peels. Error 
+bars represent the mean values ± SD from three biological replicates. C) Measurement of the color change in pear peels by chromatism analysis. 
+“a” indicated the range from red to green; Error bars indicate the mean values ± SD from six biological replicates. D–G) RT-qPCR analysis of the 
+expression levels of the genes, PyDFR, PyANS, PyUFGT, and PyGST in pear peels. Error bars show the mean values ± SD (n = 3). Statistical analysis 
+was carried out with Duncan’s multiple range tests, bars with different letters are significantly different at the P < 0.05 level.
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+2196 | PLANT PHYSIOLOGY 2023: 192; 2185–2202                                                                                                              Yao et al.
+FhMYB27 protein can repress anthocyanin accumulation by 
+interacting with the FhTT8L, which belongs to the bHLH TF 
+family (Li et al. 2020). Here, leucine in the EAR motif of 
+PyMYB73 is replaced by phenylalanine, generating diverse 
+function differences with PyMYB6 (LxLxL), suggesting that 
+a complete EAR motif in the C-terminus is essential for its 
+activity.
+MYBs act as activators or repressors coregulated 
+anthocyanin biosynthesis
+The MYB family is large and has diverse function in plants, 
+which are the key factors in regulating secondary metabolism 
+and responding to biotic and abiotic stress (Wu et al. 2022 ). 
+MYBs not only act as transcriptional activators but also act as 
+repressors. MYB TFs as activators usually interact with bHLH 
+and WD40 to form a regulatory complex. However, these 
+three proteins are not indispensable for the anthocyanin bio-
+synthesis. Here, we found co-expression of PyMYB73 or 
+PyMYB6 with PyMYB10/PyMYB114 + PybHLH3 and enhance 
+or repress anthocyanin biosynthesis in strawberry receptacles 
+and pears, and PyMYB73, PyMYB10, and PyMYB6 could 
+interact with each other ( Fig. 4 ), whereas we detected no 
+interaction between PyMYB114/PybHLH3 and PyMYB73/ 
+PyMYB6 in yeast. In a previous study, PyMYB10 with 
+PyMYB114 were reported to co-regulate anthocyanin accu -
+mulation in red-skinned pear by forming PyMYB10- 
+PyMYB114 regulatory complex ( Yao et al. 2017), PpMYB140 
+as a repressor to inhibit anthocyanin biosynthesis in red- 
+skinned pears (Ni et al. 2021
+). Our study provided evidence 
+that the complex PyMYB10-PyMYB73-PyMYB6 for balancing 
+the excessive accumulation of anthocyanin in the coloration 
+of red-skinned pear. Meanwhile, we speculate that 
+PyMYB73/PyMYB6 may interact with PyMYB114 in another 
+way to regulate the biosynthesis of anthocyanins. It is re -
+ported that PyWRKY26 had a stronger activation effect on 
+the PyMYB114 promoter to enhance the expression of antho-
+cyanin biosynthesis and transport-related structural genes 
+(Li et al. 2020), indicating PyMYB73/PyMYB6 probably will 
+act on the promoter of PyMYB114 to regulate anthocyanin 
+biosynthesis. Furthermore, PyMYB114 can interact directly 
+with PyMYB10 on the protein level to substantially enhance 
+anthocyanin biosynthesis, indicating PyMYB73/PyMYB6 
+could probably indirectly regulate the activity of 
+Figure 8. Cotransformation of the persulfidation modification of PyMYB10 and its partners resulted in anthocyanin biosynthesis in pear skins by 
+transient expression assays. A) The phenotype of the pear cultivar ‘Zaosu’ at 4 d after infiltration: a, pSAK277; b, PyMYB10 + PyMYB73; c, 
+PyMYB10Cys194Ala + PyMYB73; d, PyMYB10 Cys218Ala + PyMYB73; e, PyMYB10 Cys194AlaCys218Ala + PyMYB73; f, PyMYB10 + PyMYB6; h, 
+PyMYB10Cys194Ala + PyMYB6; i, PyMYB10 Cys218Ala + PyMYB6; j, PyMYB10 Cys194AlaCys218Ala +PyMYB6. The scale bars represent 2 cm. B) The total 
+anthocyanin contents were assessed in transformed pear peels. Bars indicate mean values ± SD from three biological replicates. C) Chromatism ana-
+lysis of the color change in the injected regions of pear peels. “a” indicated the range from red to green; Error bars represent the mean value ± SD from 
+six biological repeats. D–G) The expression levels of the genes, PyDFR, PyANS, PyUFGT, and PyGST were analyzed in pears by RT-qPCR. Bars indicate 
+mean values ± SD from three biological replicates. Statistical analysis was carried out with Student’s t-test, and significance was marked with different 
+letters (P < 0.05).
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+PyMYB10 persulfidation inhibits red pear color                                                       PLANT PHYSIOLOGY 2023: 192; 2185–2202 | 2197
+PyMYB114 by interacting with PyMYB10. However, there is 
+no evidence to prove these deductions, the mechanism of 
+this gene needs to be studied further.
+Persulfidation of PyMYB10 interferes 
+MYB10-MYB73-MYB6 complex thereby inhibiting 
+anthocyanin synthesis in red-skinned pear
+Accumulating evidence emphasizes the regulation of antho -
+cyanin biosynthesis in horticultural crops on phosphoryl -
+ation ( Mao et al. 2022), ubiquitination (Tao et al. 2020), 
+glycosylation (Xu et al. 2019) and methylation (Peng et al. 
+2020). The per-sulfidation modification of regulating antho -
+cyanin biosynthesis in fruits is remain unclear. In this study, 
+we found that H 2S significantly inhibits anthocyanin accu -
+mulation in red-skinned pears with the concentration- 
+dependent way ( Fig. 1, A and B). Moreover, the activator 
+PyMYB10 is affected in response to H 2S signaling and the 
+Cys194 and Cys218 were modified by persulfidation 
+(Fig. 5
+), PyMYB10Cys218Ala significantly increases anthocyanin 
+accumulation in strawberry receptacles and H 2S-treatment 
+inhibits anthocyanin accumulation when PyMYB10 was 
+transformed, but the mutation of PyMYB10Cys218Ala is oppos-
+ite, and it does not affect the mutation of PyMYB10 Cys194Ala 
+and PyMYB10Cys194AlaCys218Ala in transient transformation in 
+pears (Figs. 6 and 7), it suggested that H 2S-mediated persul-
+fidation modification of PyMYB10 at Cys218 is a key modifi -
+cation site for regulating anthocyanin biosynthesis in 
+red-skinned pear. Further validation showed that cotransfor-
+mation of PyMYB10Cys218Ala with PyMYB73 in pear fruit also 
+promotes anthocyanin accumulation by the interaction 
+PyMYB10 with PyMYB73, but not PyMYB6 ( Fig. 8), and 
+H2S-medicated persulfidation weakened the interaction 
+with PyMYB73 but enhanced the interaction with PyMYB6. 
+These results were similar to the report from Chen et al. 
+(2020)
+to the persulfidation of SnRK2.6 promotes its activity 
+and the interaction with TF ABA response element-binding 
+factor 2 (ABF2). It suggested that protein persulfidation 
+could alter the interaction by partially or completely com -
+promising. Further studies are needed to determine whether 
+persulfidation acts by causing changes in PyMYB10 protein 
+structure and how persulfidation of PyMYB10 regulates 
+anthocyanin accumulation in red-skinned pear in vivo. 
+Thus, we provided a model, in which PyMYB10 undergoes 
+persulfidation at Cys 218, enhanced the interaction with 
+PyMYB6 and reduced the interaction with PyMYB73, result -
+ing in the inhibition of the expression of anthocyanin 
+biosynthesis-related genes PyDFR, PyANS
+, PyUFGT, and 
+Figure 9. The interaction between PyMYB6/PyMYB73 and the mutation of thiolated modification sites of PyMYB10 was revalidated in vivo. A–C) In 
+vivo validation of the interaction between PyMYB73 and PyMYB10 with the mutation at Cys194 or Cys218 or Cys194Cys218 as Ala. D–F) In vivo 
+validation of the interaction between PyMYB6 and PyMYB10 with the mutation at Cys194 or Cys218 or Cys194Cys218 as Ala. Cys194Ala and 
+Cys218Ala represent mutations of PyMYB10 cysteine sites as Ala at positions 194 and 218, respectively. G) Firefly luciferase complementation assays 
+to demonstrate the interaction between PyMYB10 cysteine site mutation and PyMYB73/PyMYB6. Error bars show the mean values ± SD (n = 5). 
+Statistical analysis was carried out with Duncan’s multiple range tests, bars with different letters are significantly different at the P < 0.05 level.
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+2198 | PLANT PHYSIOLOGY 2023: 192; 2185–2202                                                                                                              Yao et al.
+PyGST, thereby inhibited anthocyanin accumulation in red- 
+skinned pears (Fig. 10). Our results provided a molecular 
+mechanism for H
+2S-mediated anthocyanin biosynthesis in 
+red-skinned pears.
+Materials and methods
+Plant materials
+In this study, the red-skinned pear ‘Hongzaosu’ (Pyrus pyrifo-
+lia Nakai) and its green-skinned pears ‘Zaosu’ were gathered 
+at the 60 DAFB in 2019 from an orchard of the Institute of 
+Pomology (Shandong Province, Tai’an). The diploid straw -
+berry (
+Fragaria vesca, called ‘Yellow Wonder’ 5AF7) was col -
+lected for the transient transformation experiment in this 
+study, tobacco (
+N. benthamiana) with six-leaves for the dual- 
+luciferase reporter assay and firefly luciferase complementa -
+tion assay, which were planted in an artificial incubator with 
+a 16 h photoperiod and the temperature of 21 °C at day and 
+17 °C at night. ‘Zaosu’ pears, strawberry receptacles, and 
+young N. benthamiana leaves with six leaves were used for 
+the infiltrating experiment, and the observations at 5 d after 
+injection were performed. Then collected tobacco leaves, 
+pear peels, and strawberry receptacles, were cut into pieces, 
+frozen in liquid nitrogen (LN 2), and refrigerated at −80 °C.
+Exogenous H2S treatment of pear fruit and tobacco 
+leaves
+‘Aohong No.1’ pears with black-red-yellow bagging from an 
+orchard in Anhui province Feidong County, and the pears 
+at the ripening stage with no mechanical damage and insect 
+pests were selected, then randomly divided into four groups. 
+Four pear fruits in each group were fumigated in a diameter 
+300-mm glass dryer, and 300 mL NaHS solution (acting as 
+H
+2S donor) in the dryer with the concentration of 0.0, 0.3, 
+0.6, and 0.9 mM, respectively. Four-group fruits were added 
+to four different concentration NaHS solution dryers every 
+24 h, and the corresponding concentration of NaHS solution 
+was replaced. Until 72 h after the first batch of pear fruits 
+were treated, all the pear fruits were taken out and placed 
+in the same environment of light and temperature (25 °C). 
+The changes in the samples were photographed and sampled 
+at 3, 6, and 9 d after irradiation. The pear peels of the treat -
+ment group were quickly removed and stored at −
+80 °C by 
+quartering method and used for further experimental 
+research.
+The method of H 2S treatment of tobacco leaves with six 
+leaves, the experimental group and the control group were 
+fumigated in a diameter 300-mm glass dryer containing a cer-
+tain amount of water or 0.5 mM NaHS solution for 1 h, then 
+sampled and fully ground in LN
+2, and the corresponding de -
+tection reagents were added for determining.
+Determination of the production of endogenous H 2S
+The lead sulfide method was used to determine the produc -
+tion capacity of endogenous H2S in pear pericarp. The specif-
+ic steps refer to Sun et al. (2021). Weighing 0.3 to 1 g of pear 
+peel sample and were fully ground it in LN 2. Then it was dis -
+solved in PBS (including 10 mM Cys and 10 mM PLP, pH 6.8) 
+buffer solution, and put the dissolved samples in a 37 °C in -
+cubator for dark treatment for 1 to 3 h to observe the experi-
+mental results. Referring to Hu et al. (2012) method to 
+analyze the changes in H 2S production capacity.
+Bioinformatic analysis
+The heat map was constructed with the R script, and the 
+phylogenetic tree was constructed by the MEGA7 Program 
+using the neighbor-joining method, bootstrap analysis 
+(1,000 replicates). The amino acid sequence alignment ana
+-
+lysis was performed through the DNAMAN Program.
+Measurement of anthocyanins in strawberry and pear 
+fruits
+Anthocyanins were extracted based on the method (Yao 
+et al. 2017 ). Weighing about 0.2 g, the pear skins of 
+‘Hongzaosu’ and ‘Zaosu’ or strawberry receptacles were 
+ground into powder in LN 2 and then added 1 ml of pre -
+cooled 1% (v/v) methanol hydrochloride to make it 
+Figure 10. Proposed model of the MYB10-MYB73-MYB6 complex reg-
+ulates anthocyanin synthesis when exogenous H 2S is applied or under 
+normal conditions. In the model, PyMYB10 could interact with 
+PyMYB73 and form a regulatory complex PyMYB10-PyMYB73, binding 
+to the promoter of anthocyanin biosynthesis-related genes (such as 
+PyDFR, PyANS) by MBS (MYB transaction element), resulting in en -
+hanced anthocyanin biosynthesis in red-skinned pears. When 
+PyMYB10 undergoes persulfidation at Cys218 and Cys194, it enhances 
+the interaction with PyMYB6 and reduces the interaction with 
+PyMYB73, resulting in the inhibition of the expression of anthocyanin 
+biosynthesis-related genes PyDFR, PyANS
+, PyUFGT, and PyGST, thereby 
+inhibiting anthocyanin accumulation in red-skinned pears. MBS: MYB 
+transaction element, “-Cys218 SH” indicated that the Cys218 site of 
+PyMYB10 included a “-SH”; “-Cys194 SH” indicated that the Cys194 
+site of PyMYB10 included a “-SH”; “-Cys218 SSH” indicated that the 
+Cys218 site of PyMYB10 included a “-SSH”; “-Cys194 SSH” indicated 
+that the Cys194 site of PyMYB10 included a “-SSH.”
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+PyMYB10 persulfidation inhibits red pear color                                                       PLANT PHYSIOLOGY 2023: 192; 2185–2202 | 2199
+homogenate and culture in the dark at 4 °C for 24 h. Then, 
+the supernatant was gathered by 12,000 rpm centrifugation 
+for 20 min. The absorbance of anthocyanins at 530, 620, 
+and 650 nm wavelengths was measured. There were five bio
+-
+logical replicates in each specimen, and the total anthocyanin 
+content per specimen was counted based on the following 
+formula: OD = (A530−A620) − 0.1 × (A650−A620).
+RT-qPCR analysis
+Pear skins and strawberry receptacles were ground into fine 
+powder in LN2. FastPure Universal Plant Total RNA Isolation 
+Kit (Vazyme, China) was used to extract the total RNA of the 
+specimens. Evo M-MLV RT Premix (AG, China) was used to 
+synthesize first-strand cDNA. RT-qPCR was conducted using 
+SYBR® Green Premix Pro Taq HS (AG, China) in a 10 μl vol-
+ume. The amplification was controlled on a LightCycler ®96 
+(Roche) and the raw data were analyzed with LightCycler 
+96.exe (Roche). The strawberry genes FvActin and Fv26S 
+and pear PyActin and PyTubulin were used as housekeeper 
+genes. The relative expression level of genes was counted 
+by the 2
+−ΔΔCt method. Three biological replicates were per -
+formed for all analyses and error bars. RT-qPCR’s primer se -
+quences are listed in Supplemental Table S2.
+Genes isolating and recombination vector 
+construction
+The CDS sequences of PyMYB73, PyMYB6, and PyMYB10 mu-
+tation from Cys to Ala, named as PyMYB10 Cys194Ala, 
+PyMYB10Cys218Ala, or PyMYB10 Cys194AlaCys218Ala, which all 
+cloned from the cDNA of ‘Hongzaosu’ pear were used in 
+the following study. The fragment amplification was carried 
+out by using Phanta ® Super-Fidelity DNA Polymerase 
+(P501-d2, Vazyme, China), and the primer sequences for vec-
+tor construction are listed in Supplemental Table S3 . The 
+PyMYB73 and PyMYB6 genes were integrated into the 
+pSAK277 vector. The recombinant constructs were trans -
+formed into the Agrobacterium strain GV3101. In addition, 
+we used the transient expression vector of PyMYB10 muta -
+tion was constructed as a template, and used it to construct 
+the vector needed for further experiments.
+Dual luciferase reporter (DLR) assay
+Selecting a 2.0 kb sequence upstream of PyDFR, PyANS, and 
+PyUFGT promoters, then isolated and integrated into the 
+pGreen II 0800-LUC vector. The recombinant construct 
+was transferred into Agrobacterium strain GV3101 contain -
+ing pSoup helper plasmid. The TFs were blended with the 
+promoters (the ratio 1:9, v/v) and then transformed into 
+N. benthamiana leaves for transient expression analysis. 
+The ratio of firefly luciferase (LUC) and renilla luciferase 
+(REN) was detected by using the Dual-Luciferase® Reporter 
+Assay System with the manufacturer’s instructions (E1910, 
+Promega, USA).
+Yeast two-hybrid assay
+To explore the interaction of different TFs by Y2H assay, 
+PyMYB73 is divided into five amino acid residue fragments: 
+MYB73
+1–100, MYB73 1–170, MYB73 1–239, MYB73 170–239, and 
+MYB73100–239. PyMYB6 is divided into seven parts: MYB61–61, 
+MYB61–117, MYB61–225, MYB61–324, MYB6225–324, MYB6117–324, 
+and MYB6 61–324. The above fragments were ligated to the 
+pGBKT7 vector, and the CDS fragments of candidate factors 
+PyMYB114, PybHLH3, PyMYB73, PyMYB10, and PyMYB10 
+mutation were ligated to the pGADT7 linearized vector. 
+The vectors connected to pGBKT7 and pGADT7 were co- 
+transformed into Y2H for interaction screening. The medium 
+of SD/-Leu/-Trp and SD/-Leu/-Trp/-His/-Ade were used 
+to test the transformants and interactions, respectively. The 
+co-transformation of pGBKT7-Lam + pGADT7-T + was the 
+negative control and pGBKT7-53 + pGADT7-T was the 
+positive control. The primer sequences were listed in 
+Supplemental Table S4.
+Firefly luciferase complementation (FLC) assay
+According to the method of Chen et al. (2008)to carry out an 
+FLC assay of PyMYB73 and PyMYB6 (with no stop codon), 
+they were cloned and inserted in pCAMBIA1300-NLuc, and 
+the CDS of PyMYB73
+, PyMYB10, and PyMYB10 mutation 
+were cloned and jointed with the pCAMBIA1300-CLuc vec -
+tor. The primer sequences were listed in Supplemental 
+Table S3. The mixture of Nluc and Cluc was produced at 
+1:1(v:v) and infiltrated into the promoters (the ratio 1:9, v/ 
+v) and then transformed into N. benthamiana leaves. After 
+three days of light, the firefly luciferase activity was measured 
+by a stable Glo ® luciferase analysis system (E2510, Promega, 
+USA).
+Isolation and purification of the integrated protein
+The PyMYB10-MBP-tagged, PyMYB73-HIS-tagged, and 
+PyMYB6-GST-tagged proteins were transformed in Rosetta 
+(DE3) chemically competent cells. A certain amount of 
+isopropyl-β-D-thiogalactopyranoside (0.1 mM) was appended, 
+and the bacteria optical density was cultured to OD 600 0.6 to 
+0.8, and then a part of the solution was added into 100 ml LB 
+liquid medium for 16 h at 16 °C. Then the bacteria solution 
+was collected with a centrifuge at 8,000 rpm for 30 min, the pre
+-
+cipitate was suspended in cell lysate buffer, which contained 
+1 M Tris-HCl, 5 M NaOH, and 0.5 M EDTA, the protein was 
+fragmented with an ultrasonic crusher, the mixture was centri
+-
+fuged at 8,000 rpm for 30 min, and the extract was used for 
+purification. The PyMYB10-MBP-tagged, PyMYB73-HIS-tagged, 
+and PyMYB6-GST-tagged proteins were purified using pre
+-
+packed gravity columns Amylose Resin (NEB, E8021S), 
+Glutathione Sepharose 4B (Citiva, 17075601) and Ni 
+Sepharose 6 Fast Flow (GE, 17531806), respectively. The purifi
+-
+cation process of the protein was carried out according to 
+the column specifications. Then part of the collected purified 
+mixture was mixed with a loading buffer, which contained 
+β
+-mercaptoethanol, and boiled for 10 min. 10% (v/v) 
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+2200 | PLANT PHYSIOLOGY 2023: 192; 2185–2202                                                                                                              Yao et al.
+SDS-PAGE gel electrophoresis was performed and stained the 
+gel with Coomassie Brilliant Blue.
+S-thiolation signal detection of the recombinant 
+protein by biotin-switch assay
+Biotin-switch assay for detecting S-thiolation signal. The puri-
+fied protein sample was treated with 0 to 1000 µm NaHS at 4 
+°C, and the treated sample was precipitated with acetone, 
+then the free-SH in the sample was blocked by 20 mM me -
+thyl methanethiosulfonate (MMTS) and the SSH of Cys 
+was labeled with 2 mM biotin-HDPD, the detail steps re
+-
+ferred to Chen et al. (2021) . Then, the samples were sub -
+jected to 10% (v/v) SDS-PAGE gel electrophoresis. Then 
+the proteins were transferred to 0.45 µm polyvinylidene 
+fluoride membrane (PVDF) and subjected to western blot -
+ting. ImageJ was used to quantify protein abundance.
+Measurement of the persulfidation sites of PyMYB10 
+by LC-MS/MS
+The persulfidation sites of PyMYB10 were conducted by 
+LC-MS/MS, the recombinant protein was separated with 
+nonreduced SDS-PAGE, and the target band was cut from 
+the Coomassie brilliant blue stained gel, and then placed in 
+a 96-well plate. Corresponding reagents are added to the 
+96-well plate to alkylate and digest the gel. Then it was dried 
+by vacuum centrifugation, and the dried sample was resus
+-
+pended with a solution containing 0.1% (v/v) formic acid 
+and 2% (v/v) acetonitrile. And the sample was analyzed by 
+LC-MS/MS (Fusion Lumos, Thermo Fisher, USA), the detailed 
+steps referred to by Chen et al. (2021).
+Accession numbers
+Sequence data from this article can be found from the 
+National Center for Biotechnology Information (NCBI, 
+https://www.ncbi.nlm.nih.gov/), the genome database for 
+the Rosaceae (https://strawberry-garden.kazusa.or.jp/), the 
+genome database for Arabidopsis (https://www.arabidopsis. 
+org/) or Solanaceae (https://solgenomics.net/
+) under the fol-
+lowing accession numbers: PyMYB73 (Pbr008748.1), 
+PyMYB10 (Pbr016663.1), PyMYB6 (Pbr025199.1), PyERF4.1 
+(ON652752), PyERF4.2 (ON652753), PcMYB10 (JX403957), 
+PyActin (JN684184), PyTubulin (XM_009376045.2), PyERF3 
+(ASY06613.1), PyMYB114 (ASY06612.1), PybHLH3 
+(XP_048442703.1), PyANS (Pbr001543.2), PyDFR 
+(Pbr020145.1), PyUFGT (Pbr039986.1), PyGST (Pbr012649.1), 
+FvActin (gene22626), Fv26S (gene11892), FvANS 
+(gene32347), FvDFR (gene15174), FvUFGT (gene12591), 
+FvGST (gene31672) AtMYB44 (AT5G67300), AtMYB73 
+(AT4G37260), AtMYB70 (AT2G23290), AtMYB113 
+(AT1G66370) MdMYB110a (AFC88038.1), FaMYB44.1 
+(XP_004287994.1), FaMYB44.2 (XP_004291065.1), 
+FaMYB44.3 (XP_004305954.1), MdMYB1 (ABK58136), 
+MdMYBA (AB279598.1), SlMYB75 (Solyc10G086250), 
+OsMYB44 (XP_015612590.1), StMYB44
+(XP_006367421).
+Acknowledgments
+We thank Dr. Andrew C. Allan, Dr. Richard Espley, and Dr. 
+Lin-Wang Kui for the dual vector pGreen II 0800-LUC in 
+The New Zealand Institute for Plant & Food Research 
+Limited, Auckland, New Zealand.
+Author contributions
+G.Y., S.G., T.Z., and H.Z. conceived this project and designed 
+the research. G.Y., S.G., and T.Z. performed the experiments. 
+S.G., T.Z., K.H., X.A., H.S., and C.S. analyzed the data; S.W. pro-
+vided the experimental material; G.Y., S.G., and T.Z. wrote the 
+paper; K.H., S.G., T.Z. interpreted the data, G.Y. and H.Z. re -
+vised the manuscript. All authors have read and approved 
+the manuscript.
+Supplemental data
+The following materials are available in the online version of 
+this article.
+Supplemental Table S1. List of differently expressed genes 
+(DEGs) between ‘Hongzaosu’ and ‘Zaosu’ pear fruits at 60 
+DAFB.
+Supplemental Table S2. RT-qPCR primers were used in 
+this study.
+Supplemental Table S3. The list of primers used in this 
+study for transient expression and prokaryotic expression.
+Supplemental Table S4. The list of primers used in this 
+study for Y2H.
+Supplemental Figure S1. Production of endogenous H
+2S 
+during the pear fruit development.
+Supplemental Figure S2 . Heatmap was used to analyze 
+the expression levels of genes related to anthocyanin metab -
+olism and regulation in ‘Hongzaosu’ and ‘Zaosu’ pears at 30, 
+60, and 90 DAFB, respectively.
+Supplemental Figure S3. Coinjection of PyMYB73/ 
+PyMYB6 by transient expression assay in pear skins.
+Supplemental Figure S4. Verifying the regulatory pattern 
+of PyMYB73/PyMYB6, PyMYB10 in vivo.
+Supplemental Figure S5 . PyMYB73/PyMYB6 persulfida -
+tion-site and persulfidated protein assays.
+Supplemental Figure S6 . Dual luciferase reporter (DLR) 
+assays verify that PyMYB10 with the mutated thiolated modi-
+fication site activates the PyANS
+, PyDFR, and PyUFGT 
+promoters.
+Funding
+This work was supported by the National Natural Science 
+Foundation of China (32170315, 31901993, 32272682, 
+31970312, and 31970200), Anhui Provincial Key Research and 
+Development Plan (202003a06020011), the Fundamental 
+Research Funds for the Central Universities (JZ2021HGPA0063), 
+and the Natural Science Foundations of Shandong Province 
+(ZR2021MC177).
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+PyMYB10 persulfidation inhibits red pear color                                                       PLANT PHYSIOLOGY 2023: 192; 2185–2202 | 2201
+Conflict of interest statement. The authors declare that they have no 
+conflict of interest.
+References
+Albert NW, Davies KM, Lewis DH, Zhang H, Montefiori M, 
+Brendolise C, Boase MR, Ngo H, Jameson PE, Schwinn KE. A con -
+served network of transcriptional activators and repressors regulates 
+anthocyanin pigmentation in eudicots. Plant Cell. 2014:
+26(3): 
+962–980. https://doi.org/10.1105/tpc.113.122069
+Albert NW, Lewis DH, Zhang H, Schwinn KE, Jameson PE, Davies KM
+. 
+Members of an R2R3-MYB transcription factor family in Petunia are 
+developmentally and environmentally regulated to control complex 
+floral and vegetative pigmentation patterning. Plant J. 2011:65(5): 
+771–784. https://doi.org/10.1111/j.1365-313X.2010.04465.x
+Borevitz JO, Xia Y, Blount J, Dixon RA, Lamb C
+. Activation tagging 
+identifies a conserved MYB regulator of phenylpropanoid biosyn -
+thesis. Plant Cell. 2000:
+12(12):2383–2393. https://doi.org/10.1105/ 
+tpc.12.12.2383
+Butelli E, Titta L, Giorgio M, Mock HP, Matros A, Peterek S, Schijlen 
+EG, Hall RD, Bovy AG, Luo J, et al. Enrichment of tomato fruit with 
+health-promoting anthocyanins by expression of select transcription 
+factors. Nat Biotechnol. 2008:
+26(11):1301–1308. https://doi.org/10. 
+1038/nbt.1506
+Chen S, Jia H, Wang X, Shi C, Wang X, Ma P, Wang J, Ren M, Li J. 
+Hydrogen sulfide positively regulates abscisic acid signaling through 
+persulfidation of SnRK2.6 in guard cells. Mol Plant 2020:13(5): 
+732–744. https://doi.org/10.1016/j.molp
+Chen S, Wang X, Jia H, Li F, Ma Y, Liesche J, Liao M, Ding X, Liu C, 
+Chen Y, et al. Persulfidation-induced structural change in SnRK2.6 
+establishes intramolecular interaction between phosphorylation 
+and persulfidation. Mol Plant. 2021:14(11):1814–1830. https://doi. 
+org/10.1016/j.molp.2021.07.002
+Chen H, Zou Y, Shang Y, Lin H, Wang Y, Cai R, Tang X, Zhou JM. 
+Firefly luciferase complementation imaging assay for protein-protein 
+interactions in plants. Plant Physiol. 2008:146(2):323–324. https:// 
+doi.org/10.1104/pp.107.111740
+Davies KM, Albert NW, Schwinn KE. From landing lights to mimicry: 
+the molecular regulation of flower colouration and mechanisms for 
+pigmentation patterning. Funct Plant Biol. 2012:39(8):619–638. 
+https://doi.org/10.1071/FP12195
+Du H, Yang SS, Liang Z, Feng BR, Liu L, Huang YB, Tang YX. 
+Genome-wide analysis of the MYB transcription factor superfamily 
+in soybean. BMC Plant Biol. 2012:12(1):106. https://doi.org/10. 
+1186/1471-2229-12-106
+Gonzalez A, Zhao M, Leavitt JM, Lloyd AM
+. Regulation of the antho -
+cyanin biosynthetic pathway by the TTG1/bHLH/Myb transcription-
+al complex in Arabidopsis seedlings. Plant J. 2008:
+53(5):814–827. 
+https://doi.org/10.1111/j.1365-313X.2007.03373.x
+Hu LY, Hu SL, Wu J, Li YH, Zheng JL, Wei ZJ, Liu J, Wang HL, Liu YS, 
+Zhang H
+. Hydrogen sulfide prolongs postharvest shelf life of straw -
+berry and plays an antioxidative role in fruits. J Agric Food Chem. 
+2012:
+60(35):8684–8693. https://doi.org/10.1021/jf300728h
+Hu KD, Zhang XY, Yao GF, Rong YL, Ding C, Tang J, Yang F, Huang 
+ZQ, Xu ZM, Chen XY
+, et al. A nuclear-localized cysteine desulfhy -
+drase plays a role in fruit ripening in tomato. Hortic Res. 2020:
+7(1): 
+211. https://doi.org/10.1038/s41438-020-00439-1
+Jiang C, Gu J, Chopra S, Gu X, Peterson T
+. Ordered origin of the typical 
+two- and three-repeat MYB genes. Gene. 2004:326(4): 13–22. https:// 
+doi.org/10.1016/j.gene.2003.09.049
+Kagale S, Rozwadowski K
+. EAR motif-mediated transcriptional repres-
+sion in plants: an underlying mechanism for epigenetic regulation of 
+gene expression. Epigenetics. 2011:
+6(2):141–146. https://doi.org/10. 
+4161/epi.6.2.13627
+Kranz HD, Denekamp M, Greco R, Jin H, Leyva A, Meissner RC, 
+Petroni K, Urzainqui A, Bevan M, Martin C, et al. Towards 
+functional characterisation of the members of the R2R3-MYB gene 
+family from Arabidopsis thaliana
+. Plant J. 1998:16(2):263–276. 
+https://doi.org/10.1046/j.1365-313x.1998.00278.x
+Laureano-Marín AM, Aroca Á, Pérez-Pérez ME, Yruela I, 
+Jurado-Flores A, Moreno I, Crespo JL, Romero L, Gotor C. 
+Abscisic acid-triggered persulfidation of the cysteine protease 
+ATG4 mediates regulation of autophagy by sulfide. Plant Cell. 
+2020:32(12):3902–3920. https://doi.org/10.1105/tpc.20.00766
+Li Y, Shan X, Gao R, Han T, Gao X
+. MYB Repressors and MBW activa -
+tion complex collaborate to fine-tune flower coloration in freesia hy-
+brida. Commun Biol. 2020:
+3(1):396. https://doi.org/10.1038/s42003- 
+020-01134-6
+Li X, Xue C, Li J, Qiao X, Li L, Yu L, Huang Y, Wu J
+. Genome-wide iden-
+tification, evolution and functional divergence of MYB transcription 
+factors in Chinese white pear (
+Pyrus bretschneideri). Plant Cell 
+Physiol. 2016:57(4):824–847. https://doi.org/10.1093/pcp/pcw029
+Lin WK, Bolitho K, Grafton K, Kortstee A, Karunairetnam S, McGhie 
+TK, Espley RV, Hellens RP, Allan AC
+. An R2R3 MYB transcription 
+factor associated with regulation of the anthocyanin biosynthetic 
+pathway in Rosaceae. BMC Plant Biol. 2010:10(1):50–66. https:// 
+doi.org/10.1186/1471-2229-10-50
+Liu YH, Lin W K, Espley RV, Wang L, Li YM, Liu Z, Zhou P, Zeng LH, 
+Zhang XJ, Zhang JL, et al. StMYB44 negatively regulates anthocyanin 
+biosynthesis at high temperatures in tuber flesh of potato. J Exp Bot. 
+2019:70(15):3809–3824. https://doi.org/10.1093/jxb/erz194
+Ma D, Constabel CP. MYB repressors as regulators of phenylpropanoid 
+metabolism in plants. Trends Plant Sci. 2019:24(3):275–289. https:// 
+doi.org/10.1016/j.tplants.2018.12.003
+Ma X, Zhang L, Pei Z, Zhang L, Liu Z, Liu D, Hao X, Jin Z, Pei Y. 
+Hydrogen sulfide promotes flowering in heading Chinese cabbage 
+by S-sulfhydration of BraFLCs. Hortic Res. 2021:8(1):19. https://doi. 
+org/10.1038/s41438-020-00453-3
+Mao W, Han Y, Chen Y, Sun M, Feng Q, Li L, Liu L, Zhang K, Wei L, 
+Han Z, et al. Low temperature inhibits anthocyanin accumulation in 
+strawberry fruit by activating FvMAPK3-induced phosphorylation of 
+FvMYB10 and degradation of chalcone synthase 1. Plant Cell. 
+2022:34(4):1226–1249. https://doi.org/10.1093/plcell/koac006
+Matsui K, Umemura Y, Ohme-Takagi M
+. AtMYBL2, a protein with a 
+single MYB domain, acts as a negative regulator of anthocyanin bio -
+synthesis in Arabidopsis
+. Plant J. 2008:55(6):954–967. https://doi.org/ 
+10.1111/j.1365-313X.2008.03565.x
+Ni J, Premathilake AT, Gao Y, Yu W, Tao R, Teng Y, Bai S
+. 
+Ethylene-activated PpERF105 induces the expression of the repressor-type 
+R2R3-MYB gene PpMYB140 to inhibit anthocyanin biosynthesis in red 
+pear fruit. Plant J. 2021:105(1):167–181. https://doi.org/10.1111/tpj.15049
+Ogata K, Kanei-Ishii C, Sasaki M, Hatanaka H, Nagadoi A, Enari M, 
+Nakamura H, Nishimura Y, Ishii S, Sarai A
+. The cavity in the hydro-
+phobic core of MYB DNA-binding domain is reserved for DNA rec -
+ognition and trans-activation. Nat Struct Biol. 1996:
+3(2):178–187. 
+https://doi.org/10.1038/nsb0296-178
+Peng Z, Tian J, Luo R, Kang Y, Lu Y, Hu Y, Liu N, Zhang J, Cheng Y, 
+Niu S
+, et al. Mir399d and epigenetic modification comodulate 
+anthocyanin accumulation in Malus leaves suffering from phos -
+phorus deficiency. Plant Cell Environ. 2020:
+43(5):1148–1159. 
+https://doi.org/10.1111/pce.13697
+Rahim MA, Busatto N, Trainotti L
+. Regulation of anthocyanin biosyn-
+thesis in peach fruits. Planta. 2014:
+240(5):913–929. https://doi.org/ 
+10.1007/s00425-014-2078-2
+Shen J, Zhang J, Zhou M, Zhou H, Cui B, Gotor C, Romero LC, Fu L, 
+Yang J, Foyer CH
+, et al. Persulfidation-based modification of cysteine 
+desulfhydrase and the NADPH oxidase RBOHD controls guard cell 
+abscisic acid signaling. Plant Cell. 2020:32(4):1000–1017. https://doi. 
+org/10.1105/tpc.19.00826
+Sun LL, Gao W, Zhang MM, Li C, Wang AG, Su YL, Ji TF. Composition 
+and antioxidant activity of the anthocyanins of the fruit of Berberis 
+heteropoda Schrenk. Molecules. 2014:19(11):19078–19096. https:// 
+doi.org/10.3390/molecules191119078
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026
+
+2202 | PLANT PHYSIOLOGY 2023: 192; 2185–2202                                                                                                              Yao et al.
+Sun HY, Zhang WW, Qu HY, Gou SS, Li LX, Song HH, Yang HQ, Li WJ, 
+Zhang H, Hu KD, et al. Transcriptomics reveals the 
+ERF2-bHLH2-CML5 module responses to H2S and ROS in postharvest 
+calcium deficiency apples. Int J Mol Sci. 2021:22(23):13013. https:// 
+doi.org/10.3390/ijms222313013
+Tao R, Bai S, Ni J, Yang Q, Zhao Y, Teng Y. The blue light signal transduction 
+pathway is involved in anthocyanin accumulation in ‘Red Zaosu’ pear. 
+Planta. 2018:248(1):37–48. https://doi.org/10.1007/s00425-018-2877-y
+Tao R, Yu W, Gao Y, Ni J, Yin L, Zhang X, Li H, Wang D, Bai S, Teng Y
+. 
+Light-induced basic/Helix-Loop-Helix64 enhances anthocyanin bio -
+synthesis and undergoes constitutively photomorphogenic1- 
+mediated degradation in pear. Plant Physiol. 2020:
+184(4): 
+1684–1701. https://doi.org/10.1104/pp.20.01188
+Tominaga R, Iwata M, Okada K, Wada T
+. Functional analysis of the 
+epidermal-specific MYB genes CAPRICE and WEREWOLF in 
+Arabidopsis. Plant Cell. 2007:19(7):2264–2277. https://doi.org/10. 
+1105/tpc.106.045732
+Wang S, Hubbard L, Chang Y, Guo J, Schiefelbein J, Chen JG
+. 
+Comprehensive analysis of single-repeat R3 MYB proteins in epider -
+mal cell patterning and their transcriptional regulation in 
+Arabidopsis
+. BMC Plant Biol. 2008:8(1):81. https://doi.org/10.1186/ 
+1471-2229-8-81
+Wang Y, Zhang X, Zhao Y, Yang J, He Y, Li G, Ma W, Huang X, Su J
+. 
+Transcription factor PyHY5 binds to the promoters of PyWD40 and 
+PyMYB10 and regulates its expression in red pear “Yunhongli No. 1”. 
+Plant Physiol Biochem. 2020:154(9): 665–674. https://doi.org/10. 
+1016/j.plaphy.2020.07.008
+Wei L, Mao W, Jia M, Xing S, Ali U, Zhao Y, Chen Y, Cao M, Dai Z, 
+Zhang K
+, et al. FaMYB44.2, a transcriptional repressor, negatively reg-
+ulates sucrose accumulation in strawberry receptacles through inter-
+play with FaMYB10. J Exp Bot. 2018:
+69(20):4805–4820. https://doi. 
+org/10.1093/jxb/ery249
+Wester K, Digiuni S, Geier F, Timmer J, Fleck C, Hülskamp M
+. 
+Functional diversity of R3 single-repeat genes in trichome develop -
+ment. Development. 2009:
+136(9):1487–1496. https://doi.org/10. 
+1242/dev.021733
+Wu Y, Wen J, Xia Y, Zhang L, Du H
+. Evolution and functional diversi -
+fication of R2R3-MYB transcription factors in plants. Hortic Res. 
+2022:
+9(3): uhac058. https://doi.org/10.1093/hr/uhac058
+Xiang L, Liu X, Li H, Yin X, Grierson D, Li F, Chen K
+. CmMYB#7, an R3 
+MYB transcription factor, acts as a negative regulator of anthocyanin 
+biosynthesis in chrysanthemum. J Exp Bot. 2019:70(12):3111–3123. 
+https://doi.org/10.1093/jxb/erz121
+Xu WJ, Dubos C, Lepiniec L
+. Transcriptional control of flavonoid bio -
+synthesis by MYB-bHLH-WDR complexes. Trends Plant Sci. 
+2015:
+20(3):176–185. https://doi.org/10.1016/j.tplants.2014.12.001
+Xu ZS, Yang QQ, Feng K, Xiong AS
+. Changing carrot color: insertions in 
+DcMYB7 alter the regulation of anthocyanin biosynthesis and modi -
+fication. Plant Physiol. 2019:
+181(1):195–207. https://doi.org/10.1104/ 
+pp.19.00523
+Yao G, Ming M, Allan AC, Gu C, Li L, Wu X, Wang R, Chang Y, Qi K, 
+Zhang S
+, et al. Map-based cloning of the pear gene MYB114 identifies 
+an interaction with other transcription factors to coordinately regu -
+late fruit anthocyanin biosynthesis. Plant J. 2017:
+92(3):437–451. 
+https://doi.org/10.1111/tpj.13666
+Yao GF, Wei ZZ, Li TT, Tang J, Huang ZQ, Yang F, Li YH, Han Z, Hu F, 
+Hu LY
+, et al. Modulation of enhanced antioxidant activity by hydro-
+gen sulfide antagonizing ethylene in tomato fruit ripening. J Agric 
+Food Chem. 2018:
+66(40):10380–10387. https://doi.org/10.1021/acs. 
+jafc.8b03951
+Zhai R, Wang Z, Zhang S, Meng G, Song L, Wang Z, Li P, Ma F, Xu L
+. 
+Two MYB transcription factors regulate flavonoid biosynthesis in 
+pear fruit (Pyrus bretschneideri Rehd.). J Exp Bot. 2016:67(5): 
+1275–1284. https://doi.org/10.1093/jxb/erv524
+Zhang Z, Tian C, Zhang Y, Li C, Li X, Yu Q, Wang S, Wang X, Chen X, 
+Feng S. Transcriptomic and metabolomic analysis provides insights into 
+anthocyanin and procyanidin accumulation in pear. BMC Plant Biol. 
+2020:20(1):129. https://doi.org/10.1186/s12870-020-02344-0
+Zhang J, Zhou M, Zhou H, Zhao D, Gotor C, Romero L C, Shen J, Ge Z, 
+Zhang Z, Shen W, et al. Hydrogen sulfide, a signaling molecule in 
+plant stress responses. J Integr Plant Biol. 2021:63(1):146–160. 
+https://doi.org/10.1111/jipb.13022
+Zheng T, Tan W, Yang H, Zhang L, Li T, Liu B, Zhang D, Lin H. 
+Regulation of anthocyanin accumulation via MYB75/HAT1/ 
+TPL-mediated transcriptional repression. PLoS Genet. 2019:15(3): 
+e1007993. https://doi.org/10.1371/journal.pgen.1007993
+Zhou H, Lin-Wang K, Wang F, Espley RV, Ren F, Zhao J, Ogutu C, He 
+H, Jiang Q, Allan AC, et al. Activator-type R2R3-MYB genes induce a 
+repressor-type R2R3-MYB gene to balance anthocyanin and 
+proanthocyanidin accumulation. New Phytologist. 2019:221(4): 
+1919–1934. https://doi.org/10.1111/nph.15486
+Zhou M, Zhang J, Shen J, Zhou H, Zhao D, Gotor C, Romero LC, Fu L, 
+Li Z, Yang J, et al. Hydrogen sulfide-linked persulfidation of ABI4 
+controls ABA responses through the transactivation of MAPKKK18 
+in Arabidopsis. Mol Plant. 2021:14(6):921–936. https://doi.org/10. 
+1016/j.molp.2021.03.007
+Downloaded from https://academic.oup.com/plphys/article/192/3/2185/7043516 by guest on 07 August 2026

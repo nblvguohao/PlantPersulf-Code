@@ -1,0 +1,1325 @@
+https://doi.org/10.1093/plphys/kiad070 PLANT PHYSIOLOGY 2023: 192: 616–632
+E3 ligase BRG3 persulfidation delays tomato ripening 
+by reducing ubiquitination of the repressor WRKY71
+Chen Sun 
+ ,1,† Gai-fang Yao 
+ ,1,*,† Li-xia Li 
+ ,1 Ting-ting Li 
+ ,1 Yu-qi Zhao 
+ ,1 Kang-di Hu 
+ ,1 
+Conghe Zhang2 and Hua Zhang 
+ 1,*
+1 School of Food and Biological Engineering, Hefei University of Technology, Hefei 230009, China
+2 Department of Agriculture Sciences, Winall Hi-Tech Seed Co., Ltd, Hefei 230009, China
+*Author for correspondence: hzhanglab@hfut.edu.cn(H.Z.), yaogaifang@hfut.edu.cn(G.-F.Y.)
+†These authors contributed equally to this work.
+Abstract
+Hydrogen sulfide (H2S) is a gaseous signaling molecule reported to play multiple roles in fruit ripening. However, the molecular 
+mechanisms underlying H2S-mediated delay in fruit ripening remain to be established. Here, the gene encoding a WRKY tran-
+scription factor, WRKY71, was 
+identified as substantially upregulated in H2S-treated tomato (Solanum lycopersicum) via tran-
+scriptome profiling. The expression of WRKY71 was negatively associated with that of CYANOALANINE SYNTHASE1 (CAS1). 
+Transient 
+and stable genetic modification experiments disclosed that WRKY71 acts as a repressor of the tomato ripening pro-
+cess. CAS1 appears to play an opposite role, based on the finding that the ripening process was delayed in the cas1 mutant and 
+accelerated in CAS1-OE tomatoes. 
+Dual-luciferase reporter assay, yeast one-hybrid, electrophoretic mobility shift assay, and 
+transient transformation experiments showed that WRKY71 bound to the CAS1 promoter and suppressed its activation. 
+Moreover, the persulfidation of WRKY71 enhanced its binding ability to the CAS1 promoter. Data from luciferase complemen-
+tation and Y2H assays confirmed that WRKY71 interacts with a BOI-related E3 ubiquitin-protein ligase 3 (BRG3) and is ubi -
+quitinated in vitro. Further 
+experiments showed that modification of BRG3 via persulfidation at Cys 206 and Cys212 led to 
+reduced ubiquitination activity. Our findings support a model whereby BRG3 undergoes persulfidation at Cys 206 and 
+Cys212, leading to reduced ubiquitination activity and decreased interactions with the WRKY71 transcript, with a subsequent 
+increase in binding activity of the persulfidated WRKY71 to the CAS1 promoter, resulting in its transcriptional inhibition and 
+thereby delayed ripening of tomatoes. Our collective findings provide insights into a mechanism of H2S-mediated regulation of 
+tomato fruit ripening.
+Received November 22, 2022. Accepted January 9, 2023. Advance access publication February 3, 2023
+© American Society of Plant Biologists 2023. All rights reserved. For permissions, please e-mail: journals.permissions@oup.com
+Research Article 
+Introduction
+Tomato (Solanum lycopersicum) is a classical climacteric fruit 
+extensively used as a model to study fruit ripening and sen -
+escence. Multiple physiological and biochemical reactions 
+occur during ripening and senescence of tomato fruits, in -
+cluding pigment metabolism and transformation as well as 
+synthesis and degradation of plant hormones ( Giovannoni 
+et al. 2016), which are regulated by a series of transcription 
+factors (TFs). WRKY, a unique TF family in plants, partici -
+pates in plant signal transmission, ethylene biosynthesis, abi-
+otic stress responses, and the process of ripening and 
+senescence (Rushton et al. 2010). Generally, WRKY domains 
+contain 1 or 2 highly conserved amino acid sequences 
+(WRKYGQK) and a zinc-finger motif that binds the (T)(T) 
+TGCA(C/T) element (W-box) of downstream gene promo
+-
+ters. In Arabidopsis ( Arabidopsis thaliana
+), WRKY53 is re-
+ported to regulate leaf senescence through binding the 
+W-box and activating the expression of Senescence associated 
+gene 12 (SAG12), CATALASE1/2/3 (
+CAT1/2/3), and ORESARA 
+9 (ORE9) (Schippers 2015). In tomatoes, WRKY35 enhances 
+carotenoid accumulation by directly activating DXS1, 
+WRKY31, 
+and WRKY23 at the breaker and red-ripe maturity 
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+H2S-mediated persulfidation delays tomato ripening                                                     PLANT PHYSIOLOGY 2023: 192; 616–632 | 617
+stages (Bartley and Ishida 2003; Yuan et al. 2022 ). In peach 
+(
+Prunus persica), WRKY22 ubiquitination by ring-type E3 lig-
+ase HOS1 is proposed to play a role in regulating the defense 
+program (Li et al. 2020a, 2020b). A similar regulatory mode of 
+WRKY45 has been reported, whereby its ubiquitination by 
+nuclear ubiquitin-proteasome modulates the plant defense 
+program in rice (Akane et al. 2013 ). The collective findings 
+to date suggest that WRKYs are involved in various physio -
+logical regulation mechanisms in plants through direct bind-
+ing to target genes or posttranslational modifications. 
+However, the issue of whether WRKY TFs can exert regula -
+tory effects on tomato fruit ripening through ubiquitination 
+remains unclear.
+During fruit ripening, hydrogen cyanide (HCN), CO 2, and 
+ethylene are concomitantly generated (Floss et al. 1965). 
+Cyanoalanine synthase (CAS) is an enzyme that converts 
+HCN to cyanoalanine and H
+2S via the decyanidation pathway 
+in plants (Warrilow 1998). García et al. (2014) reported in-
+creased cyanogen content in roots, thereby inhibiting the 
+formation of root hairs in plants with mitochondrial 
+β
+-cyanoalanine synthase CYS-C1 deletion in Arabidopsis. In 
+avocado and carnation flowers, CAS plays a substantial role 
+in decyanation. However, as CAS activity increases with the 
+production of a large amount of ethylene, the HCN level is 
+almost undetectable (
+Manning 1986; Yip and Yang 1998). 
+Recent reports have disclosed markedly higher CAS activity 
+in climacteric than non-climacteric fruits (Mizutani et al. 
+1988). In apples, CAS1 and CAS2 potentially play a role in 
+cyanide detoxification during ripening (Sang et al. 2007). 
+However, no direct evidence of a regulatory role of CAS in 
+the ripening process in fruits has been obtained to date.
+H2S is a gaseous signaling molecule with important physio-
+logical functions in root formation, flower opening, stress re-
+sponse, fruit ripening, and senescence (He et al. 2018; Zhang 
+et al. 2020; Huang et al. 2021). Exogenous H2S suppresses res-
+piration and ethylene production in bananas, strawberries, 
+kiwi, and other fruits (
+Hu et al. 2012; Li et al. 2017; Ge et al. 
+2018). Upon knock-out of the endogenous H 2S production 
+enzyme LCD1, the tomato fruit ripening process is acceler -
+ated (Hu et al. 2020 ), indicating a regulatory role of H 2S in 
+fruit ripening. However, the underlying molecular mechan -
+isms remain to be established. Accumulating evidence has 
+shown that ∼
+5% proteins are persulfidated in Arabidopsis, 
+a posttranslational modification whereby the thiol group at 
+cysteine residues (–SH) is replaced with the persulfidation 
+group (–SSH). The majority of persulfidated proteins are im-
+plicated in the nuclear localization signal ( Khan et al. 2018), 
+signal transduction (Chen et al. 2020), cell autophagy (Ma et 
+al. 2021), and flowering processes (Laureano et al. 2020). Due 
+to the different nucleophilic abilities of the –SH and –SSH 
+groups, modification by persulfidation confers stronger 
+chemical reactivity (Paul and Snyder 2012; Corpas 2019). 
+For instance, persulfidation of Cys 160 of glyceraldehyde-3- 
+phosphate dehydrogenase by H2S enhances its nuclear local-
+ization (Khan et al. 2018). In guard cells, H2S-induced persul-
+fidation of Cys 131 and Cys137 sites of OST1/SNF1-related 
+protein kinase 2.6 (SnRK2.6) enhances kinase activity, there -
+by promoting the closure of stomata ( Chen et al. 2020 ). 
+Additionally, H2S is reported to inhibit the binding of FLC1 
+and FLC3 to promoters of target genes through persulfida -
+tion, thereby inducing the flowering process in Chinese cab -
+bage (Ma et al. 2021). While H 2S-mediated persulfidation is 
+clearly involved in several aspects of plant development, its 
+precise role in the regulation of tomato fruit ripening is yet 
+to be established.
+To explore the mechanisms underlying H 2S regulation of 
+the tomato ripening process, we screened the TF WRKY71 
+responding to H 2S signal from transcriptome data of 
+H2S-treated tomato fruit, which showed a negative associ -
+ation with cyanoalanine synthase CAS1. Moreover, 
+WRKY71 could interact with BRG3 and both proteins were 
+modified by persulfidation. Based on the data obtained, we 
+proposed that H 2S-mediated persulfidation of BRG3 and 
+WRKY71 could weaken BRG3’s ubiquitination ability and en-
+hance the binding ability of WRKY71 to CAS1
+, thereby delay-
+ing ripening of tomato fruit. To validate this hypothesis, we 
+investigated the functions of WRKY71 and CAS1 in tomato 
+fruit by transient expression and stable genetic system. The 
+regulatory relationship between WRKY71 and CAS1 was 
+identified by a dual-luciferase reporter, yeast one-hybrid 
+(Y1H), electrophoretic mobility shift assay (EMSA), and tran
+-
+sient transformation assays. Moreover, we identified persulfi-
+dation of BRG3 weakened its ubiquitination ability and the 
+interaction with WRKY71 by in vitro simulation experiments, 
+yeast two-hybrid (Y2H), and luciferase complementation 
+analysis. Data from the current study provide insights into 
+the molecular mechanisms underlying H2S-mediated regula-
+tion of tomato fruit ripening and posttranslational modifica-
+tion of proteins.
+Results
+WRKY71 screened from the transcriptome shows 
+a negative association with CAS1 in H2S-treated 
+tomato fruits
+In a recent study, Zhong et al. (2021)showed that the ripen-
+ing process of tomato fruit could be delayed by exogenous 
+H2S treatment. Tomatoes did not turn completely red at 
+3 d under H 2S treatment while the color changed entirely 
+in tomatoes subjected to deionized water treatment (CK) 
+(
+Fig. 1A). To establish the molecular mechanisms underlying 
+the H2S-mediated delay in fruit ripening, we performed 
+RNA-seq of CK_0d, CK_1d, H2S_1d, CK_3d, and H2S_3d sam-
+ples. The number of clean-read libraries was 591–686 million 
+(Supplemental Table S1). Based on statistical alignment data, 
+the alignment efficiency of clear reads to the reference gen -
+ome ranged from 88.91% to 92.17% (Supplemental Table S1). 
+Pairwise comparison of CK_1d vs H2S_1d and CK_3d vs 
+H2S_3d led to the identification of a total of 5,982 shared dif-
+ferentially expressed genes (DEGs) (Fig. 1B). Analysis of these 
+DEG profiles revealed 10 major expression patterns, among 
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+618 | PLANT PHYSIOLOGY 2023: 192; 616–632                                                                                                                    Sun et al.
+which profiles 3, 4, and 9 were upregulated DEGs from 
+H2S-treated tomato fruits (Fig. 1D ). These DEGs were in -
+volved in numerous essential processes, such as carbon me -
+tabolism, abiotic and biological stress responses, growth 
+and development, and signal transduction, as determined 
+from Kyoto Encyclopedia of Genes and Genomes (KEGG) 
+analysis (Fig. 1C). CAS1, CBL1
+, CBL3, ACO1, ACO3, ACO4, 
+ACS2, ACS3, SAM3, PG2, PSY1, EXP1, and PAE8 were identified 
+as DEGs in H 2S-treated compared with CK-treated tomato 
+fruits (Fig. 1E), suggestive of potential involvement in the 
+regulatory processes of tomato fruit ripening. The majority 
+of these genes are known participants in fruit ripening. The 
+function of CAS1 (LOC101253940) in fruit ripening has not 
+been established so far and this gene was, therefore, selected 
+as a candidate for further study.
+A total of 18 differentially expressed TFs were screened, in-
+cluding 4 WRKYs, 3 MADSs, 5 ERFs, and 6 NACs. Expression 
+levels of WRKY2D
+, WRKY71, WRKY51, WRKY65, ERF109, 
+ERFTINY, NAC73, NAC1, NAC35, and CAS1 were further ana-
+lyzed via RT-qPCR. The results showed the upregulation of 
+ERF109
+ , ERFTINY, NAC73, NAC1, NAC35, WRKY2D, WRKY71, 
+WRKY51, and WRKY65 in H 2S-treated compared with 
+CK-treated groups, conversely, the downregulation of CAS1 
+(Fig. 2, A
+–J). Correlation analysis showed that CAS1 was 
+Figure 1Transcriptomic analysis of tomato fruit treated with H2S or control (CK) at 0, 1, and 3 d. A) Phenotype analysis of tomato fruit treated with 
+H2S for 0, 1, and 3 d at the BR stage. Scale bars = 1 cm. B) Screening of DEG between groups of CK_1d vs H 2S_1d and CK_3d vs H2S_3d. C) KEGG 
+analysis of common DEGs screened from groups of CK_1d vs H2S_1d and CK_3d vs H2S_3d. D) Expression pattern analysis of DEGs between groups 
+of CK_1d vs H2S_1d and CK_3d vs H2S_3d. E) Expression patterns of ripening-related genes identified from common DEGs. Data are presented as 
+means ± SD (n = 3). Statistical analysis was carried out with Student’s t-test, and significance was marked with asterisks: * (P < 0.05) or ** (P < 0.01).
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+H2S-mediated persulfidation delays tomato ripening                                                     PLANT PHYSIOLOGY 2023: 192; 616–632 | 619
+substantially positively correlated with WRKY65, WRKY51, 
+and ERF109 and negatively correlated with WRKY71, 
+WRKY2D, NAC1, NAC35, and ERFTINY (Fig. 3A; 
+Supplemental Table S2).
+To further explore the transactivation of TFs, we con -
+ducted a dual-luciferase reporter assay of CAS1 in Nicotiana 
+benthamiana leaves. As shown in Fig. 3B, ERF109
+, WRKY51, 
+and WRKY65 significantly activated CAS1 by 3–5-fold com-
+pared with the empty vector (
+P < 0.05). Conversely, 
+WRKY71 suppressed the activity of the LUC reporter gene 
+by one-seventh relative to the control group (P < 0.05), sug-
+gesting that WRKY71 binds to the CAS1 promoter and inhi-
+bits its transactivation. Accordingly, WRKY71 with the C 2H2 
+zinc-finger domain was selected for functional analysis in to-
+mato fruit ripening (Supplemental Fig. S1).
+WRKY71 acts as a repressor in the regulation of 
+tomato fruit ripening
+To establish the function of WRKY71 in the ripening process, we 
+performed transient overexpression and virus-induced gene si-
+lencing (VIGS) assays. Overexpression of WRKY71 delayed to-
+mato fruit ripening along with a decreased rate of chlorophyll 
+degradation and carotenoid and lycopene biosynthesis 
+(Supplemental Fig. S2). Compared with the empty vector, the 
+tomato ripening process of TRV-
+WRKY71 was accelerated 
+Figure 2 RT-qPCR analysis of expression levels of candidate genes from tomato fruit treated with H2S. Gene expression of A) ERF109, B) ERFTINY, C) 
+NAC35, D) NAC1, E) WRKY2D, F) NAC73, G) WRKY51, H) WRKY71, I) WRKY65, and J) CAS1 in tomato fruit treated with H2S or CK for 0, 1, and 3 d. 
+Data are presented as means ± SD (n = 3). Statistical analysis was carried out with Student’s t-test, and significance was marked with asterisks: 
+* (P < 0.05) or ** (P < 0.01).
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+620 | PLANT PHYSIOLOGY 2023: 192; 616–632                                                                                                                    Sun et al.
+and chlorophyll degradation, carotenoid biosynthesis, and lyco-
+pene biosynthesis enhanced (Supplemental Fig. S3).
+We further obtained stable genetic wrky71 mutant plants 
+via CRISPR/Cas9 technology and overexpression (
+WRKY71- 
+OE) transgenic plants (Supplemental Fig. S4). Phenotypic ana-
+lysis of tomato fruits of wrky71
+, WT, and WRKY71-OE samples 
+was shown in Fig. 4A. The wrky71 mutant tomato fruits dis-
+played the break red (BR) stage at 28 DPA and became mature 
+red (MR) at 37 DPA, whereas WT tomatoes entered BR at 
+37 DPA and MR at 46 DPA. WRKY71
+-OE tomato entered 
+the mature white stage at 36 DPA and eventually entered 
+the mature red stage at 50 DPA. Overall, wrky71 tomato fruit 
+matured 9 d earlier and WRKY71-OE fruit matured over 13 d 
+later than WT. The chlorophyll content presented a declining 
+trend during the ripening process (
+Fig. 4C). At 37 DPA, the 
+chlorophyll contents of WT, WRKY71
+-OE, and wrky71 fruit 
+were 3.1, 2.7, and 1.7 mg/g, respectively. The carotenoid con-
+tent in the wrky71 sample increased during the ripening pro-
+cess and was higher than that of WT at 37 DPA, but decreased 
+at 46 DPA to a lower extent than WT (Fig. 4D). The carotenoid 
+content in WRKY71
+-OE fruit was higher than in both wrky71 
+and WT at 47 DPA (P < 0.05). The lycopene content in 
+wrky71, WRKY71-OE, and WT tomato plants increased during 
+the ripening process and was consistently higher in the wrky71 
+mutant than in WRKY71-OE and WT tomato (P < 0.01) 
+(Fig. 4E).
+We analyzed the expression patterns of key genes involved 
+in the chlorophyll degradation pathway in wrky71 mutant, 
+WRKY71-OE transgene, and WT tomato fruits, including 
+NYC1, PAO, PPH, and SGR1. As shown in Fig. 4B, the expression 
+of all 4 genes was substantially increased at 28 DPA in the 
+wrky71 mutant up to a more than 10-fold higher extent rela
+-
+tive to WT, while the relative levels of these genes in 
+WRKY71
+-OE were lower than WT. Expression trends of the 
+key genes in carotenoid biosynthesis were similar to those of 
+the chlorophyll degradation pathway genes in all 3 tomato 
+fruit groups. Expression levels of PDS, PSY1, and ZDS in 
+wrky71 fruits were 10–70-fold higher relative to WT at 
+28 DPA. However, expression levels of these genes were in -
+creased at 37 DPA in WT and WRKY71
+-OE fruits. Moreover, 
+the expression of CAS1 in the wrky71 mutant tomato fruit 
+consistently remained the highest during the ripening process 
+while that in WRKY71-OE was the lowest (
+Fig. 4B).
+Determination of the function of CAS1 in tomato 
+fruit ripening
+The functional role of CAS1 in tomato fruit was explored 
+using VIGS. Tomato fruits with CAS1 silencing were explored 
+at the late-maturing stage. Notably, chlorophyll degradation, 
+carotenoid biosynthesis, and lycopene biosynthesis were de-
+celerated compared with control (Supplemental Fig. S5).
+We obtained genetically stable CAS1 mutant plants via 
+CRISPR/Cas9 technology. And we obtained transgenic to -
+mato that was generated by 35S:CAS1
+, designated CAS1-OE 
+(Supplemental Fig. S6). The expression of CAS1 was substan-
+tially inhibited in the CAS1 mutant during the tomato ripen-
+ing process. Conversely, the expression of CAS1 in CAS1
+-OE 
+was nearly 20 times higher than that in WT tomato fruit 
+Figure 3 Identification of key TFs regulating CAS1 transcription in tomato fruit. A) Correlation analysis of ERF109, ERFTINY, NAC35, NAC1, WRKY2D, 
+NAC73, WRKY51, WRKY71, WRKY65, and CAS1 expression. B) Transactivation activity of TFs for the CAS1 promoter. (a) Model of reporter and 
+effector plasmids. (b) TFs activating the CAS1 promoter were validated with the dual-luciferase reporter assay. Data are presented as means ± SD 
+(n = 3). Statistical analysis was carried out with One-way ANOVA, and different letters signify P < 0.05.
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+H2S-mediated persulfidation delays tomato ripening                                                     PLANT PHYSIOLOGY 2023: 192; 616–632 | 621
+(Fig. 5B). Phenotypic analysis showed that CAS1 -OE tomato 
+entered MR at 40 DPA while WT entered MR at 50 DPA, sug-
+gesting earlier ripening of CAS1
+-OE fruits (Fig. 5A). In con-
+trast, CAS1 mutant tomato fruit entered BR at 58 DPA, 
+which was 8 d later than WT (Fig. 5A). Our collective findings 
+indicate that CAS1 acts as a positive regulator in the tomato 
+fruit ripening process.
+The chlorophyll content decreased gradually during the ri-
+pening process of WT, CAS1
+-OE, and cas1 groups, and was 
+consistently the highest in the cas1 mutant and lowest in 
+CAS1-OE tomato fruits (Fig. 5C). Specifically, the chlorophyll 
+content of the cas1 mutant was 1.3-fold higher than that of 
+WT at 30 DPA (
+P < 0.05) and 1.2-fold higher than that of 
+CAS1-OE tomato (P < 0.05). The changes in carotenoid con-
+tent were converse to the chlorophyll degradation pattern 
+(Fig. 5D). At 40 DPA, the carotenoid content in CAS1-
+OE 
+was 2-fold higher than that in WT (P < 0.05) and 7-fold high-
+er than that of cas1 mutant tomato (
+P < 0.05). The trend of 
+lycopene content was similar to that of chlorophyll in cas1, 
+WT, and CAS1-OE groups (Fig. 5E). At 50 DPA, the lycopene 
+content of CAS1
+-OE was 1.6-fold that of WT (P < 0.05) and 
+7.6-fold that of cas1 mutant tomato fruit (P < 0.05).
+Expression levels of the chlorophyll degradation pathway 
+genes NYC1, PAO, PPH, and SGR1 in CAS1-OE were increased 
+compared with WT, suggesting accelerated chlorophyll 
+degradation in CAS1-OE tomatoes. Overall gene levels were 
+2–3 times higher than those of WT tomatoes at 40 DPA 
+(Fig. 5B
+). But there were no differences in the expression of 
+these genes which were evident between cas1 mutant and 
+WT tomato fruits. However, at 50 DPA, SGR1 expression in 
+the cas1 mutant was one-fifth that of WT (
+P < 0.05). 
+Expression patterns of PSY1, PDS, and ZDS showed similar 
+trends to NYC1, PAO, PPH, and SGR1, with 1-fold higher ex-
+pression in CAS1
+-OE than WT tomato at 50 DPA (P < 0.05) 
+and nearly 2.5-fold higher expression relative to 
+cas1 mutant fruit (P < 0.05) (Fig. 5B).
+WRKY71 binds the CAS1 promoter and negatively 
+regulates tomato fruit ripening
+To ascertain the regulatory relationship between CAS1 and 
+WRKY71, the activity of WRKY71 was analyzed using 
+VP16-UAS and the dual-luciferase reporter system. 
+Following truncation of the WRKY71 coding sequence 
+(CDS) to F1 fragment (0–561 bp) containing the 
+WRKYGQK sequence and F2 fragment (520–954 bp) con
+-
+taining the zinc-finger structure, the F2 fragment was identi-
+fied as the inhibitory region ( Fig. 6A).
+Analysis of the CAS1 promoter structure containing mul-
+tiple cis
+-regulatory elements in PlantCARE ( http:// 
+bioinformatics.psb.ugent.be/webtools/plantcare/html/) re -
+vealed the presence of a W-box cis
+-acting element in this 
+Figure 4 Functional analysis of WRKY71 in tomato fruit using CRISPR/Cas9. A) Phenotypic analysis of WT, wrky71 and WRKY71-OE samples at the 
+critical period of maturity. B) Expression patterns of WRKY71, CAS1, NYC1, PAO, PPH, SGR1, PDS, PSY1, and ZDS in WT, wrky71 and WRKY71-OE fruits 
+at the critical period of maturity. C–E) Comparison of chlorophyll, carotenoid, and lycopene contents in WT, wrky71 and WRKY71-OE fruits at the 
+critical period of maturity. Data are presented as means ± SD (n = 3). Statistical analysis was carried out with One-way ANOVA, and different letters 
+signify P < 0.05. Scale bars = 1 cm.
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+622 | PLANT PHYSIOLOGY 2023: 192; 616–632                                                                                                                    Sun et al.
+region. The promoter sequence was divided into 3 segments, 
+designated S1 (−1,970 to −1,636 bp), S2 (−1,668 to 
+−1,461 bp), and S3 (−1,197 to −936 bp), and bait vectors 
+(pAbAi-S1, pAbAi-S2, and pAbAi-S3) constructed for the 
+Y1H assay. The results obtained suggest that WRKY71 binds 
+the S1 fragment but not the S2 or S3 of CAS1 (Fig. 6B).
+Transient transformation of WRKY71 in CAS1-OE or cas1 
+mutant tomato fruits was conducted to establish whether 
+CAS1 is regulated by WRKY71 in vivo. As shown in Fig. 6C
+, 
+overexpression of WRKY71 in CAS1
+-OE tomatoes delayed 
+the ripening process compared with the group transformed 
+with the empty vector (pSAK277), but no substantial differ -
+ence in ripening was observed in cas1 mutant tomato fruits 
+(Fig. 6E). CAS1 expression was repressed upon overexpression 
+of WRKY71 (Fig. 6D), while no differences in CAS1 levels were 
+evident between cas1 mutant and empty vector groups un-
+der conditions of WRKY71 overexpression ( Fig. 6F). These 
+data clearly demonstrated that WRKY71
+-mediated suppres-
+sion of CAS1 transcription played a role in the regulation of 
+the tomato fruit ripening process.
+H2S signaling mediates persulfidation and functional 
+regulation of WRKY71
+To explore the effect of H 2S on the regulatory interactions 
+between WRKY71 and CAS1, we conducted the 
+persulfidation reaction in vitro using the biotin switch method. 
+Western blot analysis clearly showed a persulfidation signal in 
+WRKY71 protein treated with H
+2S (Fig. 7A; lanes 2 and 3). In 
+contrast, no band was observed in WRKY71 protein without 
+H2S treatment (lane 1) or upon the addition of dithiothreitol 
+(DTT) (lane 4). Additionally, no persulfidation signal was ob-
+served in the CAS1 protein (Supplemental Fig. S7). To further 
+validate persulfidation of WRKY71, we constructed a muta -
+tion protein in which Cys was replaced with Ala ( Fig. 7B) 
+and purified the WRKY71 mutant protein from Escherichia 
+coli
+. As expected, no persulfidation signal was observed for 
+WRKY71 mutant protein treated with H 2S (Fig. 7B), clearly 
+confirming that the wild-type protein is specifically modified 
+by persulfidation.
+To examine the regulatory activity of persulfidated 
+WRKY71 on CAS1, the dual-luciferase experiment was con -
+ducted. Distinct from previous experiments, co-transfected 
+N. benthamiana leaves were fumigated in H
+2S for 3 h before 
+sampling to determine the function of H 2S-modified 
+WRKY71. As shown in Fig. 7C, transactivation of WRKY71 un-
+der H2S fumigation was substantially lower than that without 
+H2S treatment (P < 0.01). However, we observed no differ -
+ences in the activation of WRKY71 Cys193AlaCys198Ala mutants 
+and pSAK277 between groups with and without H 2S 
+fumigation.
+Figure 5 Functional analysis of CAS1 in tomato fruit via CRISPR/Cas9 and transgene overexpression systems. A) Phenotypic analysis of cas1, 
+CAS1-OE, and WT tomato at the critical period of maturity. B) Analysis of relative gene expression of WRKY71, CAS1, NYC1, PAO, PPH, SGR1, 
+PDS, PSY1, and ZDS in cas1, CAS1-OE, and WT fruits at the critical period of maturity. C–E) comparison of chlorophyll, carotenoid, and lycopene 
+contents in cas1, CAS1-OE, and WT fruits at the critical period of maturity. Data are presented as means ± SD (n = 3). Statistical analysis was carried 
+out with One-way ANOVA, and significance was marked with different letters (P < 0.05). Scale bars = 1 cm.
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+H2S-mediated persulfidation delays tomato ripening                                                     PLANT PHYSIOLOGY 2023: 192; 616–632 | 623
+We additionally performed EMSA experiments using 
+H2S-treated WRKY71 recombinant protein and a 
+W-box-containing CAS1 promoter probe. As shown in 
+Fig. 7D, bands in lanes 3, 7, and 8 were produced by 
+WRKY71-GST protein treated with NaHS (0, 400, and 
+800 μ
+M) and subsequently incubated with biotin-labeled 
+probes. The bands in lanes 7 and 8 were pronounced darker 
+than those in lane 3. These findings indicate that persulfidation 
+increases the ability of WRKY71 to bind probes. Moreover, 
+upon the addition of cold probes to WRKY71-GST protein in-
+cubated with biotin probe, weaker bands were detected (lanes 4 
+and 5). No bands were observed for WRKY71-GST incubated 
+with mutant probes (lane 6), suggesting that wild-type 
+WRKY71 interacts with the W-box in the CAS1 promoter.
+WRKY71 is ubiquitinated by BRG3 in vitro
+According to data from LC-MS/MS analysis, persulfidation oc-
+curred in 2 E3 ligases of tomato, RNF144b (LOC101265447) 
+and BRG3 (LOC101267168) (
+Supplemental Table S3 ). In 
+view of the previous finding that WRKY TFs interact with 
+E3 ubiquitin ligase to co-regulate physiological processes of 
+plants, we examined the hypothesis that WRKY71 may be 
+modified via ubiquitination. Accordingly, a N. benthamiana
+- 
+based firefly luciferase complementation assay was con -
+ducted to identify interactions of WRKY71 with RNF-144b 
+or BRG3. The model of vectors is depicted in Fig 8A. Both 
+BRG3
+-nLuc+WRKY71-cLuc and BRG3-cLuc+WRKY71-nLuc 
+showed a stronger capability to rescue luciferase enzyme ac-
+tivity than control constructs (Fig. 8, A and B). Interactions of 
+Figure 6 WRKY71 suppresses CAS1 transcription in tomatoes. A) Identification of WRKY71 as a transcriptional inhibitor. (a) Subfragments of 
+WRKY71. (b) Dual-luciferase reporter assay validating the inhibitory activity of WRKY71 on transcription. B) WRKY71 directly binds to the CAS1 
+promoter. (a) Scheme of the promoter of CAS1. Bar segments were analyzed using the PlantCARE database and separated by solid lines (S1, S2, 
+S3). (b) Identification of WRKY71 bound to the CAS1 promoter with theY1H. C) Phenotypic analysis of CAS1-OE tomato transfected with 
+WRKY71 at the critical period of tomato fruit ripening. D) Gene expression of (a) CAS1 and (b) WRKY71 in CAS1-OE tomato fruit at the critical period 
+of tomato fruit ripening. E) Phenotypic analysis of cas1 mutant tomato transfected with WRKY71 at the critical period of tomato fruit ripening. F) 
+Expression of (a) CAS1 and (b) WRKY71 in cas1 mutant tomato transfected with WRKY71 at the critical period of tomato fruit ripening. Data are pre-
+sented as means ± SD (n = 3). Statistical analysis was carried out with One-way ANOVA and Student’s t-test, and significance was marked with asterisks, 
+* (P < 0.05) or ** (P < 0.01), or different letters (P < 0.05). Scale bars = 1 cm.
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+624 | PLANT PHYSIOLOGY 2023: 192; 616–632                                                                                                                    Sun et al.
+BRG3 with WRKY71 were further verified with the Y2H assay, 
+which showed that Y2H yeast-competent cells containing 
+WRKY71 and BRG3 could grow in medium without Ade, 
+His, Leu, and Trp (Fig. 8B).
+To determine whether BRG3 possesses ubiquitin ligase ac-
+tivity, BRG3 protein fused to MBP tag was expressed in E. coli
+, 
+and an in vitro ubiquitination assay was conducted. BRG3 
+displayed self-ubiquitination in human E1 and E2 as well as 
+the substrate Ubs, supporting its activity as a functional ubi-
+quitin ligase. Next, WRKY71 fusion protein with a GST tag 
+was expressed in E. coli to establish whether WRKY71 is ubi
+-
+quitinated by BRG3 protein. As shown in Fig. 8C, polyubiqui-
+tinated bands were observed upon incubation of WRKY71 
+with Ub, E1, E2, and BRG3 proteins in anti-Ub and 
+anti-GST assays (lane 1). In contrast, no polyubiquitinated 
+bands were present in the lanes without Ub, E1, E2, BRG3, 
+or WRKY71. Our collective findings indicate that BRG3 ubi -
+quitinates WRKY71 in vitro
+.
+Persulfidation and functional regulation of BRG3 
+mediated by H2S signaling
+As shown in Fig. 9A, western blot showed a clear persulfi -
+dation signal in BRG3 protein treated with H 2S (lanes 2 
+and 3), whereas a faint band was observed in BRG3 protein 
+without H 2S treatment (lane 1) or in the presence of 
+dithiothreitol (DTT) (lane 4). Based on a protein database 
+search, LC-MS/MS analysis revealed the presence of a 
+peptide “SSCMICLPCR” of BRG3 protein, with persulfida -
+tion of Cys3 and Cys9 (Fig. 9B). Comparison with the pro -
+tein sequence of BRG3 revealed that Cys 3 and Cys 9 
+correspond to Cys 206 and Cys212, respectively. To validate 
+Figure 7 Effects of persulfidation on WRKY71 function. A) Detection of persulfidation of WRKY71 recombinant protein in vitro. Purified recom-
+binant WRKY71 protein was treated with the sulfurating molecule NaHS (400 or 800 μM) for 30 min and subjected to a modified biotin-switch 
+assay for analysis of protein persulfidation. Treatment with 1 mM DTT was used as a negative control. B) Detection of persulfidation in 
+WRKY71Cys-Ala mutant. C) Dual-luciferase reporter assay showing the effect of H2S on transactivation of CAS1 transcription by WRKY71. The report-
+er construct was co-transformed with different versions of WRKY71 in N. benthamiana leaf for 48 h. Leaves were treated with 0.1 mM NaHS (or 
+distilled water as a control) for 1 h before sampling. D) EMSA results showing the effect of persulfidation on the binding ability of WRKY71 
+with CAS1 promoter probes. Data are presented as means ± SD (
+n = 3). Statistical analysis was carried out with Student’s t-test, and significance 
+was marked with asterisks: * (P < 0.05) or ** (P < 0.01).
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+H2S-mediated persulfidation delays tomato ripening                                                     PLANT PHYSIOLOGY 2023: 192; 616–632 | 625
+persulfidation of Cys 206 and Cys212, we generated a muta -
+tion protein in which Cys residues were replaced with 
+Ala ( Fig. 9C ) and purified the mutant BRG3 protein 
+from E. coli
+. As expected, no persulfidation signal was ob -
+served for BRG3 mutant protein treated with H 2S 
+(Fig. 9C), strongly suggesting that Cys 206 and Cys 212 
+are the active cysteine sites modified. An in vitro 
+ubiquitination assay identified 4 proteins, BRG3, BRG3-S 
+(protein treated with H
+2S), BRG3 Cys-Ala mutant, and 
+BRG3Cys-Ala-S (protein treated with H 2S), as functional 
+BRG3 ubiquitin ligases (Fig. 9D). The ubiquitination signal 
+of BRG3-S was weaker compared with BRG3 protein 
+(Fig. 9D; lanes 4 and 5) but similar between BRG3
+Cys-Ala 
+and BRG3 Cys-Ala-S proteins (Fig. 9D ; lanes 6 and 7). 
+There similar results were observed when detected with 
+anti-MBP antibodies and anti-ub antibodies. Our results 
+suggest that persulfidation of BRG3 alters its ubiquitina -
+tion activity.
+Discussion
+WRKY71 acts as a repressor to negatively regulate 
+tomato fruit ripening
+Accumulating evidence has shown that H 2S delays the fruit 
+ripening process in many horticultural crops (Li et al. 2017; 
+Ge et al. 2018; Zhong et al. 2021). The groups of Yao et al. 
+(2018)and Hu et al. (2019) showed that H2S delays tomato 
+fruit ripening by antagonizing the effects of ethylene in vitro 
+and in vivo. However, the specific molecular mechanisms 
+underlying H2S-mediated regulation of tomato fruit ripening 
+are unclear. A number of candidate TF genes responding to 
+H2S signalling as potential regulators in fruit ripening were 
+screened via transcriptome analysis, including ERFs, NACs, 
+and WRKYs (Fig. 1). In tomato fruit, among WRKY71, 
+WRKY35, and WRKY23, classified as Group II via genome-wide 
+analysis, WRKY35 and WRKY23 accelerated the tomato 
+ripening process (Bartley and Ishida 2003; Huang et al. 2012; 
+Figure 8 Identification of BRG3 ubiquitination and interactions with WRKY71. A) Interactions of WRKY71 and BRG3/RNF-144b. (a) Model of nLuc/ 
+cLuc, WRKY71-nLuc/cLuc, RNF-144b-nLuc/cLuc, and BRG3-nLuc/cLuc constructs. (b) Firefly luciferase complementation assays of nLuc/cLuc, 
+WRKY71-nLuc/cLuc, RNF-144b-nLuc/cLuc, and BRG3-nLuc/cLuc in 6-week-old N. benthamiana leaves. B) Y2H assay of interactions between 
+WRKY71 and BRG3. Positive colonies signify strong interactions between WRKY71 and BRG3. C) Ubiquitination assay validating WRKY71-GST ubi-
+quitination by BRG3-MBP in vitro. Data are presented as means ± SD (n = 3). Statistical analysis was carried out with One-way ANOVA, and signifi-
+cance was marked with different letters (
+P < 0.05).
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+626 | PLANT PHYSIOLOGY 2023: 192; 616–632                                                                                                                    Sun et al.
+Yuan et al. 2022). Notably, WRKY71 showed a substantial 
+negative correlation with tomato fruit ripening based on 
+RT-qPCR, correlation, and dual-luciferase analysis (Figs. 2
+and 3; Supplemental Table S2). Further experiments with a 
+transient system and stable transgenic overexpressing 
+(
+WRKY71-OE) and mutant plants (wrky71) obtained via 
+CRISPR/Cas9 confirmed that WRKY71 functions as a suppres-
+sor of tomato fruit ripening ( Supplemental Figs. S2 and S3; 
+Fig. 4). The ripening process was accelerated in wrky71 mu-
+tant tomato fruit, pigment contents were increased, and 
+expression levels of key genes involved in chlorophyll degrad-
+ation and carotenoid biosynthesis substantially enhanced. 
+The phenotypic characteristics of WRKY71
+-OE fruits pre -
+sented an opposite trend (Fig. 4). Our data provide direct evi-
+dence that WRKY71 acts as a negative regulator of ripening in 
+tomato fruit. The tomato fruit ripening process is a complex 
+regulatory network involving multiple activators and repres-
+sors, such as ripening inhibitor (RIN)
+, non-ripening (NOR), col-
+orless non-ripening (Cnr)
+, WRKY35, and WRKY23 (Bartley and 
+Ishida 2003; Ito et al. 2017; Yuan et al. 2022), which act in a 
+Figure 9 Persulfidation of BRG3 at Cys 206 and Cys212 decreases its ubiquitination activity and interactions with WRKY71. A) Detection of BRG3 
+recombinant protein persulfidation in vitro. Purified recombinant BRG3 protein was treated with the sulfurating molecule NaHS (400 or 
+800 μM) for 30 min and subjected to a Modified biotin-switch assay. Treatment with 1 mM DTT was used as a negative control. B) 
+Identification of Cys3 and Cys9 corresponding to Cys206 and Cys212, respectively. (a, b) LC-MS/MS analysis of “SSCMICLPCR” from BRG3 protein. 
+C) Detection of persulfidation in BRG3 Cys-Ala. D) BRG3 persulfidation decreases its ubiquitination ability. M: marker. Ubiquitination abilities of 
+BRG3(S) (lane 5) and mutant BRG3 (lanes 6 and 7) were lower than that of BRG3 (lane 4). 
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+H2S-mediated persulfidation delays tomato ripening                                                     PLANT PHYSIOLOGY 2023: 192; 616–632 | 627
+synergistic or antagonistic manner. However, the precise 
+regulatory relationships between WRKY71 and known ripen-
+ing regulators require further study.
+WRKY71 inhibits target gene CAS1 expression to 
+regulate tomato fruit ripening
+A previous study showed that cyanoalanine synthase 1 
+(CAS1) located downstream of the ethylene production 
+pathway acts as a key rate-limiting enzyme in the decyanida-
+tion pathway in plants. CAS1 and CAS2 function in cyanide 
+detoxification in apples and are relevant in ethylene produc-
+tion and conversion of HCN in avocado and carnation flow -
+ers. Moreover, the activity of CAS is higher in climacteric 
+compared with non-climacteric fruits ( Manning 1986; 
+Mizutani et al. 1988; Warrilow 1988; Yip and Yang 1998; 
+Sang et al. 2007). These findings suggest that CAS1 is a key 
+gene involved in the fruit ripening process. In this study, 
+CAS1 was screened via transcriptome profiling of 
+H2S-treated tomato fruit (Fig. 1). Data obtained from a 
+transient expression system, transgenic overexpression 
+(CAS1-OE), and cas1 mutant plants support the role of 
+CAS1 in promoting tomato ripening. Accordingly, CAS1 
+was identified as a positive regulator of ripening (Fig. 5; 
+Supplemental S4). Moreover, WRKY71 was shown to sup -
+press CAS1 expression via binding the W-box ( Figs. 6, B
+–D, 
+and 7E). Based on the data, we propose that WRKY71 acts 
+as a negative regulator of CAS1 transcription, thereby delay-
+ing the tomato ripening process. To clarify the relationship 
+between H2S and the tomato fruit ripening mechanism in -
+volving the WRKY71-CAS1 axis, persulfidation detection 
+was performed. The results disclosed no signal in CAS1 while 
+WRKY71 was modified via persulfidation through the H 2S 
+donor. Persulfidation increased the ability of WRKY71 to 
+bind the W-box in the CAS1 promoter (Fig. 7). These findings 
+were consistent with previous studies showing that persulfi -
+dation increases enzyme activity and binding ability in 
+Chinese cabbage ( Paul and Snyder 2012; Ma et al. 2021 ). 
+Accordingly, we conclude that H 2S activates the transcrip -
+tion of WRKY71 and induces the persulfidate posttransla -
+tional modification of its protein to enhance its binding 
+ability to the CAS1 promoter, thereby repressing CAS1 ex-
+pression and causing a delay in tomato ripening.
+Persulfidation of BRG3 at Cys206 and Cys212 decreases 
+its ubiquitination activity and interactions with 
+WRKY71
+Protein ubiquitination is a common posttranslational modi-
+fication that participates in the regulation of a wide variety of 
+protein substrates in different cellular pathways through a 
+3-enzyme cascade (E1–E2–E3) and identification of sub -
+strates through Lys residues ( Goldknopf et al. 1977; Swatek 
+and Komander 2016). For example, a ring-type E3 ligase, 
+XB3, accelerates the ubiquitination and degradation of 
+NAC2, ACS1, and ACO1 to delay ripening of bananas 
+(Shan et al. 2020 ) and BRG2/3 ubiquitinates and degrades 
+a negative regulator, MYB4, thereby accelerating ethylene ac-
+cumulation to control banana fruit ripening ( Yang et al. 
+2022). The results support a regulatory role of the ubiquitina-
+tion process in the fruit ripening process. The potential role 
+of persulfidation in ubiquitination may present a mechanism 
+by which H2S mediates fruit ripening. In the current study, 
+Y2H and luciferase complementation assays led to the iden -
+tification of a ring-type E3 ligase, BRG3, that interacts with 
+and ubiquitinates WRKY71 protein in vitro (
+Fig. 8). It has 
+been shown that BRG3 attenuates the inhibitory effect of 
+WRKY71 on the fruit ripening process via degradation 
+(Fig. 8
+), inconsistent with results showing that H 2S delays 
+the ripening tomato process by inducing an increase in 
+WRKY71 transcription. Results obtained from LC-MS/MS 
+and mutational analysis in the current study demonstrated 
+that Cys
+206 and Cys212 of BRG3 are modified via persulfida -
+tion, with resulting weakening of ubiquitination ability 
+(Fig. 9, B
+–D). Cys206 and Cys212 were thus identified as critical 
+residues for the ubiquitination ability of BRG3. Moreover, 
+BRG3 presents an important target for H
+2S-mediated regula-
+tion of physiological processes in tomato fruits. Hence, it is 
+reasonable to speculate that H2S signals decrease the ubiqui-
+tination activity of BRG3 via persulfidation at Cys 206 and 
+Cys212, thereby reducing the degradation of WRKY71. 
+Theoretically, the factors underlying changes in protein func-
+tion caused by persulfidation are not only the different nu -
+cleophilic abilities of Cys-SSH but also changes in protein 
+conformation. Further studies are essential to determine 
+whether persulfidation causes changes in protein conform
+-
+ation and the mechanisms by which persulfidation of BRG3 
+regulates tomato fruit growth and development in vivo
+.
+Conclusions
+H2S is a gaseous signal molecule with multiple roles in fruit 
+ripening and senescence. However, the molecular mechan -
+isms underlying the H 2S-mediated delay in fruit ripening 
+are currently unclear. In this study, we demonstrated that 
+persulfidation of WRKY71, an H 2S-responsive ripening re -
+pressor, increases the binding ability to the CAS1 promoter 
+and suppresses the transcription of CAS1
+, thereby delaying 
+tomato ripening. Moreover, Cys206 and Cys212 of the E3 ubi-
+quitin ligase, BRG3, were modified by persulfidation, which 
+reduced its ubiquitination activity and interactions with 
+WRKY71. Our collective findings support a model in which 
+H2S persulfidates BRG3Cys206 and BRG3Cys212, resulting in re-
+duced degradation of WRKY71. Meanwhile, persulfidation of 
+WRKY71 promotes transcriptional inhibition of CAS1
+, result-
+ing in a delay in the ripening process of tomato fruit (Fig. 10).
+Materials and methods
+Plant materials and growth
+‘Micro Tom’ tomatoes (S. lycopersicum) used in this study 
+were grown in the glass house of the School of Food and 
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+628 | PLANT PHYSIOLOGY 2023: 192; 616–632                                                                                                                    Sun et al.
+Biological Engineering (Hefei University of Technology, Hefei, 
+China). Tomato plants were grown on nutrient soil: vermicu-
+lite (3:1, v/v) in 10 cm pots in an environment-controlled 
+growth room (23 ± 2 °C; 50–70% relative humidity [RH]) un-
+der conditions of 16 h light/8 h dark and 250 µmol/m2/s light.
+The 4-week-old tobacco (
+N. benthamiana) leaves were 
+used for dual-luciferase reporter system and firefly luciferase 
+complementation assays. And the samples were frozen in li -
+quid nitrogen and stored at −
+80 °C.
+RNA extraction and transcriptome sequencing using 
+the Illumina Platform
+According to the method of Zhong et al. (2021), 60 tomato 
+fruits at the stage of color break were selected and divided 
+into 6 groups (10 tomatoes per group) representing 3 repli -
+cates of control (CK) (250 ml distilled water) and H 2S treat-
+ment (250 ml, 0.9 mM NaHS aqueous solution) groups, 
+respectively. These tomato samples were selected for tran
+-
+scriptome analysis. Untreated fruit was designated CK_0d, 
+H
+2S-treated fruits for 1 and 3 d denoted H 2S_1d and 
+H2S_3d, and control fruits watered for 1 and 3 d denoted 
+CK_1d and CK_3d, respectively. Total RNA was extracted 
+with TRIzol and RNA molecules within a size range of 
+18–30 nt enriched via polyacrylamide gel electrophoresis 
+(PAGE). Next, 3′ adapters were added, and 36–44 nt RNAs 
+enriched, followed by ligation of 5′ adapters to RNA. 
+Ligation products were subjected to reverse transcription 
+via PCR amplification. PCR products 140–160 bp in size 
+were enriched to generate a cDNA library and sequenced 
+using Illumina HiSeq 2500 (Gene Denovo Biotechnology 
+Co., Guangzhou, China).
+The expression trends of DEGs were analyzed using the 
+OmicShare Bioinformatics Cloud Platform (https://www. 
+omicshare.com/tools/). The top of the graph shows the ID 
+of the trend and the numbers within the graph represent 
+the number of genes in the trend. Blocks with color 
+(
+P < 0.05) represent significantly enriched trends, with simi -
+lar trend blocks of the same color, while blocks without color 
+represent nonsignificantly enriched trends.
+Bioinformatic analysis
+The phylogenetic relationship was analyzed by a phylogenet-
+ic tree, which was constructed by MEGA 7.0 with the 
+Neighbor-Joining method and 1,000 bootstrap replicates. 
+Multiple sequence alignment is performed at multalin 
+(http://multalin.toulouse.inra.fr/multalin/).
+Reverse transcription-quantitative PCR analysis
+Expression levels of genes were analyzed via reverse 
+transcription-quantitative PCR (RT-qPCR) with the Light 
+Figure 10 Postulated working model of association of WRKY71 with BRG3 to regulate CAS1 expression, thereby controlling tomato fruit ripening. 
+WRKY71 inhibits CAS1 expression by binding to the W-box in the promoter region and BRG3 ubiquitinates and degrades WRKY71. Persulfidation of 
+BRG3 induced by H2S signaling leads to a decrease in its ubiquitination activity and consequent WRKY71 degradation and persulfidation of WRKY71 
+promote inhibition of CAS1 expression, resulting in delayed tomato fruit ripening. Arrow, positive effect; bar, negative regulation; orange rectangle, 
+W-box.
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+H2S-mediated persulfidation delays tomato ripening                                                     PLANT PHYSIOLOGY 2023: 192; 616–632 | 629
+Cycler 480 SYBR GREEN I Master mix (Roche, San Francisco, 
+USA) according to the manufacturer’s instructions. Gene ex-
+pression levels were calculated using the 2 −ΔΔCT algorithm 
+and normalized to SlTubulin (Solyc08g006890). All analyses 
+were repeated 3 times using 3 biological replicates. 
+Statistical and correlation analyses were performed with 
+SPSS 22.0 for Windows NT. The primers used are listed in 
+Supplemental Table S4.
+Transient overexpression and VIGS in tomato fruit
+The gene sequences of WRKY71 cloned from cDNA of ‘Micro 
+Tom’ tomatoes were used for experiments. PCR amplifica -
+tion was conducted using TransStart Fast Pfu DNA polymer-
+ase (AP221-01, Transgen, Beijing, China) and the primers 
+listed in Supplemental Table S5. WRKY71 was inserted be-
+tween the EcoR
+I and XhoI restriction sites of the pSAK277 
+vector. Cultivation of the Agrobacterium tumefaciens strain 
+GV3101 containing the appropriate vectors and transfection 
+of tomato fruits was performed as described by Yao et al. 
+(2017).
+TRV-based vectors, pTRV1 and pTRV2, were used for VIGS. 
+The CAS1 and WRKY71 fragments (400 bp in length corre -
+sponding to 1–400 nt) on CDS were amplified and inserted 
+between Bam
+HI and EcoRI sites of the pTRV2 vector to gen-
+erate recombinant pTRV2-
+CAS1 and pTRV2-WRKY71, re -
+spectively. Cultivation of the A. tumefaciens strain GV3101 
+containing the appropriate vectors and transfection of to -
+mato fruits was performed as described by Fantini and 
+Giuliano (2016).
+Plasmid construction and generation of transgenic 
+tomato plants
+The CDSs of WRKY71 and CAS1 were retrieved from the NCBI 
+database. The gRNA target primers were generated based on 
+the CRISPR direct platform (http://crispr.dbcls.jp), with 2 
+pairs designed per case (Supplemental Table S6). CRISPR/ 
+Cas9 vectors contained 2 gRNA targets of WRKY71 and 
+CAS1, respectively (Ma 2015). The primers used for the amp-
+lification of the fragment are presented in Supplemental 
+Table S5. The primers for CAS1 and WRKY71 overexpression 
+were designed using Primer Premier 5 (Supplemental 
+Table S5). The CDSs of CAS1 and WRKY71 were inserted be-
+tween Bam
+HI and XhoI sites of the pBI121 vector. Plasmids 
+were introduced into the A. tumefaciens strain EHA105, 
+and tomato transformation was performed as described by 
+Chen et al. (2003).
+CAS1 and WRKY71 mutant tomato plants were identified 
+by decoding sequencing results using DSDecodeM (http:// 
+www.ygliulab.club/dsdecode) and expression analysis per -
+formed using RT-qPCR. CAS1
+- and WRKY71-overexpressing 
+transgene plants were identified via western blot and 
+RT-qPCR analysis. Antigen affinity-purified antibodies of 
+WRKY71 and CAS1 were produced using the specific pep
+-
+tides “CQVKKRVERSYQDP” and “NDAEKKGLITPGKTC,” 
+respectively, as antigens for immunization of rabbits 
+(Genscript Biotech Corporation, Nanjing, China).
+Carotenoid, chlorophyll, and lycopene determination
+Carotenoid and chlorophyll contents were determined ac -
+cording to the method of Nagata and Yamashita (1992) . 
+Briefly, 1.0 g tomato fruit powder was extracted with acetone 
+and hexane (2:3 volume), and optical densities of the super -
+natant at 663, 645, 505, and 453 nm were measured using 
+spectrophotometry. The contents of chlorophyll a, b, lyco -
+pene, and carotenoid were calculated from the equations 
+as follows: chlorophyll a (mg 100 ml
+−1) = 0.999A663– 
+0.0989A645, chlorophyll b (mg 100 ml −1) = −0.328A663 +  
+1.77A645, lycopene (mg 100 ml −1) = −0.0458A663 +  
+0.204A645 + 0.372A505 – 0.0806A453, carotenoid (mg 100 ml−1)  
+= 0.216A663−1.22A645−0.304A505 + 0.452A453.
+Dual-luciferase reporter system assay
+For the dual-luciferase reporter assay, the upstream pro -
+moter sequence of CAS1 (2 kb) was cloned and inserted be -
+tween Hind
+III and BamHI sites of pGreen II 0800-LUC vector 
+using the primers listed in Supplemental Table S5. 
+Recombinant plasmid was transformed into the 
+Agrobacterium strain GV3101 (PM90) with the pSoup helper 
+plasmid. The TFs ERF109
+, ERFTINY, NAC73, NAC1, NAC35, 
+WRKY2D, WRKY71, WRKY51, and WRKY65 were inserted 
+into pSAK277 vector, mixed with promoter sequences at a 
+ratio of 1:9 (v/v), and injected into N. benthamiana leaves 
+for transient co-transformation expression analysis (Yoo et 
+al. 2007
+). Five upstream activation sequences (UAS) were in-
+serted into the vector with LUC reporter activity and the 
+WRKY71 fragment inserted into another vector containing 
+4 herpes simplex virus protein CDSs (VP16), followed by co- 
+transfection into N. benthamiana leaves. The ratio of transac-
+tivation activities of firefly luciferase and renilla luciferase was 
+determined with the Dual-Luciferase Reporter Assay System 
+according to the manufacturer’s instructions (E1910; 
+Promega, Madison, USA).
+Luciferase complementation assay
+Firefly luciferase complementation assays were performed 
+according to the method of Chen et al. (2008)
+. Gene se -
+quences were amplified and cloned into pCAMBIA1300- 
+nLuc (no stop codon) and pCAMBIA1300-cLuc vector. The 
+primer sequences are listed in Supplemental Table S5 . 
+Recombinant vectors were subsequently transformed into 
+Agrobacterium GV3101 and cultured in a selection medium 
+containing kanamycin. At an OD 600 value of 0.6, A. tumefa-
+ciens was mixed at a ratio of 1:1 (v/v) and infiltrated into 
+N. benthamiana leaves (Chen et al. 2008). Leaf disks (2 cm 
+in diameter) were punched adjacent to the infiltration site, 
+and the firefly luciferase activity was determined using a 
+Steady-Glo Luciferase Assay System (E2510, Promega, 
+Madison, USA).
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+630 | PLANT PHYSIOLOGY 2023: 192; 616–632                                                                                                                    Sun et al.
+Y1H assay
+The sequence containing the WRKY binding site of the CAS1 
+promoter was amplified and inserted into the pAbAi bait 
+vector containing Hind III and Xho I, while WRKY71 was 
+cloned into the pGADT7 prey vector containing EcoR I and 
+Xho I. After filtering by 0.45 µm membrane, self-activation 
+of bait vectors was tested on SD/-ura + AbA 100, SD/-ura +  
+AbA200, and SD/-ura + AbA400 plates, while the prey vector, 
+pGADT7-WRKY71, was tested on SD/-Leu plates. The pro -
+motor segment baits were fused to the prey vector, intro -
+duced into the Y1HGold yeast strain, and tested on 
+SD/-ura + AbA plates at 30 °C for 3 d ( Li et al. 2020a, 
+2020b). The primer sequences used for vector construction 
+are listed (Supplemental Table S5).
+Y2H assay
+Full-length WRKY71 sequences were cloned into pGBKT7 
+containing Nde I and Pst I for the transactivation activity as-
+say. Full-length BRG3 was cloned into pGADT7 containing 
+Eco
+R I and Xho I and co-transformed in pairs into yeast strain 
+AH109 cells using the LiAC-PEG method. The primers used 
+are presented in Supplemental Table S5. Selection of co- 
+transformed colonies was performed on SD(-Leu/-Trp) 
+growth medium. Protein interactions were examined via 
+growth on SD(-Leu/-Trp/-His/-Ade) screening medium. 
+Co-transformations of pGADT7-T and pGBKT7-53/ 
+pGBKT7-Lam were used as the positive and negative control, 
+respectively (Li et al. 2020a, 2020b).
+Prokaryotic expression vector construction and 
+recombinant protein expression
+The full-length BRG3 sequence was cloned between the 
+BamHI and HindIII restriction sites of pMAL-c2x with MBP 
+tag and full-length WRKY71 cloned between the EcoRI and 
+XhoI restriction sites of pGEX-4T-1 with GST tag. The primers 
+used for cloning are presented in Supplemental Table S5 . 
+Recombinant plasmids were transformed into DE3 for pro -
+tein expression. Transformants carrying pMAL-
+BRG3 and 
+pGEX-WRKY71 were grown overnight at 37 °C in LB contain-
+ing ampicillin. The culture was subsequently transferred to 
+100 ml fresh LB containing ampicillin at 37 °C until an 
+OD600 value of 0.6–0.8 was reached. Isopropyl-β-D- 
+thiogalactopyranoside (IPTG) was added at a final concentration 
+of 1 mM and proteins were induced overnight by incubation at 
+16 °C and 120 rpm (Clos and Brandau 1994). BRG3 protein with 
+MBP tag was purified using Amylose Resin (E8021V, NEB, 
+England), and WRKY71 protein with GST tag was purified using 
+Glutathione Sepharose 4B (10305042; Cytiva, Sweden).
+Biotin switch assay of protein persulfidation
+Persulfidation was detected with the biotin conversion 
+method using purified BRG3 protein treated with H2S as de-
+scribed by Ma et al. (2021). The protocol was as follows: BRG3 
+treated with H2S and acetone-concentrated was dissolved in 
+100 μl HEN (250 mM Hepes-NaOH (pH 7.7), 1 mM EDTA 
+and 0.1 mM neocuproine) at different concentrations. 
+NaHS and dithiothreitol were incubated at 4 °C for 30 min. 
+The protein was re-precipitated with acetone and re- 
+dissolved in 100 μl HEN buffer. Following the addition of me-
+thyl thiosulfonate blocking solution (400 μ
+l), the mixture was 
+allowed to react overnight at 4 °C. Next, the acetone precipi-
+tate was dissolved in 100 μ
+l of 1% SDS HEN buffer and 30 μl 
+biotin-N-[6-(biotinamino) hexyl]-3′-(2′-pyridyl disulfide) 
+base-propionamide solution and the mixture reacted at 
+25 °C for 3 h. Subsequently, the protein was precipitated 
+with acetone, dissolved in 80 μl HEN buffer using biotin 
+and HRP-conjugated antibodies, and a High-sig ECL substrate 
+was used for color development. LC-MS/MS-based peptide 
+identification was performed as described by Rauh (2012)
+and confirmed using the UniProtKB database (https://www. 
+uniprot.org/help/uniprotkb/).
+In vitro ubiquitination assay
+The in vitro ubiquitination assay was performed according to 
+the method of Abramovitch et al. (2006)with slight modifica-
+tions. The ubiquitination reaction mixture (30 μ
+l) comprising 
+ubiquitination buffer (50 mM Tris HCl, pH 7.5, 2 mM ATP, 
+5 mM MgCl 2, 30 mM phosphocreatine [Sigma-Aldrich, 
+Saint Louis, USA]), 50 ng μl−1 creatine phosphokinase 
+(Sigma-Aldrich), recombinant E1, E2, and ubiquitin (a small 
+molecule protein) (Unibi Biotech, Changchun, Jilin, China) 
+was incubated at 37 °C for 12 h. Proteins were separated using 
+7.5% SDS-PAGE and identified via western blot with anti-Ub 
+antibody (dilution is 1:5,000) and anti-GST antibody (dilution 
+is 1:5,000) (Beyotime Biotechnology, Shanghai, China).
+Accession numbers
+Sequence data from this article can be found in the National 
+Center for Biotechnology Information (NCBI, https://www. 
+ncbi.nlm.nih.gov/) or the Phytozome (https://phytozome- 
+next.jgi.doe.gov/) under numbers: WRKY71 (LOC101264783), 
+CAS1 (LOC101253940), BRG3 (LOC101267168), RNF-144b 
+(LOC101265447), ERFTINY (LOC101259323), ERF109 (LOC10 
+1246484), NAC73 (LOC101264084), NAC35 (LOC101267943), 
+NAC1 (Solyc04g009440.2), WRKY2D (Solyc02g093050), 
+WRKY51 (LOC101258361), WRKY65 (LOC101267623), SGR1 
+(Solyc08g080090), PPH (Solyc01g088090), PAO (Solyc11g 
+066440), NYC1 (Solyc07g024000), PSY1 (Solyc03g031860), 
+PDS (Solyc03g123760), ZDS (Solyc01g097810).
+Acknowledgments
+We thank Dr Andrew C. Allan, Dr Lin-Wang Kui, and 
+Dr Richard Espley for the dual vector pGreen II 0800-LUC 
+in The New Zealand Institute for Plant & Food Research 
+Limited, Auckland, New Zealand.
+Supplemental data
+The following materials are available in the online version of 
+this article.
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+H2S-mediated persulfidation delays tomato ripening                                                     PLANT PHYSIOLOGY 2023: 192; 616–632 | 631
+Supplemental Figure S1. Evolutionary relationships and 
+comparison of protein structures of WRKY TF from different 
+species.
+Supplemental Figure S2. Functional analysis of WRKY71 
+in tomato fruit via the transient overexpression assay.
+Supplemental Figure S3. Functional analysis of WRKY71 
+in tomato fruit via the virus-induced gene silencing (VIGS) 
+assay.
+Supplemental Figure S4. Identification of CRISPR/ 
+Cas9-WRKY71 tomato fruit (wrky71) and stable WRKY71 
+transgene tomato (WRKY71-OE).
+Supplemental Figure S5. Analysis of CAS1 in tomato fruit 
+via the virus-induced gene silencing (VIGS) assay.
+Supplemental Figure S6 . Identification of CRISPR/ 
+Cas9-
+CAS1 tomato fruit (cas1) and stable CAS1 transgene to-
+mato (
+CAS1-OE).
+Supplemental Figure S7. Detection of persulfidation sig -
+nal in CAS1.
+Supplemental Table S1. Transcriptome data filtering and 
+quality assessment.
+Supplemental Table S2. Correlation analysis of ERF109
+, 
+NAC35, NAC1, WRKY2D, NAC73, WRKY51, WRKY71, 
+WRKY65, and CAS1 expressions.
+Supplemental Table S3. Identification of the persulfida -
+tion peptide by LC-MS/MS.
+Supplemental Table S4. Primers used in this study for 
+RT-qPCR analysis.
+Supplemental Table S5. Primers used in this study for 
+constructing experiment-related vectors.
+Supplemental Table S6. Primers used for PCR amplifica -
+tion of fragments containing the target sites of gRNA of 
+CRISPR/Cas9-
+WRKY71 and CRISPR/Cas9-CAS1.
+Funding
+This work was supported by the National Natural Science 
+Foundation of China (31970312, 31901993, 32170315, 
+32272682, 31970200, and 31670278), the Key Research 
+and Development Plan of Anhui Province (202003a06020011), 
+the Natural Science Foundation of Anhui Province 
+(1908085MC72), Key Technologies Research and Development 
+Program of Anhui Province (2022i01020018 and 
+2022i01020001), and Fundamental Research Funds for the 
+Central Universities (JZ2021HGPA0063).
+Conflict of interest statement. The authors declare that they 
+have no known competing financial interests or personal re-
+lationships that could have appeared to influence the work 
+reported in this paper.
+References
+Abramovitch RB, Janjusevic R, Stebbins CE, Martin GB. Type III ef -
+fector AvrPtoB requires intrinsic E3 ubiquitin ligase activity to sup -
+press plant cell death and immunity. Proc Natl Acad Sci USA. 
+2006:
+103(8):2851–2856. https://doi.org/10.1073/pnas.0507892103
+Akane M, Haruhiko I, Shingo G, Akira N, Shoji S
+. Nuclear ubiquitin 
+proteasome degradation affects WRKY45 function in the rice defense 
+program. Plant J. 2013:73(2):302–313. https://doi.org/10.1111/tpj. 
+12035
+Bartley GE, Ishida BK. Developmental gene regulation during tomato 
+fruit ripening and in-vitro sepal morphogenesis. BMC Plant Biol. 
+2003:3(1):4. https://doi.org/10.1186/1471-2229-3-4
+Chen S, Jia H, Wang X, Shi C, Wang X, Ma P, Wang J, Ren M, Li J. 
+Hydrogen sulfide positively regulates abscisic acid signaling through 
+persulfidation of SnRK2.6 in guard cells. Mol Plant. 2020:13(5): 
+732–744. https://doi.org/10.1016/j.molp.2020.01.004
+Chen PY, Wang CK, Soong SC, To KY
+. Complete sequence of the bin-
+ary vector pBI121 and its application in cloning T-DNA insertion 
+from transgenic plants. Mol Breed. 2003:
+11(4):287–293. https://doi. 
+org/10.1023/A:1023475710642
+Chen H, Yan Z, Shang Y, Lin H, Zhou JM
+. Firefly luciferase complemen-
+tation imaging assay for protein-protein interactions in plants. Plant 
+Physiol. 2008:
+146(2):368–376. https://doi.org/10.1104/pp.107.111740
+Clos J, Brandau S
+. pJC20 and pJC40–two high-copy-number vectors for 
+T7 RNA polymerase-dependent expression of recombinant genes in 
+Escherichia coli. Protein Expr Purif. 1994:5(2):133–137. https://doi. 
+org/10.1006/prep.1994.1020
+Corpas FJ. Hydrogen sulfide: a new warrior against abiotic stress. 
+Trends Plant Sci. 2019:24(11):983–988. https://doi.org/10.1016/j. 
+tplants.2019.08.003
+Fantini E, Giuliano G. Virus-induced gene silencing as a tool to study 
+tomato fruit biochemistry. Methods Mol Biol. 2016:1363:65–78. 
+https://doi.org/10.1007/978-1-4939-3115-6_7
+Floss HG, Hadwiger L, Conn EE. Enzymatic formation of 
+β-cyanoalanine from cyanide. Nature. 1965:208(5016):1207–1208. 
+https://doi.org/10.1038/2081207a0
+García AI, Gotor C, Romero LC. Beyond toxicity: a regulatory role for 
+mitochondrial cyanide. Plant Signal Behav. 2014:9(1):e27612. https:// 
+doi.org/10.4161/psb.27612
+Ge Y, Hu KD, Wang SS, Hu LY, Chen X-Y, Li Y-H, Yang Y, Yang F, 
+Zhang H
+. Hydrogen sulfide alleviates postharvest ripening and senes-
+cence of banana by antagonizing the effect of ethylene. PLoS One. 
+2018:
+13(1):e0191351. https://doi.org/10.1371/journal.pone.0191351
+Giovannoni J, Nguyen C, Ampofo B, Zhong S, Fei Z
+. The epigenome and 
+transcriptional dynamics of fruit ripening. Annu Rev Plant Biol. 2016:68(1): 
+61–84. https://doi.org/10.1146/annurev-arplant-042916-040906
+Goldknopf IL, French MF, Musso R, Busch H. Presence of protein A24 
+in rat liver nucleosomes. Proc Natl Acad Sci USA. 1977:74(12): 
+5492–5495. https://doi.org/10.1073/pnas.74.12.5492
+He H, Li Y, He LF
+. The central role of hydrogen sulfide in plant re -
+sponses to toxic metal stress. Ecotox Environ Safe. 2018:
+157: 
+403–408. https://doi.org/10.1016/j.ecoenv.2018.03.060
+Hu LY, Hu SL, Wu J, Li YH, Zheng JL, Wei ZJ, Liu J, Wang H-L, Liu Y-S, 
+Zhang H
+. Hydrogen sulfide prolongs postharvest shelf life of straw -
+berry and plays an antioxidative role in fruits. J Agric Food Chem. 
+2012:
+60(35):8684–8693. https://doi.org/10.1021/jf300728h
+Hu KD, Zhang XY, Wang SS, Tang J, Yang F, Huang Z-Q, Deng J-Y, Liu 
+S-Y, Zhao S-J, Hu L-Y, et al. Hydrogen sulfide inhibits fruit softening 
+by regulating ethylene synthesis and signaling pathway in tomato 
+(
+Solanum lycopersicum). Hortscience. 2019:54(10):1824–1830. 
+https://doi.org/10.21273/HORTSCI14283-19
+Hu KD, Zhang XY, Yao GF, Rong YL, Ding C, Tang J, Yang F, Huang 
+Z-Q, Xu Z-M, Chen X-Y, et al. A nuclear-localized cysteine desulfhy-
+drase plays a role in fruit ripening in tomato. Hortic Res. 2020:
+7(1): 
+211. https://doi.org/10.1038/s41438-020-00439-1
+Huang S, Gao Y, Liu J, Peng X, Niu X, Fei Z, Cao S, Liu Y
+. Genome-wide 
+analysis of WRKY transcription factors in Solanum lycopersicum. Mol 
+Genet Genomics. 2012:287(6):495–513. https://doi.org/10.1007/ 
+s00438-012-0696-6
+Huang D, Huo J, Liao W. Hydrogen sulfide: roles in plant abiotic stress 
+response and crosstalk with other signals. Plant Sci. 2021:302:110733. 
+https://doi.org/10.1016/j.plantsci.2020.110733
+Ito Y, Nishizawa-Yokoi A, Endo M, Mikami M, Shima Y, Nakamura 
+N, Kotake-Nara E, Kawasaki S, Toki S. Re-evaluation of the rin 
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026
+
+632 | PLANT PHYSIOLOGY 2023: 192; 616–632                                                                                                                    Sun et al.
+mutation and the role of RIN in the induction of tomato ripening. Nat 
+Plants. 2017:3(11):866–874. https://doi.org/10.1038/s41477-017-0041-5
+Khan MN, Alzuaibr FM, Al-Huqail AA, Siddiqui MH, Ali HM, 
+Al-Muwayhi MA
+. Hydrogen sulfide-mediated activation of o-acetyl-
+serine (thiol) lyase and l/d-cysteine desulfhydrase enhance dehydra -
+tion tolerance in Eruca sativa mill. Int J Mol Sci. 2018:
+19(12):3981. 
+https://doi.org/10.3390/ijms19123981
+Laureano MA, Aroca N, Pérez ME, Yruela I, Jurado FA, Moreno I, 
+Crespo JL, Romero LC, Gotor C
+. Abscisic acid-triggered persulfida-
+tion of the Cys protease ATG4 mediates regulation of autophagy 
+by sulfide. Plant Cell. 2020:
+32(12):3902–3920. https://doi.org/10. 
+1105/tpc.20.00766
+Li TT, Li ZR, Hu KD, Hu LY, Chen XY, Li YH, Yang Y, Yang F, Zhang H
+. 
+Hydrogen sulfide alleviates kiwifruit ripening and senescence by an -
+tagonizing effect of ethylene. Hortscience. 2017:
+52(11):1556–1562. 
+https://doi.org/10.21273/HORTSCI12261-17
+Li C, Wang J, Ji N, Lei C, Zhou D, Zheng Y, Wang K
+. PpHOS1, a RING E3 
+ubiquitin ligase, interacts with PpWRKY22 in the BABA-induced 
+priming defense of peach fruit against Rhizopus stolonifera. 
+Postharvest Biol Technol. 2020a:159:111029. https://doi.org/10. 
+1016/j.postharvbio.2019.111029
+Li C, Wu J, Hu KD, Wei SW, Sun H-Y, Hu L-Y, Han Z, Yao G-F, Zhang H
+. 
+PyWRKY26 and PybHLH3 cotargeted the PyMYB114 promoter to regu-
+late anthocyanin biosynthesis and transport in red-skinned pears. 
+Hortic Res. 2020b:
+7(1):37. https://doi.org/10.1038/s41438-020-0254-z
+Ma X
+. A robust CRISPR/Cas9 system for convenient, high-efficiency 
+multiplex genome editing in monocot and dicot plants. Mol Plant. 
+2015:8(8):1274–1284. https://doi.org/10.1016/j.molp.2015.04.007
+Ma X, Zhang L, Pei Z, Zhang L, Liu Z, Liu D, Hao X, Jin Z, Pei Y. 
+Hydrogen sulfide promotes flowering in heading Chinese cabbage 
+by s-sulfhydration of BraFLCs. Hortic Res. 2021:8(1):19. https://doi. 
+org/10.1038/s41438-020-00453-3
+Manning K. Ethylene production and β-cyanoalanine synthase activity 
+in carnation flowers. Planta. 1986:168(1):61–66. https://doi.org/10. 
+1007/BF00407010
+Mizutani F, Sakita Y, Hino A, Kadoya K. Cyanide metabolism linked 
+with ethylene biosynthesis in ripening processes of climacteric and 
+non-climacteric fruits. Sci Hortic. 1988:35(3–4):199–205. https:// 
+doi.org/10.1016/0304-4238(88)90113-6
+Nagata M, Yamashita I
+. Simple method for simultaneous determin -
+ation of chlorophyll and carotenoids in tomato fruit. J Jpn Soc 
+Food Sci Technol. 1992:
+39:925–928
+Paul BD, Snyder SH
+. H2S signaling through protein sulfhydration and 
+beyond. Nat Rev Mol Cell Biol. 2012:13(8):499–507. https://doi.org/ 
+10.1038/nrm3391
+Rauh M. LC–MS/MS for protein and peptide quantification in clinical 
+chemistry. J Chromatogr B. 2012:883–884:59–67. https://doi.org/10. 
+1016/j.jchromb.2011.09.030
+Rushton PJ, Somssich IE, Ringler P, Shen QJ
+. WRKY transcription fac-
+tors. Trends Plant Sci. 2010:
+15(5):247–258. https://doi.org/10.1016/j. 
+tplants.2010.02.006
+Sang EH, Seo YS, Kim D, Sung SK, Kim WT
+. Expression of MdCAS1 and 
+MdCAS2, encoding apple β-cyanoalanine synthase homologs, is con-
+comitantly induced during ripening and implicates MdCASs in the 
+possible role of the cyanide detoxification in fuji apple (
+Malus domes-
+tica borkh.) fruits. Plant Cell Rep. 2007:
+26(8):1321–1331. https://doi. 
+org/10.1007/s00299-007-0316-9
+Schippers JH
+. Transcriptional networks in leaf senescence. Curr 
+Opin Plant Biol. 2015:27:77–83. https://doi.org/10.1016/j.pbi.2015. 
+06.018
+Shan W, Kuang J, Wei W, Fan Z, Chen JY
+. MaXB3 modulates MaNAC2, 
+MaACS1 and MaACO1 stability to repress ethylene biosynthesis dur-
+ing banana fruit ripening. Plant Physiol. 2020:
+184(2):1153–1171. 
+https://doi.org/10.1104/pp.20.00313
+Swatek KN, Komander D
+. Ubiquitin modifications. Cell Res. 2016:4:24
+Warrilow A
+. Separation, subcellular location and influence of sulfur nu-
+trition on isoforms of cysteine synthase in spinach. J Exp Bot. 1998:
+49-
+(327):1625–1636. https://doi.org/10.1093/jxb/49.327.1625
+Yang YY, Shan W, Yang TW, Wu CJ, Liu XC, Chen JY, Lu WJ, Li ZG, 
+Deng W, Kuang JF
+. MaMYB4 is a negative regulator and a substrate 
+of RING-type E3 ligases MaBRG2/3 in controlling banana fruit ripen-
+ing. Plant J. 2022;
+110(6):1651–1669
+Yao G, Ming ML, Andrew CA, Gu C, Li L, Wu X, Wang R, Chang Y, Qi 
+K, Zhang S, et al. Map-based cloning of the pear gene MYB114 iden-
+tifies an interaction with other transcription factors to coordinately 
+regulate fruit anthocyanin biosynthesis. Plant J. 2017:
+92(3):437–451. 
+https://doi.org/10.1111/tpj.13666
+Yao GF, Wei ZZ, Li TT, Tang J, Huang Z-Q, Yang F, Li Y-H, Han Z, Hu 
+F, Hu L-Y, et al. Modulation of enhanced antioxidant activity by 
+hydrogen sulfide antagonization of ethylene in tomato fruit ripening. 
+J. Agric Food Chem. 2018:
+66(40):10380–10387. https://doi.org/10. 
+1021/acs.jafc.8b03951
+Yip WK, Yang SF
+. Ethylene biosynthesis in relation to cyanide metab -
+olism. Bot Bull Acad Sin. 1998:
+39:1–7
+Yoo SD, Cho YH, Jen SJ
+. Arabidopsis mesophyll protoplasts: a versatile 
+cell system for transient gene expression analysis. Nat Protoc. 
+2007:2(7):1565–1572. https://doi.org/10.1038/nprot.2007.199
+Yuan Y, Ren S, Liu X, Su L, Wu Y, Zhang W
+. SlWRKY35 positively reg-
+ulates carotenoid biosynthesis by activating the MEP pathway in to-
+mato fruit. New Phytol. 2022:
+234(1):164–178. https://doi.org/10. 
+1111/nph.17977
+Zhang J, Zhou M, Ge Z, Shen J, Zhou C, Gotor C, Romero LC, Duan X, 
+Liu X, Wu D, et al. Abscisic acid-triggered guard cell l-cysteine desulf-
+hydrase function and in situ hydrogen sulfide production contributes 
+to heme oxygenase-modulated stomatal closure. Plant Cell Environ. 
+2020:
+43(3):624–636. https://doi.org/10.1111/pce.13685
+Zhong TY, Yao GF, Wang SS, Li TT, Sun K-K, Tang J, Huang Z-Q, 
+Yang F, Li Y-H, Chen X-Y, et al. Hydrogen sulfide maintains good 
+nutrition and delays postharvest senescence in postharvest tomato 
+fruits by regulating antioxidative metabolism. J Plant Growth 
+Regul. 2021:
+40(6):2548–2559. https://doi.org/10.1007/s00344-021- 
+10377-4
+Downloaded from https://academic.oup.com/plphys/article/192/1/616/7025046 by guest on 07 August 2026

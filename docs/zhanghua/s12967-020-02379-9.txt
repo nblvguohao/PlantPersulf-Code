@@ -1,0 +1,179 @@
+===== PAGE 1 =====
+Ho  J Transl Med          (2020) 18:259  
+https://doi.org/10.1186/s12967-020-02379-9
+LETTER TO THE EDITOR
+Comments on: Huang et al. (2019) Emerging 
+trends and research foci in gastrointestinal 
+microbiome’ , J. Transl. Med., 17: 67
+Yuh‑Shan Ho* 
+Keywords: SCI‑EXPANDED, Searching keywords, Bibliometric, Web of science category
+© The Author(s) 2020. This article is licensed under a Creative Commons Attribution 4.0 International License, which permits use, sharing, 
+adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and 
+the source, provide a link to the Creative Commons licence, and indicate if changes were made. The images or other third party material 
+in this article are included in the article’s Creative Commons licence, unless indicated otherwise in a credit line to the material. If material 
+is not included in the article’s Creative Commons licence and your intended use is not permitted by statutory regulation or exceeds 
+the permitted use, you will need to obtain permission directly from the copyright holder. To view a copy of this licence, visit http://crea‑
+tivecommons.org/licenses/by/4.0/. The Creative Commons Public Domain Dedication waiver (http://creativecommons.org/publicdo‑
+main/zero/1.0/) applies to the data made available in this article, unless otherwise stated in a credit line to the data.
+Huang et  al. recently published a paper in Journal of 
+Translational Medicine entitled “Emerging trends and 
+research foci in gastrointestinal microbiome” [1]. Huang 
+et al. mentioned in section Methods, that ‘We obtained a 
+record of 2891 manuscripts published between 1998 and 
+2018 from the Web of Science Core Collection (WoSCC) 
+of Thomson Reuters; this record was obtained on June 
+23, 2018. The WoSCC is the most frequently used source 
+of scientific information. We used the term “Gastrointes
+-
+tinal Microbiomes” and all of its hyponyms to retrieve 
+the record, and restricted the subjects to gastroenterol
+-
+ogy and hepatology. ’
+There is no “Web of Science Core Collection (WoSCC) 
+of Thomson Reuters” but Web of Science Core Col -
+lection of Clarivate Analytics (formerly known as the 
+Thomson Reuters and the Institute for Scientific Infor
+-
+mation). The data were collected on June 23 in 2018. 
+A bias might be obtained as some publications in 2018 
+that have not yet been updated in the Web of Science 
+Core Collection. Using the same method as mentioned 
+in the original paper with searching keywords “gastro
+-
+intestinal microbiomes” in Topic [1] resulted only one 
+meeting abstract entitled “Microbial disease signatures 
+characterize the gastrointestinal microbiomes in irri
+-
+table bowel syndrome” [2] in Web of Science category 
+of gastroenterology and hepatology. When we used 
+searching strategy by search keywords gastrointestinal 
+microbiomes or gastrointestinal microbiome that means 
+gastrointestinal and microbiomes or gastrointestinal 
+and microbiome in Topic field, results 2188 documents 
+including 339 in the category of gastroenterology and 
+hepatology. These results show a huge difference from 
+the results in the original paper [1].
+Web of Science Core Collection includes.
+Web of Science Core Collection: Citation Indexes 
+includes.
+1. Science Citation Index Expanded (SCI-
+EXPANDED).
+2. Social Sciences Citation Index (SSCI).
+3. Arts & Humanities Citation Index (A&HCI).
+4. Conference Proceedings Citation Index—Science 
+(CPCI-S).
+5. Conference Proceedings Citation Index—Social 
+Science & Humanities (CPCI-SSH).
+6. Book Citation Index—Science (BKCI-S).
+7. Book Citation Index—Social Sciences & Humani
+-
+ties (BKCI-SSH).
+8. Emerging Sources Citation Index (ESCI).
+Web of Science Core Collection: Chemical Indexes.
+1. Current Chemical Reactions (CCR-EXPANDED).
+2. Index Chemicus (IC).
+Open Access
+Journal of 
+Translational Medicine
+This comment refers to the article available online at https ://doi.org/10.1186/
+s1296 7‑019‑1810‑x.
+*Correspondence:  ysho@asia.edu.tw
+Trend Research Centre, Asia University, No. 500, Lioufeng Road, Wufeng, 
+Taichung 41354, Taiwan
+===== PAGE 2 =====
+Page 2 of 2Ho  J Transl Med          (2020) 18:259 
+•
+ 
+fast, convenient online submission
+ •
+  
+thorough peer review by experienced researchers in your ﬁeld
+• 
+ 
+rapid publication on acceptance
+• 
+ 
+support for research data, including large and complex data types
+•
+  
+gold Open Access which fosters wider collaboration and increased citations 
+ 
+maximum visibility for your research: over 100M website views per year •
+  At BMC, research is always in progress.
+Learn more biomedcentral.com/submissions
+Ready to submit y our researc h ?  Choose BMC and benefit fr om: 
+The subject of gastroenterology and hepatology can 
+only be found in SCI-EXPANDED. In addition, since 
+there are many levels of databases as mentioned above, 
+the authors should choose the appropriate databases 
+for their research [3]. For instance, Emerging Sources 
+Citation Index (ESCI) complements the highly selective 
+indexes by providing earlier visibility for sources under 
+evaluation as part of SCIE, SSCI, and A&HCI’s rigor
+-
+ous journal selection process (https  ://liu.brook lyn.libgu 
+ides.com/az.php?a=e) [4]. SSCI, A&HCI, ESCI, CPCI-S, 
+CPCI-SSH, BKCI-S, BKCI-SSH, CCR-EXPANDED, and 
+IC are inappropriate for “Emerging trends and research 
+foci in gastrointestinal microbiome” [1].
+From my view, Huang et al. used inappropriate search
+-
+ing keywords and method to publish bibliometric paper 
+in Journal of Translational Medicine, this may result in 
+misleading the journal readers. The authors could have 
+provided a greater accuracy and information about their 
+data if they understood Web of Science Core Collection 
+beforehand. In addition, the fact that only 339 documents 
+were published in 21 years (1998–2018) is not legitimate 
+for a statistics point of view.
+Abbreviations
+SCI‑EXPANDED: Science Citation Index Expanded; SSCI: Social Sciences Cita‑
+tion Index; A&HCI: Arts & Humanities Citation Index; CPCI‑S: Conference Pro‑
+ceedings Citation Index—Science; CPCI‑SSH: Conference Proceedings Citation 
+Index—Social Science & Humanities; BKCI‑S: Book Citation Index—Science; 
+BKCI‑SSH: Book Citation Index—Social Sciences & Humanities; ESCI: Emerging 
+Sources Citation Index; CCR‑EXPANDED: Current Chemical Reactions; IC: Index 
+Chemicus.
+Acknowledgements
+I do not have any research grants to support my research and publications so 
+far.
+Author contributions
+YSH is the sole author. The author read and approved the final manuscript.
+Authors’ information
+Dr. Yuh‑Shan Ho his Ph.D. (1995) from the University of Birmingham in United 
+Kingdom. He is the director of the Trend Research Centre at Asia University 
+in Taiwan. He had 56 papers cited more than 100 times from Web of Science 
+Core Collection. One of his papers has been cited more than 9,000 times. 
+This paper has been ranked top one in the field of chemical engineering. His 
+research interests are adsorption process for water treatment and bibliometric 
+studies.
+Funding
+Not applicable.
+Availability of data and materials
+Not applicable.
+Ethics approval and consent to participate
+Not applicable.
+Consent for publication
+Not applicable.
+Competing interests
+The author declares that they have no competing interests.
+Received: 8 May 2020   Accepted: 14 May 2020
+References
+ 1. Huang XQ, Fan XWW, Ying J, Chen SY. Emerging trends and research foci 
+in gastrointestinal microbiome. J Transl Med. 2019;17:67.
+ 2. Versalovic J, Saulnier DM, Richle K, Mistretta TA, Diaz MA, Raza S, Weidler 
+EM, Milosavljevic A, Coarfa C, Mandal D, Lynch S, Petrosino J, Highlander 
+S, Gibbs R, Shulman R. Microbial disease signatures characterize the gas‑
+trointestinal microbiomes in irritable bowel syndrome. Gastroenterology. 
+2011;140:S102.
+ 3. Ho YS. Comments on the Reply to the Rebuttal to: Zhu, Jin, & He ‘On 
+evolutionary economic geography: a literature review using bibliometric 
+analysis’ . European Planning Studies vol. 27, pp 639–660. Eur Plan Stud. 
+2019;27:1235.
+ 4. Ho YS. Comment on Chen, J., Su, Y., Si, H., Chen, J. Managerial areas of 
+construction and demolition waste: A scientometric review. Int. J. Envi‑
+ron. Res. Public Health 2018, 15 (11), 2350. Int J Environ Res Public Health. 
+2019;16:1837.
+Publisher’s Note
+Springer Nature remains neutral with regard to jurisdictional claims in pub‑
+lished maps and institutional affiliations.

@@ -1,0 +1,1505 @@
+Persulfidation and phosphorylation of transcription factor 
+SlWRKY6 differentially regulate tomato fruit ripening
+Min Zhang,1,†
+ Kangdi Hu,1,*,†
+ Lin Ma,1Meihui Geng,1
+ Conghe Zhang,2Gaifang Yao,1
+ and Hua Zhang1,*
+1School of Food and Biological Engineering, Hefei University of Technology, Hefei 230009, China
+2Winall Hi-Tech Seed Co., Ltd, Hefei 231283, China
+*Author for correspondence: hzhanglab@hfut.edu.cn(H.Z.), kangdihu@hfut.edu.cn(K.H.) 
+†These authors contributed equally.
+The author responsible for distribution of materials integral to the findings presented in this article in accordance with the policy described in the Instructions for 
+Authors (https://academic.oup.com/plphys/pages/General-Instructions): is Hua Zhang (hzhanglab@hfut.edu.cn)
+Abstract 
+Cysteine desulfhydrase catalyses the generation of the signaling molecule hydrogen sulfide (H2S) in plants. In this study, we found that 
+H2S can inhibit tomato (Solanum lycopersicum) fruit ripening and SlWRKY6 undergoes differential protein persulfidation in SlLCD1- 
+overexpressing leaves. Then, further study indicated that SlWRKY6 could be persulfidated by H 2S at Cys396. By construction of 
+slwrky6 mutants and SlWRKY6-OE lines, we found that SlWRKY6 positively regulates leaf senescence and fruit ripening by activating 
+the transcription of ripening-related genes STAYGREEN 1 (SlSGR1) and Senescence-Associated Gene 12 (SlSAG12). In addition, SlWRKY6 
+interacted with kinase SlMAPK4 and was phosphorylated at Ser33. Dual-luciferase transient expression assays and electrophoretic 
+mobility shift assays indicated that SlWRKY6 persulfidation attenuated its transcriptional regulation of target genes SlSGR1 and 
+SlSAG12, whereas SlWRKY6 phosphorylation by SlMAPK4 activated the transcription of target genes to promote fruit ripening. 
+Moreover, we provided evidence that SlWRKY6 persulfidation attenuated its SlMAPK4-mediated phosphorylation to inhibit tomato 
+fruit ripening. By transient expression of SlWRKY6, SlWRKY6
+C396A, SlWRKY6S33A, and SlWRKY6S33D in slwrky6 fruits, we found that 
+SlWRKY6 persulfidation attenuated the expression of SlSGR1 and SlSAG12 thereby delaying tomato fruit ripening, while SlWRKY6 
+phosphorylation increased the expression of target genes. As tomato fruits ripened, endogenous H 2S production decreased, while 
+SlMAPK4 expression increased. Therefore, our findings reveal a model in which SlWRKY6 persulfidation due to higher endogenous H2S 
+levels in un-ripened fruit inhibits its ability to activate SlSGR1 and SlSAG12 expression, while SlWRKY6 phosphorylation by SlMAPK4 
+activates its transcriptional activity, thereby promoting tomato fruit ripening.
+Received July 20, 2023. Accepted April 13, 2024. 
+© The Author(s) 2024. Published by Oxford University Press on behalf of American Society of Plant Biologists. All rights reserved. For commercial re-use, please con-
+tact reprints@oup.com for reprints and translation rights for reprints. All other permissions can be obtained through our RightsLink service via the Permissions link 
+on the article page on our site—for further information please contact journals.permissions@oup.com. 
+Introduction
+Tomato (Solanum lycopersicum) is a fruit and vegetable crop rich in 
+nutrients that is widely grown in the world. Due to its clear genetic 
+background and short growth cycle, it is often used as a model 
+plant for studying the mechanism of fruit ripening and senes
+-
+cence (Wu et al. 2020). Fruit ripening is a complex developmental 
+process involving a variety of physiological and biochemical reac-
+tions such as changes in fruit color, texture, and accumulation of 
+soluble sugars, carotenoids, and volatile organic compounds (
+Klee 
+and Giovannoni 2011; Giovannoni et al. 2017). The study of fruit 
+ripening and senescence is crucial to reveal the mechanism of 
+fruit development, which can help improve yield, optimize qual
+-
+ity, and improve postharvest storage of tomatoes.
+Transcription factors (TFs) play essential roles during plant 
+growth and development by regulating the transcription of 
+downstream genes. In recent years, a plethora of TFs have been 
+reported to play important regulatory roles in tomato fruit ripen
+-
+ing. For instance, MADS-box family protein RIPENING INHIBITOR, 
+NON-RIPENING, and COLORLESS NON-RIPENING have been iden-
+tified as positive regulators of fruit ripening (Karlova et al. 2014). In 
+addition, WRKY TFs are an important family of TF that partici -
+pates in a variety of biotic, abiotic, or physiological responses 
+(Eulgem and Somssich 2007). WRKY TFs are zinc finger-type pro-
+teins containing WRKYGQK heptapeptide at the N-terminus and 
+zinc finger structure at the C-terminus (C
+4-5CX22-23HXH or 
+CX7CX23HXC) and specifically recognize cis-acting element called 
+the W-box (TTGACT/C) in the promoters of target genes (Rushton 
+et al. 2010). Accumulating studies have shown that WRKY TFs are 
+involved in plant growth and development. For instance, wheat 
+(Triticum 
+aestivum) TaWRKY51 promotes lateral root formation 
+by binding to the W-box in the promoter and blocking the expres-
+sion of ACS genes involved in ethylene biosynthesis ( Hu et al. 
+2018). MdWRKY17 can directly promote the expression of the sal-
+icylic acid degradation gene Downy Mildew Resistant 6 (MdDMR6
+), 
+resulting in reduced resistance to Colletotrichum fructicola (Shan 
+et al. 2021). SlWRKY35 could directly activate the expression of 
+SlDXS1 leading to the accumulation of carotenoids and thus pro-
+moting tomato fruit ripening (Yuan et al. 2022).
+Hydrogen sulfide (H 2S) is a gaseous signaling molecule that 
+can effectively regulate growth and developmental processes 
+such as seed germination, fruit ripening, senescence, and bi
+-
+otic and abiotic stress responses in plants ( Zhang et al. 2008; 
+Hu et al. 2020). H 2S could substantially inhibit the ripening 
+and senescence of postharvest fruits and prolong their storage 
+time as found in strawberry, tomato, and pear fruits (Hu et al. 
+2012; Ziogas et al. 2018; Yao et al. 2020 ). The mechanism of 
+H2S in delaying fruit ripening and senescence may involve 
+the regulation of redox balance, inhibiting ethylene biosynthe -
+sis and antagonizing ethylene effect and signaling pathway 
+and energy metabolism in fruits and the integrity of cell wall 
+Plant Physiology, 2024, 196, 210–227 
+https://doi.org/10.1093/plphys/kiae271
+Advance access publication 10 May 2024 
+Research Article
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+and cell membrane (Jia et al. 2018; Hu et al. 2020; Yao et al. 
+2020).
+As a signaling molecule, H2S is believed to accomplish its func-
+tion in vivo through protein persulfidation (Filipovic et al. 2018). As 
+a recently discovered type of post-translational modification of 
+proteins, protein S-sulfhydration modification, also known as per-
+sulfidation, refers to the transformation of a sulfhydryl group 
+(–SH) on a cysteine (Cys) residue of a protein into a persulfidated 
+state (–SSH). Aroca et al. (2017)identified 2015 proteins with sulf-
+hydryl modifications in Arabidopsis thaliana
+, which are involved in 
+multiple processes of plant growth and development, suggesting 
+that protein sulfhydryl modifications may be a widespread form 
+of post-translational modification of proteins. Recent studies 
+have found that the autophagy-related protein ATG18 can under
+-
+go persulfidation at the Cys103 site in response to H2S and thus in-
+hibit the autophagy process in A. thaliana under nutrient 
+deprivation (Aroca et al. 2021). During H2S-induced stomatal clo-
+sure, SnRK2.6 can respond to H2S signal and undergo persulfida-
+tion at the Cys131 and Cys137 sites, leading to an increase in the 
+activity of the SnRK2.6 kinase and facilitating its binding to the 
+ABA-responsive element-binding factor ABF2, which in turn indu
+-
+ces stomatal closure (Chen et al. 2021). Recently, H2S was found to 
+persulfidate E3 ubiquitin-protein ligase 3 BRG3 and reduce its 
+ubiquitination activity, which in turn led to subsequently delayed 
+ripening of tomatoes (Sun et al. 2023).
+In plants, endogenous H2S is produced mainly during cysteine 
+catabolism. The cysteine desulfhydrases LCD (L-cysteine desulf-
+hydrase) or DCD (D-cysteine desulfhydrase) use L-Cys and D-Cys, 
+respectively, as substrates to produce H 2S (Alvarez et al. 2010; 
+Scuffi et al. 2014; Zhao et al. 2023). Previously, we reported the 
+function of SlLCD1 and SlDCD2 as negative regulators of fruit rip-
+ening, further confirming the role of endogenous H2S in delaying 
+ripening and senescence ( Hu et al. 2020; Zhao et al. 2023). 
+However, whether differential endogenous H2S levels could cause 
+differential levels of protein persulfidation still needs further 
+research.
+In addition to protein persulfidation, phosphorylation has long 
+been considered as an important way for regulating protein func-
+tions (Zhang et al. 2023). When cells sense signals through receptors, 
+the signals are transmitted down the MAPKKK–MAPKK–MAPK cas-
+cade through phosphorylation, and the activated MAPKs regulate 
+protein functions by phosphorylating downstream TFs, protein kin
+-
+ases, and other substrates to achieve signal transduction (Danquah 
+et al. 2014; Wei et al. 2023). Recently, phosphorylated TFs modified by 
+MAPK kinase have been extensively studied in plants. For instance, 
+banana MabZIP21 (leucine zipper 21) phosphorylation mediated by 
+MaMPK6-3 could increase the expression of softening-related genes, 
+thereby promoting fruit ripening in banana (Wu et al. 2022
+). 
+Phosphorylation of SlBBX17 by SlMPK1 and SlMPK2 positively regu-
+lated cold tolerance in tomato (Song et al. 2023). Wei et al. (2023)
+showed that an ethylene-induced increase in MdMAPK3 kinase ac-
+tivity promoted the phosphorylation of MdNAC72 by MdMAPK3 
+and thus apple fruit softening. However, whether and how persulfi
+-
+dation interferes with phosphorylation in a single protein is still lack 
+of evidence.
+In the present study, differential persulfidated proteins in SlLCD1 
+overexpression leaves were analyzed by 4D-label-free LC/MS 
+proteomics and it was noticed that a peptide in a WKRY protein 
+(A0A3Q7F586) which was later named as SlWRKY6 showed higher 
+intensity of persulfidation. By CRISPR/Cas9 and gene overexpres
+-
+sion, we showed that SlWRKY6 was a positive regulator of leave 
+senescence and tomato fruit ripening by activating STAYGREEN 1 
+(
+SlSGR1) and Senescence-Associated Gene 12 (SlSAG12) transcription. 
+Further evidence indicated that persulfidation of SlWRKY6 by H2S 
+attenuated its transcriptional activity to target genes SlSGR1 and 
+SlSAG12. However, SlWRKY6 phosphorylation by SlMAPK4 could 
+activate the expression of SlSGR1 and SlSAG12 to promote tomato 
+fruit ripening. Moreover, we provided evidence that SlWRKY6 
+persulfidation mediated by H
+2S attenuated SlMAPK4-mediated 
+phosphorylation of SlWRKY6 to inhibit tomato fruit ripening. 
+Therefore, the current study provides a solid theoretical basis into 
+the mechanism of persulfidation and phosphorylation of a single 
+protein SlWRKY6 in regulating tomato fruit ripening.
+Results
+Identification of persulfidation modification 
+at Cys396 of SlWRKY6 protein
+To explore the role of H2S in regulating tomato fruit ripening, green 
+ripening stage tomato fruits were fumigated with H2S. As shown in 
+Supplementary Fig. S1, H2S substantially delayed tomato fruit rip-
+ening, whether H2S functioned through its mediation of target pro-
+tein persulfidation is still unclear. Previously, we created a SlLCD1 
+overexpression tomato line which encoding an H2S generating en-
+zyme LCD catalyzing L-cysteine to give rise H2S, ammonia, and pyr-
+uvate (Hu et al. 2021). SlLCD1 overexpression was found to delay 
+dark-induced senescence and fruit ripening. Therefore, we carried 
+out 4D-label-free LC/MS proteomics to investigate potential differ-
+entially persulfidated proteins in SlLCD1 overexpression and 
+wild-type (WT) leaves. Among the 119 peptides that underwent per-
+sulfidation, it was noticed that a peptide in a WKRY protein 
+(A0A3Q7F586, encoding by Solyc02g080890.2) showed a higher in-
+tensity of persulfidation. By homologous comparison, the WKRY 
+protein showed high sequence similarity to WRKY6 in A. thaliana 
+and therefore named SlWRKY6 in tomato. To investigate whether 
+the SlWRKY6 protein could undergo persulfidation in response to 
+H
+2S, in vitro persulfidation reaction was performed using H2S donor 
+NaHS as the sulfhydryl agent, followed by detection by modified 
+biotin-switch method. As shown in 
+Fig. 1A, NaHS treatment of 
+purified HIS–SlWRKY6 protein induced the occurrence of persulfi-
+dation and the persulfidation signal increased as NaHS concentra-
+tion increased. When dithiothreitol (DTT) was added, the signal of 
+persulfidation was eliminated. The result indicated that the re
+-
+combinant HIS–SlWRKY6 protein expressed in Escherichia coli could 
+be sulfhydryl modified by H2S and the sulfhydryl group could be re-
+duced by DTT reductant. To determine the amino acid sites in 
+SlWRKY6 that were persulfidated, purified HIS–SlWRKY6 protein 
+was treated with exogenous H
+2S and then analyzed by LC-MS/MS. 
+The data revealed that the Cys site at Position 396 of SlWRKY6 
+protein could undergo persulfidation (Fig. 1B and Supplementary 
+Data Set 1).
+To further verify the persulfidated site, we mutated Cys396 to 
+Ala in SlWRKY6 (Fig. 1C) and compared the effect of H 2S on the 
+modification of SlWRKY6. It was found when Cys396 was mutated 
+to Ala, persulfidation signal of SlWRKY6
+C396A mutant protein was 
+almost fully abolished shown by Western blotting results (Fig. 1D). 
+These results suggested that SlWRKY6 could be modified by H
+2S 
+and the key site of persulfidation happened on Cys396.
+SlWRKY6 is a positive regulator for fruit ripening 
+of tomato
+To investigate the function of SlWRKY6 in regulating leaf senes-
+cence or tomato fruit ripening, 2 lines of slwrky6 loss-function 
+mutants by CRISPR/Cas9-mediated gene editing (
+slwrky6#4, #11) 
+and 2 lines of SlWRKY6 overexpressing plants SlWRKY6-FLAG 
+SlWRKY6 regulates tomato fruit ripening | 211
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+(SlWRKY6#1, #2) were generated. By genomic sequencing, it was 
+found that slwrky6#4 mutant had a homozygous 64 bp deletion 
+which destroyed the gRNA1 on SlWRKY6, and the slwrky6#11 mu-
+tant showed a homozygous 1 bp deletion adjacent to gRNA2 
+which caused frame-shift mutation to SlWRKY6 (Fig. 2, A and B). 
+Specifically, slwrky6#4 was mutated in the peptide sequence 
+from the 28th amino acid residue that caused stopped translation 
+at the 44th amino acid, and the translation of slwrky6#11 stopped 
+at the 235th amino acid, and both of the mutations destroyed the 
+functional domain of SlWRKY6. SlWRKY6 overexpressing plants 
+were confirmed by RT-qPCR and Western blotting, and the data 
+indicated that SlWRKY6 expression level was approximately 100- 
+and 400-fold higher in the SlWRKY6 overexpressing plants than 
+WT, and the presence of SlWRKY6-FLAG was confirmed by immu
+-
+noblotting with anti-FLAG antibodies, while no signal was found 
+in WT and slwrky6#4, #11 (
+Fig. 2, C and D).
+During the growth of SlWRKY6 plants, we found that SlWRKY6 
+overexpressing leaves senesced earlier compared to WT especially 
+at 120 d of growth (Supplementary Figs. S2A and S3A
+). Therefore, 
+we speculated that SlWRKY6 may promote leaf senescence. To 
+clarify the regulatory mechanism of SlWRKY6, transcriptome 
+analysis was performed in the leaves of WT and SlWRKY6 overex-
+pression plants grown for 60 d. We identified 1,292 (675 upregu -
+lated and 617 downregulated) differentially expressed genes 
+(DEGs) in SlWRKY6 compared to WT (
+Supplementary Fig. S2, B 
+and C, Supplementary Data Set 2 and 3). Kyoto Encyclopedia of 
+Genes and Genomes (KEGG) analyses revealed that upregulated 
+genes were mainly involved in MAPK pathway (Supplementary 
+Data Set 4
+), phenylpropanoid biosynthesis, and plant hormone sig-
+nal transduction, and downregulated genes were preferentially 
+associated with photosynthesis-antenna proteins and steroid 
+biosynthesis (
+Supplementary Fig. S2, D and E). As shown in 
+Supplementary Fig. S3A, SlWRKY6 overexpression leaves senesced 
+earlier, while the leaves of slwrky6 mutant were greener compared 
+with WT, especially at 120 d of growth. The contents of total chlor-
+ophyll (including Chlorophyll a and Chlorophyll b) and carote -
+noids were consistent with the phenotype ( Supplementary Fig. 
+S3, B to E). Heat map analysis of the DEGs associated with leaf sen-
+escence based on transcriptome data (Supplementary Data Set 5) 
+showed that overexpression of SlWRKY6 significantly upregulated 
+the expression of the chlorophyll degradation-related gene SlSGR1 
+and the senescence-related gene SlSAG12 (Supplementary Fig. 
+S3F). The reliability of the RNA-seq data was verified by RT-qPCR 
+detection, and the data of SlSGR1 and SlSAG12 expression in 
+SlWRKY6 leaves matched with the expression pattern of transcrip-
+tome data ( Supplementary Fig. S3, G and H ). As SlSGR1 and 
+SlSAG12 promoters both contained WRKY binding sites by analyz-
+ing cis-acting regulatory element on https://bioinformatics. 
+psb.ugent.be/webtools/plantcare/html/, we speculated that they 
+might be direct target genes of SlWRKY6. This result suggested 
+that SlWRKY6 positively regulated tomato leave senescence possi
+-
+bly by regulating the expression of SlSGR1 and SlSAG12. 
+In addi-
+tion, we analyzed the expression patterns of SlWRKY6, SlSGR1
+, 
+and SlSAG12 at an equatorial region in fruit tissues at 10, 20, and 
+30 d post-anthesis (DPA), mature green, breaker, and pink fruits 
+by online tool on 
+https://tea.solgenomics.net/. Generally, the 
+data suggest that SlWRKY6, SlSGR1
+, and SlSAG12 show increasing 
+transcription during fruit ripening, implying that the genes might 
+function in tomato fruit ripening (Supplementary Fig. S4).
+Then, the role of SlWRKY6 in regulating tomato fruit ripening 
+was investigated. As shown in Fig. 3, A and B
+, there was a clear dif-
+ference between the WT, slwrky6 and SlWRKY6 at fruit ripening. 
+Fruits of SlWRKY6 overexpression plants turned red at 40 DPA, 
+whereas WT fruits turned red at 45 DPA and later slwrky6 mutant. 
+By comparing the pigment content of WT, slwrky6 and SlWRKY6 
+fruits, it was found that slwrky6#4 and slwrky6#11 fruits had high-
+er chlorophyll content (Chlorophyll a and Chlorophyll b), while 
+SlWRKY6#1 and SlWRKY6#2 fruits exhibited lower chlorophyll 
+content compared to WT fruits during fruit ripening (
+Fig. 3, C to 
+E). In addition, SlWRKY6#1 and SlWRKY6#2 fruits accumulated 
+more carotenoids compared with 2 lines of mutants ( slwrky6#4 
+and slwrky6#11
+) fruits and WT fruits (Fig. 3F). As shown in 
+RT-qPCR results of Fig. 3, G and H , SlWRKY6 significantly pro-
+moted the expression of SlSGR1 and SlSAG12 in tomato fruits. 
+Figure 1. Identification of persulfidation site of SlWRKY6 protein. A) Detection of persulfidation of SlWRKY6 recombinant protein by modified 
+biotin-switch. Purified SlWRKY6 protein was treated with different concentrations of H2S donor NaHS (500 or 1,000 µM) or the reducing agent DTT 
+(1 mM) for 1 h, respectively. Consistent protein loading as determined by Coomassie blue. B) The persulfidation site of the SlWRKY6 protein was 
+detected by MS analysis. LC-MS/MS spectra show that AMLPC396SSNM is a key site of SlWRKY6 persulfidation. The orange and green colors represent 
+the y-ion and b-ion, respectively. C) Schematic diagram of the SlWRKY6 mutant protein (Cys396-Ala, i.e. C396A). The red letters “TGT” to “GCG” 
+represent the mutation of the codon of Cys to Ala. D) Detection of persulfidation state of SlWRKY6C396A mutant protein by modified biotin-switch. CBB: 
+Coomassie blue staining.
+212 | Plant Physiology, 2024, Vol. 196, No. 1
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+Expression of ethylene synthesis-related genes SlACO1 and 
+SlACS2 were upregulated in the SlWRKY6#1 and SlWRKY6#2 fruits 
+and downregulated in the slwrky6#4 and slwrky6#11 fruits com-
+pared with WT at 35, 40, and 45 DPA. Similar results were ob -
+served in the leaves (Supplementary Fig. S5). Then we analyzed 
+the promoter sequence of SlACO1 and SlACS2, 
+and no W-box 
+cis-elements (TTGACT/C) were found, suggesting that ethylene 
+biosynthesis genes might not be the direct targets of SlWRKY6 
+and the accelerated fruit ripening or leaf senescence might con
+-
+tribute to the changes in SlACO1 and SlACS2 expression. 
+Therefore, all these data indicated that SlWRKY6 is a positive reg-
+ulator of leaf senescence and fruit ripening.
+SlWRKY6 physically interacts with SlMAPK4
+Then we screened potential phosphorylation sites of SlWRKY6 on 
+http://gps.biocuckoo.cn/and found that MAPK may target and 
+phosphorylate SlWRKY6 at the classical MAPK phosphorylating 
+SP sites. Then, 5 mitogen-activated protein kinase genes 
+(SlMAPK1, SlMAPK2, SlMAPK3, SlMAPK4, and SlMAPK5) with high 
+expression patterns during tomato fruit ripening were 
+screened by tissue expression analysis on http://bar.utoronto.ca/
+(Supplementary Fig. S6).
+First, the interaction between SlWRKY6 and these MAPKs were 
+analyzed by yeast 2-hybrid. As shown in Fig. 4A
+, only colonies car-
+rying the construct SlWRKY6-AD with SlMAPK4-BD were grown 
+on selective media, indicating that SlWRKY6 interacted with 
+SlMAPK4 in yeast cells. Besides, we further confirmed the interac
+-
+tion between SlWRKY6 and SlMAPK4 using pull-down assays. 
+GST–SlMAPK4 bound to anti-GST agarose beads was mixed with 
+HIS–SlWRKY6-purified protein. This result suggested that re
+-
+combinant HIS–SlWRKY6 was found to interact with the recombi-
+nant GST–SlMAPK4 in vitro (Fig. 4B). To validate the interaction 
+between SlWRKY6 and SlMAPK4 in plant, we performed firefly 
+luciferase complementation (FLC) assays by fusing SlWRKY6 to 
+the N-terminal end of luciferase (LUC) to form NLuc-SlWRKY6 
+and SlMAPK4 with the C-terminal end of LUC to form CLuc- 
+SlMAPK4. We co-infiltrated the NLuc-SlWRKY6 and CLuc- 
+SlMAPK4 constructs into Nicotiana benthamiana leaves to detect 
+luciferase activity, and the results showed that the luciferase ac
+-
+tivity of NLuc-SlWRKY6 and CLuc-SlMAPK4 was significantly 
+higher than those of the 3 control groups (
+Fig. 4C). However, 
+when the combination of NLuc-SlWRKY6 and CLuc-SlMAPK4 
+N. benthamiana leaves were fumigated with 500 μM 
+NaHS, the in-
+teraction effect was diminished, implying that SlWRKY6 persulfi-
+dation may interfere with the interaction with SlMAPK4. The 
+bimolecular fluorescence complementation (BiFC) assay was 
+used to further verify whether this interaction occurs in planta. 
+When co-transformed with SlWRKY6-cYFP [yellow fluorescent 
+protein (YFP) carboxy terminal] and SlMAPK4-nYFP (YFP amino 
+terminal), fluorescence signals were observed in tobacco cells, 
+suggesting the in vivo interaction between SlMAPK4 and 
+SlWRKY6. In cells transformed with cYFP and nYFP, SlWRKY6- 
+cYFP and nYFP, or cYFP and SlMAPK4-nYFP, no fluorescence 
+Figure 2. Construction of tomato slwrky6 mutants through CRIPSR/Cas9-mediated targeted mutagenesis and SlWRKY6 overexpression lines. A) The 
+schematic diagram shows the position and sequence of guide RNAs (gRNAs) in blue on the coding sequence of SlWRKY6 and PAM (protospacer adjacent 
+motif) in purple letters. B) Sequencing-based genotyping of mutations in slwrky6#4 and slwrky6#11. The slwrky6#4 mutant had a homozygous 64 bp 
+deletion near gRNA1 and the slwrky6#11 mutant had a homozygous 1 bp deletion near gRNA2 in SlWRKY6, respectively. WT, WT. C) Relative expression 
+levels of SlWRKY6 in WT and SlWRKY6 overexpression (SlWRKY6#1 and SlWRKY6#2) plants were determined by RT-qPCR. Data are shown as the means 
+[± standard deviation (SD)] of 3 biological replicates. The symbol ** indicates a significant difference compared to WT (P <0.01, Student’s t-test). D) 
+Expression of SlWRKY6-FLAG protein in SlWRKY6#1 and SlWRKY6#2 was confirmed by immunoblot analysis using anti-FLAG with WT, slwrky6#4 and 
+slwrky6#11 tomato plants as negative control. CBB: Coomassie blue staining after SDS-PAGE indicating of protein loading.
+SlWRKY6 regulates tomato fruit ripening | 213
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+signal was detected (Fig. 4D ). These results suggested that 
+SlWRKY6 can physically interact with SlMAPK4 in vivo and in vi-
+tro, while SlWRKY6 persulfidation damages the interaction.
+SlMAPK4 phosphorylates SlWRKY6 at Ser33
+To detect whether SlMAPK4 can phosphorylate SlWRKY6, we pu-
+rified recombinant HIS-tagged SlWRKY6 and GST-tagged 
+SlMAPK4 to perform in vitro kinase assays by Phos-tag mobility 
+shift assay. The protein combination was incubated with lambda 
+protein phosphatase (λ
+PP) to eliminate the phosphorylation of 
+SlWRKY6. As shown in Fig. 4E, the immunoblot analysis with 
+anti-HIS antibody showed that SlMAPK4 caused an upward shift 
+of the target band of SlWRKY6 while the shift was eliminated by 
+λPP 
+treatment, indicating that SlMAPK4 were able to phosphory-
+late SlWRKY6 in vitro.
+MAPK family proteins typically phosphorylate serine and 
+threonine residues in the S/T-P motif of their target proteins. By 
+analyzing the protein sequence of SlWRKY6 by GPS5.0 tool, 4 
+serine at Positions 33, 229, 248 and 532 (Ser 33, Ser229, Ser248 and 
+Ser355) were predicted as potential SlMAPK4 phosphorylation 
+sites. To confirm which sites of serine were phosphorylated sites 
+of SlWRKY6, we mutated each of the 4 Ser sites to the Ala mimic 
+non-phosphorylated form of SlWRKY6 protein. Then in vitro 
+phosphorylation experiments with SlMAPK4 revealed that 
+SlWRKY6 was not phosphorylated by SlMAPK4 when mutating 
+Ser
+33 to Ala (S33A) (Fig. 4F), indicating that the Ser33 residue in 
+SlWRKY6 was the main site of phosphorylation by SlMAPK4.
+To further investigate which region of SlWRKY6 interacts with 
+SlMAPK4 and the effects of persulfidation and phosphorylation 
+sites on its interaction, different truncated proteins (1 to 293, 
+294 to 354, and 355 to 550 aa) and mutant proteins of persulfida
+-
+tion and phosphorylation sites (SlWRKY6C396A and SlWRKY6S33A) 
+of SlWRKY6 were subjected to yeast 2-hybrid assays with 
+SlMAPK4. As shown in 
+Supplementary Fig. S7, the 1 to 293 
+amino acid region of SlWRKY6 could interact with SlMAPK4 and 
+Figure 3. SlWRKY6 affects tomato fruit ripening. A) Overall phenotype of slwrky6 mutants (slwrky6#4 and slwrky6#11), SlWRKY6-OE (SlWRKY6#1 and 
+SlWRKY6#2), and WT tomato plants at 90 d of growth. Image was digitally extracted for comparison. WT, wild type. Scale bars, 6 cm. B) Phenotype of 
+tomato fruit ripening in slwrky6 mutants, SlWRKY6-OE, and WT plants at 30, 35, 40, 45, and 50 DPA. Scale bars, 1 cm. C) to F) The contents of total 
+chlorophyll C), Chlorophyll a D), Chlorophyll b E), and carotenoids F) in fruits of slwrky6 mutants, SlWRKY6-OE, and WT plants at 35, 40, and 45 DPA, 
+respectively. FW, fresh weight. G) and H) The relative expression levels of SlSGR1 G) and SlSAG12 H) were measured in fruits of slwrky6 mutants, 
+SlWRKY6-OE, and WT plants by RT-qPCR at 35, 40, and 45 DPA. Data are mean ±SD (n =3). Different letters indicate significant differences between 
+samples (P <0.05, Duncan’s test).
+214 | Plant Physiology, 2024, Vol. 196, No. 1
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+Figure 4. SlWRKY6 physically interacts with SlMAPK4. A) The interaction between SlWRKY6 and SlMAPK4 was confirmed by yeast 2-hybrid assay. AD 
+vector expressing AD-SlWRKY6 was co-transformed with BD-SlMAPK4 into yeast cells and cultured in synthetic dropout (SD) medium lacking Leu and 
+Trp (-Leu/-Trp) or SD/-Leu/-Trp/-His/-Ade. Red letters represent positive combinations. AD, pGADT7. BD, pGBKT7. B) Pull-down assays of the 
+interaction between SlWRKY6 and SlMAPK4. GST–SlMAPK4 bound to anti-GST agarose beads was mixed with HIS–SlWRKY6 purified protein. GST 
+protein was used as a negative control. C) The schematic diagram of the NLuc and CLuc vectors. Interaction between SlWRKY6 and SlMAPK4 confirmed 
+by FLC assays in N. benthamiana leaves treated with H2O or 500 μM NaHS. RLU, relative light unit. Data are shown as the means (±SD) of 6 biological 
+replicates. The symbol ** indicates significant difference compared to control (P <0.01, Student’s t-test). NLuc, pCAMBIA 2300-nLUC vector. CLuc, 
+pCAMBIA 2300-cLUC vector. D) SlWRKY6 interacts with SlMAPK4 in vivo by BiFC assays. N. benthamiana leaves were cotransformed with SlWRKY6-cYFP 
+and SlMAPK4-nYFP, cYFP and nYFP, SlWRKY6-cYFP and nYFP, or cYFP and SlMAPK4-nYFP. Scale bars, 20 μM. E) Phos-tag mobility shift assay showed 
+that SlWRKY6 phosphorylation was mediated by activated SlMAPK4. HIS-SlWRKY6 was detected by immunoblot analysis with anti-HIS antibody and 
+the phosphorylated protein was separated by phos-tag gel. The phosphorylated SlWRKY6 protein migrated slowly on the phos-tag gel (arrows). 
+GST-purified protein and λPPase treatment were used as negative controls. Separate proteins with anti-GST antibody and anti-HIS antibody on a 
+normal SDS-PAGE gel to verify the same loading (bottom). F) Analysis of SlWRKY6 mutant forms by phos-tag mobility assay. SlWRKY6 variants 
+harboring alanine substitutions at S33, S229, S248, or S532 (SlWRKY6S33A, SlWRKY6S229A, SlWRKY6S248A, and SlWRKY6S532A). The phosphorylation band 
+was abolished when mutating Ser-33 of SlWRKY6 to Ala. G) Endogenous H2S production in WT fruits at different ripening stages at 35, 40, and 45 DPA. 
+DPA, days post-anthesis; FW, fresh weight. H) The relative expression level of SlMAPK4 in WT fruits at 35, 40, and 45 DPA. Error bars are presented as 
+means ±SD (F) n =5 and G) n =3). Different letters indicate significant differences between samples (P<0.05, Student’s t-test). The symbol ** indicates a 
+significant difference compared to other samples (P <0.01, Student’s t-test).
+SlWRKY6 regulates tomato fruit ripening | 215
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+SlWRKY6 persulfidation site and phosphorylation site mutations 
+did not affect the interaction with SlMAPK4. Correspondingly, 
+the phosphorylation site (S33) of SlWRKY6 located in the region 
+of 1 to 293 aa of SlWRKY6 is also the interaction fragment with 
+SlMAPK4.
+To explore the potential relation between H 2S-mediated 
+SlWRKY6 persulfidation and SlMAPK4-mediated phosphoryla -
+tion, we determined the endogenous H2S content and SlMAPK4 ex-
+pression during WT tomato fruit ripening. As shown in Fig. 4, G 
+and H, the endogenous H2S content decreased and the expression 
+of SlMAPK4 increased as the fruit ripened, implying that SlWRKY6 
+may be persulfidated in un-ripened fruit and may undergo phos-
+phorylation in ripening fruit.
+Effects of WRKY6 persulfidation and 
+phosphorylation on its transcriptional activity  
+to target genes
+To examine the effects of SlWRKY6 persulfidation and phosphor-
+ylation on its transcriptional activity, we used a dual-luciferase 
+system in N. benthamiana leaves to measure the transcriptional ac-
+tivation potential of SlWRKY6 persulfidation and phosphorylation 
+on its downstream target genes SlSGR1 and SlSAG12
+. Therefore, 
+we co-infiltrated N. benthamiana leaves with effector constructs 
+containing SlWRKY6, SlMAPK4, SlWRKY6 C396A, SlWRKY6 S33A, 
+and SlWRKY6S33D and different combinations of reporters under 
+the control of the SlSGR1 or SlSAG12 promoters (Fig. 5A). A 
+dual-LUC reporter assay was performed using N. benthamiana 
+leaves co-transformed with the effector SlWRKY6 and the report-
+er vector constructed using the promoters of SlSGR1 (
+SlSGR1pro: 
+LUC) or SlSAG12 (SlSAG12pro:LUC). The LUC activities of 
+SlSGR1pro:LUC and SlSAG12pro:LUC were significantly activated by 
+SlWRKY6 and by co-infiltration of SlWRKY6 and SlMAPK4. In the 
+presence of SlMAPK4, co-infiltration of the SlWRKY6 and 
+SlSGR1
+pro:LUC and SlSAG12pro:LUC led to significant activation of 
+the fluorescence signal than that of SlWRKY6 alone ( Fig. 5, B 
+and C). Relative LUC activity of SlSGR1pro or SlSAG12pro reporters 
+was significantly higher when SlWRKY6 or SlWRKY6 C396A was 
+transiently expressed compared to the pSAK277 control, and tran-
+scriptional activity of both promoters continued to increase when 
+co-expressed with SlMAPK4. However, treatment of N. benthami
+-
+ana with NaHS (500 μ
+M) fumigation revealed a significant decrease 
+in LUC activity of SlWRKY6 or SlWRKY6 co-expressed with 
+SlMAPK4, whereas no significant change in LUC activity of 
+SlWRKY6
+C396A or SlWRKY6C396A co-expressed with SlMAPK4 was 
+observed compared with that of water treatment ( Fig. 5, D and 
+E). This result indicated that SlWRKY6 persulfidation modification 
+can inhibit the transcriptional activity of SlWRKY6. Then the effect 
+of SlWRKY6 phosphorylation on its transcriptional activity was 
+evaluated by the phosphonull SlWRKY6S33A and phosphomimetic 
+SlWRKY6S33D vectors. The expression of SlWRKY6S33A resulted in 
+lower transcriptional activity of SlSGR1pro or SlSAG12pro reporters 
+than SlWRKY6, whereas when a construct expressing phosphomi-
+mic SlWRKY6S33D was co-infiltrated with SlMAPK4 or not in N. ben-
+thamiana leaves, the LUC activity of the promoters was increased. 
+However, co-expression of SlWRKY6 S33A or SlWRKY6S33D and 
+SlMAPK4 did not further increase LUC activity compared with 
+SlWRKY6
+S33A and SlWRKY6S33D alone (Fig. 5, F and G). The result 
+suggested that phosphorylation of SlWRKY6 by SlMAPK4 was es-
+sential for activating the expression of its downstream target genes 
+SlSGR1 and SlSAG12 during tomato fruit ripening, while SlWRKY6 
+persulfidation attenuated its transcriptional activity to target 
+genes.
+To further clarify the regulatory relationship between 
+SlWRKY6 persulfidation and phosphorylation on its downstream 
+target genes, electrophoretic mobility shift assays (EMSA) were 
+performed using the SlWRKY6 target gene SlSGR1 and SlSAG12 
+promoters. The analysis of the SlSGR1 and SlSAG12 promoters of 
+−
+1,000 bp sequences showed that the promoter of SlSGR1 had 2 
+TTGACC binding sequences, while SlSAG12 contains 1 TTGACT el-
+ement (Fig. 6, A and E). As shown in Fig. 6, B and F, it was found 
+that SlWRKY6 protein could only bind to probe 2 of the SlSGR1 pro-
+moter, though the sequences surrounding the cis-element of the 2 
+probes were very similar, and could bind to probe of the SlSAG12 
+promoter. The binding ability of SlWRKY6 protein with both pro
+-
+moters was diminished when unlabeled promoter fragments 
+were added as competitors. When SlWRKY6 was modified by per-
+sulfidation mediated by NaHS treatment, the binding ability to 
+SlSGR1 and SlSAG12 promoters became weaker with increasing 
+NaHS concentration as evidenced by the weaker intensity of the 
+retarded bands (
+Fig. 6, C and F). When SlWRKY6 was phosphory-
+lated by SlMAPK4, the binding affinity of phosphorylated 
+SlWRKY6 for the target gene promoters was clearly enhanced 
+due to the stronger intensity of the bands ( Fig. 6, D and G). The 
+above results indicated that SlWRKY6 persulfidation inhibited 
+its binding ability to the W-box of SlSGR1 and SlSAG12 promoters, 
+while its phosphorylation by SlMAPK4 enhances its binding activ
+-
+ity to target genes.
+To explore the roles of SlSGR1 and SlSAG12 in regulating tomato 
+fruit ripening, we silenced the expression of SlSGR1 and SlSAG12 in 
+WT by virus-induced gene silencing (VIGS). SlSGR1 and SlSAG12 
+silencing in WT caused delayed fruit ripening compared to pTRV 
+control. In addition, pTRV-
+SlSGR1 and pTRV-SlSAG12 in WT 
+displayed higher chlorophyll (including Chlorophyll a and 
+Chlorophyll b) content and lower carotenoid content than control. 
+Besides, the expression level of SlSGR1 and SlSAG12 was signifi-
+cantly lower in pTRV-
+SlSGR1 and pTRV-SlSAG12 than in the coun-
+terpart controls ( Supplementary Fig. S8). Therefore, the result 
+suggested that SlSGR1 and SlSAG12 are positive regulators for fruit 
+ripening in tomato.
+Effect of SlWRKY6 persulfidation and 
+phosphorylation in regulating tomato fruit 
+ripening
+To investigate the effects of SlWRKY6 modification by persulfida-
+tion and phosphorylation in regulating fruit ripening of tomato, 
+we transiently expressed SlWRKY6, SlWRKY6 C396A which could 
+not be persulfidated, phosphonull SlWRKY6S33A, and phosphomi-
+metic SlWRKY6S33D by pSAK277 vector in slwrky6 mutant fruits. 
+The tomatoes transfected with SlWRKY6 and SlWRKY6 C396A 
+turned red earlier compared to pSAK277 control ( Fig. 7A ). 
+However, tomato fruits ripened slower after H 2S fumigation by 
+NaHS than H2O treatment, and the ripening process was a little 
+accelerated in SlWRKY6 C396A compared with SlWRKY6 under 
+H2S fumigation. SlWRKY6S33A became red on the 7th day after in-
+jection, and SlWRKY6S33D fruit color was a little redder compared 
+with SlWRKY6 (Fig. 8A). Next, we determined the total chloro -
+phyll, Chlorophyll a, Chlorophyll b, and carotenoid contents of 
+the fruits, and generally, the parameters were in agreement 
+with the phenotype caused by transient expression ( Figs. 7, B to 
+E and 8, B to E). The expression levels of SlWRKY6 and 
+SlWRKY6C396A were significantly higher in transient expression 
+groups than in the counterpart controls (Fig. 7F), and the expres-
+sions of SlWRKY6
+, SlWRKY6S33A, and SlWRKY6S33D significantly 
+higher than those of control ( Fig. 8F). As shown in Fig. 7, G and 
+216 | Plant Physiology, 2024, Vol. 196, No. 1
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+Figure 5. Effect of SlWRKY6 persulfidation and phosphorylation on the transcriptional activity of SlWRKY6. A) Schematic diagram of the effector 
+vectors expressing SlWRKY6, SlWRKY6C396A, SlWRKY6S33A, and SlMAPK4 and the reporter constructs containing the SlSGR1 and SlSAG12 promoters for 
+the dual-luciferase reporter assay. REN, renilla luciferase. LUC, firefly luciferase. B) and C) Activity assay of SlWRKY6 in regulating SlSGR1 or SlSAG12. 
+Luciferase reporter assay showed the binding of SlWRKY6 to the SlSGR1 or SlSAG12 promoter in vivo. The infected N. benthamiana was visualized by a 
+living fluorescence imager with D-luciferin (sodium salt). The color scale bar indicates the range of luminescence intensity. D) and E) Dual-luciferase 
+assay (LUC) showed the transcriptional activity of SlWRKY6, SlWRKY6C396A and SlMAPK4 on the transcription of downstream target gene SlSGR1 D) and 
+SlSAG12 E). LUC/REN ratios indicated the transactivation effect to SlSGR1 and SlSAG12 promoters. N. benthamiana leaves which expressing the vectors 
+were treated with H2O and 500 μM NaHS, respectively, to elucidate the effect of SlWRKY6 persulfidation or SlWRKY6C396A which could not be 
+persulfidated. F) and G) Effect of phosphorylation of SlWRKY6 on the transcription of SlSGR1 F) and SlSAG12 G) promoters by LUC experiment in N. 
+benthamiana leaves, respectively. The effector vectors included SlWRKY6S33A, mutation of serine (S) to alanine (A) at Position 33 which prevents 
+phosphorylation of SlWRKY6. SlWRKY6S33D, mutation of serine (S) to aspartate (D) mimics phosphorylation and SlMAPK4 in single or in combination. 
+Data are shown as the means (±SD) of 6 biological replicates. Stars are used to indicate significant differences (**P<0.01, Student’s t-test) and n.s. stands 
+for no significant difference.
+SlWRKY6 regulates tomato fruit ripening | 217
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+H, the transcript levels of SlSGR1 and SlSAG12 were upregulated in 
+SlWRKY6 and SlWRKY6C396A fruits, but H2S fumigation attenu-
+ated the upregulation of these genes. Besides, the expression lev-
+els of SlSGR1 and SlSAG12 were upregulated in SlWRKY6 and 
+SlWRKY6S33D, while SlWRKY6 S33A attenuated the upregulation 
+of SlSGR1 and SlSAG12 expression (Fig. 8, G and H ). In all, the 
+data suggested that SlWRKY6 persulfidation inhibited its tran -
+scriptional activity and affected the binding of SlWRKY6 to 
+Figure 6. DNA-binding activity of SlWRKY6 to the SlSGR1 and SlSAG12 promoters was assessed by EMSA. A) and E) Analysis of WRKY binding sites of 
+SlSGR1 and SlSAG12 promoters in −1,000 bp. B) Identification of the DNA-binding element of SlWRKY6 in SlSGR1 promoter. C) and F) The SlWRKY6 
+protein was treated with 500 or 1,000 μM NaHS for 1 h and the DNA-binding ability to SlSGR1 C) and SlSAG12 F) probes were evaluated by EMSA. D) and G) 
+EMSA showing the binding ability of SlWRKY6 phosphorylation to SlSGR1 D) and SlSAG12 G) promoters. The proteins include purified HIS–SlWRKY6 or 
+HIS–SlWRKY6 in combination with GST–SlMAPK4. The cold probes are unlabeled fragments used as competitive to probes (1×). The mutant probes are 
+biotin-labeled probes with mutations from TTGACC/T to AAAAA (red letters), −, absence. +, presence.
+218 | Plant Physiology, 2024, Vol. 196, No. 1
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+SlSGR1 and SlSAG12 promoters, thereby inhibiting tomato fruit 
+ripening, whereas SlWRKY6 phosphorylation activated down -
+stream target genes and thus promoted tomato ripening.
+SlMAPK4 is required for the function of SlWRKY6 
+in fruit ripening
+To further explore the genetic relationship between SlMAPK4 and 
+SlWRKY6, we silenced SlMAPK4 in WT and SlWRKY6#1 fruits by 
+VIGS. SlMAPK4 silencing in WT caused delayed fruit ripening, and 
+SlMAPK4 silencing in SlWRKY6 overexpression fruit also retarded 
+fruit ripening compared to pTRV control (Fig. 9A). In addition, 
+pTRV-SlMAPK4 in WT and pTRV-SlMAPK4 in SlWRKY6 fruit 
+displayed higher chlorophyll (including Chlorophyll a and 
+Chlorophyll b) content and lower carotenoid content than WT: 
+pTRV and SlWRKY6#1: pTRV (Fig. 9, B to E
+). Finally, the relative ex-
+pressions of SlMAPK4, SlWRKY6
+, SlSGR1, and SlSAG12 were 
+examined by RT-qPCR. The expression level of SlMAPK4 was signif-
+icantly lower in pTRV- SlMAPK4 and SlWRKY6#1
+: pTRV- 
+SlMAPK4 than in the counterpart controls (Fig. 9F). The expression 
+level of SlWRKY6 is not much affected by SlMAPK4 silencing 
+(Fig. 9G). However, the expression levels of SlSGR1 and SlSAG12 
+were much lower in pTRV- SlMAPK4 and SlWRKY6#1
+: pTRV- 
+SlMAPK4 compared with WT: pTRV and SlWRKY6#1: pTRV (Fig. 9, 
+H and I). Collectively, these results indicated that SlMAPK4 played 
+a positive regulatory role in fruit ripening by phosphorylating 
+SlWRKY6. Finally, we provide a model based on the persulfidation 
+and phosphorylation of SlWRKY6 in balancing tomato fruit ripen
+-
+ing (Fig. 10).
+Discussion
+Tomato fruit ripening is a programmed physiological process in-
+volving a variety of physiological changes including chlorophyll 
+degradation and carotenoid synthesis, etc. During fruit ripening 
+or leaf senescence, SGR1 plays an important role in activating 
+chlorophyll degradation and in tomato SGR1 deletion line shows 
+higher chlorophyll and carotenoid levels (
+Kim et al. 2022). SAG12 
+encodes a cysteine protease, participating in macromolecule deg-
+radation and is upregulated during plant senescence (Doan et al. 
+2022). TFs, including WRKY, ERFs, and NACs, have been shown 
+to bind directly to the promoters of chlorophyll degradation and 
+senescence-related genes, such as PPH, SGR1
+, NYC, and SAG12, 
+and can regulate their transcription, which is consistent with their 
+involvement in the regulation of fruit ripening and leaf senes
+-
+cence (Li et al. 2021; Zhang et al. 2021; Wang et al. 2022). 
+Interestingly, Yuan et al. (2022)showed that SlWRKY35 promotes 
+fruit ripening by positively regulating carotenoid biosynthesis 
+through activation of the 2-
+C-methyl-D-erythritol 4-phosphate 
+pathway in tomato fruit. LcNAC002 was shown to promote 
+Figure 7. Effect of SlWRKY6C396A mutation on tomato fruit ripening detected by transient expression under NaHS treatment in slwrky6 fruits. A) The 
+slwrky6 mutant fruits were injected with pSAK277 (control), SlWRKY6 or SlWRKY6C396A-pSAK277 at the green ripening stage (25 DPA) and treated with 
+H2O or 500 μM NaHS to observe fruit phenotypic changes after storage at 25°C for 1, 3, 5, and 7 d. Images were digitally extracted for comparison. Scale 
+bars, 1 cm. B) to E). The contents of total chlorophyll B), Chlorophyll a C), Chlorophyll b D), and carotenoids E) in tomato fruits in A) at 3 and 5 d of 
+storage, respectively. FW, fresh weight. F) to H) The expression levels of SlWRKY6 F), SlSGR1 G), and SlSAG12 H) in fruits in A) by RT-qPCR. Error bars are 
+presented as means ±SD (n =3). Different letters indicate significant differences between samples (P <0.05, Duncan’s test).
+SlWRKY6 regulates tomato fruit ripening | 219
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+chlorophyll degradation by directly targeting the LcSGR promoter 
+(Zou et al. 2023). In this study, through dual-luciferase transient 
+expression assays and electrophoresis mobility shift assays, we 
+confirm the function of WRKY TF SlWRKY6 in promoting tomato 
+fruit ripening, by directly promoting the transcription of ripening 
+and senescence-related genes SlSGR1 and SlSAG12.
+Post-translational modifications of proteins may alter the 
+structure and/or conformation of proteins, thereby activating or 
+inhibiting enzyme activity, changing their interaction ability 
+with other molecules (proteins, DNA and RNA), affecting their 
+subcellular localization or changing their stability (Kwon et al. 
+2006
+). Increasing evidence have highlighted that protein modifica-
+tions such as phosphorylation, ubiquitination, persulfidation, and 
+glycosylation regulated fruit ripening (Sun et al. 2023; Wei et al. 
+2023; Xu et al. 2023). H2S can post-translationally modify –SH in 
+protein cysteine residues to form -SSH group through persulfida-
+tion and is considered as an important way for regulating protein 
+function. For instance, H
+2S induces S-sulfhydryl modification of 
+the Cys131 and Cys137 sites of the Arabidopsis SnRK2.6 protein, 
+which promotes protein kinase and its substrate protein ABF2 
+which in turn promotes ABA-induced stomatal closure (
+Chen 
+et al. 2020). In the present work, we find that SlWRKY6 undergoes 
+differential protein persulfidation in SlLCD1 overexpression 
+leaves, suggesting that SlWRKY6 may be a target protein for 
+H
+2S-mediated persulfidation. This study reveals that SlWRKY6 
+at Cys396 can be modified by persulfidation in vitro which signifi-
+cantly inhibits fruit ripening, but SlWRKY6C396A which cannot be 
+persulfidated eliminates this inhibitory effect. Further validation 
+shows that SlWRKY6 persulfidation delays tomato fruit ripening 
+by attenuating the transcriptional activity to the target genes 
+SlSAG12 and SlSGR1. 
+Robatzek and Somssich (2002) show that 
+AtWRKY6 could directly activate SIRK to accelerate leaf senes -
+cence in Arabidopsis. Similarly, we also find that SlWRKY6 over-
+expression accelerates both leaf senescence and fruit ripening. 
+To explore the mechanism of SlWRKY6 persulfidation in regulat
+-
+ing fruit ripening, dual-luciferase system in N. benthamiana leaves 
+is applied to measure the transcriptional activation potential of 
+SlWRKY6 persulfidation. H
+2S fumigation of N. benthamiana leaves 
+reveals a significant decrease in the LUC activity of SlWRKY6 or 
+SlWRKY6 co-expressed with SlMAPK4, whereas no significant 
+change in LUC activity of SlWRKY6 C396A or SlWRKY6 C396A 
+co-expressed with SlMAPK4 is observed compared with that of 
+water treatment (
+Fig. 5, D and E), suggesting that SlWRKY6 persul-
+fidation modification can inhibit the transcriptional activity of 
+SlWRKY6. Further, by EMSA experiment, SlWRKY6 treated with 
+H
+2S which leads to its persulfidation weakens the binding ability 
+to SlSGR1 and SlSAG12 promoters as evidenced by the weaker in-
+tensity of the retarded bands. SlWRKY6 modification by persulfi-
+dation in regulating tomato fruit ripening is also confirmed by 
+transient expression of SlWRKY6, SlWRKY6
+C396A which could 
+not be persulfidated in slwrky6 mutant fruits. SlWRKY6 persulfi-
+dation in tomato fruit in vivo reveals that mutation of cysteine 
+at Position 396 of SlWRKY6 results in accelerated fruit ripening, 
+increased carotenoid content, and increased expression of target 
+genes SlSGR1 and SlSAG12. 
+Collectively, our study showed that 
+SlWRKY6 persulfidation represses its transcriptional regulatory 
+Figure 8. Effect of SlWRKY6 serine (S33) to alanine (A) mutation which could not be phosphorylated and serine (S33) to aspartate (D) mimics 
+phosphorylation mutation on tomato fruit ripening as detected by transient expression in slwrky6 fruits. A) The slwrky6 mutant fruits were injected 
+with pSAK277 (control) or SlWRKY6S33A-pSAK277 or SlWRKY6S33D-pSAK277 at green ripening stage and fruit phenotypic changes were observed after 
+storage at 25°C for 1, 3, 5, and 7 d. Scale bars, 1 cm. B) to E) The contents of total chlorophyll B), Chlorophyll a C), Chlorophyll b D), and carotenoids E) in 
+tomato fruits, respectively. FW, fresh weight. F) to H) The expression levels of SlWRKY6 F), SlSGR1 G), and SlSAG12 H) in fruit by RT-qPCR. Error bars are 
+presented as means ±SD (n =3). Different letters indicate significant differences between samples (P <0.05, Duncan’s test).
+220 | Plant Physiology, 2024, Vol. 196, No. 1
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+Figure 9. Effect of SlMAPK4 on the function of SlWRKY6 in fruit ripening by VIGS. A) Phenotypes of fruits infected with pTRV or pTRV-SlMAPK4 in WT 
+and SlWRKY6#1 plants, at 10 and 15 d post injection. WT, wild type. Scale bars, 0.5 cm. B) to E) The content of total chlorophyll B), Chlorophyll a C), 
+Chlorophyll b D), and carotenoids E) at 10 and 15 d post-injection, respectively. FW, fresh weight. F) to I) The expression levels of SlMAPK4 F), SlWRKY6 G), 
+SlSGR1 H), and SlSAG12 I) in fruits in A) by RT-qPCR. Data are presented as means±SD (n =3). Different letters indicate significant differences between 
+samples (P <0.05, Duncan’s test).
+Figure 10. The model showing the molecular mechanism of differential roles of persulfidation and phosphorylation of SlWRKY6 in regulating tomato 
+fruit ripening. In the early stage of fruit ripening, SlWRKY6 was modified by persulfidation due to high levels of endogenous H2S in un-ripened fruit, 
+which may inhibit its phosphorylation by SlMAPK4, which in turn inhibited the transcription of SlSGR1 and SlSAG12. As the fruit ripened, H2S 
+production decreased and SlMAPK4 expression increased, and thus phosphorylated SlWRKY6 increased the transcriptional activity of SlSGR1 and 
+SlSAG12, leading to fruit ripening. –SSH, persulfidated state; –SH, sulfhydryl group; P, phosphate group.
+SlWRKY6 regulates tomato fruit ripening | 221
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+activity to target genes. Similarly, Yao et al. (2023) reported that 
+PyMYB10 persulfidation inhibits anthocyanin synthesis in red- 
+skinned pears.
+Post-translational modifications are essential for protein func-
+tion. Accumulating evidence show that many WRKY family pro-
+teins can undergo phosphorylation as substrates of MAPKs in 
+Arabidopsis (Guan et al. 2014), rice (Wang et al. 2023), and cotton 
+(Wang et al. 2021), thereby regulating plant growth and develop-
+ment. Previous studies revealed that AtMPK3 and AtMPK6 were 
+involved in leaf senescence and floral organ abscission in 
+Arabidopsis (
+Yue et al. 2012; Guan et al. 2014). Besides, studies 
+have demonstrated that the MAPK cascade is involved in the eth-
+ylene signaling pathway. For instance, Arabidopsis MAPK6 can in-
+crease ethylene biosynthesis by phosphorylating ACS2/ACS6 to 
+enhance its protein stability and activity (
+Liu and Zhang 2004). 
+Ethylene was found to induce enhancement of MdMAPK3 phos -
+phorylation of MdNAC72, thereby promoting apple fruit softening 
+(Wei et al. 2023). MAPK3 and MAPK6 can regulate the expression of 
+ACS2 and ACS6 genes by phosphorylating the TF WRKY33 (WRKY 
+DNA-binding protein 33) in Arabidopsis (Li et al. 2012). Although 
+phosphorylation is known to be essential for the ethylene synthe-
+sis pathway in fruit ripening by promoting the stability of TFs, 
+there are fewer reports on the effects of TF phosphorylation on 
+the chlorophyll degradation pathway. In the present work, 
+SlMAPK4 is found to interact with SlWRKY6 and to phosphory
+-
+late SlWRKY6 at Ser33 by in vitro phosphorylation experiments. 
+More interestingly, SlWRKY6 phosphorylation can directly acti
+-
+vate the expression of its downstream target genes SlSGR1 and 
+SlSAG12 (Fig. 5, F and G). This result is also verified by EMSA as 
+when SlWRKY6 is phosphorylated by SlMAPK4, the binding affin-
+ity of phosphorylated SlWRKY6 for the target gene promoters is 
+clearly enhanced due to the stronger intensity of the bands 
+(Fig. 6, D and G). Also, how SlWRKY6 phosphorylation regulates 
+tomato fruit ripening is further investigated by transient expres-
+sion of SlWRKY6, phosphonull SlWRKY6 S33A and phosphomi-
+metic SlWRKY6S33D by pSAK277 vector in slwrky6 mutant fruit. 
+The results indicates that SlWRKY6 S33D accelerates tomato rip-
+ening, while the opposite is found for SlWRKY6 S33A. Therefore, 
+SlMAPK4 acts as a molecular bridge linking chlorophyll degrada-
+tion and senescence gene expression to fruit color transition 
+during tomato fruit ripening. Moreover, SlMAPK4 is important 
+for the phosphorylation of SlWRKY6, and phosphorylation of 
+SlWRKY6 by SlMAPK4 activates the expression of SlWRKY6 
+downstream target genes, thereby promoting the ripening of 
+SlWRKY6 tomato fruits.
+The relations between SlWRKY6 persulfidation and 
+phosphorylation are also explored. When the combination of 
+NLuc-SlWRKY6 and CLuc-SlMAPK4 N. benthamiana leaves are fu-
+migated with H2S, the interaction effect is diminished, implying 
+that SlWRKY6 persulfidation may interfere the interaction 
+with SlMAPK4. Besides, it is found that as tomato fruit ripens, 
+endogenous H
+2S production decreases, while SlMAPK4 
+expression increases, suggesting the changes may alter the post- 
+translational modification of SlWRKY6. In the EMSA experiment, 
+SlWRKY6 persulfidation by H 2S in combination with SlMAPK6 
+phosphorylation weakens its binding ability to the W-box of 
+SlSGR1 and SlSAG12 promoters compared with control 
+SlWRKY6, also implying that SlWRKY6 persulfidation may inter-
+fere with its phosphorylation. Therefore, our data provides 
+insights into the mechanism of persulfidation and phosphoryla
+-
+tion of SlWRKY6 in regulating tomato fruit ripening, which may 
+improve the understanding of the molecular basis by which H
+2S 
+inhibits fruit ripening.
+Materials and methods
+Plant materials and growth conditions
+The WT tomato (S. lycopersicum “Micro-Tom”) used in this study 
+and transgenic lines constructed in this background (2 CRISPR– 
+Cas, 9 mutant lines slwrky6#4 and slwrky6#11, and 2 pBI121- 
+FLAG lines SlWRKY6#1 and SlWRKY6#2) were grown in a nutrient 
+soil: vermiculite (3:1, v/v) in pots of 10 cm diameter with 16-h 
+light/8-h dark cycles at 25°C.
+H2S fumigation of tomato fruits
+The WT tomato fruits at the green ripening stage were fumigated 
+in a 10 L closed container with 100 mL 500 μM NaHS as H
+2S donor 
+or water at 25°C. Random 10 tomato fruits with similar sizes and 
+shapes were selected and each group contained 3 replicates. The 
+NaHS solution or water was changed every 24 h and photographs 
+were taken daily for phenotypic observation.
+Plasmid construction and plant transformation
+To construct SlWRKY6 loss-of-function mutant plants, 2 gRNA 
+sequences of SlWRKY6 were designed by the CRISPRdirect 
+website (http://crispr.dbcls.jp/) (Supplementary Table S1 ). The 
+synthesized gRNAs were annealed and integrated with AtU3d 
+and AtU3b promoter which were further inserted into the 
+pYLCRISPR/Cas9-DN binary vector. To overexpress SlWRKY6
+, 
+the coding sequence (CDS) of SlWRKY6 without the stop codon 
+were amplified from the cDNA of the WT tomato and inserted 
+into the pBI121-FLAG vector at the sites of XbaI and XhoI. The 
+recombinant plasmids were transformed into Agrobacterium 
+tumefaciens EHA105 and the correct strains were transformed into 
+tomato cv. Micro-Tom by Agrobacterium-mediated cotyledon tissue 
+culture. All the mutant plants were genotyped by Sanger sequenc
+-
+ing of the PCR products of genomic DNA flanking the target site 
+(Supplementary Table S2). SlWRKY6 overexpression plants were 
+confirmed by RT-qPCR and Western blotting with anti-FLAG anti-
+body. Two independent homozygous lines of slwrky6 mutants 
+and SlWRKY6 overexpression of the T2 generation plants were 
+used for further study.
+Identification of persulfidated proteins  
+by LC-MS/MS
+The persulfidation proteins were identified according to the meth-
+od of Aroca et al. (2017). Tomato leaves of WT and SlLCD1 were 
+lysed in the lysis solution of 4% (w/v) SDS and 100 mM Tris/HCl 
+at pH 7.6 to extract proteins, followed by protein quantification 
+by bicinchoninic acid method. An appropriate amount of protein 
+from each sample was trypsinized by filter-aided proteome prep
+-
+aration, and the peptides were desalted by C18 Cartridge, lyophi-
+lized in 40 μ
+L of 0.1% (v/v) formic acid solution, and then 
+quantified by peptide quantification (OD280). The peptides were 
+analyzed by liquid chromatography and MS. MS and MS/MS 
+data obtained for individual samples were processed using 
+Analyst TF 1.5.1 Software (AB SCIEX).
+Biotin-switch detection of protein persulfidation
+The persulfidation of SlWRKY6 protein was detected by modified 
+biotin-switch according to the method of Sun et al. (2023). The 
+coding sequence of SlWRKY6 or SlWRKY6 with mutation from 
+Cys to Ala at Position 33 amplified by over-lap PCR was cloned 
+onto pCold vector to generate HIS–SlWRKY6. Recombinant 
+His–SlWRKY6 were expressed in E. coli Rosetta (DE3) by 
+induction with 0.5 mM isopropyl β-
+D-1-thiogalactopyranoside 
+222 | Plant Physiology, 2024, Vol. 196, No. 1
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+(IPTG) overnight at 16°C for 16 h. HIS–SlWRKY6 protein was puri-
+fied by Ni Sepharose 6 Fast Flow (GE, 17531806). Then 200 μ
+L of pu-
+rified HIS–SlWRKY6 protein was treated with 0 μ
+M, 500 μM, 
+1,000 μM H2S, or 1 mM DTT at 4°C for 1 h. The protein was labeled 
+the biotin-switch method. Then the protein samples were sepa -
+rated on 10% (v/v) SDS-PAGE gel, and after electrophoresis, the 
+proteins were transferred onto 0.45 μ
+M polyvinylidene difluoride 
+membranes by Western blotting with anti-biotin rabbit polyclonal 
+antibody as the primary antibody. The primers used are listed in 
+Supplementary Tables S3 and S4.
+Persulfidation site analysis of SlWRKY6  
+by LC-MS/MS
+The persulfidation sites of SlWRKY6 protein were assayed by 
+LC-MS/MS. The purified SlWRKY6 protein of 200 μL was treated 
+with 1,000 μM NaHS at 4 °C for 1 h. Then, the sample was analyzed 
+by LC-MS/MS (FusionLumos, ThermoFisher, USA) as described by 
+Chen et al. (2021).
+Transcriptome analysis
+Three biological replicates of mature leaf samples of WT and 
+SlWRKY6 overexpression plants grown for 60 d were collected 
+for RNA-seq analysis. RNA-seq was performed at OE Biotech 
+(China) as described by Wu et al. (2020). The clean reads were 
+aligned to the Tomato Genome version SL4.0. The DEGs between 
+WT and SlWRKY6 overexpression leaves were analyzed under 
+fold change ≥2 and false discovery rate <0.05. KEGG pathway of 
+DEGs was analyzed using (https://www.genome.jp/kegg/).
+Measurement of chlorophyll and carotenoid in 
+tomato leaves and fruits
+The contents of chlorophyll and carotenoid were determined by 
+the method of Yao et al. (2020). Fresh tomato sample of 2.0 ± 
+0.01 g was ground in liquid nitrogen and extracted with 95% (v/v) 
+ethanol. The absorbance was measured at 665, 649, and 470 nm. 
+Three biological replicates were performed for each sample, and 
+each biological replicate includes 3 technical replicates. The results 
+were expressed as mg/g FW (fresh weight).
+RNA extraction and reverse transcription 
+quantitative PCR (RT-qPCR) analysis
+Total RNA was extracted using FastPure Universal Plant Total 
+RNA Isolation Kit (Vazyme, China). Then, cDNA synthesis was 
+performed according to Evo M-MLV One-step RT-PCR Kit (AG, 
+China). RT-qPCR was performed by the manufacturer’s instruc
+-
+tions of Light Cycler 96 SYBR GREEN I Master (Roche, USA). The 
+relative expression level of genes was analyzed using the 2 −ΔΔCt 
+analysis method by normalizing to the reference gene SlTubulin 
+(Bustin et al. 2009). Each sample represents 3 biological replicates, 
+and each biological replicate includes 3 technical replicates. The 
+primers are listed in Supplementary Table S5.
+Determination of endogenous H2S production in 
+tomato fruit
+The production of endogenous H 2S of fruit sample was deter -
+mined according to the method of Riemenschneider et al. (2005). 
+Fruit samples (1 g) of 35, 40, and 45 DPA were ground in liquid ni-
+trogen and homogenized by adding 5 mL of phosphate-buffered 
+salt (pH 7.4) solution containing 10 mM L-cysteine and 10 mM pyr-
+idoxal 5
+′-phosphate and then centrifuged at 10,000 × g for 10 min. 
+H2S released from the supernatant was absorbed by zinc acetate 
+and then reacted with N,N-dimethyl-phenylenediamine and 
+FeCl3 to form methylene blue, then the absorbance was deter -
+mined at 670 nm. The experiment was performed in 3 technical 
+replicates and repeated for 3 biological replicates.
+Yeast 2-hybrid assays
+Full-length coding sequence of SlWRKY6 was cloned into the 
+pGADT7 linearized vector and those of SlMAPK1, SlMAPK2, 
+SlMAPK3, SlMAPK4, and SlMAPK5 were cloned and inserted into 
+pGBKT7 vector. Then, the pGBKT7 and pGADT7 recombinant 
+plasmids were co-transformed into yeast (Saccharomyces cerevisiae) 
+strain Y2HGold cells (Clontech) for interaction screening. The syn
+-
+thetic dropout medium lacking Leu and Trp was used to test the 
+transformants. Positive interactions were detected on medium 
+lacking Leu, Trp, His and Ade (
+Yao et al. 2023). After the screening 
+of interacting protein, SlWRKY6 is divided into 3 segments: amino 
+acid region 1 to 293, 294 to 354, and 355 to 550, and SlWRKY6
+C396A, 
+SlWRKY6S33A site mutations were constructed in pGADT7 vector, 
+and yeast 2-hybrid were carried out between SlWRKY6 trunca -
+tions, SlWRKY6 site mutations and SlMAPK4. The primer sequen-
+ces are listed in Supplementary Table S6.
+Pull-down assays
+To further explore the interaction between SlWRKY6 and 
+SlMAPK4, CDSs of SlMAPK4 and SlWRKY6 were cloned into pGEX- 
+4T-1 and pCold vectors to generate GST–SlMAPK4 and HIS– 
+SlWRKY6, respectively. Recombinant GST–SlMAPK4 and 
+HIS–SlWRKY6 were expressed from E. coli Rosetta (DE3) by adding 
+0.5 mM IPTG overnight at 16°C for 16 h. The pull-down analyses 
+were performed referring to the method of Miernyk and Thelen 
+(2008) . The protein blots were analyzed using an anti-GST antibody 
+and anti-HIS antibody (working dilution 1:5,000) from Beyotime 
+(China). The primer sequences are listed in Supplementary 
+Table S3.
+FLC assay
+According to Yao’s et al. (2023) method for FLC assay, SlWRKY6 
+was labeled to the N-terminal end of LUC to form NLuc- 
+SlWRKY6, while SlMAPK4 was labeled with the C-terminal end 
+of LUC to form CLuc-SlMAPK4. NLuc-SlWRKY6 and CLuc- 
+SlMAPK4 constructs were then transferred into Agrobacterium sep-
+arately, mixed at a ratio of 1:1 (v/v) and co-infiltrated into Nicotiana 
+benthamiana leaves. After dark treatment for 12 to 16 h and then 
+transferred to light incubation for 2 to 3 d, the firefly luciferase ac-
+tivity was measured by Enhanced Firefly Luciferase Reporter Gene 
+Assay Kit (Beyotime, China). The primer sequences are listed in 
+Supplementary Table S7.
+BiFC assay
+The BiFC assay was carried out based on the method of Song et al. 
+(2023). Recombinant vectors SlWRKY6-cYFP and SlMAPK4-nYFP 
+were transfected into Agrobacterium strain GV3101 separately, 
+and transient expressions were performed in N. benthamiana 
+leaves of 4 wk growth. A laser confocal scanning microscope 
+(Nikon, Japan) with an excitation wavelength at 511 nm and emis-
+sion wavelength of 525 nm under laser intensity of 20% were used 
+to observe the fluorescence signal in leaf cells after 2 d of infiltra
+-
+tion. The primer sequences are listed in Supplementary Table S7.
+In vitro kinase activity assays
+The in vitro kinase activity assays were performed as previously 
+described (Ding et al. 2018). The recombinant GST–SlMAPK4 and 
+HIS-SlWRKY6 proteins were purified using Protein Purification 
+SlWRKY6 regulates tomato fruit ripening | 223
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+Kit (Cytiva, 17075601 and 17531806) according to the manufac -
+turer’s instructions. The purified GST–SlMAPK4 and HIS– 
+SlWRKY6 proteins were dissolved with 50 μ
+L of kinase reaction 
+buffer (25 mM Tris–HCl pH 7.5, 2 mM DTT, 10 mM MgCl2, 200 μM 
+ATP, protease inhibitor, and phosphatase inhibitor) and incuba -
+tion for 1 h at 37°C. Dephosphorylation was carried out by the ad-
+dition of 0.5 μ
+L Lambda Protein Phosphatase (λ-PPase). The 
+reaction was stopped by adding 1× SDS loading buffer and incu-
+bated at 100°C for 10 min. Samples were subsequently separated 
+in 10% (v/v) Phos-tag SDS-PAGE gels (ApexBio, USA). The protein 
+samples were then analyzed by immunoblotting with anti-HIS 
+and anti-GST antibodies (working dilution 1:5,000) from 
+Beyotime (China). Meanwhile, potential MAPK phosphorylation 
+(SP) sites of SlWRKY6 (including S33, S229, S248, and S532) were 
+sequentially mutated to mutants (S to A) which might be phos
+-
+phorylated and cloned for protein expression and further used 
+for phosphorylation experiments.
+Dual-luciferase reporter system assay
+The dual-luciferase experiment was assayed following the meth-
+od described previously (Yuan et al. 2021). The gene promoter se-
+quences of SlSGR1 and SlSAG12 upstream 1,000 bp sequence of the 
+starting codon were inserted into the pGreenII 0800-LUC vector at 
+the sites of HindIII and BamHI. Meanwhile, the coding sequences 
+of SlWRKY6
+, mutant forms SlWRKY6C396A, SlWRKY6S33A, 
+SlWRKY6S33D, and SlMAPK4 were cloned into the pSAK277 vector. 
+All recombinant constructs were transferred into Agrobacterium 
+strain GV3101 including the helper PSoup and P19 plasmid. The 
+Agrobacteria containing recombinant vectors were mixed with a 1:9 
+(v/v) ratio, and co-infiltrated into 4- to 6-wk-old N. benthamiana 
+leaves. After dark treatment for 12 to 16 h and then transferred to 
+light incubation for 2 to 3 d, total protein was extracted from the in
+-
+filtration zone of N. benthamiana leaves. Plants of N. benthamiana were 
+also fumigated with 500 μ
+M NaHS for 4 h to study the effect of 
+SlWRKY6 persulfidation on transcriptional activity to SlSGR1 and 
+SlSAG12 promoter. The ratio of firefly luciferase (LUC) and renilla lu-
+ciferase (REN) was tested by using the Dual-Luciferase Reporter 
+Assay System (E1910, Promega, USA) according to the manufac -
+turer’s instructions. LUC activity was analyzed by infiltrating N. ben-
+thamiana leaves with 0.5 mM D-fluorescein (Segnon, Shanghai, 
+China) in dark conditions for 5 min. Images of leaves were acquired 
+by an in vivo imaging system (
+Tanno5200, Tanon, China). The primer 
+sequences are listed in Supplementary Tables S4 and S8.
+Electrophoresis mobility shift assays
+EMSAs were performed as described by Tan et al. (2018). 
+The recombinant purified GST–SlMAPK4 and HIS–SlWRKY6 proteins 
+single or HIS–SlWRKY6 treated with NaHS (500 or 1,000 μM) for 1 h 
+were incubated with biotin-labeled probes containing the W-box of 
+SlSAG12 and SlSGR1 promoters (Supplementary Table S7
+) in binding 
+buffer. Then the 10% of non-denaturing polyacrylamide gel was 
+used to separate the protein-DNA complexes by 0.5
+× Tris-buffered 
+EDTA buffer (pH 8.0), and the DNA in the gels was electroblotted 
+onto nitrocellulose membranes by Western blotting, and the chem-
+iluminescence kit (Beyotime, China) was used to detect protein–DNA 
+interactions. All the above primer sequences used are listed in 
+Supplementary Table S9.
+VIGS and transient transformation in tomato fruits
+The 400 bp fragment of SlMAPK4 was selected by the VIGS online 
+tool (https://vigs.solgenomics.net/), and then the fragment was 
+amplified by PCR and ligated into pTRV2 vector. The plasmid 
+was transformed into A. tumefaciens strain GV3101. VIGS in tomato 
+fruits was performed as described by Fantini and Giuliano (2016).
+Transient tomato fruit injection experiment was conducted with 
+slight modification according to the method of Sun et al. (2023)
+. The 
+coding sequences of SlWRKY6C396A, SlWRKY6S33A, and SlWRKY6S33D 
+mutations were inserted into the pSAK277 vector. The plasmids 
+were transformed into Agrobacterium strain GV3101 and then 
+Agrobacterium was resuspended in the infection solution (10 mM 
+MgCl
+2; 10 mM 2-morpholinoethanesulphonic acid, MES; and 
+100 μM acetosyringone) for transient transformation in slwrky6 mu-
+tant fruits which were further subjected to H2S fumigation released 
+from 500 μM NaHS or water control. The empty vector (pSAK277) 
+was used as a negative control. Tomato fruit phenotypic changes 
+were observed and sampled for further analysis. All the above pri-
+mer sequences used are listed in Supplementary Table S10.
+Statistical analysis
+All experiments use at least 3 biological replicates. One-way 
+ANOVA was analyzed using SPSS statistical software version 
+24.0 (SPSS Inc., Chicago, IL, USA). Three independent experiments 
+(replications) were used to calculate the mean and standard 
+deviation (SD). Significant differences among the parameters 
+means (P <0.05) were analyzed by Student’s t-test or Duncan’s 
+multiple tests. The date processing and graphics rendering were 
+plotted by Origin Pro 9.0.
+Accession numbers
+Sequence data and accession numbers in this article were ob -
+tained by the Phytozome data libraries (https://phytozome-next. 
+jgi.doe.gov/) under the following accession numbers: SlWRKY6 
+(Solyc02g080890), SlSGR1 (Solyc08g080090), SlSAG12 (Solyc02 
+g076910), SlACO1 (Solyc07g049550), SlACS2 (Solyc01g095080), 
+SlMAPK1 (Solyc06g005170), SlMAPK2 (Solyc01g094960), SlMAPK3 
+(Solyc05g049970), SlMAPK4 (Solyc08g014420), and SlMAPK5 
+(Solyc11g072630). The data are shown in Supplementary Tables 
+S1 to S10.
+Acknowledgments
+We are grateful for the kind support of pBI121-FLAG from Prof. 
+Mingchun Liu at Sichuan University. We thank Dr Andrew 
+C. Allan, Dr Richard Espley, and Dr Lin-Wang Kui for the dual vec
+-
+tor pGreen II 0800-LUC in the New Zealand Institute for Plant & 
+Food Research Limited, Auckland, New Zealand.
+Author contributions
+K.H. and H.Z. designed the experiments. M.Z., L.M., and M.G. per-
+formed the experiments and collected the data. K.H., C.Z., G.Y., and 
+H.Z. guided this research. M.Z. and K.H. wrote and revised the manu
+-
+script. All the authors read, revised, and approved the manuscript.
+Supplementary data
+The following materials are available in the online version of this 
+article.
+Supplementary Figure S1. Role of H
+2S fumigation in delaying 
+WT tomato fruit ripening.
+Supplementary Figure S2. Overview of RNA-seq datasets in 
+SlWRKY6-OE and WT tomato leaves grown for 60 d.
+Supplementary Figure S3. SlWRKY6 is a positive regulator of 
+tomato leaf senescence.
+224 | Plant Physiology, 2024, Vol. 196, No. 1
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+Supplementary Figure S4. Analysis of SlWRKY6, SlSGR1, and 
+SlSAG12 gene transcription during tomato fruit ripening.
+Supplementary Figure S5. SlWRKY6 promotes the expression 
+of ethylene synthesis genes SlACO1 and SlACS2 in tomato fruits 
+and leaves.
+Supplementary Figure S6. Analysis of tissue expression of 
+SlMAPK1, SlMAPK2, SlMAPK3, SlMAPK4, and SlMAPK5 in tomato.
+Supplementary Figure S7. Interaction between SlWRKY6 in 
+different truncations or SlWRKY6 C396A, SlWRKY6 S33A, and 
+SlMAPK4.
+Supplementary Figure S8. Effect of SlSGR1 and SlSAG12 gene 
+silencing by VIGS on tomato fruit ripening.
+Supplementary Table S1. Primer sequences for SlWRKY6-Cas9 
+and overexpression.
+Supplementary Table S2. Primer sequences for identification 
+of slwrky6 mutants.
+Supplementary Table S3. The primer sequences used for con-
+structing prokaryotic expression vectors.
+Supplementary Table S4. Primer sequences for SlWRKY6 (Cys 
+and Ser) site mutations.
+Supplementary Table S5 . Primer sequences for the gene ex -
+pression analysis.
+Supplementary Table S6. Primer sequences for the yeast 2-hy-
+brid assays.
+Supplementary Table S7. The FLC and BiFC primer sequences.
+Supplementary Table S8. The primer sequences used for dual- 
+luciferase assays.
+Supplementary Table S9. The probe sequences used for elec-
+trophoresis mobility shift assays.
+Supplementary Table S10. The VIGS primer sequences.
+Supplementary Data Set 1. Persulfidation site analysis data of 
+SlWRKY6 by LC-MS/MS.
+Supplementary Data Set 2. Statistics of differently expressed 
+genes in SlWRKY6 overexpressing and WT leaves.
+Supplementary Data Set 3. Differential gene expression levels 
+in SlWRKY6 overexpressing and WT leaves.
+Supplementary Data Set 4. KEGG enrichment of differential 
+gene analysis data in SlWRKY6 overexpressing and WT leaves.
+Supplementary Data Set 5. Original data of ripening- 
+associated DEG gene heat map.
+Funding
+This research was supported by the National Natural Science 
+Foundation of China (31970200, 31970312, 32170315, 32272682), 
+Anhui Provincial Key Research and Development Plan (2022i 
+01020001), Fundamental Research Funds for the Central 
+Universities (JZ2021HGPA0063), and Natural Science Foundations 
+of Anhui Province (1908085MC72).
+Conflict of interest statement. None declared.
+Data availability
+The authors confirm that the data supporting the findings of this 
+study are available within the article and its supplementary 
+materials.
+References
+Alvarez C, Calo L, Romero LC, García I, Gotor C. An O-acetylserine 
+(thiol)lyase homolog with L-cysteine desulfhydrase activity regu-
+lates cysteine homeostasis in Arabidopsis. Plant Physiol
+. 
+2010:152(2):656–669. https://doi.org/10.1104/pp.109.147975
+Aroca A, Benito JM, Gotor C, Romero LC. Persulfidation proteome re-
+veals the regulation of protein function by hydrogen sulfide in di-
+verse biological processes in Arabidopsis. J Exp Bot
+. 2017:68(17): 
+4915–4927. https://doi.org/10.1093/jxb/erx294
+Aroca A, Yruela I, Gotor C, Bassham DC. Persulfidation of ATG18a 
+regulates autophagy under ER stress in Arabidopsis. Proc Natl 
+Acad Sci U S A
+. 2021:118(20):e2023604118. https://doi.org/10. 
+1073/pnas.2023604118
+Bustin SA, Benes V, Garson JA, Hellemans J, Huggett J, Kubista M, 
+Mueller R, Nolan T, Pfaffl MW, Shipley GL, et al. The MIQE guide-
+lines: minimum information for publication of quantitative real- 
+time PCR experiments. Clin Chem
+. 2009:55(4):611–622. https://doi. 
+org/10.1373/clinchem.2008.112797
+Chen S, Jia H, Wang X, Shi C, Wang X, Ma P, Wang J, Ren M, Li J. 
+Hydrogen sulfide positively regulates abscisic acid signaling 
+through persulfidation of SnRK2.6 in guard cells. Mol Plant
+. 
+2020:13(5):732–744. https://doi.org/10.1016/j.molp.2020.01.004
+Chen S, Wang X, Jia H, Li F, Ma Y, Liesche J, Liao M, Ding X, Liu C, Chen 
+Y, et al. Persulfidation-induced structural change in SnRK2.6 es-
+tablishes intramolecular interaction between phosphorylation 
+and persulfidation. Mol Plant
+. 2021:14(11):1814–1830. https://doi. 
+org/10.1016/j.molp.2021.07.002
+Danquah A, Zelicourt AD, Colcombet J, Hirt H. The role of ABA and 
+MAPK signaling pathways in plants abiotic stress responses. 
+Biotechnol Adv
+. 2014:32(1):40–52. https://doi.org/10.1016/j. 
+biotechadv.2013.09.006
+Ding H, He J, Wu Y, Wu X, Ge C, Wang Y, Zhong S, Peiter E, Liang J, Xu 
+W. The tomato mitogen-activated protein kinase SlMPK1 is as a 
+negative regulator of the high-temperature stress response. 
+Plant Physiol. 2018:177(2):633–651. https://doi.org/10.1104/pp.18. 
+00067
+Doan PPT, Kim JH, Kim J. Rapid investigation of functional roles of 
+genes in regulation of leaf senescence using Arabidopsis proto -
+plasts. Front Plant Sci
+. 2022:13:818239. https://doi.org/10.3389/ 
+fpls.2022.818239
+Eulgem T, Somssich IE. Networks of WRKY transcription factors in 
+defense signaling. Curr Opin Plant Biol
+. 2007:10(4):366–371. 
+https://doi.org/10.1016/j.pbi.2007.04.020
+Fantini E, Giuliano G. Virus-induced gene silencing as a tool to study 
+tomato fruit biochemistry. Methods Mol Biol. 2016:1363:65–78. 
+https://doi.org/10.1007/978-1-4939-3115-6_7
+Filipovic MR, Zivanovic J, Alvarez B, Banerjee R. Chemical biology of 
+H2S signaling through persulfidation. Chem Rev. 2018:118(3): 
+1253–1337. https://doi.org/10.1021/acs.chemrev.7b00205
+Giovannoni J, Nguyen C, Ampofo B, Zhong S, Fei Z. The epigenome 
+and transcriptional dynamics of fruit ripening. Annu Rev Plant 
+Biol. 2017:68(1):61–84. https://doi.org/10.1146/annurev-arplant- 
+042916-040906
+Guan Y, Meng X, Khanna R, LaMontagne E, Liu Y, Zhang S. 
+Phosphorylation of a WRKY transcription factor by MAPKs is re-
+quired for pollen development and function in Arabidopsis. 
+PLoS Genet
+. 2014:10(5):e1004384. https://doi.org/10.1371/journal. 
+pgen.1004384
+Hu K, Peng X, Yao G, Zhou Z, Yang F, Li W, Zhao Y, Li Y, Han Z, Chen 
+X, et al. Roles of a cysteine desulfhydrase LCD1 in regulating leaf 
+senescence in tomato. Int J Mol Sci
+. 2021:22(23):13078. https://doi. 
+org/10.3390/ijms222313078
+Hu KD, Zhang XY, Yao GF, Rong YL, Ding C, Tang J, Yang F, Huang ZQ, 
+Xu ZM, Chen XY, et al. A nuclear-localized cysteine desulfhydrase 
+plays a role in fruit ripening in tomato. Hortic Res. 2020:7(1):211. 
+https://doi.org/10.1038/s41438-020-00439-1
+Hu LY, Hu SL, Wu J, Li YH, Zheng JL, Wei ZJ, Liu J, Wang HL, Liu YS, 
+Zhang H. Hydrogen sulfide prolongs postharvest shelf life of 
+SlWRKY6 regulates tomato fruit ripening | 225
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+strawberry and plays an antioxidative role in fruits. J Agric Food 
+Chem. 2012:60(35):8684–8693. https://doi.org/10.1021/jf300728h
+Hu Z, Wang R, Zheng M, Liu X, Meng F, Wu H, Yao Y, Xin M, Peng H, Ni 
+Z, et al. TaWRKY51 promotes lateral root formation through neg-
+ative regulation of ethylene biosynthesis in wheat (
+Triticum aesti-
+vum L.). Plant J
+. 2018:96(2):372–388. https://doi.org/10.1111/tpj. 
+14038
+Jia H, Chen S, Liu D, Liesche J, Shi C, Wang J, Ren M, Wang X, Yang J, 
+Shi W, et al. Ethylene-induced hydrogen sulfide negatively regu-
+lates ethylene biosynthesis by persulfidation of ACO in tomato 
+under osmotic stress. Front Plant Sci
+. 2018:9:1517. https://doi.org/ 
+10.3389/fpls.2018.01517
+Karlova R, Chapman N, David K, Angenent GC, Seymour GB, de 
+Maagd RA. Transcriptional control of fleshy fruit development 
+and ripening. J Exp Bot
+. 2014:65(16):4527–4541. https://doi.org/10. 
+1093/jxb/eru316
+Kim JY, Kim JH, Jang YH, Yu J, Bae S, Kim MS, Cho YG, Jung YJ, Kang 
+KK. Transcriptome and metabolite profiling of tomato SGR- 
+knockout null lines using the CRISPR/Cas9 system. Int J Mol Sci. 
+2022:24(1):109. https://doi.org/10.3390/ijms24010109
+Klee HJ, Giovannoni JJ. Genetics and control of tomato fruit ripening 
+and quality attributes. Annu Rev Genet. 2011:45(1):41–59. https:// 
+doi.org/10.1146/annurev-genet-110410-132507
+Kwon SJ, Choi EY, Choi YJ, Ahn JH, Park OK. Proteomics studies of 
+post-translational modifications in plants. J Exp Bot. 2006:57(7): 
+1547–1551. https://doi.org/10.1093/jxb/erj137
+Li CX, Hou XM, Qi NN, Liu HW, Li YH, Huang DJ, Wang CL. Insight into 
+ripening-associated transcription factors in tomato: a review. Sci 
+Hortic. 2021:288:110363. https://doi.org/10.1016/j.scienta.2021. 
+110363
+Li G, Meng X, Wang R, Mao G, Han L, Liu Y, Zhang S. Dual-level reg-
+ulation of ACC synthase activity by MPK3/MPK6 cascade and its 
+downstream WRKY transcription factor during ethylene induc -
+tion in Arabidopsis. PLoS Genet
+. 2012:8(6):e1002767. https://doi. 
+org/10.1371/journal.pgen.1002767
+Liu Y, Zhang S. Phosphorylation of 1-aminocyclopropane-1- 
+carboxylic acid synthase by MPK6, a stress-responsive mitogen- 
+activated protein kinase, induces ethylene biosynthesis in 
+Arabidopsis. Plant Cell
+. 2004:16(12):3386–3399. https://doi.org/10. 
+1105/tpc.104.026609
+Miernyk JA, Thelen JJ. Biochemical approaches for discovering 
+protein-protein interactions. Plant J. 2008:53(4):597–609. https:// 
+doi.org/10.1111/j.1365-313X.2007.03316.x
+Riemenschneider A, Wegele R, Schmidt A, Papenbrock J. Isolation 
+and characterization of a D-cysteine desulfhydrase protein 
+from Arabidopsis thaliana. FEBS J. 2005:272(5):1291–1304.
+Robatzek S, Somssich IE. Targets of AtWRKY6 regulation during 
+plant senescence and pathogen defense. Genes Dev. 2002:16(9): 
+1139–1149. https://doi.org/10.1101/gad.222702
+Rushton PJ, Somssich IE, Ringler P, Shen QJ. WRKY transcription fac-
+tors. Trends Plant Sci
+. 2010:15(5):247–258. https://doi.org/10.1016/j. 
+tplants.2010.02.006
+Scuffi D, Álvarez C, Laspina N, Gotor C, Lamattina L, García-Mata C. 
+Hydrogen sulfide generated by L-cysteine desulfhydrase acts up-
+stream of nitric oxide to modulate abscisic acid-dependent sto -
+matal closure. Plant Physiol
+. 2014:166(4):2065–2076. https://doi. 
+org/10.1104/pp.114.245373
+Shan D, Wang C, Zheng X, Hu Z, Zhu Y, Zhao Y, Jiang A, Zhang H, Shi 
+K, Bai Y, et al. MKK4-MPK3-WRKY17-mediated salicylic acid deg-
+radation increases susceptibility to Glomerella leaf spot in apple. 
+Plant Physiol
+. 2021:186(2):1202–1219. https://doi.org/10.1093/ 
+plphys/kiab108
+Song J, Lin R, Tang M, Wang L, Fan P, Xia X, Yu J, Zhou Y. SlMPK1- and 
+SlMPK2-mediated SlBBX17 phosphorylation positively regulates 
+CBF-dependent cold tolerance in tomato. New Phytol
+. 
+2023:239(5):1887–1902. https://doi.org/10.1111/nph.19072
+Sun C, Yao GF, Li LX, Li TT, Zhao YQ, Hu KD, Zhang CH, Zhang H. E3 
+ligase BRG3 persulfidation delays tomato ripening by reducing 
+ubiquitination of the repressor WRKY71. Plant Physiol. 2023: 
+192(1):616–632. https://doi.org/10.1093/plphys/kiad070
+Tan W, Zhang D, Zhou H, Zheng T, Yin Y, Lin H. Transcription factor 
+HAT1 is a substrate of SnRK2.3 kinase and negatively regulates 
+ABA synthesis and signaling in Arabidopsis responding to drought. 
+PLoS Genet. 2018:14(4):e1007336. https://doi.org/10.1371/journal. 
+pgen.1007336
+Wang NN, Li Y, Chen YH, Lu R, Zhou L, Wang Y, Zheng Y, Li XB. 
+Phosphorylation of WRKY16 by MPK3-1 is essential for its tran -
+scriptional activity during fiber initiation and elongation in cot -
+ton (
+Gossypium hirsutum). Plant Cell. 2021:33(8):2736–2752. 
+https://doi.org/10.1093/plcell/koab153
+Wang S, Han S, Zhou X, Zhao C, Guo L, Zhang J, Liu F, Huo Q, Zhao W, 
+Guo Z, et al. Phosphorylation and ubiquitination of OsWRKY31 are 
+integral to OsMKK10-2-mediated defense responses in rice. Plant 
+Cell
+. 2023:35(6):2391–2412. https://doi.org/10.1093/plcell/koad064
+Wang S, Wang T, Li Q, Xu C, Tian Y, Wang Y, Zhang X, Xu X, Han Z, 
+Wu T. Phosphorylation of MdERF17 by MdMPK4 promotes apple 
+fruit peel degreening during light/dark transitions. Plant Cell. 
+2022:34(5):1980–2000. https://doi.org/10.1093/plcell/koac049
+Wei Y, Liu Z, Lv T, Xu Y, Wei Y, Liu W, Liu L, Wang A, Li T. Ethylene 
+enhances MdMAPK3-mediated phosphorylation of MdNAC72 to 
+promote apple fruit softening. Plant Cell. 2023:35(8):2887–2909. 
+https://doi.org/10.1093/plcell/koad122
+Wu CJ, Shan W, Liu XC, Zhu LS, Wei W, Yang YY, Guo YF, Bouzayen 
+M, Chen JY, Lu WJ, et al. Phosphorylation of transcription factor 
+bZIP21 by MAP kinase MPK6-3 enhances banana fruit ripening. 
+Plant Physiol. 2022:188(3):1665–1685. https://doi.org/10.1093/ 
+plphys/kiab539
+Wu M, Xu X, Hu X, Liu Y, Cao H, Chan H, Gong Z, Yuan Y, Luo Y, Feng 
+B, et al. SlMYB72 regulates the metabolism of chlorophylls, caro-
+tenoids, and flavonoids in tomato fruit. Plant Physiol
+. 2020:183(3): 
+854–868. https://doi.org/10.1104/pp.20.00156
+Xu J, Liu S, Cai L, Wang L, Dong Y, Qi Z, Yu J, Zhou Y. SPINDLY inter-
+acts with EIN2 to facilitate ethylene signaling-mediated fruit rip-
+ening in tomato. Plant Biotechnol J
+. 2023:21(1):219–231. https://doi. 
+org/10.1111/pbi.13939
+Yao GF, Gou SS, Zhong TY, Wei SW, An X, Sun HY, Sun C, Hu KD, 
+Zhang H. Persulfidation of transcription factor MYB10 inhibits 
+anthocyanin synthesis in red-skinned pear. Plant Physiol
+. 
+2023:192(3):2185–2202. https://doi.org/10.1093/plphys/kiad100
+Yao GF, Li C, Sun KK, Tang J, Huang ZQ, Yang F, Huang GG, Hu LY, Jin 
+P, Hu KD, et al. Hydrogen sulfide maintained the good appearance 
+and nutrition in post-harvest tomato fruits by antagonizing the 
+effect of ethylene. Front Plant Sci. 2020:11:584. https://doi.org/10. 
+3389/fpls.2020.00584
+Yuan Y, Ren S, Liu X, Su L, Wu Y, Zhang W, Li Y, Jiang Y, Wang H, Fu 
+R, et al. SlWRKY35 positively regulates carotenoid biosynthesis by 
+activating the MEP pathway in tomato fruit. New Phytol. 
+2022:234(1):164–178. https://doi.org/10.1111/nph.17977
+Yuan Y, Xu X, Luo Y, Gong Z, Hu X, Wu M, Liu Y, Yan F, Zhang X, 
+Zhang W, et al. R2r3 MYB-dependent auxin signalling regulates 
+trichome formation, and increased trichome density confers spi-
+der mite tolerance on tomato. Plant Biotechnol J
+. 2021:19(1): 
+138–152. https://doi.org/10.1111/pbi.13448
+Yue H, Nie S, Xing D. Over-expression of Arabidopsis Bax inhibitor-1 
+delays methyl jasmonate-induced leaf senescence by suppressing 
+226 | Plant Physiology, 2024, Vol. 196, No. 1
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026
+
+the activation of MAP kinase 6. J Exp Bot. 2012:63(12):4463–4474. 
+https://doi.org/10.1093/jxb/ers122
+Zhang H, Hu LY, Hu KD, He YD, Wang SH, Luo JP. Hydrogen sulfide 
+promotes wheat seed germination and alleviates oxidative dam-
+age against copper stress. J Integr Plant Biol
+. 2008:50(12):1518–1529. 
+https://doi.org/10.1111/j.1744-7909.2008.00769.x
+Zhang H, Zhang L, Wu S, Chen Y, Yu D, Chen L. AtWRKY75 positively 
+regulates age-triggered leaf senescence through gibberellin path-
+way. Plant Divers
+. 2021:43(4):331–340. https://doi.org/10.1016/j. 
+pld.2020.10.002
+Zhang WJ, Zhou Y, Zhang Y, Su YH, Xu T. Protein phosphorylation: a 
+molecular switch in plant signaling. Cell Rep
+. 2023:42(7):112729. 
+https://doi.org/10.1016/j.celrep.2023.112729
+Zhao YQ, Hu KD, Yao GF, Wang SY, Peng XJ, Zhang H. A D-cysteine 
+desulfhydrase, SlDCD2, participates in tomato fruit ripening 
+by modulating ROS homoeostasis and ethylene biosynthesis. 
+Hortic Res. 2023:10(3):uhad014. https://doi.org/10.1093/hr/ 
+uhad014
+Ziogas V, Molassiotis A, Fotopoulos V, Tanou G. Hydrogen sulfide: a 
+potent tool in postharvest fruit biology and possible mechanism 
+of action. Front Plant Sci. 2018:9:1375. https://doi.org/10.3389/fpls. 
+2018.01375
+Zou SC, Zhou MG, Abbas F, Hu GB, Wang HC, Huang XM. 
+Transcription factor LcNAC002 coregulates chlorophyll degrada-
+tion and anthocyanin biosynthesis in litchi. Plant Physiol
+. 2023: 
+192(3):1913–1927. https://doi.org/10.1093/plphys/kiad118
+SlWRKY6 regulates tomato fruit ripening | 227
+Downloaded from https://academic.oup.com/plphys/article/196/1/210/7668393 by guest on 07 August 2026

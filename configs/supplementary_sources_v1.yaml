@@ -231,6 +231,16 @@ sources:
     expected_size_bytes: 147365
     data_level: C
     scientific_use: recombinant_protein_control_evidence
+  - study_accession: KIAE271_SUPPL
+    member: kiae271_DSs.xlsx
+    publication_doi: 10.1093/plphys/kiae271
+    source_kind: paper_supplement
+    container: Oxford University Press / Plant Physiology supplementary data (kiae271)
+    container_url: https://academic.oup.com/plphys/article/196/1/210/7666287#supplementary-data
+    destination: supplements/KIAE271_SUPPL/kiae271_DSs.xlsx
+    expected_size_bytes: 5450509
+    data_level: C
+    scientific_use: persulfidation_site_evidence
   - study_accession: PANTHERDB_ORTHOLOGY
     member: panther_arabidopsis_taxon3702.tsv
     publication_doi: 10.1093/nar/gkaa1106
@@ -239,6 +249,26 @@ sources:
     container_url: https://rest.uniprot.org/uniprotkb/stream?query=%28taxonomy_id%3A3702%29&fields=accession,xref_panther&format=tsv
     destination: references/panther_annotations_v1/panther_arabidopsis_taxon3702.tsv
     expected_size_bytes: 1584582
+    data_level: C
+    scientific_use: cross_species_ortholog_conservation
+  - study_accession: GOANNOT_TOMATO
+    member: tomato_go_taxon4081.tsv
+    publication_doi: 10.1093/nar/gkaa1042
+    source_kind: reference_annotation
+    container: UniProtKB GO-annotation stream (taxonomy_id:4081)
+    container_url: https://rest.uniprot.org/uniprotkb/stream?query=%28taxonomy_id%3A4081%29&fields=accession,go&format=tsv
+    destination: references/go_annotations_v1/tomato_go_taxon4081.tsv
+    expected_size_bytes: 4155474
+    data_level: C
+    scientific_use: go_enrichment_background
+  - study_accession: PANTHERDB_ORTHOLOGY
+    member: panther_tomato_taxon4081.tsv
+    publication_doi: 10.1093/nar/gkaa1106
+    source_kind: reference_annotation
+    container: UniProtKB PANTHER cross-reference stream (taxonomy_id:4081)
+    container_url: https://rest.uniprot.org/uniprotkb/stream?query=%28taxonomy_id%3A4081%29&fields=accession,xref_panther&format=tsv
+    destination: references/panther_annotations_v1/panther_tomato_taxon4081.tsv
+    expected_size_bytes: 1097506
     data_level: C
     scientific_use: cross_species_ortholog_conservation
   - study_accession: PANTHERDB_ORTHOLOGY
