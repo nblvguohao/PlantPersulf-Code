@@ -24,9 +24,7 @@ def _rows(path: Path) -> list[dict[str, str]]:
 
 def _tree_hashes(root: Path) -> dict[str, str]:
     return {
-        path.relative_to(root).as_posix(): hashlib.sha256(
-            path.read_bytes()
-        ).hexdigest()
+        path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(root.rglob("*"))
         if path.is_file()
     }
@@ -58,9 +56,7 @@ def test_real_content_audit_is_deterministic_and_label_free(
     assert {path.name for path in first_output.iterdir()} == OUTPUT_NAMES
     assert _tree_hashes(first_output) == _tree_hashes(second_output)
 
-    manifest = json.loads(
-        (first_output / "manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((first_output / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["content_audit_complete"] is True
     assert manifest["labels_created"] is False
     assert manifest["nondetection_labeled_negative"] is False
@@ -79,22 +75,16 @@ def test_content_records_preserve_evidence_levels_without_site_promotion(
     assert sum(row["record_type"] == "peptide_csv" for row in evidence) == 9326
     assert sum(row["record_type"] == "protein_csv" for row in evidence) == 1461
     assert {
-        row["evidence_class"]
-        for row in evidence
-        if row["record_type"] == "peptide_csv"
+        row["evidence_class"] for row in evidence if row["record_type"] == "peptide_csv"
     } == {"identification_only"}
     assert {
-        row["evidence_class"]
-        for row in evidence
-        if row["record_type"] == "protein_csv"
+        row["evidence_class"] for row in evidence if row["record_type"] == "protein_csv"
     } == {"protein_level_only"}
     assert not any(row["evidence_class"] == "site_ms" for row in evidence)
     assert "label" not in evidence[0]
     assert all(len(row["source_sha256"]) == 64 for row in evidence)
     assert all(len(row["method_source_sha256"]) == 64 for row in evidence)
-    assert json.loads(evidence[0]["raw_values_json"])["Avg. Area"] == (
-        "1.2568E9"
-    )
+    assert json.loads(evidence[0]["raw_values_json"])["Avg. Area"] == ("1.2568E9")
 
 
 def test_candidates_and_file_mapping_conflicts_remain_explicit(
@@ -110,16 +100,12 @@ def test_candidates_and_file_mapping_conflicts_remain_explicit(
 
     assert len(candidates) == 25
     assert {row["evidence_class"] for row in candidates} == {"unresolved"}
-    assert {row["method_mapping_status"] for row in candidates} == {
-        "absent_v1"
-    }
+    assert {row["method_mapping_status"] for row in candidates} == {"absent_v1"}
     assert len(mappings) == 12
     assert sum(row["mapping_status"] == "exact" for row in mappings) == 6
     assert sum(row["mapping_status"] == "conflict" for row in mappings) == 6
     assert len(conflicts) == 6
-    assert {row["conflict_type"] for row in conflicts} == {
-        "unmatched_exact_filename"
-    }
+    assert {row["conflict_type"] for row in conflicts} == {"unmatched_exact_filename"}
     assert len(schema) == 4
     assert {row["parse_status"] for row in schema} == {"parsed"}
 
@@ -133,9 +119,7 @@ def test_content_audit_replaces_pending_gaps_with_observed_limits(
     gaps = _rows(output / "metadata_gaps.tsv")
     assert not any(row["gap_type"] == "content_audit_pending" for row in gaps)
     pxd035795_gaps = {
-        row["gap_type"]
-        for row in gaps
-        if row["dataset_accession"] == "PXD035795"
+        row["gap_type"] for row in gaps if row["dataset_accession"] == "PXD035795"
     }
     assert pxd035795_gaps == {
         "partial_sample_file_mapping",
@@ -155,8 +139,6 @@ def test_content_audit_cli_and_hash_audit(tmp_path: Path) -> None:
     build = build_parser().parse_args(
         ["build-evidence-content-audit", "--version", "v1"]
     )
-    audit = build_parser().parse_args(
-        ["audit-evidence-content", "--version", "v1"]
-    )
+    audit = build_parser().parse_args(["audit-evidence-content", "--version", "v1"])
     assert build.command == "build-evidence-content-audit"
     assert audit.command == "audit-evidence-content"

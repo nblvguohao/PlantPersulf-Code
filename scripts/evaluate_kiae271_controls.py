@@ -98,7 +98,9 @@ def run_kiae271_control_evaluation(
             }
         )
 
-    percentiles = [r["percentile_rank"] for r in rows if r["percentile_rank"] is not None]
+    percentiles = [
+        r["percentile_rank"] for r in rows if r["percentile_rank"] is not None
+    ]
     n_recovered = sum(1 for r in rows if r["recovery_status"] == "recovered")
     n_scored = len(percentiles)
 
@@ -155,9 +157,7 @@ def run_kiae271_control_evaluation(
         },
         "scoring": {
             "n_scored": n_scored,
-            "n_feature_extraction_failed": sum(
-                1 for r in rows if r["detail"] != "ok"
-            ),
+            "n_feature_extraction_failed": sum(1 for r in rows if r["detail"] != "ok"),
             "n_recovered_pct_gt_50": n_recovered,
             "recovery_rate": (n_recovered / n_scored) if n_scored else None,
             "mean_percentile": (sum(percentiles) / len(percentiles))

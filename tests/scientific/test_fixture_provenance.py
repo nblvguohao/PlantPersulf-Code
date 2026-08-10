@@ -9,8 +9,7 @@ import pytest
 APPROVED_ACCESSIONS = ("PXD006140", "PXD051570", "GSE163745")
 FIXTURE_ROOT = Path("tests/fixtures/real")
 EXTRACTION_COMMAND = (
-    "python scripts/build_real_fixtures.py "
-    "--accessions PXD006140,PXD051570,GSE163745"
+    "python scripts/build_real_fixtures.py --accessions PXD006140,PXD051570,GSE163745"
 )
 MANIFEST_FIELDS = {
     "schema_version",
@@ -32,9 +31,15 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _manifests(root: Path) -> dict[str, tuple[Path, dict[str, object]]]:
+def _standard_manifests() -> dict[str, tuple[Path, dict[str, object]]]:
+    """Manifests produced by the canonical fixture builder only.
+
+    Additional scientifically scoped fixtures have their own schemas and
+    dedicated parser tests, so they are not subject to this builder contract.
+    """
     result: dict[str, tuple[Path, dict[str, object]]] = {}
-    for path in root.glob("*/source_manifest.json"):
+    for accession in APPROVED_ACCESSIONS:
+        path = FIXTURE_ROOT / accession / "source_manifest.json"
         parsed: object = json.loads(path.read_text(encoding="utf-8"))
         assert isinstance(parsed, dict)
         accession = parsed.get("accession")
@@ -71,14 +76,14 @@ def test_real_fixture_bytes_are_exempt_from_git_text_normalization() -> None:
 
 
 def test_real_fixture_manifests_use_canonical_lf_bytes() -> None:
-    for manifest_path in FIXTURE_ROOT.glob("*/source_manifest.json"):
+    for manifest_path, _ in _standard_manifests().values():
         manifest_bytes = manifest_path.read_bytes()
         assert manifest_bytes.endswith(b"\n")
         assert b"\r\n" not in manifest_bytes
 
 
 def test_every_real_fixture_has_complete_manifest() -> None:
-    manifests = _manifests(FIXTURE_ROOT)
+    manifests = _standard_manifests()
 
     assert set(manifests) == set(APPROVED_ACCESSIONS)
     for accession, (manifest_path, manifest) in manifests.items():
@@ -99,7 +104,7 @@ def test_every_real_fixture_has_complete_manifest() -> None:
 
 
 def test_real_fixtures_preserve_registered_source_bytes() -> None:
-    manifests = _manifests(FIXTURE_ROOT)
+    manifests = _standard_manifests()
 
     for manifest_path, manifest in manifests.values():
         source_path = Path(str(manifest["source_file"]))

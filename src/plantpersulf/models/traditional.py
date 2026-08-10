@@ -98,9 +98,7 @@ class TestEvaluationGuard:
         self._test_y = test_y
         self._evaluated = False
 
-    def evaluate(
-        self, score_fn: Callable[[list[list[float]], list[str]], T]
-    ) -> T:
+    def evaluate(self, score_fn: Callable[[list[list[float]], list[str]], T]) -> T:
         if self._evaluated:
             raise RuntimeError("test set may be evaluated only once")
         self._evaluated = True
@@ -147,9 +145,7 @@ def pu_logistic_regression_scores(
 
     fit_X = [train_X[i] for i in fit_idx]
     fit_y = [train_y[i] for i in fit_idx]
-    nontraditional_scores = logistic_regression_scores(
-        fit_X, fit_y, fit_X, seed=seed
-    )
+    nontraditional_scores = logistic_regression_scores(fit_X, fit_y, fit_X, seed=seed)
 
     holdout_X = [train_X[i] for i in holdout_idx]
     holdout_scores = logistic_regression_scores(fit_X, fit_y, holdout_X, seed=seed)

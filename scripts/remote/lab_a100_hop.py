@@ -70,9 +70,7 @@ from pathlib import Path
 try:
     import paramiko
 except ImportError as exc:  # pragma: no cover
-    raise SystemExit(
-        "paramiko is required: python -m pip install paramiko"
-    ) from exc
+    raise SystemExit("paramiko is required: python -m pip install paramiko") from exc
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LAB_HOST_FILE = REPO_ROOT / "LAB_HOST"
@@ -100,7 +98,9 @@ def _load_credential(path: Path) -> _Credential:
     user_host, password = lines[0], lines[1]
     workdir = lines[2] if len(lines) > 2 else ""
     if "@" not in user_host:
-        raise SystemExit(f"credential file {path} line 1 must be user@host, got: {user_host!r}")
+        raise SystemExit(
+            f"credential file {path} line 1 must be user@host, got: {user_host!r}"
+        )
     username, host = user_host.split("@", 1)
     return _Credential(username=username, host=host, password=password, workdir=workdir)
 
@@ -149,11 +149,13 @@ class Hop:
         rc = stdout.channel.recv_exit_status()
         return rc, out, err
 
-    def run(self, remote_cmd: str, timeout: int = 300, quiet: bool = False) -> tuple[int, str, str]:
+    def run(
+        self, remote_cmd: str, timeout: int = 300, quiet: bool = False
+    ) -> tuple[int, str, str]:
         """Run a bash command on the A100 target, base64-piped through the lab-host hop."""
         b64 = base64.b64encode(remote_cmd.encode("utf-8")).decode("ascii")
         hop_cmd = (
-            f'ssh -o StrictHostKeyChecking=no {self.target.username}@{self.target.host} '
+            f"ssh -o StrictHostKeyChecking=no {self.target.username}@{self.target.host} "
             f'"echo {b64} | base64 -d | bash"'
         )
         rc, out, err = self._exec_on_lab_host(hop_cmd, timeout=timeout)
@@ -166,14 +168,16 @@ class Hop:
             print(f"[exit {rc}]\n")
         return rc, out, err
 
-    def upload(self, local_path: str | Path, remote_path: str, verify: bool = True) -> None:
+    def upload(
+        self, local_path: str | Path, remote_path: str, verify: bool = True
+    ) -> None:
         """Copy local_path -> A100:remote_path, staging through the lab host."""
         local_path = Path(local_path)
         if not local_path.exists():
             raise FileNotFoundError(local_path)
 
         local_sha = hashlib.sha256(local_path.read_bytes()).hexdigest()
-        stage_dir = r"C:\Users\%s\_hop_transfer" % self.lab.username
+        stage_dir = rf"C:\Users\{self.lab.username}\_hop_transfer"
         stage_path = f"{stage_dir}\\{local_path.name}"
 
         self._exec_on_lab_host(f'mkdir "{stage_dir}" 2>nul & echo ok')
@@ -182,14 +186,16 @@ class Hop:
         t0 = time.time()
         sftp.put(str(local_path), stage_path)
         sftp.close()
-        print(f"[upload] local -> lab host: {local_path.name} in {time.time() - t0:.1f}s")
+        print(
+            f"[upload] local -> lab host: {local_path.name} in {time.time() - t0:.1f}s"
+        )
 
         remote_dir = posixpath.dirname(remote_path)
         if remote_dir:
             self.run(f"mkdir -p {remote_dir}", quiet=True)
         rc, out, err = self._exec_on_lab_host(
             f'scp -o StrictHostKeyChecking=no "{stage_path}" '
-            f'{self.target.username}@{self.target.host}:{remote_path}',
+            f"{self.target.username}@{self.target.host}:{remote_path}",
             timeout=300,
         )
         self._exec_on_lab_host(f'del /f /q "{stage_path}" & echo cleaned')
@@ -205,7 +211,9 @@ class Hop:
                 )
             print(f"[upload] verified SHA256 {local_sha}")
 
-    def download(self, remote_path: str, local_path: str | Path, verify: bool = True) -> None:
+    def download(
+        self, remote_path: str, local_path: str | Path, verify: bool = True
+    ) -> None:
         """Copy A100:remote_path -> local_path, staging through the lab host."""
         local_path = Path(local_path)
         local_path.parent.mkdir(parents=True, exist_ok=True)
@@ -216,12 +224,12 @@ class Hop:
             if rc == 0 and out.strip():
                 remote_sha = out.split()[0]
 
-        stage_dir = r"C:\Users\%s\_hop_transfer" % self.lab.username
+        stage_dir = rf"C:\Users\{self.lab.username}\_hop_transfer"
         fname = posixpath.basename(remote_path)
         stage_path = f"{stage_dir}\\{fname}"
         self._exec_on_lab_host(f'mkdir "{stage_dir}" 2>nul & echo ok')
         rc, out, err = self._exec_on_lab_host(
-            f'scp -o StrictHostKeyChecking=no '
+            f"scp -o StrictHostKeyChecking=no "
             f'{self.target.username}@{self.target.host}:{remote_path} "{stage_path}"',
             timeout=300,
         )
@@ -233,7 +241,9 @@ class Hop:
         t0 = time.time()
         sftp.get(stage_path, str(local_path))
         sftp.close()
-        print(f"[download] lab host -> local: {local_path.name} in {time.time() - t0:.1f}s")
+        print(
+            f"[download] lab host -> local: {local_path.name} in {time.time() - t0:.1f}s"
+        )
         self._exec_on_lab_host(f'del /f /q "{stage_path}" & echo cleaned')
 
         if verify and remote_sha:
@@ -252,7 +262,9 @@ class Hop:
 
 def _cmd_check(hop: Hop) -> None:
     print(f"jump host : {hop.lab.username}@{hop.lab.host}")
-    print(f"target    : {hop.target.username}@{hop.target.host}  (workdir hint: {hop.target.workdir})")
+    print(
+        f"target    : {hop.target.username}@{hop.target.host}  (workdir hint: {hop.target.workdir})"
+    )
     rc, out, _ = hop._exec_on_lab_host("whoami & hostname")
     print("[lab host]\n" + out)
     hop.run("whoami && hostname && uname -a")
@@ -262,7 +274,9 @@ def _cmd_check(hop: Hop) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("check", help="Sanity-check both hops")

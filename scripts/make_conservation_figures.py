@@ -65,9 +65,7 @@ SPECIES_COLORS = {
 }
 
 CONSERVATION_JSON = Path("results/cross_species_conservation/conservation_v1.json")
-STRUCTURAL_JSON = Path(
-    "results/cross_species_conservation/structural_context_v1.json"
-)
+STRUCTURAL_JSON = Path("results/cross_species_conservation/structural_context_v1.json")
 
 
 def _sig_marker(p: float) -> str:
@@ -111,9 +109,7 @@ def panel_a_family_enrichment(ax: plt.Axes, conservation: dict) -> None:
     bonf_sig = [p["significant_bonferroni_0.05"] for p in pairs]
 
     y = np.arange(len(pairs))[::-1]
-    colors = [
-        PALETTE["blue_main"] if s else PALETTE["neutral_mid"] for s in bonf_sig
-    ]
+    colors = [PALETTE["blue_main"] if s else PALETTE["neutral_mid"] for s in bonf_sig]
     ax.barh(y, odds_ratios, color=colors, edgecolor="black", linewidth=0.8, height=0.5)
     ax.axvline(1.0, color=PALETTE["neutral_dark"], linestyle="--", linewidth=1.0)
 
@@ -123,8 +119,7 @@ def panel_a_family_enrichment(ax: plt.Axes, conservation: dict) -> None:
         ax.text(
             orv + x_max * 0.03,
             yi,
-            f"OR={orv:.2f} ({f:.2f}×)\n"
-            f"raw p={rp:.1e}\nBonf={bp:.1e}\nBH q={bq:.1e}",
+            f"OR={orv:.2f} ({f:.2f}×)\nraw p={rp:.1e}\nBonf={bp:.1e}\nBH q={bq:.1e}",
             va="center",
             ha="left",
             fontsize=5.8,
@@ -153,8 +148,11 @@ def panel_a_family_enrichment(ax: plt.Axes, conservation: dict) -> None:
         ),
     ]
     ax.legend(
-        handles=legend_handles, loc="upper center", bbox_to_anchor=(0.5, -0.18),
-        ncol=2, fontsize=6.5,
+        handles=legend_handles,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.18),
+        ncol=2,
+        fontsize=6.5,
     )
 
 
@@ -173,12 +171,22 @@ def panel_b_contact_proxy(ax: plt.Axes, structural: dict) -> None:
     x = np.arange(len(species))
     w = 0.32
     ax.bar(
-        x - w / 2, pos, width=w, label="Persulfidated (positive)",
-        color=[SPECIES_COLORS[s] for s in species], edgecolor="black", linewidth=0.8,
+        x - w / 2,
+        pos,
+        width=w,
+        label="Persulfidated (positive)",
+        color=[SPECIES_COLORS[s] for s in species],
+        edgecolor="black",
+        linewidth=0.8,
     )
     ax.bar(
-        x + w / 2, unl, width=w, label="Other Cys (unlabeled)",
-        color=PALETTE["neutral_light"], edgecolor="black", linewidth=0.8,
+        x + w / 2,
+        unl,
+        width=w,
+        label="Other Cys (unlabeled)",
+        color=PALETTE["neutral_light"],
+        edgecolor="black",
+        linewidth=0.8,
     )
     y_max = max(max(pos), max(unl)) * 1.28
     for xi, p in zip(x, pvals, strict=True):
@@ -197,7 +205,10 @@ def panel_b_contact_proxy(ax: plt.Axes, structural: dict) -> None:
         loc="left",
     )
     ax.legend(
-        loc="upper center", bbox_to_anchor=(0.5, -0.22), ncol=1, fontsize=6.5,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.22),
+        ncol=1,
+        fontsize=6.5,
     )
 
 
@@ -218,12 +229,22 @@ def panel_c_real_sasa(ax: plt.Axes, structural: dict) -> None:
     x = np.arange(len(species))
     w = 0.32
     ax.bar(
-        x - w / 2, pos, width=w, label="Persulfidated (positive)",
-        color=[SPECIES_COLORS[s] for s in species], edgecolor="black", linewidth=0.8,
+        x - w / 2,
+        pos,
+        width=w,
+        label="Persulfidated (positive)",
+        color=[SPECIES_COLORS[s] for s in species],
+        edgecolor="black",
+        linewidth=0.8,
     )
     ax.bar(
-        x + w / 2, unl, width=w, label="Other Cys (unlabeled)",
-        color=PALETTE["neutral_light"], edgecolor="black", linewidth=0.8,
+        x + w / 2,
+        unl,
+        width=w,
+        label="Other Cys (unlabeled)",
+        color=PALETTE["neutral_light"],
+        edgecolor="black",
+        linewidth=0.8,
     )
     y_max = max(max(pos), max(unl)) * 1.28
     for xi, p in zip(x, pvals, strict=True):
@@ -242,7 +263,10 @@ def panel_c_real_sasa(ax: plt.Axes, structural: dict) -> None:
         loc="left",
     )
     ax.legend(
-        loc="upper center", bbox_to_anchor=(0.5, -0.22), ncol=1, fontsize=6.5,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.22),
+        ncol=1,
+        fontsize=6.5,
     )
 
 

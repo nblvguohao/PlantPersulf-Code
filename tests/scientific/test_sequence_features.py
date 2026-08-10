@@ -24,9 +24,7 @@ def _write_fixtures(tmp_path: Path) -> tuple[Path, Path]:
     """Write minimal proteome + benchmark labels with all labels needed for tests."""
     proteome = tmp_path / "mini.fasta"
     proteome.write_text(
-        ">sp|P1\nMVCGK\n"
-        ">sp|P2\nACDEF\n"
-        ">sp|P3\nGCCCC\n",
+        ">sp|P1\nMVCGK\n>sp|P2\nACDEF\n>sp|P3\nGCCCC\n",
         encoding="utf-8",
     )
     labels = tmp_path / "sites.tsv"
@@ -188,6 +186,4 @@ def test_proteome_loader_accepts_non_uniprot_headers(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     rows = extract_sequence_features(labels, proteome)
-    assert [(r.protein_accession, r.cys_position) for r in rows] == [
-        ("MGG_00001T0", 3)
-    ]
+    assert [(r.protein_accession, r.cys_position) for r in rows] == [("MGG_00001T0", 3)]

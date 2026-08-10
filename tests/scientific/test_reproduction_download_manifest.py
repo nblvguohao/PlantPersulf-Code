@@ -18,18 +18,14 @@ def test_reproduction_manifest_exactly_covers_registered_inputs() -> None:
 
     assert len(manifest) == len(downloads) + len(methods) == 10
 
-    by_key = {
-        (row["study_accession"], row["file_name"]): row for row in manifest
-    }
+    by_key = {(row["study_accession"], row["file_name"]): row for row in manifest}
     for source in downloads:
         row = by_key[(source["dataset_accession"], source["file_name"])]
         assert row["source_type"] == "repository_file"
         assert row["official_url"] == source["download_url"]
         assert row["registry_size_bytes"] == source["registry_size_bytes"]
         assert row["download_size_bytes"] == source["size_bytes"]
-        assert row["remote_checksum_algorithm"] == source[
-            "remote_checksum_algorithm"
-        ]
+        assert row["remote_checksum_algorithm"] == source["remote_checksum_algorithm"]
         assert row["remote_checksum"] == source["remote_checksum"]
         assert row["sha256"] == source["sha256"]
 

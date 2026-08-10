@@ -20,9 +20,7 @@ from plantpersulf.features.esm2 import (  # RED: module missing
 
 def _write_fixtures(tmp_path: Path) -> tuple[Path, Path]:
     proteome = tmp_path / "mini.fasta"
-    proteome.write_text(
-        ">sp|P1\nMVCGK\n>sp|P2\nACDEF\n", encoding="utf-8"
-    )
+    proteome.write_text(">sp|P1\nMVCGK\n>sp|P2\nACDEF\n", encoding="utf-8")
     labels = tmp_path / "sites.tsv"
     labels.write_text(
         "protein_accession\tcys_position_in_protein\tlabel\t"

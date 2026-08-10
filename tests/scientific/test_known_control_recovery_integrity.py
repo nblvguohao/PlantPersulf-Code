@@ -29,8 +29,12 @@ from plantpersulf.evaluation.external_validation import (  # RED: module missing
 
 def _mapped(lineage: str, acc: str, pos: int) -> ControlRecord:
     return ControlRecord(
-        mechanism_lineage_id=lineage, gene=lineage, uniprot_accession=acc,
-        cys_position=pos, status="mapped", percentile_rank=90.0,
+        mechanism_lineage_id=lineage,
+        gene=lineage,
+        uniprot_accession=acc,
+        cys_position=pos,
+        status="mapped",
+        percentile_rank=90.0,
     )
 
 
@@ -62,8 +66,12 @@ def test_unmappable_control_is_not_an_independent_unit() -> None:
     controls = [
         _mapped("LIN_A", "Q1", 5),
         ControlRecord(
-            mechanism_lineage_id="LIN_C", gene="BRG3", uniprot_accession="",
-            cys_position=0, status="unmappable", percentile_rank=None,
+            mechanism_lineage_id="LIN_C",
+            gene="BRG3",
+            uniprot_accession="",
+            cys_position=0,
+            status="unmappable",
+            percentile_rank=None,
         ),
     ]
     assert count_independent_validation_units(controls) == 1
@@ -83,12 +91,19 @@ def test_failed_and_unmappable_controls_are_reported() -> None:
     controls = [
         _mapped("LIN_A", "Q1", 5),
         ControlRecord(
-            mechanism_lineage_id="LIN_C", gene="BRG3", uniprot_accession="",
-            cys_position=0, status="unmappable", percentile_rank=None,
+            mechanism_lineage_id="LIN_C",
+            gene="BRG3",
+            uniprot_accession="",
+            cys_position=0,
+            status="unmappable",
+            percentile_rank=None,
         ),
         ControlRecord(
-            mechanism_lineage_id="LIN_D", gene="X", uniprot_accession="Q9",
-            cys_position=3, status="feature_extraction_failed",
+            mechanism_lineage_id="LIN_D",
+            gene="X",
+            uniprot_accession="Q9",
+            cys_position=3,
+            status="feature_extraction_failed",
             percentile_rank=None,
         ),
     ]

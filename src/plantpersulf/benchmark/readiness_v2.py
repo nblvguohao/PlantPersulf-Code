@@ -102,9 +102,7 @@ def _read_tsv(path: Path, fields: tuple[str, ...]) -> list[dict[str, str]]:
         if tuple(reader.fieldnames or ()) != fields:
             raise RuntimeError(f"readiness source has invalid columns: {path}")
         rows = [dict(row) for row in reader]
-    if any(
-        None in row or any(value is None for value in row.values()) for row in rows
-    ):
+    if any(None in row or any(value is None for value in row.values()) for row in rows):
         raise RuntimeError(f"readiness source has malformed row: {path}")
     return cast(list[dict[str, str]], rows)
 
@@ -156,8 +154,7 @@ def _blockers(studies: list[Row], required_count: int) -> list[Row]:
                 "observed_value": study["eligible_site_count"],
                 "required_value": "site-specific evidence",
                 "source_locator": (
-                    f"../{study['study_accession']}/"
-                    f"persulfidation_sites_v1/sites.tsv"
+                    f"../{study['study_accession']}/persulfidation_sites_v1/sites.tsv"
                 ),
             }
         )
@@ -178,9 +175,7 @@ def _blockers(studies: list[Row], required_count: int) -> list[Row]:
             {
                 "scope": "global",
                 "study_accession": "",
-                "blocker_code": (
-                    "insufficient_distinct_site_evidence_studies"
-                ),
+                "blocker_code": ("insufficient_distinct_site_evidence_studies"),
                 "observed_value": str(eligible),
                 "required_value": str(required_count),
                 "source_locator": "configs/benchmark_readiness_v2.yaml",

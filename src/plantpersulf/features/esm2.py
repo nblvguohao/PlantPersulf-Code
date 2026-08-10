@@ -68,9 +68,7 @@ def _select_device(torch_mod: object) -> object:
 
 
 def _esm_cache_dir() -> Path:
-    return Path(
-        os.environ.get("ESM2_CACHE_DIR", "data/interim/esm2_cache")
-    )
+    return Path(os.environ.get("ESM2_CACHE_DIR", "data/interim/esm2_cache"))
 
 
 def _load_cached_embedding(accession: str) -> Any | None:
@@ -155,8 +153,9 @@ def extract_esm2_embeddings(
         if acc in proteome and len(proteome[acc]) <= MAX_PROTEIN_LENGTH
     ]
     skipped_long = sorted(
-        acc for acc in needed if acc in proteome
-        and len(proteome[acc]) > MAX_PROTEIN_LENGTH
+        acc
+        for acc in needed
+        if acc in proteome and len(proteome[acc]) > MAX_PROTEIN_LENGTH
     )
     if skipped_long:
         lengths = [len(proteome[acc]) for acc in skipped_long]
@@ -178,9 +177,7 @@ def extract_esm2_embeddings(
         cached = _load_cached_embedding(acc)
         if cached is not None:
             for pos in range(len(seq)):
-                embed_map[(acc, pos + 1)] = tuple(
-                    float(v) for v in cached[pos]
-                )
+                embed_map[(acc, pos + 1)] = tuple(float(v) for v in cached[pos])
             cached_count += 1
         else:
             uncached_seqs.append((acc, seq))

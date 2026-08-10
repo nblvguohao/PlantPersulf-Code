@@ -37,7 +37,9 @@ def _train(
     labels = ["positive" if i % 2 == 0 else "unlabeled" for i in range(n)]
     return (
         BranchFeatures(
-            sequence=sequence, esm=esm, structure=structure,
+            sequence=sequence,
+            esm=esm,
+            structure=structure,
             structure_mask=structure_mask,
             study_ids=["S"] * n,
         ),
@@ -78,12 +80,10 @@ def test_masked_structure_values_do_not_leak_during_training() -> None:
     train_junk, _ = _train(masked_structure_fill=-777.0)
     predict = _predict_row([1.0, 60.0], mask=True)
 
-    from_zeros = structure_ranker_scores(
-        train_zeros, train_y, predict, seed=0
-    ).scores[0]
-    from_junk = structure_ranker_scores(
-        train_junk, train_y, predict, seed=0
-    ).scores[0]
+    from_zeros = structure_ranker_scores(train_zeros, train_y, predict, seed=0).scores[
+        0
+    ]
+    from_junk = structure_ranker_scores(train_junk, train_y, predict, seed=0).scores[0]
 
     assert from_zeros == from_junk
 
@@ -108,11 +108,11 @@ def test_present_structure_values_do_change_score() -> None:
     row_a = _neutral_predict_row([10.0, 90.0])
     row_b = _neutral_predict_row([0.0, 50.0])
 
-    score_a = structure_ranker_scores(
-        train, train_y, row_a, seed=0, epochs=40
-    ).scores[0]
-    score_b = structure_ranker_scores(
-        train, train_y, row_b, seed=0, epochs=40
-    ).scores[0]
+    score_a = structure_ranker_scores(train, train_y, row_a, seed=0, epochs=40).scores[
+        0
+    ]
+    score_b = structure_ranker_scores(train, train_y, row_b, seed=0, epochs=40).scores[
+        0
+    ]
 
     assert score_a != score_b

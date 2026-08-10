@@ -122,11 +122,7 @@ def test_reviewed_mapping_upgrades_only_exact_cys_matches(tmp_path: Path) -> Non
         assert decision.monoisotopic_mass_delta == anchor.monoisotopic_mass_delta
         assert decision.method_mapping_status == "resolved_reviewed"
     # Non-cysteine residues (blank/K) are never upgraded by a Cys rule.
-    assert all(
-        d.evidence_class == "unresolved"
-        for d in decisions
-        if d.residue != "C"
-    )
+    assert all(d.evidence_class == "unresolved" for d in decisions if d.residue != "C")
 
 
 def test_mapping_without_registered_method_is_fail_closed(tmp_path: Path) -> None:

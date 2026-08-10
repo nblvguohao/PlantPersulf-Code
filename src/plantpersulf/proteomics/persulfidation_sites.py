@@ -88,9 +88,7 @@ def parse_dataset_s3_sites(
         if tuple(reader.fieldnames or ()) != REQUIRED_COLUMNS:
             raise RuntimeError(f"Dataset S3 subset has invalid columns: {source_tsv}")
         rows = [dict(row) for row in reader]
-    if any(
-        None in row or any(value is None for value in row.values()) for row in rows
-    ):
+    if any(None in row or any(value is None for value in row.values()) for row in rows):
         raise RuntimeError(f"Dataset S3 subset has malformed row: {source_tsv}")
 
     sites: list[SiteEvidence] = []
@@ -163,9 +161,7 @@ def parse_dataset_s3_sites(
                     peptide_sequence=peptide,
                     modified_sequence=row["mods"],
                     protein_accession_raw=protein,
-                    protein_accession_canonical=(
-                        "" if "-" in protein else protein
-                    ),
+                    protein_accession_canonical=("" if "-" in protein else protein),
                     cys_position_in_peptide=peptide_position,
                     cys_position_in_protein=protein_position,
                     modification_name_raw=PERSULFIDATION_MODS[code],

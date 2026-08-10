@@ -14,8 +14,7 @@ from plantpersulf.provenance.audit import assert_registered_input
 from plantpersulf.provenance.hashing import hash_file
 
 EXTRACTION_COMMAND = (
-    "python scripts/build_real_fixtures.py "
-    "--accessions PXD006140,PXD051570,GSE163745"
+    "python scripts/build_real_fixtures.py --accessions PXD006140,PXD051570,GSE163745"
 )
 
 
@@ -44,8 +43,7 @@ SOURCES: Mapping[str, FixtureSource] = MappingProxyType(
             source_repository="PRIDE",
             source_registry=Path("data/registry/downloads.tsv"),
             source_file=Path(
-                "data/raw/PXD006140/"
-                "omssa.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt"
+                "data/raw/PXD006140/omssa.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt"
             ),
             expected_source_sha256=(
                 "f8d052626f9f792495c785b7b42d657e2effb3a982c2f8ba561c7c320f37bdcb"

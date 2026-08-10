@@ -35,10 +35,10 @@ from plantpersulf.proteomics.tomato_local_dataset import (  # RED: module missin
 
 # Two panel proteins (one with 3 Cys, one with 2) plus two background proteins.
 MINI_PROTEOME = {
-    "PANEL1": "MACDEFGHIKCLMNPQRSTCVWY",   # Cys at 3, 11, 20
-    "PANEL2": "MCADEFGHIKLMNPQRSTVWYC",    # Cys at 2, 22
-    "BACK1": "MGCDEFGHIKCLMNPQRSTVWY",     # Cys at 3, 11
-    "BACK2": "MGGCDEFGHIKLMNPQRSTVWY",     # Cys at 4
+    "PANEL1": "MACDEFGHIKCLMNPQRSTCVWY",  # Cys at 3, 11, 20
+    "PANEL2": "MCADEFGHIKLMNPQRSTVWYC",  # Cys at 2, 22
+    "BACK1": "MGCDEFGHIKCLMNPQRSTVWY",  # Cys at 3, 11
+    "BACK2": "MGGCDEFGHIKLMNPQRSTVWY",  # Cys at 4
 }
 
 HEADER = (
@@ -89,9 +89,27 @@ def _row(
     intensity_wt: float = 0.0,
 ) -> tuple:
     return (
-        proteins, positions, leading, leading, f"{leading} description",
-        loc_prob, 0.001, 100, 100, 1, amino, "SEQWINDOW", "1", "PEP", 2,
-        intensity_lcd, 0, intensity_wt, 0, intensity_lcd, intensity_wt,
+        proteins,
+        positions,
+        leading,
+        leading,
+        f"{leading} description",
+        loc_prob,
+        0.001,
+        100,
+        100,
+        1,
+        amino,
+        "SEQWINDOW",
+        "1",
+        "PEP",
+        2,
+        intensity_lcd,
+        0,
+        intensity_wt,
+        0,
+        intensity_lcd,
+        intensity_wt,
     )
 
 
@@ -101,14 +119,20 @@ def mini_xlsx(tmp_path: Path) -> Path:
     localization (PANEL1 C11) — the failing row is the ambiguity that must be
     kept out of the unlabeled pool."""
     xlsx = tmp_path / "DSs.xlsx"
-    _write_xlsx(xlsx, [
-        _row("tr|PANEL1|P1_SOLLC", "3", "tr|PANEL1|P1_SOLLC", intensity_lcd=1000.0),
-        _row("tr|PANEL2|P2_SOLLC", "2", "tr|PANEL2|P2_SOLLC", intensity_wt=800.0),
-        _row(
-            "tr|PANEL1|P1_SOLLC", "11", "tr|PANEL1|P1_SOLLC",
-            loc_prob=0.4, intensity_lcd=500.0,
-        ),
-    ])
+    _write_xlsx(
+        xlsx,
+        [
+            _row("tr|PANEL1|P1_SOLLC", "3", "tr|PANEL1|P1_SOLLC", intensity_lcd=1000.0),
+            _row("tr|PANEL2|P2_SOLLC", "2", "tr|PANEL2|P2_SOLLC", intensity_wt=800.0),
+            _row(
+                "tr|PANEL1|P1_SOLLC",
+                "11",
+                "tr|PANEL1|P1_SOLLC",
+                loc_prob=0.4,
+                intensity_lcd=500.0,
+            ),
+        ],
+    )
     return xlsx
 
 
@@ -124,7 +148,11 @@ def test_excluded_keys_cover_every_unverified_dataset_s1_site(
 
 def test_ambiguous_row_is_neither_positive_nor_unlabeled(mini_xlsx: Path) -> None:
     rows = build_tomato_pu_rows(
-        mini_xlsx, MINI_PROTEOME, arena=ARENA_PANEL, ratio=20, seed=12345,
+        mini_xlsx,
+        MINI_PROTEOME,
+        arena=ARENA_PANEL,
+        ratio=20,
+        seed=12345,
     )
     keys = {(r.protein_accession, r.cys_position, r.label) for r in rows}
     assert ("PANEL1", 11, "positive") not in keys
@@ -135,13 +163,15 @@ def test_panel_arena_background_is_only_panel_protein_cysteines(
     mini_xlsx: Path,
 ) -> None:
     rows = build_tomato_pu_rows(
-        mini_xlsx, MINI_PROTEOME, arena=ARENA_PANEL, ratio=20, seed=12345,
+        mini_xlsx,
+        MINI_PROTEOME,
+        arena=ARENA_PANEL,
+        ratio=20,
+        seed=12345,
     )
     assert {r.protein_accession for r in rows} == {"PANEL1", "PANEL2"}
     unlabeled = {
-        (r.protein_accession, r.cys_position)
-        for r in rows
-        if r.label == "unlabeled"
+        (r.protein_accession, r.cys_position) for r in rows if r.label == "unlabeled"
     }
     # PANEL1 C20 and PANEL2 C22 remain; C3/C2 are positives, C11 is excluded.
     assert unlabeled == {("PANEL1", 20), ("PANEL2", 22)}
@@ -151,7 +181,11 @@ def test_proteome_arena_background_is_subsampled_at_the_fixed_ratio(
     mini_xlsx: Path,
 ) -> None:
     rows = build_tomato_pu_rows(
-        mini_xlsx, MINI_PROTEOME, arena=ARENA_PROTEOME, ratio=2, seed=12345,
+        mini_xlsx,
+        MINI_PROTEOME,
+        arena=ARENA_PROTEOME,
+        ratio=2,
+        seed=12345,
     )
     n_pos = sum(1 for r in rows if r.label == "positive")
     n_unl = sum(1 for r in rows if r.label == "unlabeled")
@@ -164,8 +198,11 @@ def test_proteome_arena_subsample_is_deterministic(mini_xlsx: Path) -> None:
         return [
             (r.protein_accession, r.cys_position)
             for r in build_tomato_pu_rows(
-                mini_xlsx, MINI_PROTEOME, arena=ARENA_PROTEOME,
-                ratio=2, seed=seed,
+                mini_xlsx,
+                MINI_PROTEOME,
+                arena=ARENA_PROTEOME,
+                ratio=2,
+                seed=seed,
             )
         ]
 
@@ -174,7 +211,11 @@ def test_proteome_arena_subsample_is_deterministic(mini_xlsx: Path) -> None:
 
 def test_positive_is_never_also_in_the_unlabeled_pool(mini_xlsx: Path) -> None:
     rows = build_tomato_pu_rows(
-        mini_xlsx, MINI_PROTEOME, arena=ARENA_PROTEOME, ratio=2, seed=12345,
+        mini_xlsx,
+        MINI_PROTEOME,
+        arena=ARENA_PROTEOME,
+        ratio=2,
+        seed=12345,
     )
     positives = {
         (r.protein_accession, r.cys_position) for r in rows if r.label == "positive"
@@ -189,7 +230,11 @@ def test_grouped_folds_never_split_a_homology_cluster(mini_xlsx: Path) -> None:
     """The leakage-safety property: PANEL1 and BACK1 are homologs (same
     cluster), so they must land in the same fold no matter the seed."""
     rows = build_tomato_pu_rows(
-        mini_xlsx, MINI_PROTEOME, arena=ARENA_PROTEOME, ratio=2, seed=12345,
+        mini_xlsx,
+        MINI_PROTEOME,
+        arena=ARENA_PROTEOME,
+        ratio=2,
+        seed=12345,
     )
     clusters = {"PANEL1": "cl_A", "BACK1": "cl_A", "PANEL2": "cl_B", "BACK2": "cl_C"}
     folded = assign_grouped_folds(rows, clusters, n_folds=2, seed=20260810)
@@ -201,7 +246,11 @@ def test_grouped_folds_never_split_a_homology_cluster(mini_xlsx: Path) -> None:
 
 def test_unclustered_protein_gets_a_singleton_cluster(mini_xlsx: Path) -> None:
     rows = build_tomato_pu_rows(
-        mini_xlsx, MINI_PROTEOME, arena=ARENA_PANEL, ratio=20, seed=12345,
+        mini_xlsx,
+        MINI_PROTEOME,
+        arena=ARENA_PANEL,
+        ratio=20,
+        seed=12345,
     )
     folded = assign_grouped_folds(rows, {}, n_folds=2, seed=20260810)
     assert all(r.cluster_id == f"__singleton__{r.protein_accession}" for r in folded)
@@ -211,7 +260,11 @@ def test_grouped_folds_are_deterministic_and_cover_every_row(
     mini_xlsx: Path,
 ) -> None:
     rows = build_tomato_pu_rows(
-        mini_xlsx, MINI_PROTEOME, arena=ARENA_PROTEOME, ratio=2, seed=12345,
+        mini_xlsx,
+        MINI_PROTEOME,
+        arena=ARENA_PROTEOME,
+        ratio=2,
+        seed=12345,
     )
     clusters = {"PANEL1": "cl_A", "BACK1": "cl_A", "PANEL2": "cl_B", "BACK2": "cl_C"}
     first = assign_grouped_folds(rows, clusters, n_folds=2, seed=20260810)
@@ -227,18 +280,26 @@ def test_every_fold_holds_at_least_one_positive(mini_xlsx: Path) -> None:
     """Average precision is undefined on a fold with no positive, so the
     dealer must spread positive-bearing clusters across folds."""
     rows = build_tomato_pu_rows(
-        mini_xlsx, MINI_PROTEOME, arena=ARENA_PROTEOME, ratio=2, seed=12345,
+        mini_xlsx,
+        MINI_PROTEOME,
+        arena=ARENA_PROTEOME,
+        ratio=2,
+        seed=12345,
     )
     clusters = {"PANEL1": "cl_A", "BACK1": "cl_A", "PANEL2": "cl_B", "BACK2": "cl_C"}
     folded = assign_grouped_folds(rows, clusters, n_folds=2, seed=20260810)
     for fold in (0, 1):
-        assert any(
-            r.label == "positive" and r.fold == fold for r in folded
-        ), f"fold {fold} has no positive"
+        assert any(r.label == "positive" and r.fold == fold for r in folded), (
+            f"fold {fold} has no positive"
+        )
 
 
 def test_unknown_arena_is_rejected(mini_xlsx: Path) -> None:
     with pytest.raises(ValueError):
         build_tomato_pu_rows(
-            mini_xlsx, MINI_PROTEOME, arena="whole_genome", ratio=2, seed=1,
+            mini_xlsx,
+            MINI_PROTEOME,
+            arena="whole_genome",
+            ratio=2,
+            seed=1,
         )

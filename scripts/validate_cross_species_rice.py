@@ -135,8 +135,13 @@ def run_cross_species_rice(
 
     # --- 1. hash-verified inputs (fail closed) ---
     required = (
-        BENCHMARK, ARABIDOPSIS_PROTEOME, CONFIG,
-        SD01, SD04, SS_ALL_PEPTIDES, RICE_PROTEOME,
+        BENCHMARK,
+        ARABIDOPSIS_PROTEOME,
+        CONFIG,
+        SD01,
+        SD04,
+        SS_ALL_PEPTIDES,
+        RICE_PROTEOME,
     )
     for path in required:
         if not path.is_file():
@@ -264,6 +269,7 @@ def run_cross_species_rice(
 
     # Source breakdown
     from collections import Counter
+
     source_counts = dict(Counter(s.source for s in table.sites))
 
     summary: dict[str, Any] = {
@@ -368,7 +374,8 @@ def run_cross_species_rice(
         },
     }
     (output_dir / "cross_species_summary.json").write_text(
-        json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8",
+        json.dumps(summary, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
     print(f"wrote summary -> {output_dir / 'cross_species_summary.json'}")
     return summary

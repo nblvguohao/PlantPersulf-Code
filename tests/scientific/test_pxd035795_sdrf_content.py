@@ -16,9 +16,13 @@ def test_real_sdrf_preserves_duplicate_headers_and_rows() -> None:
 
     assert len(audit.header) == 26
     assert len(audit.rows) == 6
-    assert audit.duplicate_header_positions[
-        "comment[modification parameters]"
-    ] == (19, 20, 21, 22, 23)
+    assert audit.duplicate_header_positions["comment[modification parameters]"] == (
+        19,
+        20,
+        21,
+        22,
+        23,
+    )
     assert audit.rows[0].source_name == "Sample 1"
     assert audit.rows[0].assay_name == "Run 1"
     assert audit.rows[0].replicate == "1"
@@ -68,9 +72,7 @@ def test_real_sdrf_does_not_decode_or_rewrite_mgf_names() -> None:
     audit = _audit()
 
     conflicted_names = {
-        row.data_file
-        for row in audit.file_mappings
-        if row.mapping_status == "conflict"
+        row.data_file for row in audit.file_mappings if row.mapping_status == "conflict"
     }
     assert "0h201.mgf" not in conflicted_names
     assert "0h 201.mgf" not in conflicted_names

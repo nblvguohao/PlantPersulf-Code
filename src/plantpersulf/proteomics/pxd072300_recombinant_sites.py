@@ -90,9 +90,7 @@ def _find_protein_block(
     """Return (start, end) row indices of the peptide rows following the
     protein row whose AC == internal_ac, or None if not found."""
     protein_row_indices = [
-        i
-        for i, r in enumerate(rows)
-        if i >= 2 and r and r[0].strip().isdigit()
+        i for i, r in enumerate(rows) if i >= 2 and r and r[0].strip().isdigit()
     ]
     for idx, row_idx in enumerate(protein_row_indices):
         if rows[row_idx][1] == internal_ac:
@@ -211,10 +209,7 @@ def parse_recombinant_control_sites(
                 ):
                     continue
                 abs_pos = pep_start + idx_in_pep - 1
-                if (
-                    1 <= abs_pos <= len(sequence)
-                    and sequence[abs_pos - 1] == "C"
-                ):
+                if 1 <= abs_pos <= len(sequence) and sequence[abs_pos - 1] == "C":
                     verified_positions.add(abs_pos)
 
         if not verified_positions:

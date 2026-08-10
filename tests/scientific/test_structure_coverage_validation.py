@@ -5,12 +5,9 @@ from real data — specifically AP, paired deltas, and condition computation."""
 from __future__ import annotations
 
 import csv
-import json
 import shutil
 import tempfile
 from pathlib import Path
-
-import pytest
 
 from plantpersulf.evaluation.metrics import average_precision
 from plantpersulf.evaluation.structure_coverage_decision import (
@@ -41,8 +38,12 @@ def test_real_scores_produce_valid_decision(tmp_path: Path) -> None:
     with benchmark_path.open(encoding="utf-8", newline="") as h:
         reader = csv.DictReader(h, delimiter="\t")
         if tuple(reader.fieldnames or ()) != (
-            "protein_accession", "cys_position_in_protein", "label",
-            "study_accession", "evidence_level", "source_sha256",
+            "protein_accession",
+            "cys_position_in_protein",
+            "label",
+            "study_accession",
+            "evidence_level",
+            "source_sha256",
         ):
             raise RuntimeError("invalid benchmark columns")
         all_rows = [dict(r) for r in reader]
@@ -57,6 +58,7 @@ def test_real_scores_produce_valid_decision(tmp_path: Path) -> None:
     )
 
     import random
+
     rng = random.Random(cfg.subsample_seed)
     train_dedup = train_rows[:]
     rng.shuffle(train_dedup)
@@ -64,27 +66,38 @@ def test_real_scores_produce_valid_decision(tmp_path: Path) -> None:
     train_rows_fold = train_dedup[n_val:]
     train_y = [r["label"] for r in train_rows_fold]
 
-    arm_full = cfg.arms["sequence_contact_plddt"]
-    arm_seq = cfg.arms["sequence_only"]
-
     ab_full = AblationConfig(
-        use_esm=False, use_structure=True,
-        use_plddt=True, use_accessibility=True, use_study_context=False,
+        use_esm=False,
+        use_structure=True,
+        use_plddt=True,
+        use_accessibility=True,
+        use_study_context=False,
     )
     ab_seq = AblationConfig(
-        use_esm=False, use_structure=False,
-        use_plddt=False, use_accessibility=False, use_study_context=False,
+        use_esm=False,
+        use_structure=False,
+        use_plddt=False,
+        use_accessibility=False,
+        use_study_context=False,
     )
 
     scratch = Path(tempfile.mkdtemp(prefix="sc_val_test_"))
     try:
         branch_train = run_experiment._build_branch_features(
-            train_rows_fold, proteome_path, scratch, "train", False,
+            train_rows_fold,
+            proteome_path,
+            scratch,
+            "train",
+            False,
             structure_registry_path=reg_path,
             structure_registry_base=Path("data/registry"),
         )
         branch_test = run_experiment._build_branch_features(
-            test_rows, proteome_path, scratch, "test", False,
+            test_rows,
+            proteome_path,
+            scratch,
+            "test",
+            False,
             structure_registry_path=reg_path,
             structure_registry_base=Path("data/registry"),
         )
@@ -94,25 +107,35 @@ def test_real_scores_produce_valid_decision(tmp_path: Path) -> None:
     from plantpersulf.models.structure_ranker import structure_ranker_scores
 
     out_full = structure_ranker_scores(
-        branch_train, train_y, branch_test,
-        seed=0, ablation=ab_full,
-        hidden=16, dropout=0.2,
-        epochs=2, lr=0.05, n_mc_dropout=4,
+        branch_train,
+        train_y,
+        branch_test,
+        seed=0,
+        ablation=ab_full,
+        hidden=16,
+        dropout=0.2,
+        epochs=2,
+        lr=0.05,
+        n_mc_dropout=4,
     )
     out_seq = structure_ranker_scores(
-        branch_train, train_y, branch_test,
-        seed=0, ablation=ab_seq,
-        hidden=16, dropout=0.2,
-        epochs=2, lr=0.05, n_mc_dropout=4,
+        branch_train,
+        train_y,
+        branch_test,
+        seed=0,
+        ablation=ab_seq,
+        hidden=16,
+        dropout=0.2,
+        epochs=2,
+        lr=0.05,
+        n_mc_dropout=4,
     )
 
     ap_full = average_precision(
-        list(zip(out_full.scores,
-                [r["label"] for r in test_rows], strict=True))
+        list(zip(out_full.scores, [r["label"] for r in test_rows], strict=True))
     )
     ap_seq = average_precision(
-        list(zip(out_seq.scores,
-                [r["label"] for r in test_rows], strict=True))
+        list(zip(out_seq.scores, [r["label"] for r in test_rows], strict=True))
     )
 
     assert ap_full is not None
@@ -126,14 +149,16 @@ def test_real_scores_produce_valid_decision(tmp_path: Path) -> None:
 
 def test_decision_json_shape() -> None:
     """The decision JSON must have the required fields."""
-    decision = decide_structure_signal({
-        "full_exceeds_sequence_both_studies": True,
-        "cluster_ci_excludes_zero_both_studies": True,
-        "all_seed_directions_positive_both_studies": True,
-        "full_exceeds_coverage_only_both_studies": True,
-        "top_cluster_removed_gain_positive_both_studies": True,
-        "all_audits_pass": True,
-    })
+    decision = decide_structure_signal(
+        {
+            "full_exceeds_sequence_both_studies": True,
+            "cluster_ci_excludes_zero_both_studies": True,
+            "all_seed_directions_positive_both_studies": True,
+            "full_exceeds_coverage_only_both_studies": True,
+            "top_cluster_removed_gain_positive_both_studies": True,
+            "all_audits_pass": True,
+        }
+    )
     assert decision.status == "STRUCTURE_SIGNAL_STABLE"
     assert decision.gate2_status == "GATE2_STOP"
     assert not decision.failed_conditions

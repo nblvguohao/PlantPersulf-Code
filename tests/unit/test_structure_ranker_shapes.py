@@ -81,7 +81,10 @@ def test_ablation_disabling_esm_still_produces_valid_scores() -> None:
     predict = _toy_branches(6)
 
     out = structure_ranker_scores(
-        train, train_y, predict, seed=0,
+        train,
+        train_y,
+        predict,
+        seed=0,
         ablation=AblationConfig(use_esm=False),
     )
     assert len(out.scores) == 6

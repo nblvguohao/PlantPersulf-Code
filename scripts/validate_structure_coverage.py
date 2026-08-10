@@ -17,17 +17,14 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import random
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from plantpersulf.evaluation.bootstrap import BootstrapResult
 from plantpersulf.evaluation.effect_size import (
     paired_cluster_bootstrap_delta_ci,
     top_cluster_dominance,
 )
-from plantpersulf.evaluation.metrics import average_precision, recall_at_k
+from plantpersulf.evaluation.metrics import average_precision
 from plantpersulf.evaluation.structure_coverage_audit import sha256_file
 from plantpersulf.evaluation.structure_coverage_config import (
     load_structure_coverage_config,
@@ -108,40 +105,76 @@ def validate_structure_coverage(
     # ---- Per-study AP metrics ----
     metrics_rows: list[dict[str, object]] = []
     for study in studies:
-        full_v2 = _ap_for(scores_v2, arm=FULL_ARM, held_out_study=study,
-                          coverage_release="structcover_v2")
-        base_v2 = _ap_for(scores_v2, arm=BASELINE_ARM, held_out_study=study,
-                          coverage_release="structcover_v2")
-        cov_v2 = _ap_for(scores_v2, arm=COVERAGE_ARM, held_out_study=study,
-                         coverage_release="structcover_v2")
+        full_v2 = _ap_for(
+            scores_v2,
+            arm=FULL_ARM,
+            held_out_study=study,
+            coverage_release="structcover_v2",
+        )
+        base_v2 = _ap_for(
+            scores_v2,
+            arm=BASELINE_ARM,
+            held_out_study=study,
+            coverage_release="structcover_v2",
+        )
+        cov_v2 = _ap_for(
+            scores_v2,
+            arm=COVERAGE_ARM,
+            held_out_study=study,
+            coverage_release="structcover_v2",
+        )
 
-        metrics_rows.append({
-            "study": study, "arm": FULL_ARM, "release": "structcover_v2",
-            "ap": round(full_v2, 6) if full_v2 is not None else None,
-        })
-        metrics_rows.append({
-            "study": study, "arm": BASELINE_ARM, "release": "structcover_v2",
-            "ap": round(base_v2, 6) if base_v2 is not None else None,
-        })
-        metrics_rows.append({
-            "study": study, "arm": COVERAGE_ARM, "release": "structcover_v2",
-            "ap": round(cov_v2, 6) if cov_v2 is not None else None,
-        })
+        metrics_rows.append(
+            {
+                "study": study,
+                "arm": FULL_ARM,
+                "release": "structcover_v2",
+                "ap": round(full_v2, 6) if full_v2 is not None else None,
+            }
+        )
+        metrics_rows.append(
+            {
+                "study": study,
+                "arm": BASELINE_ARM,
+                "release": "structcover_v2",
+                "ap": round(base_v2, 6) if base_v2 is not None else None,
+            }
+        )
+        metrics_rows.append(
+            {
+                "study": study,
+                "arm": COVERAGE_ARM,
+                "release": "structcover_v2",
+                "ap": round(cov_v2, 6) if cov_v2 is not None else None,
+            }
+        )
     table["metrics"] = metrics_rows
 
     # ---- Seed-level directions ----
     seed_rows: list[dict[str, object]] = []
     for study in studies:
         for seed in seeds:
-            full_v2_s = _ap_for(scores_v2, arm=FULL_ARM, held_out_study=study,
-                                coverage_release="structcover_v2",
-                                seed=str(seed))
-            base_v2_s = _ap_for(scores_v2, arm=BASELINE_ARM, held_out_study=study,
-                                coverage_release="structcover_v2",
-                                seed=str(seed))
-            cov_v2_s = _ap_for(scores_v2, arm=COVERAGE_ARM, held_out_study=study,
-                               coverage_release="structcover_v2",
-                               seed=str(seed))
+            full_v2_s = _ap_for(
+                scores_v2,
+                arm=FULL_ARM,
+                held_out_study=study,
+                coverage_release="structcover_v2",
+                seed=str(seed),
+            )
+            base_v2_s = _ap_for(
+                scores_v2,
+                arm=BASELINE_ARM,
+                held_out_study=study,
+                coverage_release="structcover_v2",
+                seed=str(seed),
+            )
+            cov_v2_s = _ap_for(
+                scores_v2,
+                arm=COVERAGE_ARM,
+                held_out_study=study,
+                coverage_release="structcover_v2",
+                seed=str(seed),
+            )
             seq_delta = (
                 (full_v2_s - base_v2_s)
                 if full_v2_s is not None and base_v2_s is not None
@@ -152,22 +185,41 @@ def validate_structure_coverage(
                 if full_v2_s is not None and cov_v2_s is not None
                 else None
             )
-            seed_rows.append({
-                "held_out_study": study, "seed": seed,
-                f"{FULL_ARM}_ap": round(full_v2_s, 6) if full_v2_s is not None else None,
-                f"{BASELINE_ARM}_ap": round(base_v2_s, 6) if base_v2_s is not None else None,
-                "delta_vs_sequence_only": round(seq_delta, 6) if seq_delta is not None else None,
-                "delta_vs_coverage_only": round(cov_delta, 6) if cov_delta is not None else None,
-            })
+            seed_rows.append(
+                {
+                    "held_out_study": study,
+                    "seed": seed,
+                    f"{FULL_ARM}_ap": round(full_v2_s, 6)
+                    if full_v2_s is not None
+                    else None,
+                    f"{BASELINE_ARM}_ap": round(base_v2_s, 6)
+                    if base_v2_s is not None
+                    else None,
+                    "delta_vs_sequence_only": round(seq_delta, 6)
+                    if seq_delta is not None
+                    else None,
+                    "delta_vs_coverage_only": round(cov_delta, 6)
+                    if cov_delta is not None
+                    else None,
+                }
+            )
     table["seed_stability"] = seed_rows
 
     # ---- Condition 1: full_exceeds_sequence_both_studies ----
     cond1 = True
     for study in studies:
-        full_ap = _ap_for(scores_v2, arm=FULL_ARM, held_out_study=study,
-                          coverage_release="structcover_v2")
-        base_ap = _ap_for(scores_v2, arm=BASELINE_ARM, held_out_study=study,
-                          coverage_release="structcover_v2")
+        full_ap = _ap_for(
+            scores_v2,
+            arm=FULL_ARM,
+            held_out_study=study,
+            coverage_release="structcover_v2",
+        )
+        base_ap = _ap_for(
+            scores_v2,
+            arm=BASELINE_ARM,
+            held_out_study=study,
+            coverage_release="structcover_v2",
+        )
         if full_ap is None or base_ap is None or full_ap <= base_ap:
             cond1 = False
     conditions["full_exceeds_sequence_both_studies"] = cond1
@@ -176,10 +228,18 @@ def validate_structure_coverage(
     cond2 = True
     paired_rows: list[dict[str, object]] = []
     for study in studies:
-        full_rows = _filter_rows(scores_v2, arm=FULL_ARM, held_out_study=study,
-                                 coverage_release="structcover_v2")
-        base_rows = _filter_rows(scores_v2, arm=BASELINE_ARM, held_out_study=study,
-                                 coverage_release="structcover_v2")
+        full_rows = _filter_rows(
+            scores_v2,
+            arm=FULL_ARM,
+            held_out_study=study,
+            coverage_release="structcover_v2",
+        )
+        base_rows = _filter_rows(
+            scores_v2,
+            arm=BASELINE_ARM,
+            held_out_study=study,
+            coverage_release="structcover_v2",
+        )
         if full_rows and base_rows:
             ci = paired_cluster_bootstrap_delta_ci(
                 _cluster_scored(full_rows),
@@ -191,15 +251,17 @@ def validate_structure_coverage(
             excludes_zero = ci.lower > 0 or ci.upper < 0
             if not (ci.lower > 0):
                 cond2 = False
-            paired_rows.append({
-                "held_out_study": study,
-                "ap_full": round(ci.point, 6) if ci.point else None,
-                "ap_baseline": None,  # delta already computed
-                "delta": round(ci.point, 6),
-                "ci_low": round(ci.lower, 6),
-                "ci_high": round(ci.upper, 6),
-                "excludes_zero": excludes_zero,
-            })
+            paired_rows.append(
+                {
+                    "held_out_study": study,
+                    "ap_full": round(ci.point, 6) if ci.point else None,
+                    "ap_baseline": None,  # delta already computed
+                    "delta": round(ci.point, 6),
+                    "ci_low": round(ci.lower, 6),
+                    "ci_high": round(ci.upper, 6),
+                    "excludes_zero": excludes_zero,
+                }
+            )
     table["paired_effects"] = paired_rows
     conditions["cluster_ci_excludes_zero_both_studies"] = cond2
 
@@ -207,10 +269,20 @@ def validate_structure_coverage(
     cond3 = True
     for study in studies:
         for seed in seeds:
-            full_s = _ap_for(scores_v2, arm=FULL_ARM, held_out_study=study,
-                             coverage_release="structcover_v2", seed=str(seed))
-            base_s = _ap_for(scores_v2, arm=BASELINE_ARM, held_out_study=study,
-                             coverage_release="structcover_v2", seed=str(seed))
+            full_s = _ap_for(
+                scores_v2,
+                arm=FULL_ARM,
+                held_out_study=study,
+                coverage_release="structcover_v2",
+                seed=str(seed),
+            )
+            base_s = _ap_for(
+                scores_v2,
+                arm=BASELINE_ARM,
+                held_out_study=study,
+                coverage_release="structcover_v2",
+                seed=str(seed),
+            )
             if full_s is not None and base_s is not None:
                 if full_s <= base_s:
                     cond3 = False
@@ -219,10 +291,18 @@ def validate_structure_coverage(
     # ---- Condition 4: full_exceeds_coverage_only_both_studies ----
     cond4 = True
     for study in studies:
-        full_ap = _ap_for(scores_v2, arm=FULL_ARM, held_out_study=study,
-                          coverage_release="structcover_v2")
-        cov_ap = _ap_for(scores_v2, arm=COVERAGE_ARM, held_out_study=study,
-                         coverage_release="structcover_v2")
+        full_ap = _ap_for(
+            scores_v2,
+            arm=FULL_ARM,
+            held_out_study=study,
+            coverage_release="structcover_v2",
+        )
+        cov_ap = _ap_for(
+            scores_v2,
+            arm=COVERAGE_ARM,
+            held_out_study=study,
+            coverage_release="structcover_v2",
+        )
         if full_ap is None or cov_ap is None or full_ap <= cov_ap:
             cond4 = False
     conditions["full_exceeds_coverage_only_both_studies"] = cond4
@@ -231,31 +311,39 @@ def validate_structure_coverage(
     cond5 = True
     cluster_rows: list[dict[str, object]] = []
     for study in studies:
-        full_rows = _filter_rows(scores_v2, arm=FULL_ARM, held_out_study=study,
-                                 coverage_release="structcover_v2")
+        full_rows = _filter_rows(
+            scores_v2,
+            arm=FULL_ARM,
+            held_out_study=study,
+            coverage_release="structcover_v2",
+        )
         if full_rows:
             dom = top_cluster_dominance(_cluster_scored(full_rows))
-            base_rows_study = _filter_rows(scores_v2, arm=BASELINE_ARM,
-                                           held_out_study=study,
-                                           coverage_release="structcover_v2")
+            base_rows_study = _filter_rows(
+                scores_v2,
+                arm=BASELINE_ARM,
+                held_out_study=study,
+                coverage_release="structcover_v2",
+            )
             if base_rows_study:
                 dom_base = top_cluster_dominance(_cluster_scored(base_rows_study))
             else:
                 dom_base = None
 
-            gain_without_top = (
-                dom.ap_without_top
-                - (dom_base.ap_without_top if dom_base else 0.0)
+            gain_without_top = dom.ap_without_top - (
+                dom_base.ap_without_top if dom_base else 0.0
             )
-            cluster_rows.append({
-                "held_out_study": study,
-                "top_cluster_id": dom.top_cluster_id,
-                "top_cluster_rows": dom.top_cluster_rows,
-                "ap_full": round(dom.ap_full, 6),
-                "ap_without_top": round(dom.ap_without_top, 6),
-                "retention_ratio": round(dom.retention_ratio, 6),
-                "gain_without_top": round(gain_without_top, 6),
-            })
+            cluster_rows.append(
+                {
+                    "held_out_study": study,
+                    "top_cluster_id": dom.top_cluster_id,
+                    "top_cluster_rows": dom.top_cluster_rows,
+                    "ap_full": round(dom.ap_full, 6),
+                    "ap_without_top": round(dom.ap_without_top, 6),
+                    "retention_ratio": round(dom.retention_ratio, 6),
+                    "gain_without_top": round(gain_without_top, 6),
+                }
+            )
             if gain_without_top <= 0:
                 cond5 = False
     table["cluster_sensitivity"] = cluster_rows
@@ -295,10 +383,10 @@ def run_validation(
                     f"non-finite score for {row['protein_accession']} "
                     f"pos {row['cys_position_in_protein']}"
                 )
-        except (ValueError, KeyError):
+        except (ValueError, KeyError) as exc:
             raise RuntimeError(
                 f"invalid score for {row.get('protein_accession', '?')}"
-            )
+            ) from exc
 
     # Verify all five seeds and both studies
     studies_in_scores = {r["held_out_study"] for r in scores_v2}
@@ -319,14 +407,21 @@ def run_validation(
     decision = decide_structure_signal(conditions)
 
     # Write outputs
-    _write_tsv(result_directory / "metrics.tsv",
-               _flatten_metrics(table.get("metrics", [])))
-    _write_tsv(result_directory / "paired_effects.tsv",
-               _flatten_metrics(table.get("paired_effects", [])))
-    _write_tsv(result_directory / "seed_stability.tsv",
-               _flatten_metrics(table.get("seed_stability", [])))
-    _write_tsv(result_directory / "cluster_sensitivity.tsv",
-               _flatten_metrics(table.get("cluster_sensitivity", [])))
+    _write_tsv(
+        result_directory / "metrics.tsv", _flatten_metrics(table.get("metrics", []))
+    )
+    _write_tsv(
+        result_directory / "paired_effects.tsv",
+        _flatten_metrics(table.get("paired_effects", [])),
+    )
+    _write_tsv(
+        result_directory / "seed_stability.tsv",
+        _flatten_metrics(table.get("seed_stability", [])),
+    )
+    _write_tsv(
+        result_directory / "cluster_sensitivity.tsv",
+        _flatten_metrics(table.get("cluster_sensitivity", [])),
+    )
 
     decision_json = {
         "experiment": cfg.experiment_name,
@@ -359,8 +454,7 @@ def _flatten_metrics(rows: list[dict[str, object]]) -> list[dict[str, str]]:
             if k not in all_keys:
                 all_keys.append(k)
     return [
-        {k: str(row.get(k, "")) if row.get(k) is not None else ""
-         for k in all_keys}
+        {k: str(row.get(k, "")) if row.get(k) is not None else "" for k in all_keys}
         for row in rows
     ]
 
@@ -378,8 +472,7 @@ def _write_tsv(path: Path, rows: list[dict[str, str]]) -> None:
 
 
 def _write_json(path: Path, data: dict[str, Any]) -> None:
-    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n",
-                    encoding="utf-8")
+    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 def _write_manifest(config_path: Path, result_dir: Path) -> None:
@@ -389,8 +482,10 @@ def _write_manifest(config_path: Path, result_dir: Path) -> None:
     }
     for child in sorted(result_dir.iterdir()):
         if child.is_file():
-            if child.name not in ("scores_structcover_v1.tsv",
-                                  "scores_structcover_v2.tsv"):
+            if child.name not in (
+                "scores_structcover_v1.tsv",
+                "scores_structcover_v2.tsv",
+            ):
                 manifest["output_files"] = {
                     **manifest.get("output_files", {}),
                     child.name: sha256_file(child),
@@ -412,7 +507,8 @@ def build_parser() -> argparse.ArgumentParser:
         description="validate paired structure-coverage scoring results"
     )
     p.add_argument(
-        "--config", type=Path,
+        "--config",
+        type=Path,
         default=Path("configs/experiments/pu_ranker_structcover_v2.yaml"),
     )
     p.add_argument("--results", type=Path, required=True)

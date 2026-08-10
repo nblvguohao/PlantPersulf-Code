@@ -48,8 +48,8 @@ satisfied by current public data, and the expected honest outcome is
   fail rather than being assumed — `validate_external.py` records gaps, never
   fills them.
 
-## Two-track evaluation policy: leave-study-out (primary) + Split A cluster
-## split (supplementary, literature-comparable)
+## Evaluation tracks: leave-study-out (Gate 2 evidence) + two
+## literature-comparable tracks (cluster split, random protein split)
 
 **Question this section answers**: published cysteine-PTM predictors (e.g.
 Sul-BertGRU, Bioinformatics 2025, doi:10.1093/bioinformatics/btaf078; pCysMod,
@@ -57,6 +57,20 @@ Front Cell Dev Biol 2021, doi:10.3389/fcell.2021.617366) evaluate with a
 within-integrated-dataset split, not a cross-study split. Is our
 leave-study-out requirement self-imposed rigor with no basis, or a
 recognised concern?
+
+**2026-08-10 decision (locked here)**: after re-reading Sul-BertGRU in full
+(`docs/compete/btaf078.pdf`), the collaboration-facing reporting order is
+changed — the literature-comparable number (random protein split, identical
+geometry to Sul-BertGRU: 20% of proteins held out, 10 repetitions, no
+homology control) is the primary *displayed* number, and leave-study-out is
+reported alongside as the reference/strict track. This changes reporting
+presentation only: Gate 2 admissibility is unchanged and structurally locked
+(see table and tests below). Every displayed literature-comparable number
+must carry the limitation text from its config verbatim, and must never be
+presented as cross-study/cross-lab/cross-species evidence. The scientific
+reason the strict track still exists is unchanged: the benchmark's known
+weakness (2 studies, same lab) sits exactly where sequence-identity dedup
+does not control for it.
 
 **It is a recognised concern, not self-imposed.** Evidence:
 
@@ -86,8 +100,13 @@ be maximised unconditionally.
 
 | Track | Split | Purpose | Admissible for Gate 2? |
 |---|---|---|---|
-| Primary | leave-study-out (`pu_ranker_v1.yaml`) | Judge cross-study predictive value | Yes — the only admissible source |
-| Supplementary | Split A cluster split (`pu_ranker_cluster_v1.yaml`) | Literature-comparable "is there any learnable signal" number, reported side-by-side with the primary track | **No, structurally never** |
+| Primary (evidence) | leave-study-out (`pu_ranker_v1.yaml`) | Judge cross-study predictive value | Yes — the only admissible source |
+| Supplementary A | Split A cluster split (`pu_ranker_cluster_v1.yaml`) | Literature-comparable, homology-controlled (MMseqs2 30% identity) | **No, structurally never** |
+| Supplementary B (displayed first) | Random protein split, 10 reps (`pu_ranker_protein_split_v1.yaml`) | Literature-comparable with identical geometry to Sul-BertGRU (Bioinformatics 2025, btaf078): random 20% of proteins held out per seed, no homology control. The number used for external communication | **No, structurally never** |
+
+Supplementary B exists because Sul-BertGRU's own regime is a *random*
+protein-level split (no homology control); Split A is stricter than that, so
+without B we had no number computed under the exact published geometry.
 
 `scripts/validate_external.py::_parse_fold_study` only recognises model names
 of the shape `leave_<study>_out|...`; a cluster-split experiment's rows never
@@ -98,9 +117,14 @@ cannot ingest Split A numbers even if `--model-release` is pointed at the
 wrong experiment by mistake.
 
 **Reporting rule**: any manuscript/collaboration document may state the Split
-A number for literature comparison, but must accompany it with the
-`pu_ranker_cluster_v1.yaml` `limitation` text verbatim, and must never cite it
-as evidence for cross-study, cross-lab, or cross-species generalisation.
+A number or the `pu_ranker_protein_split_v1` number for literature
+comparison, but must accompany it with the corresponding config's
+`limitation` text verbatim, and must never cite it as evidence for
+cross-study, cross-lab, or cross-species generalisation. Gate 2 evidence
+remains leave-study-out only. Note: the cluster config's `limitation` field
+is not yet written into its results manifest by the runner
+(`_write_results` receives it only on the study-split/protein-split paths);
+the protein-split config's limitation IS written to its manifest.
 
 ## Environment note
 

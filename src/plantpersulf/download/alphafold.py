@@ -110,9 +110,7 @@ def query_alphafold_api(
         pdb_url=str(entry.get("pdbUrl", "")),
         cif_url=str(entry.get("cifUrl", "")),
         global_metric_value=(
-            float(entry["globalMetricValue"])
-            if "globalMetricValue" in entry
-            else None
+            float(entry["globalMetricValue"]) if "globalMetricValue" in entry else None
         ),
         fraction_plddt_very_high=(
             float(entry["fractionPlddtVeryHigh"])
@@ -120,9 +118,7 @@ def query_alphafold_api(
             else None
         ),
         fraction_plddt_low=(
-            float(entry["fractionPlddtLow"])
-            if "fractionPlddtLow" in entry
-            else None
+            float(entry["fractionPlddtLow"]) if "fractionPlddtLow" in entry else None
         ),
     )
 
@@ -162,9 +158,7 @@ def fetch_alphafold_structure(
         try:
             meta = query_alphafold_api(accession, timeout_seconds=timeout_seconds)
         except Exception as exc:
-            raise RuntimeError(
-                f"AlphaFold API query failed: {accession}"
-            ) from exc
+            raise RuntimeError(f"AlphaFold API query failed: {accession}") from exc
         if meta is None:
             return AlphaFoldFetchResult(
                 accession=accession,
@@ -198,9 +192,7 @@ def fetch_alphafold_structure(
                 sha256=None,
                 retrieved_at=None,
             )
-        raise RuntimeError(
-            f"AlphaFold download failed: {resolved_url}"
-        ) from exc
+        raise RuntimeError(f"AlphaFold download failed: {resolved_url}") from exc
     return AlphaFoldFetchResult(
         accession=accession,
         status=_STATUS_DOWNLOADED,

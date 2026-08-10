@@ -30,8 +30,6 @@ def test_fetch_script_accepts_registered_download_command() -> None:
 def test_cli_exposes_file_audit_command() -> None:
     from plantpersulf.cli import build_parser
 
-    arguments = build_parser().parse_args(
-        ["audit-files", "--accession", "PXD006140"]
-    )
+    arguments = build_parser().parse_args(["audit-files", "--accession", "PXD006140"])
     assert arguments.command == "audit-files"
     assert arguments.accession == "PXD006140"

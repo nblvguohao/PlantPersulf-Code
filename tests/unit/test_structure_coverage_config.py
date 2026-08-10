@@ -8,7 +8,6 @@ from pathlib import Path
 import pytest
 
 from plantpersulf.evaluation.structure_coverage_config import (
-    StructureCoverageExperimentConfig,
     load_structure_coverage_config,
     validate_controlled_variables,
 )
@@ -18,13 +17,15 @@ CONFIG_PATH = Path("configs/experiments/pu_ranker_structcover_v2.yaml")
 V1_RELEASE = Path("data/registry/releases/alphafold_structures_release_v1.tsv")
 V2_RELEASE = Path("data/registry/releases/alphafold_structures_release_v2.tsv")
 
-EXPECTED_ARMS = frozenset({
-    "sequence_only",
-    "sequence_coverage_only",
-    "sequence_contact",
-    "sequence_plddt",
-    "sequence_contact_plddt",
-})
+EXPECTED_ARMS = frozenset(
+    {
+        "sequence_only",
+        "sequence_coverage_only",
+        "sequence_contact",
+        "sequence_plddt",
+        "sequence_contact_plddt",
+    }
+)
 
 
 class TestConfigLoading:
@@ -73,8 +74,9 @@ class TestConfigLoading:
         cfg = load_structure_coverage_config(CONFIG_PATH)
         for arm_name, arm in cfg.arms.items():
             assert not arm.get("use_esm", True), f"{arm_name} should have use_esm=false"
-            assert not arm.get("use_study_context", True), \
+            assert not arm.get("use_study_context", True), (
                 f"{arm_name} should have use_study_context=false"
+            )
 
     def test_ranker_parameters_are_copied_from_v1(self) -> None:
         cfg = load_structure_coverage_config(CONFIG_PATH)
@@ -99,13 +101,26 @@ class TestConfigRejection:
 
     def test_unknown_arm_is_rejected(self, monkeypatch: pytest.MonkeyPatch) -> None:
         cfg = load_structure_coverage_config(CONFIG_PATH)
-        cfg = cfg._replace(arms={**cfg.arms, "fake_arm": {"use_esm": False, "use_structure": True}})
+        cfg = cfg._replace(
+            arms={**cfg.arms, "fake_arm": {"use_esm": False, "use_structure": True}}
+        )
         with pytest.raises(RuntimeError, match="unknown"):
             validate_controlled_variables(cfg)
 
     def test_more_than_five_arms_is_rejected(self) -> None:
         cfg = load_structure_coverage_config(CONFIG_PATH)
-        cfg_violated = cfg._replace(arms={**cfg.arms, "extra_arm": {"use_esm": False, "use_structure": True, "use_plddt": False, "use_accessibility": False, "use_study_context": False}})
+        cfg_violated = cfg._replace(
+            arms={
+                **cfg.arms,
+                "extra_arm": {
+                    "use_esm": False,
+                    "use_structure": True,
+                    "use_plddt": False,
+                    "use_accessibility": False,
+                    "use_study_context": False,
+                },
+            }
+        )
         with pytest.raises(RuntimeError, match="unknown"):
             validate_controlled_variables(cfg_violated)
 

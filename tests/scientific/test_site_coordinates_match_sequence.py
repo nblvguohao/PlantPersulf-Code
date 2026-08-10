@@ -107,8 +107,7 @@ def test_real_q93vk9_and_q9zw96_coordinates_match_registered_sequences(
             "10fce0b8ac26f564c7c16879b0d6e32cfa14a8ee1116f0f7911cbc758650b43f"
         )
         assert all(
-            "negative" not in str(value).lower()
-            for value in vars(site).values()
+            "negative" not in str(value).lower() for value in vars(site).values()
         )
 
 
@@ -132,9 +131,7 @@ def test_real_record_without_registered_sequence_is_a_conflict(
     )
 
     assert not normalized.sites
-    assert [issue.reason for issue in normalized.conflicts] == [
-        "sequence_unavailable"
-    ]
+    assert [issue.reason for issue in normalized.conflicts] == ["sequence_unavailable"]
 
 
 def test_protein_level_scope_never_creates_a_site(tmp_path: Path) -> None:

@@ -8,8 +8,9 @@ gate override.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Literal, Mapping
+from collections.abc import Mapping
+from dataclasses import dataclass
+from typing import Literal
 
 REQUIRED_CONDITIONS = (
     "full_exceeds_sequence_both_studies",

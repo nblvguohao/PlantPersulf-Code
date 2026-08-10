@@ -264,9 +264,7 @@ def main(argv: list[str] | None = None) -> int:
             policy_path=arguments.policy,
             selection_path=arguments.selection_config,
             registry_dir=arguments.registry_dir,
-            output_directory=(
-                arguments.output_root / "evidence_preflight_v1"
-            ),
+            output_directory=(arguments.output_root / "evidence_preflight_v1"),
         )
         print(json.dumps(asdict(preflight_summary), sort_keys=True))
         return 0
@@ -336,9 +334,7 @@ def main(argv: list[str] | None = None) -> int:
             policy_path=arguments.policy,
             parser_output_root=arguments.output_root,
             content_output_directory=content_directory,
-            output_directory=(
-                arguments.output_root / "benchmark_readiness_v1"
-            ),
+            output_directory=(arguments.output_root / "benchmark_readiness_v1"),
             registry_dir=arguments.registry_dir,
         )
         print(json.dumps(asdict(readiness_summary), sort_keys=True))

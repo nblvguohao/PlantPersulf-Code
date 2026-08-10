@@ -10,11 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from plantpersulf.evaluation.structure_coverage_audit import (
-    CoverageRecord,
-    StructureCoverageAudit,
     audit_structure_coverage,
     sha256_file,
 )
@@ -28,14 +24,16 @@ REGISTRY_V2 = Path("data/registry/releases/alphafold_structures_release_v2.tsv")
 REGISTRY_DATA_ROOT = Path("data/registry")
 
 
-ALLOWED_STATUSES = frozenset({
-    "mapped_cys",
-    "absent_structure",
-    "absent_residue",
-    "non_cys_residue",
-    "malformed_structure",
-    "duplicate_residue_ambiguity",
-})
+ALLOWED_STATUSES = frozenset(
+    {
+        "mapped_cys",
+        "absent_structure",
+        "absent_residue",
+        "non_cys_residue",
+        "malformed_structure",
+        "duplicate_residue_ambiguity",
+    }
+)
 
 
 def test_audit_v1_returns_one_record_per_benchmark_row() -> None:
@@ -55,6 +53,7 @@ def test_audit_v1_returns_one_record_per_benchmark_row() -> None:
     n_rows = 0
     with BENCHMARK.open(encoding="utf-8", newline="") as h:
         import csv
+
         for _ in csv.DictReader(h, delimiter="\t"):
             n_rows += 1
 

@@ -20,9 +20,7 @@ OUTPUT_NAMES = {
 
 def _tree_hashes(root: Path) -> dict[str, str]:
     return {
-        path.relative_to(root).as_posix(): hashlib.sha256(
-            path.read_bytes()
-        ).hexdigest()
+        path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(root.rglob("*"))
         if path.is_file()
     }
@@ -93,9 +91,7 @@ def test_real_registry_preflight_is_deterministic_and_unlabeled(
         and row["file_name"] == "checksum.txt"
     ] == ["downloaded"]
     mzid = next(
-        row
-        for row in decisions
-        if row["file_name"] == "peptides_1_1_0.mzid.gz"
+        row for row in decisions if row["file_name"] == "peptides_1_1_0.mzid.gz"
     )
     assert mzid["registry_size_bytes"] == "1967088"
     assert mzid["local_size_bytes"] == "184107"
@@ -106,9 +102,7 @@ def test_real_registry_preflight_is_deterministic_and_unlabeled(
     evidence_rows = _rows(first_output / "evidence_records.tsv")
     assert evidence_rows == []
     assert "label" not in _rows(first_output / "study_inventory.tsv")[0]
-    manifest = json.loads(
-        (first_output / "manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((first_output / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["content_audit_complete"] is False
     assert manifest["labels_created"] is False
     assert manifest["nondetection_labeled_negative"] is False
@@ -126,9 +120,7 @@ def test_preflight_reports_real_metadata_gaps(tmp_path: Path) -> None:
         for row in gaps
     )
     assert {
-        row["file_name"]
-        for row in gaps
-        if row["gap_type"] == "content_audit_pending"
+        row["file_name"] for row in gaps if row["gap_type"] == "content_audit_pending"
     } == {
         "SDRF.txt",
         "peptide.csv",
@@ -158,12 +150,8 @@ def test_preflight_audit_detects_declared_hash_corruption(tmp_path: Path) -> Non
 def test_cli_exposes_evidence_preflight_commands() -> None:
     from plantpersulf.cli import build_parser
 
-    build = build_parser().parse_args(
-        ["build-evidence-preflight", "--version", "v1"]
-    )
-    audit = build_parser().parse_args(
-        ["audit-evidence-preflight", "--version", "v1"]
-    )
+    build = build_parser().parse_args(["build-evidence-preflight", "--version", "v1"])
+    audit = build_parser().parse_args(["audit-evidence-preflight", "--version", "v1"])
 
     assert build.command == "build-evidence-preflight"
     assert audit.command == "audit-evidence-preflight"

@@ -190,7 +190,10 @@ def _sequence_features(
 
 
 def _species_onehot(species: str) -> list[float]:
-    return [1.0 if species == s else 0.0 for s in ("arabidopsis", "tomato", "rice", "magnaporthe")]
+    return [
+        1.0 if species == s else 0.0
+        for s in ("arabidopsis", "tomato", "rice", "magnaporthe")
+    ]
 
 
 def _feature_matrix(
@@ -309,11 +312,7 @@ def _run_fold(
     ]
 
     # Arabidopsis-only baseline arm: train on arabidopsis positives only
-    ath_idx = [
-        i
-        for i in train_idx
-        if sites[i].species == "arabidopsis"
-    ]
+    ath_idx = [i for i in train_idx if sites[i].species == "arabidopsis"]
     ath_sites = [sites[i] for i in ath_idx]
     ath_feats = _feature_matrix(proteomes, ath_sites, family_stats)
     ath_y = ["positive"] * len(ath_sites)
@@ -340,18 +339,17 @@ def _run_fold(
 
     per_species_ap: dict[str, float] = {}
     for sp in ("arabidopsis", "tomato", "rice", "magnaporthe"):
-        sp_test_idx = [
-            i for i, site in enumerate(test_sites) if site.species == sp
-        ]
+        sp_test_idx = [i for i, site in enumerate(test_sites) if site.species == sp]
         sp_unl_idx = unlabeled_by_species.get(sp, [])
         if not sp_test_idx or not sp_unl_idx:
             continue
-        sp_scores = (
-            [ens_scores[i] for i in sp_test_idx]
-            + [ens_scores[len(test_sites) + j] for j in sp_unl_idx]
-        )
+        sp_scores = [ens_scores[i] for i in sp_test_idx] + [
+            ens_scores[len(test_sites) + j] for j in sp_unl_idx
+        ]
         sp_labels = ["positive"] * len(sp_test_idx) + ["unlabeled"] * len(sp_unl_idx)
-        per_species_ap[sp] = average_precision(list(zip(sp_scores, sp_labels, strict=True)))
+        per_species_ap[sp] = average_precision(
+            list(zip(sp_scores, sp_labels, strict=True))
+        )
 
     return {
         "fold": fold_idx,
@@ -388,9 +386,7 @@ def _leave_one_species_out(
     train_feats = _feature_matrix(proteomes, train_sites, family_stats)
     train_y = ["positive"] * len(train_sites)
 
-    held_unl_idx = [
-        i for i, r in enumerate(unlabeled_rows) if r["species"] == held_out
-    ]
+    held_unl_idx = [i for i, r in enumerate(unlabeled_rows) if r["species"] == held_out]
     held_unl_feats = [unlabeled_feats[i] for i in held_unl_idx]
 
     combined_X = [*train_feats, *held_unl_feats]
@@ -428,8 +424,16 @@ def run_multispecies_v1(
     fold_seed: int = FOLD_SEED,
 ) -> dict[str, Any]:
     seeds = seeds or [0, 1, 2, 3, 4]
-    for path in (*PROTEOMES.values(), *PANTHER_FILES.values(), BENCHMARK,
-                 KIAE271_XLSX, SD01, SD04, SS_ALL, MAGNAPORTHE_TSV):
+    for path in (
+        *PROTEOMES.values(),
+        *PANTHER_FILES.values(),
+        BENCHMARK,
+        KIAE271_XLSX,
+        SD01,
+        SD04,
+        SS_ALL,
+        MAGNAPORTHE_TSV,
+    ):
         if not path.is_file():
             raise RuntimeError(f"required input missing: {path}")
 
@@ -478,7 +482,17 @@ def run_multispecies_v1(
 
     folds = family_grouped_folds(sites, n_folds=n_folds, seed=fold_seed)
     fold_results = [
-        _run_fold(i, tr, te, sites, family_stats, proteomes, unlabeled_rows, unlabeled_feats, seeds)
+        _run_fold(
+            i,
+            tr,
+            te,
+            sites,
+            family_stats,
+            proteomes,
+            unlabeled_rows,
+            unlabeled_feats,
+            seeds,
+        )
         for i, (tr, te) in enumerate(folds)
     ]
 
@@ -540,14 +554,14 @@ def run_multispecies_v1(
     )
     print(f"wrote summary -> {output_dir / 'multispecies_summary.json'}")
     print(
-        f"mean AP: multispecies={sum(ap_ms)/len(ap_ms):.4f}  "
-        f"arabidopsis-only={sum(ap_ath)/len(ap_ath):.4f}"
+        f"mean AP: multispecies={sum(ap_ms) / len(ap_ms):.4f}  "
+        f"arabidopsis-only={sum(ap_ath) / len(ap_ath):.4f}"
     )
     for f in fold_results:
         print(
             f"  fold {f['fold']}: n={f['n_test_positives']} "
             f"ms_ap={f['multispecies_ap']:.4f} ath_ap={f['arabidopsis_only_ap']:.4f} "
-            f"by_species={ {k: round(v,3) for k,v in f['per_species_ap'].items()} }"
+            f"by_species={ {k: round(v, 3) for k, v in f['per_species_ap'].items()} }"
         )
     print("\nleave-one-species-out (unseen-species transfer):")
     for r in loso_results:
@@ -561,7 +575,9 @@ def run_multispecies_v1(
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(description="multi-species joint persulfidation ranker v1")
+    p = argparse.ArgumentParser(
+        description="multi-species joint persulfidation ranker v1"
+    )
     p.add_argument("--output-dir", type=Path, default=Path("results/multispecies_v1"))
     p.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2, 3, 4])
     return p

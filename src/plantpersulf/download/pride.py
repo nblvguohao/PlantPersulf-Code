@@ -114,9 +114,7 @@ class PrideClient:
                     ) from exc
             except TimeoutError as exc:
                 if attempt == self.retries - 1:
-                    raise RuntimeError(
-                        f"PRIDE request failed: {url}: timeout"
-                    ) from exc
+                    raise RuntimeError(f"PRIDE request failed: {url}: timeout") from exc
             except URLError as exc:
                 if attempt == self.retries - 1:
                     raise RuntimeError(

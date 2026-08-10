@@ -9,7 +9,9 @@ import json
 import sys
 import urllib.request
 
-WEBHOOK = "https://open.feishu.cn/open-apis/bot/v2/hook/b9c6b3d4-f289-4308-bb7f-a72e7ddbf9fe"
+WEBHOOK = (
+    "https://open.feishu.cn/open-apis/bot/v2/hook/b9c6b3d4-f289-4308-bb7f-a72e7ddbf9fe"
+)
 
 
 def send(text: str) -> None:

@@ -31,8 +31,7 @@ def test_pride_ftp_url_uses_same_host_and_path_over_https() -> None:
     from plantpersulf.download.base import canonical_download_url
 
     source_url = (
-        "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2023/02/"
-        "PXD035795/SDRF.txt"
+        "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2023/02/PXD035795/SDRF.txt"
     )
 
     assert canonical_download_url(source_url) == source_url.replace(

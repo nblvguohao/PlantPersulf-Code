@@ -41,8 +41,12 @@ def test_single_fold_seed_arm_is_reproducible(tmp_path: Path) -> None:
     with benchmark_path.open(encoding="utf-8", newline="") as h:
         reader = csv.DictReader(h, delimiter="\t")
         if tuple(reader.fieldnames or ()) != (
-            "protein_accession", "cys_position_in_protein", "label",
-            "study_accession", "evidence_level", "source_sha256",
+            "protein_accession",
+            "cys_position_in_protein",
+            "label",
+            "study_accession",
+            "evidence_level",
+            "source_sha256",
         ):
             raise RuntimeError("invalid benchmark columns")
         all_rows = [dict(r) for r in reader]
@@ -57,6 +61,7 @@ def test_single_fold_seed_arm_is_reproducible(tmp_path: Path) -> None:
     )
 
     import random
+
     rng = random.Random(cfg.subsample_seed)
     train_dedup = train_rows[:]
     rng.shuffle(train_dedup)
@@ -77,12 +82,20 @@ def test_single_fold_seed_arm_is_reproducible(tmp_path: Path) -> None:
         scratch = Path(tempfile.mkdtemp(prefix="sc_repro_"))
         try:
             branch_train = run_experiment._build_branch_features(
-                train_rows_fold, proteome_path, scratch, "train", False,
+                train_rows_fold,
+                proteome_path,
+                scratch,
+                "train",
+                False,
                 structure_registry_path=reg_path,
                 structure_registry_base=reg_base,
             )
             branch_test = run_experiment._build_branch_features(
-                test_rows, proteome_path, scratch, "test", False,
+                test_rows,
+                proteome_path,
+                scratch,
+                "test",
+                False,
                 structure_registry_path=reg_path,
                 structure_registry_base=reg_base,
             )
@@ -92,11 +105,16 @@ def test_single_fold_seed_arm_is_reproducible(tmp_path: Path) -> None:
         from plantpersulf.models.structure_ranker import structure_ranker_scores
 
         out = structure_ranker_scores(
-            branch_train, train_y, branch_test,
-            seed=0, ablation=ab,
-            hidden=16, dropout=0.2,
+            branch_train,
+            train_y,
+            branch_test,
+            seed=0,
+            ablation=ab,
+            hidden=16,
+            dropout=0.2,
             epochs=2,  # test-only reduction
-            lr=0.05, n_mc_dropout=4,
+            lr=0.05,
+            n_mc_dropout=4,
         )
         return list(out.scores)
 

@@ -82,9 +82,7 @@ def _read_tsv(path: Path, fields: tuple[str, ...]) -> list[dict[str, str]]:
         if tuple(reader.fieldnames or ()) != fields:
             raise RuntimeError(f"benchmark source has invalid columns: {path}")
         rows = [dict(row) for row in reader]
-    if any(
-        None in row or any(value is None for value in row.values()) for row in rows
-    ):
+    if any(None in row or any(value is None for value in row.values()) for row in rows):
         raise RuntimeError(f"benchmark source has malformed row: {path}")
     return rows
 
@@ -192,8 +190,7 @@ def build_benchmark_labels(
     # Handle any positive whose protein is not in the reference proteome
     for key, row in positives.items():
         existing = {
-            (r["protein_accession"], int(r["cys_position_in_protein"]))
-            for r in records
+            (r["protein_accession"], int(r["cys_position_in_protein"])) for r in records
         }
         if key not in existing:
             records.append(row)

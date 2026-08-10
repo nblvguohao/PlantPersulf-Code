@@ -11,15 +11,12 @@ def test_registered_pride_sdrf_download_matches_size_and_checksum(
     from plantpersulf.download.base import DownloadRequest, download_verified_file
     from plantpersulf.provenance.hashing import hash_file
 
-    with Path("data/registry/files.tsv").open(
-        encoding="utf-8", newline=""
-    ) as handle:
+    with Path("data/registry/files.tsv").open(encoding="utf-8", newline="") as handle:
         rows = list(csv.DictReader(handle, delimiter="\t"))
     row = next(
         row
         for row in rows
-        if row["dataset_accession"] == "PXD035795"
-        and row["file_name"] == "SDRF.txt"
+        if row["dataset_accession"] == "PXD035795" and row["file_name"] == "SDRF.txt"
     )
     destination = tmp_path / row["file_name"]
 

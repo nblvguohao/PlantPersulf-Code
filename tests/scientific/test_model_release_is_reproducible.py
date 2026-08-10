@@ -23,8 +23,11 @@ def _branches(n: int) -> BranchFeatures:
     structure_mask = [i % 3 != 0 for i in range(n)]
     study_ids = ["PXD000001" if i % 2 else "PXD000002" for i in range(n)]
     return BranchFeatures(
-        sequence=sequence, esm=esm, structure=structure,
-        structure_mask=structure_mask, study_ids=study_ids,
+        sequence=sequence,
+        esm=esm,
+        structure=structure,
+        structure_mask=structure_mask,
+        study_ids=study_ids,
     )
 
 

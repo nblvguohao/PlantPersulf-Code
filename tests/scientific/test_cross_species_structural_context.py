@@ -243,8 +243,15 @@ def _make_full_atom_cys_pdb(residues: dict[int, str]) -> str:
         for atom_name, dy, dz, element in atoms:
             lines.append(
                 _full_atom_pdb_line(
-                    serial, atom_name, res_name, "A", res_seq,
-                    base_x, dy, dz, element,
+                    serial,
+                    atom_name,
+                    res_name,
+                    "A",
+                    res_seq,
+                    base_x,
+                    dy,
+                    dz,
+                    element,
                 )
             )
             serial += 1

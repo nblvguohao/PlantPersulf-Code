@@ -106,9 +106,7 @@ def _duplicate_positions(header: tuple[str, ...]) -> dict[str, tuple[int, ...]]:
     for index, name in enumerate(header):
         positions.setdefault(name, []).append(index)
     return {
-        name: tuple(indices)
-        for name, indices in positions.items()
-        if len(indices) > 1
+        name: tuple(indices) for name, indices in positions.items() if len(indices) > 1
     }
 
 

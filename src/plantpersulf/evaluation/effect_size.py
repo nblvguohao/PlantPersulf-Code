@@ -100,9 +100,7 @@ def paired_cluster_bootstrap_delta_ci(
             "model and baseline must be scored on the same rows "
             f"(got {len(model_scored)} vs {len(baseline_scored)})"
         )
-    for (_, y_m, c_m), (_, y_b, c_b) in zip(
-        model_scored, baseline_scored, strict=True
-    ):
+    for (_, y_m, c_m), (_, y_b, c_b) in zip(model_scored, baseline_scored, strict=True):
         if (y_m, c_m) != (y_b, c_b):
             raise ValueError(
                 "model and baseline rows diverge — both arms must be scored "

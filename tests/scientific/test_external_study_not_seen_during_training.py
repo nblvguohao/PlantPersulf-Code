@@ -17,22 +17,31 @@ from plantpersulf.evaluation.external_validation import (  # RED: module missing
 
 def _rows() -> list[dict[str, str]]:
     return [
-        {"protein_accession": "P1", "cys_position_in_protein": "10",
-         "label": "positive", "study_accession": "PXD_A"},
-        {"protein_accession": "P2", "cys_position_in_protein": "20",
-         "label": "positive", "study_accession": "PXD_B"},
-        {"protein_accession": "P3", "cys_position_in_protein": "30",
-         "label": "unlabeled", "study_accession": ""},
+        {
+            "protein_accession": "P1",
+            "cys_position_in_protein": "10",
+            "label": "positive",
+            "study_accession": "PXD_A",
+        },
+        {
+            "protein_accession": "P2",
+            "cys_position_in_protein": "20",
+            "label": "positive",
+            "study_accession": "PXD_B",
+        },
+        {
+            "protein_accession": "P3",
+            "cys_position_in_protein": "30",
+            "label": "unlabeled",
+            "study_accession": "",
+        },
     ]
 
 
 def test_heldout_study_positives_are_not_in_train() -> None:
     train, test = partition_leave_study_out(_rows(), holdout_study="PXD_A")
 
-    train_positives = [
-        r for r in train
-        if r["label"] == "positive"
-    ]
+    train_positives = [r for r in train if r["label"] == "positive"]
     assert all(r["study_accession"] != "PXD_A" for r in train_positives)
 
     test_positives = [r for r in test if r["label"] == "positive"]

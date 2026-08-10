@@ -27,14 +27,37 @@ from plantpersulf.proteomics.pxd072300_recombinant_sites import (
 )
 
 PROTEIN_HEADER = [
-    "ID", "AC", "Score", "Q-Value", "Coverage", "No.Peptide",
-    "No.Sameset", "No.Subset", "Have_Distinct_Pep", "Description",
+    "ID",
+    "AC",
+    "Score",
+    "Q-Value",
+    "Coverage",
+    "No.Peptide",
+    "No.Sameset",
+    "No.Subset",
+    "Have_Distinct_Pep",
+    "Description",
 ]
 PEPTIDE_HEADER = [
-    "", "", "ID", "Sequence", "Calc.MH+", "Mass_Shift(Exp.-Calc.)",
-    "Raw_Score", "Final_Score", "Modification", "Specificity", "Proteins",
-    "Positions", "Label", "Target/Decoy", "Miss.Clv.Sites",
-    "Avg.Frag.Mass.Shift", "File_Name", "Charge", "Spec_Num",
+    "",
+    "",
+    "ID",
+    "Sequence",
+    "Calc.MH+",
+    "Mass_Shift(Exp.-Calc.)",
+    "Raw_Score",
+    "Final_Score",
+    "Modification",
+    "Specificity",
+    "Proteins",
+    "Positions",
+    "Label",
+    "Target/Decoy",
+    "Miss.Clv.Sites",
+    "Avg.Frag.Mass.Shift",
+    "File_Name",
+    "Charge",
+    "Spec_Num",
 ]
 
 
@@ -51,9 +74,25 @@ def _peptide_row(
     modification: str = "",
 ) -> list[str]:
     return [
-        "", "", pep_id, seq, "1000.0", "0.001", "20.0", "1e-5",
-        modification, "3", "FAKE/", f"{pos_before},{before_res},{after_res}/",
-        "1|", "target", "0", "0.05", "fake.dta", "2", "1",
+        "",
+        "",
+        pep_id,
+        seq,
+        "1000.0",
+        "0.001",
+        "20.0",
+        "1e-5",
+        modification,
+        "3",
+        "FAKE/",
+        f"{pos_before},{before_res},{after_res}/",
+        "1|",
+        "target",
+        "0",
+        "0.05",
+        "fake.dta",
+        "2",
+        "1",
     ]
 
 
@@ -137,7 +176,11 @@ def test_coordinate_mismatch_row_is_ignored(tmp_path: Path) -> None:
         tmp_path,
         [
             _peptide_row(
-                "1", "ZZZZZZZZZZZZZ", 1, "M", "L",
+                "1",
+                "ZZZZZZZZZZZZZ",
+                1,
+                "M",
+                "L",
                 modification="6,Carbamidomethyl[C]S;",
             ),
         ],

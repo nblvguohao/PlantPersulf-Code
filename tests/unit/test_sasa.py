@@ -85,9 +85,11 @@ def test_parse_all_atoms_skips_unsupported_elements() -> None:
 
 
 def test_parse_all_atoms_ignores_non_atom_lines() -> None:
-    text = "HEADER    test\n" + _pdb_atom_line(
-        1, "CA", "ALA", "A", 1, 0.0, 0.0, 0.0, "C"
-    ) + "\nTER\nEND\n"
+    text = (
+        "HEADER    test\n"
+        + _pdb_atom_line(1, "CA", "ALA", "A", 1, 0.0, 0.0, 0.0, "C")
+        + "\nTER\nEND\n"
+    )
     atoms = parse_all_atoms(text)
     assert len(atoms) == 1
 
@@ -102,8 +104,14 @@ def test_isolated_atom_has_full_sphere_sasa() -> None:
     # full probe-inflated sphere surface area, 4*pi*r^2.
     atoms = (
         Atom(
-            chain_id="A", res_seq=1, res_name="ALA", atom_name="CA",
-            element="C", x=0.0, y=0.0, z=0.0,
+            chain_id="A",
+            res_seq=1,
+            res_name="ALA",
+            atom_name="CA",
+            element="C",
+            x=0.0,
+            y=0.0,
+            z=0.0,
         ),
     )
     sasa = compute_atom_sasa(atoms, [0], n_sphere_points=200)

@@ -105,6 +105,7 @@ def test_benchmark_is_deterministic(
     tmp = Path(tempfile.mkdtemp())
     try:
         from plantpersulf.benchmark.labels import build_benchmark_labels
+
         second = build_benchmark_labels(
             site_output_root=site_root,
             proteome_path=Path("data/raw/references/arabidopsis_ref_proteome_v1.fasta"),

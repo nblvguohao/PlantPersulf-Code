@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import csv
 import json
-import random
 import shutil
 import tempfile
 from collections import Counter
@@ -129,9 +128,7 @@ def _seq_feature_vectors(
                 values.append(0.0)
         lookup[(f.protein_accession, f.cys_position)] = values
     default = [0.0] * len(fields)
-    return [
-        lookup.get((acc, pos), default) for acc, pos, _ in rows
-    ]
+    return [lookup.get((acc, pos), default) for acc, pos, _ in rows]
 
 
 # ---------------------------------------------------------------------------
@@ -223,7 +220,6 @@ def _evaluate_one_arm(
     elif arm_name == "seq_structure":
         seq_fields = ("hydrophobicity", "cys_density", "local_positive_charge_density")
 
-    per_fold: list[dict[str, Any]] = []
     per_seed_scores: list[list[float]] = []
 
     for seed in MODEL_SEEDS:
@@ -238,12 +234,18 @@ def _evaluate_one_arm(
 
             # sequence features
             train_seq = _seq_feature_vectors(
-                train_rows, proteome_path, scratch_dir,
-                f"train_{arm_name}_fold{fold_idx}_seed{seed}", seq_fields,
+                train_rows,
+                proteome_path,
+                scratch_dir,
+                f"train_{arm_name}_fold{fold_idx}_seed{seed}",
+                seq_fields,
             )
             test_seq = _seq_feature_vectors(
-                test_rows, proteome_path, scratch_dir,
-                f"test_{arm_name}_fold{fold_idx}_seed{seed}", seq_fields,
+                test_rows,
+                proteome_path,
+                scratch_dir,
+                f"test_{arm_name}_fold{fold_idx}_seed{seed}",
+                seq_fields,
             )
 
             # structure features (if arm includes them)
@@ -251,11 +253,13 @@ def _evaluate_one_arm(
             test_X: list[list[float]]
             if arm_name == "seq_structure":
                 train_struct, _ = _structure_feature_vectors(
-                    train_rows, scratch_dir,
+                    train_rows,
+                    scratch_dir,
                     f"train_struct_fold{fold_idx}_seed{seed}",
                 )
                 test_struct, test_struct_mask = _structure_feature_vectors(
-                    test_rows, scratch_dir,
+                    test_rows,
+                    scratch_dir,
                     f"test_struct_fold{fold_idx}_seed{seed}",
                 )
                 train_X = [s + u for s, u in zip(train_seq, train_struct, strict=True)]
@@ -265,7 +269,7 @@ def _evaluate_one_arm(
                 test_X = test_seq
 
             scores = _fit_pu_logistic(train_X, train_y, test_X, seed)
-            for i, s in zip(test_idx, scores):
+            for i, s in zip(test_idx, scores, strict=True):
                 seed_scores[i] = s
 
             scored = list(zip(scores, test_y, strict=True))
@@ -280,8 +284,7 @@ def _evaluate_one_arm(
     # Ensemble: mean score per row across model seeds
     n_rows = len(all_tuples)
     ens = [
-        sum(per_seed_scores[s][i] for s in range(len(MODEL_SEEDS)))
-        / len(MODEL_SEEDS)
+        sum(per_seed_scores[s][i] for s in range(len(MODEL_SEEDS))) / len(MODEL_SEEDS)
         for i in range(n_rows)
     ]
 
@@ -297,15 +300,17 @@ def _evaluate_one_arm(
         r50 = recall_at_k(scored, 50)
         mrr = mean_reciprocal_rank(scored)
         n_pos = sum(1 for y in fold_y if y == "positive")
-        ens_by_fold.append({
-            "fold": fold_idx,
-            "n_rows": len(test_idx),
-            "n_positive": n_pos,
-            "ap": ap,
-            "recall_at_10": r10,
-            "recall_at_50": r50,
-            "mrr": mrr,
-        })
+        ens_by_fold.append(
+            {
+                "fold": fold_idx,
+                "n_rows": len(test_idx),
+                "n_positive": n_pos,
+                "ap": ap,
+                "recall_at_10": r10,
+                "recall_at_50": r50,
+                "mrr": mrr,
+            }
+        )
 
     all_scored = list(zip(ens, [r.label for r in folded_rows], strict=True))
     ap_all = average_precision(all_scored)
@@ -336,7 +341,8 @@ def _cluster_bootstrap_ci(
     from plantpersulf.evaluation.metrics import average_precision
 
     scored: list[tuple[float, str, str]] = [
-        (s, lab, cid) for s, lab, cid in zip(ens_scores, labels, cluster_ids, strict=True)
+        (s, lab, cid)
+        for s, lab, cid in zip(ens_scores, labels, cluster_ids, strict=True)
     ]
     result = cluster_bootstrap_ci(scored, average_precision, n_boot=n_boot, seed=seed)
     return {"point": result.point, "lower": result.lower, "upper": result.upper}
@@ -353,8 +359,6 @@ def run_tomato_local_v1(
     from plantpersulf.features.sequence import _load_proteome
     from plantpersulf.proteomics.kiae271_sites import parse_kiae271_sites
     from plantpersulf.proteomics.tomato_local_dataset import (
-        ARENA_PANEL,
-        ARENA_PROTEOME,
         assign_grouped_folds,
         build_tomato_pu_rows,
         read_cluster_map,
@@ -386,9 +390,15 @@ def run_tomato_local_v1(
 
     for arena in ARENAS:
         rows = build_tomato_pu_rows(
-            KIAE271_XLSX, proteome, arena, ratio=RATIO, seed=arena_seeds[arena],
+            KIAE271_XLSX,
+            proteome,
+            arena,
+            ratio=RATIO,
+            seed=arena_seeds[arena],
         )
-        folded = assign_grouped_folds(rows, cluster_map, n_folds=N_FOLDS, seed=SEED_FOLDS)
+        folded = assign_grouped_folds(
+            rows, cluster_map, n_folds=N_FOLDS, seed=SEED_FOLDS
+        )
         n_pos = sum(1 for r in folded if r.label == "positive")
         n_unl = sum(1 for r in folded if r.label == "unlabeled")
         n_prots = len({r.protein_accession for r in folded})
@@ -427,7 +437,10 @@ def run_tomato_local_v1(
                 print(f"\n=== {arena} / {arm} ===")
                 tag = f"{arena}_{arm}"
                 arm_result = _evaluate_one_arm(
-                    folded, TOMATO_PROTEOME, arm, scratch / tag,
+                    folded,
+                    TOMATO_PROTEOME,
+                    arm,
+                    scratch / tag,
                 )
                 # Re-extract ensembled scores for bootstrap
                 all_tuples = [
@@ -437,11 +450,19 @@ def run_tomato_local_v1(
                 if arm == "seq_2":
                     seq_fields = ("hydrophobicity", "cys_density")
                 else:
-                    seq_fields = ("hydrophobicity", "cys_density", "local_positive_charge_density")
+                    seq_fields = (
+                        "hydrophobicity",
+                        "cys_density",
+                        "local_positive_charge_density",
+                    )
 
                 # re-train across folds to get ensembled scores
                 ens_scores = _recompute_ensemble(
-                    folded, all_tuples, TOMATO_PROTEOME, scratch / f"ens_{tag}", arm,
+                    folded,
+                    all_tuples,
+                    TOMATO_PROTEOME,
+                    scratch / f"ens_{tag}",
+                    arm,
                     seq_fields,
                 )
                 labels = [r.label for r in folded]
@@ -461,9 +482,7 @@ def run_tomato_local_v1(
                     "ap_bootstrap_ci": ci,
                 }
 
-                print(
-                    f"  per-fold AP: {per_fold_aps}"
-                )
+                print(f"  per-fold AP: {per_fold_aps}")
                 print(
                     f"  mean fold AP: {mean_ap:.4f}, "
                     f"ensemble AP: {arm_result['ensemble_ap']:.4f}, "
@@ -514,7 +533,11 @@ def run_tomato_local_v1(
                 "description": "Replicates the 2-feature cross-species panel evaluation baseline",
             },
             "seq_3": {
-                "features": ["hydrophobicity", "cys_density", "local_positive_charge_density"],
+                "features": [
+                    "hydrophobicity",
+                    "cys_density",
+                    "local_positive_charge_density",
+                ],
                 "description": "Adds thiolate-stabilisation proxy (K/R fraction in flanking window)",
             },
             "seq_structure": {
@@ -574,21 +597,29 @@ def _recompute_ensemble(
             train_y = [folded_rows[i].label for i in train_idx]
 
             train_seq = _seq_feature_vectors(
-                train_rows, proteome_path, scratch_dir,
-                f"ens_train_{arm}_f{fold_idx}_s{seed}", seq_fields,
+                train_rows,
+                proteome_path,
+                scratch_dir,
+                f"ens_train_{arm}_f{fold_idx}_s{seed}",
+                seq_fields,
             )
             test_seq = _seq_feature_vectors(
-                test_rows, proteome_path, scratch_dir,
-                f"ens_test_{arm}_f{fold_idx}_s{seed}", seq_fields,
+                test_rows,
+                proteome_path,
+                scratch_dir,
+                f"ens_test_{arm}_f{fold_idx}_s{seed}",
+                seq_fields,
             )
 
             if arm == "seq_structure":
                 train_struct, _ = _structure_feature_vectors(
-                    train_rows, scratch_dir,
+                    train_rows,
+                    scratch_dir,
                     f"ens_train_struct_f{fold_idx}_s{seed}",
                 )
                 test_struct, _ = _structure_feature_vectors(
-                    test_rows, scratch_dir,
+                    test_rows,
+                    scratch_dir,
                     f"ens_test_struct_f{fold_idx}_s{seed}",
                 )
                 train_X = [s + u for s, u in zip(train_seq, train_struct, strict=True)]
@@ -598,13 +629,12 @@ def _recompute_ensemble(
                 test_X = test_seq
 
             scores = _fit_pu_logistic(train_X, train_y, test_X, seed)
-            for i, s in zip(test_idx, scores):
+            for i, s in zip(test_idx, scores, strict=True):
                 seed_scores[i] = s
         per_seed_scores.append(seed_scores)
 
     return [
-        sum(per_seed_scores[s][i] for s in range(len(MODEL_SEEDS)))
-        / len(MODEL_SEEDS)
+        sum(per_seed_scores[s][i] for s in range(len(MODEL_SEEDS))) / len(MODEL_SEEDS)
         for i in range(n_rows)
     ]
 
@@ -615,9 +645,6 @@ def _write_per_site_scores(
     proteome_path: Path,
 ) -> None:
     """Write per-site scores for the seq_3 and seq_structure arms, both arenas."""
-    from plantpersulf.features.sequence import _load_proteome
-
-    proteome = _load_proteome(proteome_path)
     scratch = Path(tempfile.mkdtemp(prefix="tomato_local_v1_scores_"))
 
     try:
@@ -630,11 +657,19 @@ def _write_per_site_scores(
                 seq_fields: tuple[str, ...] = (
                     ("hydrophobicity", "cys_density")
                     if arm == "seq_2"
-                    else ("hydrophobicity", "cys_density", "local_positive_charge_density")
+                    else (
+                        "hydrophobicity",
+                        "cys_density",
+                        "local_positive_charge_density",
+                    )
                 )
                 ens_scores = _recompute_ensemble(
-                    folded, all_tuples, proteome_path,
-                    scratch / f"scores_{arena}_{arm}", arm, seq_fields,
+                    folded,
+                    all_tuples,
+                    proteome_path,
+                    scratch / f"scores_{arena}_{arm}",
+                    arm,
+                    seq_fields,
                 )
 
                 fields = (
@@ -646,21 +681,25 @@ def _write_per_site_scores(
                     "score",
                 )
                 rows_out: list[dict[str, str]] = []
-                for row, score in zip(folded, ens_scores):
-                    rows_out.append({
-                        "protein_accession": row.protein_accession,
-                        "cys_position": str(row.cys_position),
-                        "label": row.label,
-                        "cluster_id": row.cluster_id,
-                        "fold": str(row.fold),
-                        "score": f"{score:.10g}",
-                    })
+                for row, score in zip(folded, ens_scores, strict=True):
+                    rows_out.append(
+                        {
+                            "protein_accession": row.protein_accession,
+                            "cys_position": str(row.cys_position),
+                            "label": row.label,
+                            "cluster_id": row.cluster_id,
+                            "fold": str(row.fold),
+                            "score": f"{score:.10g}",
+                        }
+                    )
                 path = output_dir / f"scores_{arena}_{arm}.tsv"
                 path.parent.mkdir(parents=True, exist_ok=True)
                 with path.open("w", encoding="utf-8", newline="") as h:
                     w = csv.DictWriter(
-                        h, fieldnames=list(fields),
-                        delimiter="\t", lineterminator="\n",
+                        h,
+                        fieldnames=list(fields),
+                        delimiter="\t",
+                        lineterminator="\n",
                     )
                     w.writeheader()
                     w.writerows(rows_out)
@@ -676,7 +715,9 @@ def build_parser() -> Any:
         description="tomato-local model v1: within-species training & evaluation"
     )
     p.add_argument(
-        "--output-dir", type=Path, default=OUTPUT_DIR,
+        "--output-dir",
+        type=Path,
+        default=OUTPUT_DIR,
     )
     return p
 

@@ -59,9 +59,7 @@ def test_go_manifest_has_no_labels_and_is_fail_safe(tmp_path: Path) -> None:
 
     import json
 
-    manifest = json.loads(
-        (output_dir / "manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((output_dir / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["decision"] == "GO"
     assert manifest["benchmark_created"] is False  # benchmark not yet built
     assert manifest["labels_created"] is False

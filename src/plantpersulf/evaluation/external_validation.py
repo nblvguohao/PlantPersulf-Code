@@ -59,6 +59,46 @@ def partition_leave_study_out(
     return train, test
 
 
+def partition_random_protein(
+    rows: list[Row],
+    seed: int,
+    test_ratio: float = 0.2,
+) -> tuple[list[Row], list[Row]]:
+    """Random protein-level split — literature-comparable regime, NOT
+    cross-study validation.
+
+    Mirrors the evaluation regime of published cysteine-PTM predictors
+    (Sul-BertGRU, Bioinformatics 2025, btaf078: 20% of proteins held out as
+    an independent test set, 10 repetitions). ``test_ratio`` of *proteins*
+    are held out entirely — all their Cys rows (positive and unlabeled) go
+    to test; the remaining proteins go to train. Deterministic per ``seed``.
+
+    Deliberately NO homology control: this matches the published regime so
+    the resulting numbers are comparable with the literature. It therefore
+    does NOT cross a study, laboratory, chemistry, or species boundary, and
+    its output must never enter Gate 2 — scripts/validate_external.py only
+    parses ``leave_<study>_out``-tagged model names, and the runner tags
+    this track's folds ``protein_split_seed<k>|...`` so they are structurally
+    invisible to Gate 2 (locked in by
+    tests/release/test_gate2_ignores_within_dataset_split_metrics.py).
+    """
+    import random
+
+    proteins = sorted({r["protein_accession"] for r in rows})
+    rng = random.Random(seed)
+    rng.shuffle(proteins)
+    n_test = max(1, round(len(proteins) * test_ratio))
+    test_proteins = set(proteins[:n_test])
+    train: list[Row] = []
+    test: list[Row] = []
+    for row in rows:
+        if row["protein_accession"] in test_proteins:
+            test.append(row)
+        else:
+            train.append(row)
+    return train, test
+
+
 # ---------------------------------------------------------------------------
 # known-mechanism control integrity
 # ---------------------------------------------------------------------------
@@ -83,7 +123,8 @@ def find_control_training_leakage(
     """Return mapped controls whose (accession, position) is a training
     positive — such a control cannot be an independent recovery."""
     return [
-        c for c in controls
+        c
+        for c in controls
         if c.status == RECOVERED_STATUS
         and (c.uniprot_accession, c.cys_position) in training_positives
     ]
@@ -96,9 +137,7 @@ def count_independent_validation_units(controls: list[ControlRecord]) -> int:
     count as independent validation units.
     """
     lineages = {
-        c.mechanism_lineage_id
-        for c in controls
-        if c.status == RECOVERED_STATUS
+        c.mechanism_lineage_id for c in controls if c.status == RECOVERED_STATUS
     }
     return len(lineages)
 

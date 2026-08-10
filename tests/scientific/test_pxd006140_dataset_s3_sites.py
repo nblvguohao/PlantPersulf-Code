@@ -72,9 +72,7 @@ def test_persulfidation_mod_codes_exclude_control_and_artifact() -> None:
 
 def test_only_author_designated_persulfidation_cysteines_become_sites() -> None:
     result = _normalized()
-    sites = {
-        (s.protein_accession_raw, s.cys_position_in_protein) for s in result.sites
-    }
+    sites = {(s.protein_accession_raw, s.cys_position_in_protein) for s in result.sites}
 
     # O03042 C284 (MOD:99998) + O03042 C247 (MOD:99996) + Q9SLA0 C353 (MOD:99997)
     assert sites == {("O03042", 284), ("O03042", 247), ("Q9SLA0", 353)}
@@ -98,9 +96,7 @@ def test_multicysteine_peptide_marks_only_the_modified_cysteine() -> None:
 def test_isoform_multimapped_spectrum_goes_to_conflicts_not_a_site() -> None:
     result = _normalized()
 
-    assert not any(
-        s.protein_accession_raw.startswith("P27140") for s in result.sites
-    )
+    assert not any(s.protein_accession_raw.startswith("P27140") for s in result.sites)
     reasons = {c.reason for c in result.conflicts}
     assert any("isoform" in r or "multi" in r for r in reasons)
 

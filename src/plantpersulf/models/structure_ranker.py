@@ -38,6 +38,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Literal
 
 import numpy as np
+from numpy.typing import NDArray
 
 from plantpersulf.models.pu_risk import estimate_label_frequency, pu_example_weights
 from plantpersulf.models.traditional import TrainOnlyScaler
@@ -53,13 +54,15 @@ ArmLabel = Literal[
     "sequence_contact_plddt",
 ]
 
-ALLOWED_ARMS = frozenset({
-    "sequence_only",
-    "sequence_coverage_only",
-    "sequence_contact",
-    "sequence_plddt",
-    "sequence_contact_plddt",
-})
+ALLOWED_ARMS = frozenset(
+    {
+        "sequence_only",
+        "sequence_coverage_only",
+        "sequence_contact",
+        "sequence_plddt",
+        "sequence_contact_plddt",
+    }
+)
 
 
 # ---------------------------------------------------------------------------
@@ -112,14 +115,14 @@ class ProjectedStructureInputs:
     column, not either scientific structure column.
     """
 
-    values: np.ndarray
-    mask: np.ndarray
+    values: NDArray[np.float64]
+    mask: NDArray[np.float64]
 
 
 def project_structure_inputs(
     *,
-    structure: np.ndarray,
-    mask: np.ndarray,
+    structure: NDArray[np.float64],
+    mask: NDArray[np.float64],
     arm: str,
 ) -> ProjectedStructureInputs:
     """Project raw [contact_proxy, plddt] columns onto the subset the arm
@@ -153,10 +156,12 @@ def project_structure_inputs(
         # present structure yields 1.0. The raw structure columns are never
         # consulted. Output shape matches d_str=2 so the existing encoder
         # works without width changes.
-        vals = np.hstack([
-            mask.astype(np.float64),
-            np.zeros_like(mask, dtype=np.float64),
-        ])
+        vals = np.hstack(
+            [
+                mask.astype(np.float64),
+                np.zeros_like(mask, dtype=np.float64),
+            ]
+        )
         return ProjectedStructureInputs(
             values=vals,
             mask=mask.astype(np.float64),
@@ -429,8 +434,12 @@ def _train_network(
     for _ in range(epochs):
         opt.zero_grad()
         logits = net(
-            tensors["seq"], tensors["esm"], tensors["struct"],
-            tensors["struct_active"], tensors["study"], tensors["study_active"],
+            tensors["seq"],
+            tensors["esm"],
+            tensors["struct"],
+            tensors["struct_active"],
+            tensors["study"],
+            tensors["study_active"],
         )
         per = loss_fn(logits, s_labels)
         loss = (per * weights).sum() / weights.sum()
@@ -445,8 +454,12 @@ def _forward_scores(
 
     with torch.no_grad():
         logits = net(
-            tensors["seq"], tensors["esm"], tensors["struct"],
-            tensors["struct_active"], tensors["study"], tensors["study_active"],
+            tensors["seq"],
+            tensors["esm"],
+            tensors["struct"],
+            tensors["struct_active"],
+            tensors["study"],
+            tensors["study_active"],
         )
         return torch.sigmoid(logits).to("cpu")
 
@@ -575,8 +588,11 @@ def structure_ranker_scores(
     with torch.no_grad():
         for _ in range(n_mc_dropout):
             logits = net_b(
-                predict_t["seq"], predict_t["esm"], predict_t["struct"],
-                predict_t["struct_active"], predict_t["study"],
+                predict_t["seq"],
+                predict_t["esm"],
+                predict_t["struct"],
+                predict_t["struct_active"],
+                predict_t["study"],
                 predict_t["study_active"],
             )
             samples.append([float(x) for x in torch.sigmoid(logits).tolist()])
@@ -594,5 +610,5 @@ def _column_std(samples: list[list[float]], n_cols: int) -> list[float]:
         col = [row[j] for row in samples]
         mean = sum(col) / n
         var = sum((x - mean) ** 2 for x in col) / n
-        out.append(var ** 0.5)
+        out.append(var**0.5)
     return out

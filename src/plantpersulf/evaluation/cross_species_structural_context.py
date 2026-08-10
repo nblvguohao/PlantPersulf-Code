@@ -115,9 +115,7 @@ def build_structural_context_rows(
         if structure_path is None or sequence is None or not structure_path.is_file():
             continue
 
-        cys_positions = [
-            i + 1 for i, residue in enumerate(sequence) if residue == "C"
-        ]
+        cys_positions = [i + 1 for i, residue in enumerate(sequence) if residue == "C"]
         if not cys_positions:
             continue
 
@@ -244,9 +242,7 @@ def build_structural_context_rows_sasa(
         if structure_path is None or sequence is None or not structure_path.is_file():
             continue
 
-        cys_positions = [
-            i + 1 for i, residue in enumerate(sequence) if residue == "C"
-        ]
+        cys_positions = [i + 1 for i, residue in enumerate(sequence) if residue == "C"]
         if not cys_positions:
             continue
 
@@ -306,9 +302,7 @@ def sasa_structural_context_test(
     if metric == "residue_sasa":
         scored: Scored = [(row.residue_sasa, row.label) for row in rows]
     elif metric == "sg_sasa":
-        scored = [
-            (row.sg_sasa, row.label) for row in rows if row.sg_sasa is not None
-        ]
+        scored = [(row.sg_sasa, row.label) for row in rows if row.sg_sasa is not None]
     else:
         raise ValueError(f"unknown metric: {metric!r}")
 

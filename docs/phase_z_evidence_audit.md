@@ -434,9 +434,15 @@ Seville 研究均为单蛋白机制研究(各含 1–2 个验证位点)。
 | 小麦 TaATG6c(Stress Biol 2026) | 小麦 | Xiaojing Wang, 西北农林(独立) | LC-MS/MS | 2 个验证位点 | **无数据库沉积** | 不可用 |
 | 小鼠限食 persulfidome(Nat Commun 2021) | 小鼠多组织 | Bithi et al.(独立) | — | 全蛋白质组 | 沉积号未确认 | 候选 C(确认沉积后可并入) |
 
-补充:Sul-BertGRU(Bioinformatics 2025)的训练集为 2,705 阳性位点的
-文献整合集——再次印证"非 Seville 植物位点级数据"在全领域都稀缺,
-SOTA 同样依赖混合物种文献位点。
+补充:Sul-BertGRU(Bioinformatics 2025, btaf078)的训练集为 2,705 阳性位点,
+源自 iCysMod 数据库(icysmod.omicsbio.info)——与 pCysMod 同属
+omicsbio.info 体系的文献整理库;正文未报告物种组成,应用导向为人类
+疾病(心血管、神经退行)。其评估为随机蛋白级 80/20 切分 + 10 次重复,
+无同源控制(2026-08-10 原文核对:docs/compete/btaf078.pdf)。再次印证
+"非 Seville 植物位点级数据"在全领域都稀缺,SOTA 同样依赖混合物种
+文献位点。据此新增同行可比轨道 pu_ranker_protein_split_v1(随机蛋白
+切分+10 次重复,与 Sul-BertGRU 同口径;不得进入 Gate 2),见
+docs/superpowers/specs/2026-07-21-phase-f-pu-ranker-design.md 评估轨道章节。
 
 **执行状态(2026-07-22)**:候选 A 的"跨物种迁移"轨道已建成并首跑
 (拟南芥 PU 训练 → 对真菌蛋白组 Cys 打分 → 回收其 persulfidation 位点;

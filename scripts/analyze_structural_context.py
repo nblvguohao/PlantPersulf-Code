@@ -32,9 +32,7 @@ RICE_SD04 = Path("data/raw/supplements/PXD072089/pnas.2608150123.sd04.xlsx")
 RICE_SS = Path("data/raw/supplements/PXD072089/SS-all-peptides.tsv")
 RICE_PROTEOME = Path("data/raw/references/rice_proteome_v1/uniprot_rice_v1.fasta")
 MG_SITE_TSV = Path("data/raw/supplements/PXD063170/PXD063170_sites_moesm3.tsv")
-MG_PROTEOME = Path(
-    "data/raw/supplements/PXD063170/Magnaporthe_oryzae.MG8.pep.all.fa"
-)
+MG_PROTEOME = Path("data/raw/supplements/PXD063170/Magnaporthe_oryzae.MG8.pep.all.fa")
 PANTHER_MG = Path(
     "data/raw/references/panther_annotations_v1/panther_magnaporthe_taxon242507.tsv"
 )
@@ -235,8 +233,7 @@ def run_structural_context_analysis(
     }
     for metric, dirs in sasa_directions_by_metric.items():
         print(
-            f"[SASA:{metric}] direction consistent: "
-            f"{sasa_consistency[metric]} ({dirs})"
+            f"[SASA:{metric}] direction consistent: {sasa_consistency[metric]} ({dirs})"
         )
 
     summary: dict[str, Any] = {
@@ -284,9 +281,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--output",
         type=Path,
-        default=Path(
-            "results/cross_species_conservation/structural_context_v1.json"
-        ),
+        default=Path("results/cross_species_conservation/structural_context_v1.json"),
     )
     p.add_argument("--n-perm", type=int, default=1000)
     p.add_argument("--seed", type=int, default=0)

@@ -128,18 +128,14 @@ def test_contaminants_are_excluded_and_never_become_sites() -> None:
 
     emitted = list(result.sites) + list(result.low_confidence)
     assert not any(s.protein_accession_raw.startswith("CON__") for s in emitted)
-    assert any(
-        "contaminant" in issue.reason for issue in result.excluded
-    )
+    assert any("contaminant" in issue.reason for issue in result.excluded)
 
 
 def test_cianobiotin_sites_carry_the_labeled_persulfidation_modification() -> None:
     result = _cianobiotin()
 
     assert _sites(result) == {("Q8VZF1", 290)}
-    assert all(
-        s.modification_name_raw == "CN-Biotin-Sulfide" for s in result.sites
-    )
+    assert all(s.modification_name_raw == "CN-Biotin-Sulfide" for s in result.sites)
 
 
 def test_fixture_provenance_is_intact() -> None:

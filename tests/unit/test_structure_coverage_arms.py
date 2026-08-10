@@ -5,7 +5,6 @@ or pLDDT values regardless of what the raw structure array contains."""
 from __future__ import annotations
 
 import numpy as np
-
 import pytest
 
 
@@ -99,8 +98,12 @@ class TestProjectStructureInputs:
     def test_missing_structure_produces_zero_projection_and_mask_0(self) -> None:
         from plantpersulf.models.structure_ranker import project_structure_inputs
 
-        for arm in ("sequence_contact", "sequence_plddt",
-                     "sequence_contact_plddt", "sequence_coverage_only"):
+        for arm in (
+            "sequence_contact",
+            "sequence_plddt",
+            "sequence_contact_plddt",
+            "sequence_coverage_only",
+        ):
             result = project_structure_inputs(
                 structure=np.array([[99.0, 99.0]]),
                 mask=np.array([[0.0]]),

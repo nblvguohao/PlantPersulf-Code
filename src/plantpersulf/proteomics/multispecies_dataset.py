@@ -37,6 +37,7 @@ from __future__ import annotations
 import csv
 import random
 from collections import defaultdict
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -117,10 +118,10 @@ def family_stats_from_panther(
 
 
 def build_multispecies_sites(
-    arabidopsis: list[MultispeciesSite] = (),
-    tomato: list[MultispeciesSite] = (),
-    rice: list[MultispeciesSite] = (),
-    magnaporthe: list[MultispeciesSite] = (),
+    arabidopsis: Sequence[MultispeciesSite] = (),
+    tomato: Sequence[MultispeciesSite] = (),
+    rice: Sequence[MultispeciesSite] = (),
+    magnaporthe: Sequence[MultispeciesSite] = (),
 ) -> tuple[MultispeciesSite, ...]:
     """Merge per-species site lists into one deduplicated, sorted tuple.
 
@@ -136,7 +137,10 @@ def build_multispecies_sites(
             seen[key] = site
     order = {s: i for i, s in enumerate(ALL_SPECIES)}
     return tuple(
-        sorted(seen.values(), key=lambda s: (order[s.species], s.protein_accession, s.cys_position))
+        sorted(
+            seen.values(),
+            key=lambda s: (order[s.species], s.protein_accession, s.cys_position),
+        )
     )
 
 
@@ -184,9 +188,7 @@ def family_grouped_folds(
 
     folds: list[tuple[list[int], list[int]]] = []
     for test_families in fold_families:
-        test_idx = sorted(
-            i for f in test_families for i in family_to_idx[f]
-        )
+        test_idx = sorted(i for f in test_families for i in family_to_idx[f])
         test_set = set(test_idx)
         train_idx = [i for i in range(len(sites)) if i not in test_set]
         folds.append((train_idx, test_idx))

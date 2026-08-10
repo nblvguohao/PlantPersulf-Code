@@ -141,9 +141,7 @@ def _readiness_status(row: Row) -> str:
         return "eligible_site_evidence"
     if int(row["coordinate_only_count"]):
         return "coordinate_only_not_site_evidence"
-    if int(row["non_site_evidence_count"]) or int(
-        row["unresolved_candidate_count"]
-    ):
+    if int(row["non_site_evidence_count"]) or int(row["unresolved_candidate_count"]):
         return "non_site_evidence_only"
     return row["content_audit_status"]
 
@@ -155,9 +153,7 @@ def _study_rows(
     evidence_rows: list[Row],
     candidate_rows: list[Row],
 ) -> list[Row]:
-    content_by_study = {
-        row["dataset_accession"]: row for row in content_studies
-    }
+    content_by_study = {row["dataset_accession"]: row for row in content_studies}
     if tuple(content_by_study) != policy.studies:
         raise RuntimeError("content audit studies differ from readiness policy")
 
@@ -167,18 +163,13 @@ def _study_rows(
             row for row in parser_rows if row["study_accession"] == accession
         ]
         evidence_for_study = [
-            row
-            for row in evidence_rows
-            if row["dataset_accession"] == accession
+            row for row in evidence_rows if row["dataset_accession"] == accession
         ]
         candidates_for_study = [
-            row
-            for row in candidate_rows
-            if row["dataset_accession"] == accession
+            row for row in candidate_rows if row["dataset_accession"] == accession
         ]
         eligible_count = sum(
-            row["evidence_level"] in policy.eligible_levels
-            for row in parser_for_study
+            row["evidence_level"] in policy.eligible_levels for row in parser_for_study
         ) + sum(
             row["evidence_class"] in policy.eligible_levels
             for row in evidence_for_study + candidates_for_study
@@ -204,9 +195,7 @@ def _study_rows(
                     for item in candidates_for_study
                 )
             ),
-            "content_audit_status": content_by_study[accession][
-                "content_audit_status"
-            ],
+            "content_audit_status": content_by_study[accession]["content_audit_status"],
             "readiness_status": "",
         }
         row["readiness_status"] = _readiness_status(row)
@@ -238,9 +227,7 @@ def _blockers(
                 "source_locator": source,
             }
         )
-    eligible_studies = sum(
-        int(row["eligible_site_count"]) > 0 for row in studies
-    )
+    eligible_studies = sum(int(row["eligible_site_count"]) > 0 for row in studies)
     if eligible_studies == 0:
         rows.append(
             {
@@ -257,9 +244,7 @@ def _blockers(
             {
                 "scope": "global",
                 "study_accession": "",
-                "blocker_code": (
-                    "insufficient_distinct_site_evidence_studies"
-                ),
+                "blocker_code": ("insufficient_distinct_site_evidence_studies"),
                 "observed_value": str(eligible_studies),
                 "required_value": str(policy.required_study_count),
                 "source_locator": "configs/benchmark_readiness_v1.yaml",
@@ -280,21 +265,13 @@ def _summary(
     blockers: list[Row],
     required_study_count: int,
 ) -> BenchmarkReadinessSummary:
-    eligible_studies = sum(
-        int(row["eligible_site_count"]) > 0 for row in studies
-    )
+    eligible_studies = sum(int(row["eligible_site_count"]) > 0 for row in studies)
     return BenchmarkReadinessSummary(
-        decision=(
-            "GO" if eligible_studies >= required_study_count else "STOP"
-        ),
+        decision=("GO" if eligible_studies >= required_study_count else "STOP"),
         study_count=len(studies),
         eligible_study_count=eligible_studies,
-        eligible_site_count=sum(
-            int(row["eligible_site_count"]) for row in studies
-        ),
-        coordinate_only_count=sum(
-            int(row["coordinate_only_count"]) for row in studies
-        ),
+        eligible_site_count=sum(int(row["eligible_site_count"]) for row in studies),
+        coordinate_only_count=sum(int(row["coordinate_only_count"]) for row in studies),
         non_site_evidence_count=sum(
             int(row["non_site_evidence_count"]) for row in studies
         ),
@@ -327,9 +304,7 @@ def build_benchmark_readiness(
     audit_site_output("PXD006140", parser_output_root, registry_dir)
     audit_content_output(content_output_directory)
 
-    parser_directory = (
-        parser_output_root / "PXD006140" / "proteomics_parser_v1"
-    )
+    parser_directory = parser_output_root / "PXD006140" / "proteomics_parser_v1"
     parser_rows = _read_tsv(parser_directory / "sites.tsv", SITE_FIELDS)
     content_studies = _read_tsv(
         content_output_directory / "study_inventory.tsv", STUDY_FIELDS
@@ -430,9 +405,7 @@ def audit_benchmark_readiness(
     output_directory: Path,
 ) -> BenchmarkReadinessSummary:
     """Rehash the readiness inputs and verify a label-free decision."""
-    observed = {
-        path.name for path in output_directory.iterdir() if path.is_file()
-    }
+    observed = {path.name for path in output_directory.iterdir() if path.is_file()}
     if observed != set(OUTPUT_NAMES):
         raise RuntimeError("benchmark readiness output file set mismatch")
     manifest_path = output_directory / "manifest.json"
@@ -464,9 +437,7 @@ def audit_benchmark_readiness(
             if resolution == "repository"
             else output_directory / stored_path
         )
-        if not path.is_file() or hash_file(path, "sha256") != entry.get(
-            "sha256"
-        ):
+        if not path.is_file() or hash_file(path, "sha256") != entry.get("sha256"):
             raise RuntimeError(f"readiness input SHA256 mismatch: {path}")
         input_paths[str(entry.get("name", ""))] = path
     if set(input_paths) != {
@@ -486,9 +457,7 @@ def audit_benchmark_readiness(
         name = str(entry.get("file", ""))
         declared.add(name)
         path = output_directory / name
-        if not path.is_file() or hash_file(path, "sha256") != entry.get(
-            "sha256"
-        ):
+        if not path.is_file() or hash_file(path, "sha256") != entry.get("sha256"):
             raise RuntimeError(f"readiness output SHA256 mismatch: {path}")
     if declared != set(OUTPUT_NAMES) - {"manifest.json"}:
         raise RuntimeError("benchmark readiness output list mismatch")
@@ -500,8 +469,7 @@ def audit_benchmark_readiness(
     if tuple(row["study_accession"] for row in studies) != policy.studies:
         raise RuntimeError("benchmark readiness study order mismatch")
     if any(
-        "label" in field.lower()
-        for field in STUDY_READINESS_FIELDS + BLOCKER_FIELDS
+        "label" in field.lower() for field in STUDY_READINESS_FIELDS + BLOCKER_FIELDS
     ):
         raise RuntimeError("benchmark readiness output contains a label field")
     summary = _summary(studies, blockers, policy.required_study_count)

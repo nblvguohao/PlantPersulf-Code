@@ -47,14 +47,15 @@ class TestRunStructureCoverageScoring:
         from scripts.score_structure_coverage import (
             run_structure_coverage_scoring,
         )
+
         assert callable(run_structure_coverage_scoring)
 
     def test_config_hashing_catches_mismatch(self, tmp_path: Path) -> None:
         """A config with a wrong hash should be rejected."""
+        from plantpersulf.evaluation.structure_coverage_audit import sha256_file
         from plantpersulf.evaluation.structure_coverage_config import (
             load_structure_coverage_config,
         )
-        from plantpersulf.evaluation.structure_coverage_audit import sha256_file
 
         cfg = load_structure_coverage_config(
             Path("configs/experiments/pu_ranker_structcover_v2.yaml")

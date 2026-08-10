@@ -8,24 +8,27 @@ the exact five-arm ESM-free design is a ``RuntimeError``.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 import yaml
 
-ALLOWED_ARMS = frozenset({
-    "sequence_only",
-    "sequence_coverage_only",
-    "sequence_contact",
-    "sequence_plddt",
-    "sequence_contact_plddt",
-})
+ALLOWED_ARMS = frozenset(
+    {
+        "sequence_only",
+        "sequence_coverage_only",
+        "sequence_contact",
+        "sequence_plddt",
+        "sequence_contact_plddt",
+    }
+)
 
-FORBIDDEN_OUTPUT_ROOTS = frozenset({
-    "pu_ranker_v1",
-    "external_validation",
-})
+FORBIDDEN_OUTPUT_ROOTS = frozenset(
+    {
+        "pu_ranker_v1",
+        "external_validation",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -69,10 +72,12 @@ class StructureCoverageExperimentConfig:
     output_directory: str
 
     def _replace(self, **kwargs: object) -> StructureCoverageExperimentConfig:
-        return StructureCoverageExperimentConfig(**{
-            **self.__dict__,
-            **kwargs,
-        })  # type: ignore[arg-type]
+        return StructureCoverageExperimentConfig(
+            **{
+                **self.__dict__,
+                **kwargs,
+            }
+        )
 
 
 def load_structure_coverage_config(
@@ -142,8 +147,10 @@ def load_structure_coverage_config(
         ranker_epochs=int(rnk.get("epochs", 200)),
         ranker_lr=float(rnk.get("lr", 0.05)),
         ranker_n_mc_dropout=int(rnk.get("n_mc_dropout", 16)),
-        arms={str(k): {str(ak): bool(av) for ak, av in dict(v).items()}
-              for k, v in arms_raw.items()},
+        arms={
+            str(k): {str(ak): bool(av) for ak, av in dict(v).items()}
+            for k, v in arms_raw.items()
+        },
         output_directory=str(out.get("directory", "")),
     )
 

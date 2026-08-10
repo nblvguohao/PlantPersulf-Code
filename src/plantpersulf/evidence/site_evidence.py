@@ -89,15 +89,15 @@ def load_reviewed_site_mappings(path: Path) -> tuple[ReviewedSiteMapping, ...]:
             raise RuntimeError("reviewed site mapping must be a mapping")
         entry = cast(dict[str, Any], raw)
         tolerance = entry.get("mass_tolerance")
-        if not isinstance(tolerance, (int, float)) or isinstance(
-            tolerance, bool
-        ) or tolerance < 0:
+        if (
+            not isinstance(tolerance, (int, float))
+            or isinstance(tolerance, bool)
+            or tolerance < 0
+        ):
             raise RuntimeError("reviewed site mapping has invalid mass_tolerance")
         persulfidation = _required_string(entry, "persulfidation_evidence")
         if persulfidation != SITE_EVIDENCE_CLASS:
-            raise RuntimeError(
-                "reviewed site mapping may only assign site_ms evidence"
-            )
+            raise RuntimeError("reviewed site mapping may only assign site_ms evidence")
         mappings.append(
             ReviewedSiteMapping(
                 study_accession=_required_string(entry, "study_accession"),
@@ -108,9 +108,7 @@ def load_reviewed_site_mappings(path: Path) -> tuple[ReviewedSiteMapping, ...]:
                 ),
                 mass_tolerance=float(tolerance),
                 evidence_scope=_required_string(entry, "evidence_scope"),
-                method_source_sha256=_required_string(
-                    entry, "method_source_sha256"
-                ),
+                method_source_sha256=_required_string(entry, "method_source_sha256"),
                 persulfidation_evidence=persulfidation,
             )
         )
@@ -153,9 +151,7 @@ def apply_reviewed_site_mappings(
     """Upgrade candidates to site_ms only under a registered reviewed mapping."""
     registered = {
         (source.study_accession, source.sha256)
-        for source in audit_method_sources(
-            method_config_path, method_registry_path
-        )
+        for source in audit_method_sources(method_config_path, method_registry_path)
     }
     for mapping in mappings:
         if (
@@ -170,11 +166,7 @@ def apply_reviewed_site_mappings(
     decisions: list[SiteEvidenceDecision] = []
     for candidate in candidates:
         matched = next(
-            (
-                mapping
-                for mapping in mappings
-                if _mapping_matches(candidate, mapping)
-            ),
+            (mapping for mapping in mappings if _mapping_matches(candidate, mapping)),
             None,
         )
         if matched is None:

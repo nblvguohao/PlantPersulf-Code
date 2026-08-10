@@ -145,9 +145,7 @@ def attrition_bias_test(
             kept_redox / len(kept_descriptions) if kept_descriptions else 0.0
         ),
         dropped_redox_fraction=(
-            dropped_redox / len(dropped_descriptions)
-            if dropped_descriptions
-            else 0.0
+            dropped_redox / len(dropped_descriptions) if dropped_descriptions else 0.0
         ),
         odds_ratio=odds_ratio,
         p_value=p_value,

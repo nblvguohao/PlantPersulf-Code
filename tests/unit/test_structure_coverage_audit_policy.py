@@ -23,8 +23,9 @@ REAL_REGISTRY = Path("data/registry/releases/alphafold_structures_release_v1.tsv
 
 class TestFrozenFileVerification:
     def test_verify_frozen_file_passes_when_hash_matches(self) -> None:
-        item = FrozenFile(name="test", path=REAL_REGISTRY,
-                         sha256=sha256_file(REAL_REGISTRY))
+        item = FrozenFile(
+            name="test", path=REAL_REGISTRY, sha256=sha256_file(REAL_REGISTRY)
+        )
         verify_frozen_file(item)  # must not raise
 
     def test_verify_frozen_file_raises_on_mismatch(self, tmp_path: Path) -> None:
@@ -33,8 +34,7 @@ class TestFrozenFileVerification:
         # Append a byte so the hash changes
         with tampered.open("ab") as f:
             f.write(b"tampered\n")
-        item = FrozenFile(name="test", path=tampered,
-                         sha256=sha256_file(REAL_REGISTRY))
+        item = FrozenFile(name="test", path=tampered, sha256=sha256_file(REAL_REGISTRY))
         with pytest.raises(RuntimeError, match="SHA256 mismatch"):
             verify_frozen_file(item)
 

@@ -131,9 +131,7 @@ def test_study_split_holds_out_designated_study(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     proteome = tmp_path / "mini.fasta"
-    proteome.write_text(
-        ">sp|A\nAAAA\n>sp|B\nBBBB\n>sp|C\nCCCC\n", encoding="utf-8"
-    )
+    proteome.write_text(">sp|A\nAAAA\n>sp|B\nBBBB\n>sp|C\nCCCC\n", encoding="utf-8")
     folds = build_study_splits(positives, proteome)
 
     assert set(folds) == {"leave_PXD006140_out", "leave_PXD024061_out"}

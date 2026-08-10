@@ -34,9 +34,7 @@ RICE_SD04 = Path("data/raw/supplements/PXD072089/pnas.2608150123.sd04.xlsx")
 RICE_SS = Path("data/raw/supplements/PXD072089/SS-all-peptides.tsv")
 RICE_PROTEOME = Path("data/raw/references/rice_proteome_v1/uniprot_rice_v1.fasta")
 MG_SITE_TSV = Path("data/raw/supplements/PXD063170/PXD063170_sites_moesm3.tsv")
-MG_PROTEOME = Path(
-    "data/raw/supplements/PXD063170/Magnaporthe_oryzae.MG8.pep.all.fa"
-)
+MG_PROTEOME = Path("data/raw/supplements/PXD063170/Magnaporthe_oryzae.MG8.pep.all.fa")
 PANTHER_AT = Path(
     "data/raw/references/panther_annotations_v1/panther_arabidopsis_taxon3702.tsv"
 )
@@ -108,8 +106,16 @@ def run_conservation_analysis(output_path: Path) -> dict[str, Any]:
     from plantpersulf.proteomics.pxd063170_sites import load_ensembl_fungi_proteome
 
     required = (
-        BENCHMARK, RICE_SD01, RICE_SD04, RICE_SS, RICE_PROTEOME,
-        MG_SITE_TSV, MG_PROTEOME, PANTHER_AT, PANTHER_RICE, PANTHER_MG,
+        BENCHMARK,
+        RICE_SD01,
+        RICE_SD04,
+        RICE_SS,
+        RICE_PROTEOME,
+        MG_SITE_TSV,
+        MG_PROTEOME,
+        PANTHER_AT,
+        PANTHER_RICE,
+        PANTHER_MG,
     )
     for path in required:
         if not path.is_file():
@@ -118,23 +124,17 @@ def run_conservation_analysis(output_path: Path) -> dict[str, Any]:
     at_positives = _arabidopsis_positives()
     rice_positives, rice_n_sites = _rice_positives()
     mg_positives, mg_n_sites = _magnaporthe_positives()
-    print(
-        f"Arabidopsis: {len(at_positives)} persulfidated proteins "
-        f"(390 sites)"
-    )
+    print(f"Arabidopsis: {len(at_positives)} persulfidated proteins (390 sites)")
     print(f"Rice: {len(rice_positives)} persulfidated proteins ({rice_n_sites} sites)")
     print(
-        f"Magnaporthe: {len(mg_positives)} persulfidated proteins "
-        f"({mg_n_sites} sites)"
+        f"Magnaporthe: {len(mg_positives)} persulfidated proteins ({mg_n_sites} sites)"
     )
 
     at_map = load_panther_annotations(PANTHER_AT)
     rice_map = load_panther_annotations(PANTHER_RICE)
 
     mg_proteome = load_ensembl_fungi_proteome(MG_PROTEOME)
-    mg_accession_to_gene = {
-        acc: mg8_accession_to_gene(acc) for acc in mg_proteome
-    }
+    mg_accession_to_gene = {acc: mg8_accession_to_gene(acc) for acc in mg_proteome}
     mg_map = load_panther_annotations_by_orf_gene(PANTHER_MG, mg_accession_to_gene)
     print(
         f"MG8 accessions bridged to PANTHER: "
@@ -145,8 +145,12 @@ def run_conservation_analysis(output_path: Path) -> dict[str, Any]:
     pairs: list[PairSpec] = [
         ("Arabidopsis", at_map, at_positives, "Rice", rice_map, rice_positives),
         (
-            "Arabidopsis", at_map, at_positives,
-            "Magnaporthe", mg_map, mg_positives,
+            "Arabidopsis",
+            at_map,
+            at_positives,
+            "Magnaporthe",
+            mg_map,
+            mg_positives,
         ),
         ("Rice", rice_map, rice_positives, "Magnaporthe", mg_map, mg_positives),
     ]
@@ -206,9 +210,7 @@ def run_conservation_analysis(output_path: Path) -> dict[str, Any]:
     rice_fam = rice_map.persulfidated_families(rice_positives)
     mg_fam = mg_map.persulfidated_families(mg_positives)
     triple_conserved = at_fam & rice_fam & mg_fam
-    print(
-        f"\nFamilies co-persulfidated in ALL THREE species: {len(triple_conserved)}"
-    )
+    print(f"\nFamilies co-persulfidated in ALL THREE species: {len(triple_conserved)}")
     for fam in sorted(triple_conserved):
         print(f"  {fam}")
 

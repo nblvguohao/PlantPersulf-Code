@@ -29,6 +29,20 @@ def test_cluster_split_model_name_is_not_recognised_as_a_fold() -> None:
     assert _parse_fold_study("structure_ranker:full") is None
 
 
+def test_protein_split_model_name_is_not_recognised_as_a_fold() -> None:
+    # Model-name shape pu_ranker_protein_split_v1 produces (one tag per
+    # repetition seed, literature-comparable regime).
+    assert _parse_fold_study("protein_split_seed0|structure_ranker:full") is None
+    assert _parse_fold_study("protein_split_seed9|structure_ranker:full") is None
+
+
+def test_cluster_cv_model_name_is_not_recognised_as_a_fold() -> None:
+    # Model-name shape pu_ranker_cluster_cv_v1 produces (development-
+    # stability track, repeated cluster K-fold CV).
+    assert _parse_fold_study("cluster_cv_r0f0|structure_ranker:full") is None
+    assert _parse_fold_study("cluster_cv_r4f4|structure_ranker:full") is None
+
+
 def test_cluster_split_rows_never_enter_gate2_fold_metrics() -> None:
     cluster_rows = [
         {

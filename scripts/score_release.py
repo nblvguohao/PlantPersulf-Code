@@ -42,8 +42,14 @@ BENCHMARK_FIELDS = (
 )
 
 SCORED_FIELDS = (
-    "fold", "seed", "protein_accession", "cys_position",
-    "label", "cluster_id", "has_structure", "score",
+    "fold",
+    "seed",
+    "protein_accession",
+    "cys_position",
+    "label",
+    "cluster_id",
+    "has_structure",
+    "score",
 )
 
 
@@ -85,8 +91,10 @@ def _write_scored(path: Path, rows: list[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(
-            handle, fieldnames=list(SCORED_FIELDS),
-            delimiter="\t", lineterminator="\n",
+            handle,
+            fieldnames=list(SCORED_FIELDS),
+            delimiter="\t",
+            lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(rows)
@@ -130,7 +138,9 @@ def score_release(
         print("NOTE: an arm uses the ESM branch — extraction will be slow.")
 
     arms: dict[str, list[dict[str, Any]]] = {
-        "model": [], "ablated": [], "baseline": [],
+        "model": [],
+        "ablated": [],
+        "baseline": [],
     }
 
     for study in cfg["splits"]["studies"]:
@@ -192,8 +202,11 @@ def score_release(
         for seed in seeds:
             for arm, ab in (("model", ab_release), ("ablated", ab_ablated)):
                 out = structure_ranker_scores(
-                    branch_train, train_y, branch_test,
-                    seed=seed, ablation=ab,
+                    branch_train,
+                    train_y,
+                    branch_test,
+                    seed=seed,
+                    ablation=ab,
                     hidden=int(ranker_params.get("hidden", 16)),
                     dropout=float(ranker_params.get("dropout", 0.2)),
                     epochs=int(ranker_params.get("epochs", 200)),
@@ -202,8 +215,7 @@ def score_release(
                 )
                 _emit(arm, seed, list(out.scores))
                 ap = average_precision(
-                    list(zip(out.scores, [r["label"] for r in test_rows],
-                             strict=True))
+                    list(zip(out.scores, [r["label"] for r in test_rows], strict=True))
                 )
                 print(f"  {arm} seed={seed} test_ap={ap:.4f}")
 
@@ -212,17 +224,18 @@ def score_release(
             )
             _emit("baseline", seed, base_scores)
             ap_b = average_precision(
-                list(zip(base_scores, [r["label"] for r in test_rows],
-                         strict=True))
+                list(zip(base_scores, [r["label"] for r in test_rows], strict=True))
             )
             print(f"  baseline[{baseline_model}] seed={seed} test_ap={ap_b:.4f}")
 
-    names = {"model": release_ablation, "ablated": ablated_ablation,
-             "baseline": baseline_model}
+    names = {
+        "model": release_ablation,
+        "ablated": ablated_ablation,
+        "baseline": baseline_model,
+    }
     for arm, rows in arms.items():
         _write_scored(output_dir / f"{arm}.tsv", rows)
-        print(f"wrote {len(rows)} rows -> {output_dir / f'{arm}.tsv'} "
-              f"({names[arm]})")
+        print(f"wrote {len(rows)} rows -> {output_dir / f'{arm}.tsv'} ({names[arm]})")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -230,11 +243,13 @@ def build_parser() -> argparse.ArgumentParser:
         description="per-site score regeneration for Gate-2 statistics"
     )
     p.add_argument(
-        "--config", type=Path,
+        "--config",
+        type=Path,
         default=Path("configs/experiments/pu_ranker_v1.yaml"),
     )
     p.add_argument(
-        "--clusters", type=Path,
+        "--clusters",
+        type=Path,
         default=Path("data/processed/clusters/protein_clusters_v1.tsv"),
     )
     p.add_argument("--release-ablation", default="seq_structure")

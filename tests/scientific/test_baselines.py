@@ -60,9 +60,7 @@ def test_evaluate_ranking_returns_valid_scores(tmp_path: Path) -> None:
         assert result.total_sites > 0
         n_pos = sum(
             1
-            for row in csv.DictReader(
-                splits_path.open(encoding="utf-8", newline="")
-            )
+            for row in csv.DictReader(splits_path.open(encoding="utf-8", newline=""))
             if row["split"] == split_name and row["label"] == "positive"
         )
         if n_pos == 0:

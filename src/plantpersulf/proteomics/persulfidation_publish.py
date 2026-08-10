@@ -263,14 +263,9 @@ def publish_persulfidation_sites(
         excluded: tuple[ParseIssue, ...] = tuple(
             issue
             for issue in conflicts
-            if "decoy" in issue.reason
-            or "contaminant" in issue.reason.lower()
+            if "decoy" in issue.reason or "contaminant" in issue.reason.lower()
         )
-        conflicts = tuple(
-            issue
-            for issue in conflicts
-            if issue not in excluded
-        )
+        conflicts = tuple(issue for issue in conflicts if issue not in excluded)
     elif parser_label == "maxquant_sites":
         _, mq_result = _publish_024061(study_cfg, references, supplement_sources)
         sites = mq_result.sites
@@ -289,8 +284,7 @@ def publish_persulfidation_sites(
         conflict_count=len(conflicts),
         excluded_count=len(excluded),
         missing_sequence_count=sum(
-            issue.reason
-            in {"sequence_unavailable", "isoform_sequence_unavailable"}
+            issue.reason in {"sequence_unavailable", "isoform_sequence_unavailable"}
             for issue in conflicts
         ),
     )
@@ -307,9 +301,7 @@ def publish_persulfidation_sites(
     staged.mkdir()
     try:
         _write_tsv(staged / "sites.tsv", PERSULF_SITE_FIELDS, sites)
-        _write_tsv(
-            staged / "low_confidence.tsv", PERSULF_SITE_FIELDS, low_confidence
-        )
+        _write_tsv(staged / "low_confidence.tsv", PERSULF_SITE_FIELDS, low_confidence)
         _write_tsv(staged / "conflicts.tsv", ISSUE_FIELDS, conflicts)
         _write_tsv(staged / "excluded.tsv", ISSUE_FIELDS, excluded)
 
@@ -370,9 +362,7 @@ def _read_tsv(path: Path, fields: tuple[str, ...]) -> list[dict[str, str]]:
                 f"persulfidation site output has invalid columns: {path}"
             )
         rows = [dict(row) for row in reader]
-    if any(
-        None in row or any(value is None for value in row.values()) for row in rows
-    ):
+    if any(None in row or any(value is None for value in row.values()) for row in rows):
         raise RuntimeError(f"persulfidation site output has malformed row: {path}")
     return cast(list[dict[str, str]], rows)
 
@@ -425,9 +415,7 @@ def audit_persulfidation_sites(
         raise RuntimeError("persulfidation site output list mismatch")
 
     sites = _read_tsv(output_directory / "sites.tsv", PERSULF_SITE_FIELDS)
-    low = _read_tsv(
-        output_directory / "low_confidence.tsv", PERSULF_SITE_FIELDS
-    )
+    low = _read_tsv(output_directory / "low_confidence.tsv", PERSULF_SITE_FIELDS)
     conflicts = _read_tsv(output_directory / "conflicts.tsv", ISSUE_FIELDS)
     excluded = _read_tsv(output_directory / "excluded.tsv", ISSUE_FIELDS)
     summary = PersulfidationPublishSummary(
@@ -442,8 +430,7 @@ def audit_persulfidation_sites(
         conflict_count=len(conflicts),
         excluded_count=len(excluded),
         missing_sequence_count=sum(
-            row["reason"]
-            in {"sequence_unavailable", "isoform_sequence_unavailable"}
+            row["reason"] in {"sequence_unavailable", "isoform_sequence_unavailable"}
             for row in conflicts
         ),
     )

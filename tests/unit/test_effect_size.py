@@ -84,9 +84,7 @@ def _separable_rows() -> tuple[
 
 def test_paired_cluster_delta_better_model_excludes_zero() -> None:
     model, baseline = _separable_rows()
-    result = paired_cluster_bootstrap_delta_ci(
-        model, baseline, n_boot=500, seed=0
-    )
+    result = paired_cluster_bootstrap_delta_ci(model, baseline, n_boot=500, seed=0)
     assert result.point > 0.5
     assert result.lower > 0.0
 

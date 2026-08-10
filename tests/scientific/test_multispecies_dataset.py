@@ -8,7 +8,7 @@ homology grouping for leakage-safe CV.
 
 from __future__ import annotations
 
-import pytest
+from pathlib import Path
 
 from plantpersulf.proteomics.multispecies_dataset import (
     MultispeciesSite,
@@ -51,7 +51,10 @@ def _site(acc: str, pos: int, species: str, family: str) -> MultispeciesSite:
 
 
 def test_build_multispecies_sites_merges_and_assigns_families() -> None:
-    arab = [_site("AT1", 5, "arabidopsis", "PTHR10000"), _site("AT2", 7, "arabidopsis", "PTHR20000")]
+    arab = [
+        _site("AT1", 5, "arabidopsis", "PTHR10000"),
+        _site("AT2", 7, "arabidopsis", "PTHR20000"),
+    ]
     tomato = [_site("SL1", 9, "tomato", "PTHR10000")]
     rice = [_site("OS1", 3, "rice", "PTHR30000")]
     magna = [_site("MG1", 11, "magnaporthe", "PTHR30000")]
@@ -78,9 +81,7 @@ def test_duplicate_accession_position_collapses() -> None:
 
 
 def test_family_grouped_folds_never_split_a_family() -> None:
-    sites = [
-        _site(f"P{i}", 5, "arabidopsis", f"F{i % 3}") for i in range(9)
-    ]
+    sites = [_site(f"P{i}", 5, "arabidopsis", f"F{i % 3}") for i in range(9)]
     folds = family_grouped_folds(sites, n_folds=3, seed=42)
     assert len(folds) == 3
     family_of = {s.protein_accession: s.panther_family for s in sites}

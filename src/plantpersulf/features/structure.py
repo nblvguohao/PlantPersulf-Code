@@ -155,9 +155,11 @@ def parse_mmcif(text: str) -> tuple[ResidueStructure, ...]:
     ):
         row_start += 1
     row_end = row_start
-    while row_end < len(lines) and not lines[row_end].startswith(
-        "#"
-    ) and lines[row_end].strip():
+    while (
+        row_end < len(lines)
+        and not lines[row_end].startswith("#")
+        and lines[row_end].strip()
+    ):
         row_end += 1
 
     residues: list[ResidueStructure] = []
@@ -184,7 +186,9 @@ def parse_mmcif(text: str) -> tuple[ResidueStructure, ...]:
 
 
 def _end_of_atom_site(
-    col_start: int | None, i: int, line: str,
+    col_start: int | None,
+    i: int,
+    line: str,
 ) -> bool:
     return (
         col_start is not None

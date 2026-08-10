@@ -119,9 +119,7 @@ def _read_registry(path: Path) -> list[dict[str, str]]:
         if tuple(reader.fieldnames or ()) != SUPPLEMENTARY_FIELDS:
             raise RuntimeError("supplementary registry has invalid columns")
         rows = [dict(row) for row in reader]
-    if any(
-        None in row or any(value is None for value in row.values()) for row in rows
-    ):
+    if any(None in row or any(value is None for value in row.values()) for row in rows):
         raise RuntimeError("supplementary registry has malformed row")
     return rows
 

@@ -83,11 +83,7 @@ def build_splits(config_path: Path) -> BenchmarkSplitTable:
         raise RuntimeError("cluster split fractions must sum to 1.0")
     seed = int(cs["seed"])
     holdout = config.get("known_mechanism_holdout")
-    holdout = (
-        tuple(str(g) for g in holdout)
-        if isinstance(holdout, list)
-        else ()
-    )
+    holdout = tuple(str(g) for g in holdout) if isinstance(holdout, list) else ()
 
     protein_clusters = _load_clusters(cluster_file)
     clusters: dict[str, list[str]] = {}
@@ -115,9 +111,7 @@ def build_splits(config_path: Path) -> BenchmarkSplitTable:
         )
         for protein in sorted(clusters[cid]):
             rows.append(
-                SplitRow(
-                    protein_accession=protein, cluster_id=cid, split=split
-                )
+                SplitRow(protein_accession=protein, cluster_id=cid, split=split)
             )
     return BenchmarkSplitTable(
         rows=tuple(rows), seed=seed, known_mechanism_holdout=holdout

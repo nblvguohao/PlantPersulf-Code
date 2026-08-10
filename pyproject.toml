@@ -28,7 +28,7 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 markers = ["network: tests that access official external repositories"]
 
 [tool.ruff]
@@ -37,6 +37,13 @@ line-length = 88
 
 [tool.ruff.lint]
 select = ["B", "E", "F", "I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/evaluate_kiae271_controls.py" = ["E501"]
+"scripts/kiae271_full_report.py" = ["E501"]
+"scripts/remote/lab_a100_hop.py" = ["E501"]
+"scripts/run_tomato_local_v1.py" = ["E501"]
+"scripts/score_structure_coverage.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.10"

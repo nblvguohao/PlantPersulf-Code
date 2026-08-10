@@ -24,7 +24,6 @@ import hashlib
 import random
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 from plantpersulf.download.alphafold import (
     AlphaFoldStructureSource,
@@ -128,16 +127,19 @@ def verify_registry_pair(
         )
 
     if not accessions_v1 < accessions_v2:
-        raise RuntimeError(
-            "v1 registry is not a strict subset of v2"
-        )
+        raise RuntimeError("v1 registry is not a strict subset of v2")
 
     # Check for conflicting rows on shared accessions
     v2_lookup = {_key(r): r for r in rows_v2}
     for r1 in rows_v1:
         r2 = v2_lookup[r1["accession"]]
-        for col in ("model_version", "source_url", "local_path",
-                     "size_bytes", "sha256"):
+        for col in (
+            "model_version",
+            "source_url",
+            "local_path",
+            "size_bytes",
+            "sha256",
+        ):
             if r1[col] != r2[col]:
                 raise RuntimeError(
                     f"registry conflict on {r1['accession']}: "
@@ -150,14 +152,16 @@ def verify_registry_pair(
 # ---------------------------------------------------------------------------
 
 
-ALLOWED_MAPPING_STATUSES = frozenset({
-    "mapped_cys",
-    "absent_structure",
-    "absent_residue",
-    "non_cys_residue",
-    "malformed_structure",
-    "duplicate_residue_ambiguity",
-})
+ALLOWED_MAPPING_STATUSES = frozenset(
+    {
+        "mapped_cys",
+        "absent_structure",
+        "absent_residue",
+        "non_cys_residue",
+        "malformed_structure",
+        "duplicate_residue_ambiguity",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -167,7 +171,7 @@ class CoverageRecord:
     release: str
     protein_accession: str
     cys_position_in_protein: int
-    label: str          # "positive" | "unlabeled"
+    label: str  # "positive" | "unlabeled"
     study_accession: str
     cluster_id: str
     has_registered_structure: bool
@@ -241,7 +245,7 @@ def audit_structure_coverage(
         # --- Step 1: read inputs ---
         benchmark_rows = _read_benchmark(benchmark_path)
         clusters = _read_clusters(clusters_path)
-        proteome = _load_proteome_fasta(proteome_path)
+        _load_proteome_fasta(proteome_path)
 
         # --- Step 2: register structure sources ---
         try:
@@ -293,8 +297,8 @@ def audit_structure_coverage(
             study = row["study_accession"]
             cluster = clusters.get(acc, f"__singleton__{acc}")
 
-            residues = pdb_cache.get(acc)
-            if residues is None:
+            site_residues = pdb_cache.get(acc)
+            if site_residues is None:
                 records.append(
                     CoverageRecord(
                         release=release,
@@ -312,11 +316,13 @@ def audit_structure_coverage(
                 continue
 
             # Check if this position maps to a CYS
-            by_pos = {r[0]: r for r in residues}
+            by_pos = {r[0]: r for r in site_residues}
             match = by_pos.get(pos)
 
             if match is None:
-                status = "absent_residue" if residues else "malformed_structure"
+                status = (
+                    "absent_residue" if site_residues else "malformed_structure"
+                )
             elif match[2] != "CYS":
                 status = "non_cys_residue"
             else:
@@ -333,7 +339,11 @@ def audit_structure_coverage(
                     has_registered_structure=True,
                     maps_to_cys=(status == "mapped_cys"),
                     mapping_status=status,
-                    plddt=match[1] if status == "mapped_cys" else None,
+                    plddt=(
+                        match[1]
+                        if match is not None and status == "mapped_cys"
+                        else None
+                    ),
                 )
             )
 
@@ -436,46 +446,118 @@ def _build_summary(
     n_unlabeled = sum(1 for r in records if r.label == "unlabeled")
 
     # Registered proteins: unique accessions that have at least one structure
-    registered_set = {r.protein_accession for r in records
-                      if r.has_registered_structure}
+    registered_set = {
+        r.protein_accession for r in records if r.has_registered_structure
+    }
 
     # Covered proteins: unique accessions where at least one Cys maps
-    covered_set = {r.protein_accession for r in records
-                   if r.mapping_status == "mapped_cys"}
+    covered_set = {
+        r.protein_accession for r in records if r.mapping_status == "mapped_cys"
+    }
 
     # Mapped Cys counts
     mapped_total = sum(1 for r in records if r.mapping_status == "mapped_cys")
-    mapped_pos = sum(1 for r in records
-                     if r.label == "positive" and r.mapping_status == "mapped_cys")
-    mapped_ul = sum(1 for r in records
-                    if r.label == "unlabeled" and r.mapping_status == "mapped_cys")
+    mapped_pos = sum(
+        1 for r in records if r.label == "positive" and r.mapping_status == "mapped_cys"
+    )
+    mapped_ul = sum(
+        1
+        for r in records
+        if r.label == "unlabeled" and r.mapping_status == "mapped_cys"
+    )
 
     for scope, label, n_sites in [
         ("overall", "all", n_benchmark),
         ("overall", "positive", n_positive),
         ("overall", "unlabeled", n_unlabeled),
     ]:
-        _add_summary_row(summary, release, scope, "", label,
-                         "benchmark_sites", n_sites, None, None, n_sites)
+        _add_summary_row(
+            summary,
+            release,
+            scope,
+            "",
+            label,
+            "benchmark_sites",
+            n_sites,
+            None,
+            None,
+            n_sites,
+        )
 
-    _add_summary_row(summary, release, "overall", "", "all",
-                     "registered_proteins", len(registered_set),
-                     None, None, n_benchmark)
-    _add_summary_row(summary, release, "overall", "", "all",
-                     "covered_proteins", len(covered_set),
-                     None, None, n_benchmark)
-    _add_summary_row(summary, release, "overall", "", "all",
-                     "mapped_cys_sites", mapped_total, None, None, n_benchmark)
-    _add_summary_row(summary, release, "overall", "", "positive",
-                     "mapped_cys_sites", mapped_pos, None, None, n_positive)
-    _add_summary_row(summary, release, "overall", "", "unlabeled",
-                     "mapped_cys_sites", mapped_ul, None, None, n_unlabeled)
+    _add_summary_row(
+        summary,
+        release,
+        "overall",
+        "",
+        "all",
+        "registered_proteins",
+        len(registered_set),
+        None,
+        None,
+        n_benchmark,
+    )
+    _add_summary_row(
+        summary,
+        release,
+        "overall",
+        "",
+        "all",
+        "covered_proteins",
+        len(covered_set),
+        None,
+        None,
+        n_benchmark,
+    )
+    _add_summary_row(
+        summary,
+        release,
+        "overall",
+        "",
+        "all",
+        "mapped_cys_sites",
+        mapped_total,
+        None,
+        None,
+        n_benchmark,
+    )
+    _add_summary_row(
+        summary,
+        release,
+        "overall",
+        "",
+        "positive",
+        "mapped_cys_sites",
+        mapped_pos,
+        None,
+        None,
+        n_positive,
+    )
+    _add_summary_row(
+        summary,
+        release,
+        "overall",
+        "",
+        "unlabeled",
+        "mapped_cys_sites",
+        mapped_ul,
+        None,
+        None,
+        n_unlabeled,
+    )
 
     if n_benchmark > 0:
-        _add_summary_row(summary, release, "overall", "", "all",
-                         "coverage_rate",
-                         round(mapped_total / n_benchmark, 6),
-                         None, None, n_benchmark)
+        _add_summary_row(
+            summary,
+            release,
+            "overall",
+            "",
+            "all",
+            "coverage_rate",
+            round(mapped_total / n_benchmark, 6),
+            None,
+            None,
+            n_benchmark,
+        )
 
     # Per-study summaries
     studies = sorted({r.study_accession for r in records if r.study_accession})
@@ -483,33 +565,82 @@ def _build_summary(
         study_recs = [r for r in records if r.study_accession == study]
         n_s = len(study_recs)
         mapped_s = sum(1 for r in study_recs if r.mapping_status == "mapped_cys")
-        _add_summary_row(summary, release, "study", study, "all",
-                         "benchmark_sites", n_s, None, None, n_s)
-        _add_summary_row(summary, release, "study", study, "all",
-                         "mapped_cys_sites", mapped_s, None, None, n_s)
+        _add_summary_row(
+            summary,
+            release,
+            "study",
+            study,
+            "all",
+            "benchmark_sites",
+            n_s,
+            None,
+            None,
+            n_s,
+        )
+        _add_summary_row(
+            summary,
+            release,
+            "study",
+            study,
+            "all",
+            "mapped_cys_sites",
+            mapped_s,
+            None,
+            None,
+            n_s,
+        )
         if n_s > 0:
-            _add_summary_row(summary, release, "study", study, "all",
-                             "coverage_rate", round(mapped_s / n_s, 6),
-                             None, None, n_s)
+            _add_summary_row(
+                summary,
+                release,
+                "study",
+                study,
+                "all",
+                "coverage_rate",
+                round(mapped_s / n_s, 6),
+                None,
+                None,
+                n_s,
+            )
 
     # pLDDT bins
-    bins = {"plddt_lt_50": (0.0, 50.0), "plddt_50_70": (50.0, 70.0),
-            "plddt_70_90": (70.0, 90.0), "plddt_ge_90": (90.0, float("inf"))}
+    bins = {
+        "plddt_lt_50": (0.0, 50.0),
+        "plddt_50_70": (50.0, 70.0),
+        "plddt_70_90": (70.0, 90.0),
+        "plddt_ge_90": (90.0, float("inf")),
+    }
     for bin_name, (lo, hi) in bins.items():
-        count = sum(
-            1 for r in records
-            if r.plddt is not None and lo <= r.plddt < hi
+        count = sum(1 for r in records if r.plddt is not None and lo <= r.plddt < hi)
+        _add_summary_row(
+            summary,
+            release,
+            "overall",
+            "",
+            "all",
+            bin_name,
+            count,
+            None,
+            None,
+            n_benchmark,
         )
-        _add_summary_row(summary, release, "overall", "", "all",
-                         bin_name, count, None, None, n_benchmark)
 
     # Coverage-label association: difference in coverage rate pos vs unlabeled
     coverage_pos = mapped_pos / n_positive if n_positive > 0 else 0.0
     coverage_ul = mapped_ul / n_unlabeled if n_unlabeled > 0 else 0.0
     diff = coverage_pos - coverage_ul
-    _add_summary_row(summary, release, "overall", "", "all",
-                     "coverage_label_risk_difference",
-                     round(diff, 6), None, None, n_benchmark)
+    _add_summary_row(
+        summary,
+        release,
+        "overall",
+        "",
+        "all",
+        "coverage_label_risk_difference",
+        round(diff, 6),
+        None,
+        None,
+        n_benchmark,
+    )
 
     # Cluster bootstrap CI for coverage-label risk difference
     # Pre-aggregate per cluster to avoid O(n_records * n_boot) scanning
@@ -553,11 +684,19 @@ def _build_summary(
         ci_low = 0.0
         ci_high = 0.0
 
-    _add_summary_row(summary, release, "overall", "", "all",
-                     "coverage_label_risk_difference",
-                     round(diff, 6),
-                     round(ci_low, 6), round(ci_high, 6),
-                     n_benchmark, n_clusters)
+    _add_summary_row(
+        summary,
+        release,
+        "overall",
+        "",
+        "all",
+        "coverage_label_risk_difference",
+        round(diff, 6),
+        round(ci_low, 6),
+        round(ci_high, 6),
+        n_benchmark,
+        n_clusters,
+    )
 
     return tuple(summary)
 
@@ -575,18 +714,20 @@ def _add_summary_row(
     n_sites: int,
     n_clusters: int = 0,
 ) -> None:
-    target.append({
-        "release": release,
-        "scope": scope,
-        "study_accession": study_accession,
-        "label": label,
-        "metric": metric,
-        "estimate": estimate,
-        "ci_low": ci_low,
-        "ci_high": ci_high,
-        "n_sites": n_sites,
-        "n_clusters": n_clusters,
-    })
+    target.append(
+        {
+            "release": release,
+            "scope": scope,
+            "study_accession": study_accession,
+            "label": label,
+            "metric": metric,
+            "estimate": estimate,
+            "ci_low": ci_low,
+            "ci_high": ci_high,
+            "n_sites": n_sites,
+            "n_clusters": n_clusters,
+        }
+    )
 
 
 def _percentile(sorted_values: list[float], q: float) -> float:

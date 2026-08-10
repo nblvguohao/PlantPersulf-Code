@@ -17,7 +17,7 @@ import argparse
 import csv
 import json
 import re
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
 from plantpersulf.features.sequence import (
@@ -109,7 +109,6 @@ def _fisher_enrichment(
     min_hits: int = 2,
 ) -> list[dict]:
     """One-sided Fisher exact per GO id: foreground vs background."""
-    from math import comb
 
     n_fg = len(foreground)
     n_bg = len(background)
@@ -230,14 +229,18 @@ def run_report(output_dir: Path) -> dict:
                 "intensity_wt": s.intensity_wt,
                 "protein_name": (headers.get(s.protein_accession, "") or "")[:120],
                 "panther_family": panther.get(s.protein_accession, ""),
-                "has_alphafold_structure": "yes" if s.protein_accession in structure_accs else "no",
+                "has_alphafold_structure": "yes"
+                if s.protein_accession in structure_accs
+                else "no",
                 **seq_ctx[(s.protein_accession, s.cys_position)],
             }
         )
     with (output_dir / "sites_full.tsv").open(
         "w", encoding="utf-8", newline=""
     ) as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(site_rows[0].keys()), delimiter="\t")
+        writer = csv.DictWriter(
+            handle, fieldnames=list(site_rows[0].keys()), delimiter="\t"
+        )
         writer.writeheader()
         writer.writerows(site_rows)
 
@@ -246,7 +249,9 @@ def run_report(output_dir: Path) -> dict:
         with (output_dir / f"go_enrichment_{name}.tsv").open(
             "w", encoding="utf-8", newline=""
         ) as handle:
-            writer = csv.DictWriter(handle, fieldnames=list(rows[0].keys()), delimiter="\t")
+            writer = csv.DictWriter(
+                handle, fieldnames=list(rows[0].keys()), delimiter="\t"
+            )
             writer.writeheader()
             writer.writerows(rows)
 
@@ -254,17 +259,17 @@ def run_report(output_dir: Path) -> dict:
     md: list[str] = [
         "# kiae271 番茄差异硫巯基化位点全谱分析报告",
         "",
-        f"> 数据来源:Zhang et al. 2024, Plant Physiology, doi:10.1093/plphys/kiae271,"
-        f" Supplementary Dataset S1(SlLCD1-OE vs WT 番茄叶片)",
-        f"> 分析日期:2026-08-10 | 生成脚本:`scripts/kiae271_full_report.py`",
+        "> 数据来源:Zhang et al. 2024, Plant Physiology, doi:10.1093/plphys/kiae271,"
+        " Supplementary Dataset S1(SlLCD1-OE vs WT 番茄叶片)",
+        "> 分析日期:2026-08-10 | 生成脚本:`scripts/kiae271_full_report.py`",
         "",
         "## 1. 数据总览",
         "",
         f"- 原始行数:{table.rows_total}",
         f"- 坐标验证通过位点:**{table.total_verified_sites} 个 / {table.total_verified_proteins} 个蛋白**",
         f"- 分层:lcd_gain(H2S 诱导获得)**{strata['lcd_gain']}**、wt_only **{strata['wt_only']}**、both **{strata['both']}**",
-        f"- 定位概率 ≥0.75;每行至少一个条件强度非零",
-        f"- AlphaFold 结构覆盖:{n_covered}/{len(accs)}({n_covered/len(accs)*100:.0f}%)",
+        "- 定位概率 ≥0.75;每行至少一个条件强度非零",
+        f"- AlphaFold 结构覆盖:{n_covered}/{len(accs)}({n_covered / len(accs) * 100:.0f}%)",
         "",
         "## 2. GO 功能富集(lcd_gain 分层,H2S 诱导获得位点)",
         "",
@@ -304,16 +309,14 @@ def run_report(output_dir: Path) -> dict:
         "## 5. 序列环境特征",
         "",
         f"- 正电荷密度(硫醇盐稳定化代理)均值:"
-        f"{sum(v['pos_charge_density'] for v in seq_ctx.values())/len(seq_ctx):.3f}",
+        f"{sum(v['pos_charge_density'] for v in seq_ctx.values()) / len(seq_ctx):.3f}",
         f"- 疏水性均值:"
-        f"{sum(v['hydrophobicity'] for v in seq_ctx.values())/len(seq_ctx):.3f}",
+        f"{sum(v['hydrophobicity'] for v in seq_ctx.values()) / len(seq_ctx):.3f}",
         "",
         "完整逐位点表见 `sites_full.tsv`,富集表见 `go_enrichment_*.tsv`。",
         "",
     ]
-    (output_dir / "kiae271_full_report.md").write_text(
-        "\n".join(md), encoding="utf-8"
-    )
+    (output_dir / "kiae271_full_report.md").write_text("\n".join(md), encoding="utf-8")
 
     summary = {
         "rows_total": table.rows_total,

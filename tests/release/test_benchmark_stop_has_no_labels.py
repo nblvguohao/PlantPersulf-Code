@@ -25,9 +25,7 @@ def test_stop_release_is_label_free_and_fail_closed(
     assert result["decision"] == "STOP"
     assert result["eligible_site_count"] == 0
     assert result["eligible_study_count"] == 0
-    manifest = json.loads(
-        (readiness / "manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((readiness / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["benchmark_created"] is False
     assert manifest["labels_created"] is False
     assert manifest["nondetection_labeled_negative"] is False

@@ -1,0 +1,62 @@
+# Frozen supplementary config — pu_logistic baseline under the SAME random
+# protein-split regime as pu_ranker_protein_split_v1.yaml.
+#
+# WHY THIS CONFIG EXISTS (do not delete, do not feed into Gate 2):
+# The frozen protein-split display run only listed `structure_ranker` in its
+# `models:`, so no baseline arm was scored there and the release-vs-baseline
+# effect delta could not be computed. `_run_protein_split_experiment`'s
+# partition (`partition_random_protein(rows, seed, 0.2)`) and subsample
+# arithmetic (`sub_seed + 10*seed`) are model-independent and
+# seed-deterministic, so this config reproduces the EXACT per-seed train/test
+# rows of the display run — per-seed paired deltas are therefore valid.
+#
+# Differences from pu_ranker_protein_split_v1.yaml (deliberate, recorded):
+#   - models: [pu_logistic] instead of [structure_ranker]
+#   - features: [sequence] instead of [sequence, esm2, structure]
+#     (pu_logistic consumes flat sequence features only; CPU-run locally)
+# Everything else is identical: splits.mode=random_protein, test_ratio 0.2,
+# seeds 0-9, subsample 1:20 seed 12345.
+#
+# MANDATORY LIMITATION (record with every reported number from this config):
+# identical to the display run's — random protein-level split, within-dataset,
+# no homology control, never admissible as Gate 2 evidence (see
+# tests/release/test_gate2_ignores_within_dataset_split_metrics.py).
+
+version: 1
+
+experiment:
+  name: pu_ranker_protein_split_v1_baseline
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  mode: random_protein
+  test_ratio: 0.2
+
+features:
+  - name: sequence
+    module: plantpersulf.features.sequence
+
+models:
+  - pu_logistic
+
+evaluation:
+  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+subsample:
+  unlabeled_per_positive: 20
+  seed: 12345
+
+output:
+  directory: results/experiments/pu_ranker_protein_split_v1_baseline
+
+limitation: |
+  RANDOM PROTEIN-LEVEL SPLIT (within-dataset, no homology control) — NOT
+  cross-study validation. 20% of proteins held out at random per seed
+  (10 seeds = 10 repetitions, mirroring Sul-BertGRU, Bioinformatics 2025,
+  btaf078); train/test proteins are drawn from the SAME pool of studies
+  (PXD006140 + PXD024061). Baseline arm of the display track: reported only
+  to quantify the release-vs-baseline delta under the literature-comparable
+  regime; it must never be used to support a cross-study, cross-laboratory,
+  or cross-species predictive claim, and must never be substituted into the
+  Gate 2 conclusion-gate evidence.

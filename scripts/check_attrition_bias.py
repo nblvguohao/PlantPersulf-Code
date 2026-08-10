@@ -51,9 +51,7 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _collect_accession_descriptions(
-    sd01_path: Path, sd04_path: Path
-) -> dict[str, str]:
+def _collect_accession_descriptions(sd01_path: Path, sd04_path: Path) -> dict[str, str]:
     """One description per unique accession referenced in SD01 or SD04.
 
     SD01 uses "Leading razor protein"; SD04 uses "leading razor protein"

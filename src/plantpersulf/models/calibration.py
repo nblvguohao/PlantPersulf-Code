@@ -74,5 +74,5 @@ def aggregate_uncertainty(
         mean = sum(col) / n_pass
         var = sum((x - mean) ** 2 for x in col) / n_pass
         means.append(mean)
-        stds.append(var ** 0.5)
+        stds.append(var**0.5)
     return means, stds

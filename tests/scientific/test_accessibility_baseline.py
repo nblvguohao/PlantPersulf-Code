@@ -123,9 +123,7 @@ def test_evaluate_accessibility_ranking_recovers_exposed_positive_first(
     splits_path, structure_path = _write_fixtures(tmp_path)
     model = train_accessibility_baseline(splits_path, structure_path)
 
-    result = evaluate_accessibility_ranking(
-        model, splits_path, structure_path, "train"
-    )
+    result = evaluate_accessibility_ranking(model, splits_path, structure_path, "train")
     assert result.recall_at_k is not None
     assert result.recall_at_k[1] == 1.0  # A (exposed, positive) ranks #1
 

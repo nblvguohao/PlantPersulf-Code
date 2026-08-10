@@ -168,18 +168,14 @@ def build_tomato_pu_rows(
     if arena not in ARENAS:
         raise ValueError(f"unknown arena: {arena!r} (expected one of {ARENAS})")
 
-    table = parse_kiae271_sites(
-        xlsx_path, proteome, localization_min=localization_min
-    )
+    table = parse_kiae271_sites(xlsx_path, proteome, localization_min=localization_min)
     positive_keys = {(s.protein_accession, s.cys_position) for s in table.sites}
     excluded = kiae271_excluded_keys(
         xlsx_path, proteome, localization_min=localization_min
     )
     panel_accessions = sorted({s.protein_accession for s in table.sites})
 
-    candidates = (
-        panel_accessions if arena == ARENA_PANEL else sorted(proteome)
-    )
+    candidates = panel_accessions if arena == ARENA_PANEL else sorted(proteome)
     background = [
         key
         for key in _all_cysteine_keys(proteome, candidates)
@@ -244,9 +240,7 @@ def assign_grouped_folds(
     positive_clusters = sorted(
         {r.cluster_id for r in labelled if r.label == LABEL_POSITIVE}
     )
-    other_clusters = sorted(
-        {r.cluster_id for r in labelled} - set(positive_clusters)
-    )
+    other_clusters = sorted({r.cluster_id for r in labelled} - set(positive_clusters))
     if len(positive_clusters) < n_folds:
         raise ValueError(
             f"only {len(positive_clusters)} positive-bearing clusters for "

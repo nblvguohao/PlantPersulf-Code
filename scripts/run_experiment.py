@@ -39,8 +39,12 @@ from plantpersulf.download.alphafold import audit_alphafold_structures
 DEFAULT_STRUCTURE_REGISTRY = Path("data/registry/alphafold_structures.tsv")
 
 BENCHMARK_FIELDS = (
-    "protein_accession", "cys_position_in_protein", "label",
-    "study_accession", "evidence_level", "source_sha256",
+    "protein_accession",
+    "cys_position_in_protein",
+    "label",
+    "study_accession",
+    "evidence_level",
+    "source_sha256",
 )
 
 
@@ -60,6 +64,7 @@ def _load_config(path: Path) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 # results
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class ModelResult:
@@ -83,6 +88,7 @@ class ExperimentResults:
 # ---------------------------------------------------------------------------
 # bench --> split
 # ---------------------------------------------------------------------------
+
 
 def _build_singleton_cluster_file(benchmark_path: Path, output: Path) -> Path:
     """Each protein in its own cluster when no MMseqs2 output is available."""
@@ -128,6 +134,7 @@ def _train_val_test_rows(
 # subsampling + feature extraction
 # ---------------------------------------------------------------------------
 
+
 def _subsample_unlabeled(
     rows: list[dict[str, str]],
     ratio: int,
@@ -156,8 +163,11 @@ def _subsample_unlabeled(
 def _write_labels_tsv(rows: list[dict[str, str]], path: Path) -> None:
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(
-            handle, fieldnames=list(BENCHMARK_FIELDS),
-            delimiter="\t", lineterminator="\n", extrasaction="ignore",
+            handle,
+            fieldnames=list(BENCHMARK_FIELDS),
+            delimiter="\t",
+            lineterminator="\n",
+            extrasaction="ignore",
         )
         writer.writeheader()
         writer.writerows(rows)
@@ -192,6 +202,7 @@ def _sequence_feature_vectors(
 # ---------------------------------------------------------------------------
 # study-split experiment (leave-one-study-out)
 # ---------------------------------------------------------------------------
+
 
 def _study_fold_rows(
     all_rows: list[dict[str, str]],
@@ -254,7 +265,8 @@ def _run_study_split_experiment(
         # For a no-validation study-split: train on fold train, evaluate on
         # fold test. Hyperparameters are fixed at defaults.
         fold_results = _run_baselines(
-            cfg, train_rows_fold,
+            cfg,
+            train_rows_fold,
             [r["label"] for r in train_rows_fold],
             val_rows_fold,
             [r["label"] for r in val_rows_fold],
@@ -273,9 +285,195 @@ def _run_study_split_experiment(
     _write_results(combined, out_cfg, limitation=limitation)
 
 
+def _run_protein_split_experiment(
+    cfg: dict[str, Any],
+    exp_cfg: dict[str, Any],
+    eval_cfg: dict[str, Any],
+    out_cfg: dict[str, Any],
+    all_rows: list[dict[str, str]],
+    proteome_path: Path,
+) -> None:
+    """Random protein-level split, one repetition per evaluation seed.
+
+    Literature-comparable regime matching published cysteine-PTM predictors
+    (Sul-BertGRU, Bioinformatics 2025, btaf078: 20% of proteins held out as
+    an independent test set; 10 repetitions). Each seed is one *independent
+    protein split* — NO homology control, deliberately, so the numbers are
+    comparable with the published regime.
+
+    Folds are tagged ``protein_split_seed<k>|...`` so
+    ``scripts/validate_external.py`` (which only parses
+    ``leave_<study>_out|...`` model names) structurally cannot ingest them
+    into Gate 2 — locked in by
+    tests/release/test_gate2_ignores_within_dataset_split_metrics.py.
+    """
+    from plantpersulf.evaluation.external_validation import (
+        partition_random_protein,
+    )
+
+    ratio = int(cfg.get("subsample", {}).get("unlabeled_per_positive", 50))
+    sub_seed = int(cfg.get("subsample", {}).get("seed", 12345))
+    test_ratio = float(cfg["splits"].get("test_ratio", 0.2))
+    limitation = str(cfg.get("limitation", ""))
+
+    feature_fn = _resolve_feature_fn(cfg)
+    all_fold_results: list[ModelResult] = []
+    for seed in eval_cfg["seeds"]:
+        print(f"\n===== Repetition: protein_split_seed{seed} =====")
+        train_rows, test_rows = partition_random_protein(
+            all_rows, int(seed), test_ratio
+        )
+        train_rows = _subsample_unlabeled(train_rows, ratio, sub_seed + 10 * int(seed))
+        test_rows = _subsample_unlabeled(
+            test_rows, ratio, sub_seed + 10 * int(seed) + 1
+        )
+        train_pos = sum(1 for r in train_rows if r["label"] == "positive")
+        test_pos = sum(1 for r in test_rows if r["label"] == "positive")
+        print(
+            f"  subsampled: train={len(train_rows)}(+{train_pos}) "
+            f"test={len(test_rows)}(+{test_pos})"
+        )
+        # Split train further into train/val (80/20 of train rows)
+        rng = random.Random(sub_seed + int(seed))
+        train_dedup = train_rows[:]
+        rng.shuffle(train_dedup)
+        n_val = max(1, int(len(train_dedup) * 0.2))
+        val_rows_fold = train_dedup[:n_val]
+        train_rows_fold = train_dedup[n_val:]
+
+        # One seed per repetition: shallow-copy the config so _run_baselines
+        # runs exactly this repetition's model seeds, not the full list again.
+        fold_cfg = dict(cfg)
+        fold_cfg["evaluation"] = {"seeds": [seed]}
+        fold_results = _run_baselines(
+            fold_cfg,
+            train_rows_fold,
+            [r["label"] for r in train_rows_fold],
+            val_rows_fold,
+            [r["label"] for r in val_rows_fold],
+            test_rows,
+            [r["label"] for r in test_rows],
+            proteome_path,
+            f"protein_split_seed{seed}",
+            feature_fn=feature_fn,
+        )
+        all_fold_results.extend(fold_results)
+
+    combined = ExperimentResults(experiment=exp_cfg["name"])
+    combined.model_results = all_fold_results
+    _write_results(combined, out_cfg, limitation=limitation)
+
+
+def _cluster_cv_chunks(
+    cluster_ids: list[str],
+    n_folds: int,
+    seed: int,
+) -> list[list[str]]:
+    """Deterministic round-robin partition of cluster ids into n_folds
+    roughly equal chunks (clusters are never split)."""
+    rng = random.Random(seed)
+    shuffled = cluster_ids[:]
+    rng.shuffle(shuffled)
+    return [shuffled[i::n_folds] for i in range(n_folds)]
+
+
+def _run_cluster_cv_experiment(
+    cfg: dict[str, Any],
+    exp_cfg: dict[str, Any],
+    eval_cfg: dict[str, Any],
+    out_cfg: dict[str, Any],
+    all_rows: list[dict[str, str]],
+    proteome_path: Path,
+) -> None:
+    """Repeated K-fold cross-validation over homology clusters.
+
+    Development-stability track (user decision 2026-08-11): the Arabidopsis
+    benchmark is evaluated under repeated K-fold CV where the folds are
+    MMseqs2 homology clusters (a cluster never crosses train/val/test), and
+    the whole K-fold is repeated ``n_repetitions`` times with fresh cluster
+    shuffles. This is the model-selection/ablation *stability* yardstick — it
+    is NOT the NC main evidence (that is the future tomato lockbox cohort)
+    and NOT Gate 2 evidence.
+
+    Folds are tagged ``cluster_cv_r<rep>f<fold>|...`` so
+    ``scripts/validate_external.py`` (which only parses
+    ``leave_<study>_out|...`` model names) structurally cannot ingest them
+    into Gate 2 — locked in by
+    tests/release/test_gate2_ignores_within_dataset_split_metrics.py.
+    """
+    cluster_file = Path(cfg["splits"]["cluster_file"])
+    n_folds = int(cfg["splits"].get("n_folds", 5))
+    n_repetitions = int(cfg["splits"].get("n_repetitions", 5))
+    if n_folds < 3:
+        # test + val consume n_folds - 2 folds of training clusters; with
+        # < 3 folds the train set degenerates to empty.
+        raise ValueError(f"cluster_cv requires n_folds >= 3, got {n_folds}")
+    ratio = int(cfg.get("subsample", {}).get("unlabeled_per_positive", 50))
+    sub_seed = int(cfg.get("subsample", {}).get("seed", 12345))
+    limitation = str(cfg.get("limitation", ""))
+
+    cluster_map: dict[str, str] = {}
+    with cluster_file.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle, delimiter="\t"):
+            cluster_map[row["protein_accession"]] = row["cluster_id"]
+
+    feature_fn = _resolve_feature_fn(cfg)
+    cluster_ids = sorted(set(cluster_map.values()))
+    all_fold_results: list[ModelResult] = []
+    for rep in range(n_repetitions):
+        chunks = _cluster_cv_chunks(cluster_ids, n_folds, sub_seed + rep)
+        for fold in range(n_folds):
+            test_clusters = set(chunks[fold])
+            val_clusters = set(chunks[(fold + 1) % n_folds])
+            print(f"\n===== Fold: cluster_cv_r{rep}f{fold} =====")
+            train_rows: list[dict[str, str]] = []
+            val_rows: list[dict[str, str]] = []
+            test_rows: list[dict[str, str]] = []
+            for row in all_rows:
+                cid = cluster_map.get(row["protein_accession"])
+                # unclustered accessions follow the existing train fallback
+                if cid is None or cid in test_clusters:
+                    if cid is None:
+                        train_rows.append(row)
+                    else:
+                        test_rows.append(row)
+                elif cid in val_clusters:
+                    val_rows.append(row)
+                else:
+                    train_rows.append(row)
+            fold_sub_seed = sub_seed + rep * n_folds + fold
+            train_rows = _subsample_unlabeled(train_rows, ratio, fold_sub_seed)
+            val_rows = _subsample_unlabeled(val_rows, ratio, fold_sub_seed + 1)
+            test_rows = _subsample_unlabeled(test_rows, ratio, fold_sub_seed + 2)
+            train_pos = sum(1 for r in train_rows if r["label"] == "positive")
+            test_pos = sum(1 for r in test_rows if r["label"] == "positive")
+            print(
+                f"  subsampled: train={len(train_rows)}(+{train_pos}) "
+                f"val={len(val_rows)} test={len(test_rows)}(+{test_pos})"
+            )
+            fold_results = _run_baselines(
+                cfg,
+                train_rows,
+                [r["label"] for r in train_rows],
+                val_rows,
+                [r["label"] for r in val_rows],
+                test_rows,
+                [r["label"] for r in test_rows],
+                proteome_path,
+                f"cluster_cv_r{rep}f{fold}",
+                feature_fn=feature_fn,
+            )
+            all_fold_results.extend(fold_results)
+
+    combined = ExperimentResults(experiment=exp_cfg["name"])
+    combined.model_results = all_fold_results
+    _write_results(combined, out_cfg, limitation=limitation)
+
+
 # ---------------------------------------------------------------------------
 # shared baseline execution + result writing
 # ---------------------------------------------------------------------------
+
 
 def _load_proteome_fasta(path: Path) -> dict[str, str]:
     seqs: dict[str, str] = {}
@@ -318,9 +516,7 @@ def _esm2_feature_vectors(
     total = len(unique)
     for start in range(0, total, chunk_size):
         chunk_prots = unique[start : start + chunk_size]
-        chunk_rows = [
-            r for r in rows if r["protein_accession"] in chunk_prots
-        ]
+        chunk_rows = [r for r in rows if r["protein_accession"] in chunk_prots]
         labels_path = scratch_dir / f"{tag}_esm2_{start}.tsv"
         _write_labels_tsv(chunk_rows, labels_path)
         emb_rows = extract_esm2_embeddings(labels_path, proteome_path)
@@ -465,8 +661,11 @@ def _build_branch_features(
     )
     study_ids = [r.get("study_accession") or "__unlabeled__" for r in rows]
     return BranchFeatures(
-        sequence=seq, esm=esm, structure=struct,
-        structure_mask=mask, study_ids=study_ids,
+        sequence=seq,
+        esm=esm,
+        structure=struct,
+        structure_mask=mask,
+        study_ids=study_ids,
     )
 
 
@@ -528,14 +727,16 @@ def _evaluate_motif(
         with sp.open("w", encoding="utf-8", newline="") as h:
             w = _csv.writer(h, delimiter=",", lineterminator="\n")
             w.writerow(("protein_accession", "cys_position", "label", "split"))
-            pairs = [
-                (train_rows, "train"), (val_rows, "val"), (test_rows, "test")
-            ]
+            pairs = [(train_rows, "train"), (val_rows, "val"), (test_rows, "test")]
             for rs, sn in pairs:
                 for r in rs:
                     w.writerow(
-                        (r["protein_accession"], r["cys_position_in_protein"],
-                         r["label"], sn)
+                        (
+                            r["protein_accession"],
+                            r["cys_position_in_protein"],
+                            r["label"],
+                            sn,
+                        )
                     )
 
         model = train_motif_baseline(sp, proteome_path, window_radius=10)
@@ -577,7 +778,8 @@ def _evaluate_motif(
         vs = _sc(val_rows)
         ts = _sc(test_rows)
         return ModelResult(
-            model=f"{label}|motif_frequency", seed=seed,
+            model=f"{label}|motif_frequency",
+            seed=seed,
             val_ap=ap(vs) if vs else None,
             test_ap=ap(ts) if ts else None,
         )
@@ -613,7 +815,11 @@ def _evaluate_ranker(
     n_val = branch_val.n_rows()
     combined = _concat_branches(branch_val, branch_test)
     out = structure_ranker_scores(
-        branch_train, train_y, combined, seed=seed, ablation=ablation,
+        branch_train,
+        train_y,
+        combined,
+        seed=seed,
+        ablation=ablation,
         hidden=int(params.get("hidden", 16)),
         dropout=float(params.get("dropout", 0.2)),
         epochs=int(params.get("epochs", 200)),
@@ -661,9 +867,7 @@ def _run_baselines(
             feat_val = feature_fn(val_rows, proteome_path, scratch, "val")
             feat_test = feature_fn(test_rows, proteome_path, scratch, "test")
         if needs_branch:
-            need_esm = any(
-                _ablation_from_spec(s).use_esm for s in _ablation_specs(cfg)
-            )
+            need_esm = any(_ablation_from_spec(s).use_esm for s in _ablation_specs(cfg))
             branch_train = _build_branch_features(
                 train_rows, proteome_path, scratch, "train", need_esm
             )
@@ -683,8 +887,15 @@ def _run_baselines(
             if model_name == "motif_frequency":
                 for seed in eval_cfg["seeds"]:
                     r = _evaluate_motif(
-                        train_rows, train_y, val_rows, val_y,
-                        test_rows, test_y, proteome_path, label, seed,
+                        train_rows,
+                        train_y,
+                        val_rows,
+                        val_y,
+                        test_rows,
+                        test_y,
+                        proteome_path,
+                        label,
+                        seed,
                     )
                     msg = (
                         f"motif seed={seed} "
@@ -700,16 +911,21 @@ def _run_baselines(
                     print(f"  {RANKER_MODEL}[{ab_name}] seed={seed} ...", end=" ")
                     r = _evaluate_ranker(
                         f"{RANKER_MODEL}:{ab_name}",
-                        _ablation_from_spec(spec), seed,
-                        branch_train, train_y,
-                        branch_val, val_y,
-                        branch_test, test_y,
+                        _ablation_from_spec(spec),
+                        seed,
+                        branch_train,
+                        train_y,
+                        branch_val,
+                        val_y,
+                        branch_test,
+                        test_y,
                         ranker_params=cfg.get("ranker", {}),
                     )
                     r.model = f"{label}|{r.model}"
                     msg = (
                         f"val_ap={r.val_ap:.4f}"
-                        if r.val_ap is not None else "no_val_pos"
+                        if r.val_ap is not None
+                        else "no_val_pos"
                     )
                     if r.test_ap is not None:
                         msg += f" test_ap={r.test_ap:.4f}"
@@ -718,10 +934,14 @@ def _run_baselines(
                 continue
             print(f"  {model_name} seed={seed} ...", end=" ")
             r = _evaluate(
-                model_name, seed,
-                feat_train, train_y,
-                feat_val, val_y,
-                feat_test, test_y,
+                model_name,
+                seed,
+                feat_train,
+                train_y,
+                feat_val,
+                val_y,
+                feat_test,
+                test_y,
             )
             r.model = f"{label}|{r.model}"
             msg = f"val_ap={r.val_ap:.4f}" if r.val_ap is not None else "no_val_pos"
@@ -746,7 +966,8 @@ def _write_results(
     for r in results.model_results:
         out_row: dict[str, str] = {"model": r.model, "seed": str(r.seed)}
         for key, val in [
-            ("val_ap", r.val_ap), ("test_ap", r.test_ap),
+            ("val_ap", r.val_ap),
+            ("test_ap", r.test_ap),
             ("test_recall_10", r.test_recall_10),
             ("test_recall_50", r.test_recall_50),
             ("test_mrr", r.test_mrr),
@@ -755,11 +976,13 @@ def _write_results(
         rows_out.append(out_row)
     with (out_dir / "metrics.tsv").open("w", encoding="utf-8", newline="") as h:
         w = csv.DictWriter(
-            h, fieldnames=list(rows_out[0]), delimiter="\t", lineterminator="\n",
+            h,
+            fieldnames=list(rows_out[0]),
+            delimiter="\t",
+            lineterminator="\n",
         )
         w.writeheader()
         w.writerows(rows_out)
-
 
     manifest: dict[str, object] = {
         "experiment": results.experiment,
@@ -776,6 +999,7 @@ def _write_results(
 # ---------------------------------------------------------------------------
 # baseline scoring
 # ---------------------------------------------------------------------------
+
 
 def _train_predict(
     model_name: str,
@@ -800,13 +1024,9 @@ def _train_predict(
     if model_name == "pu_logistic":
         return pu_logistic_regression_scores(train_X, train_y, predict_X, seed)
     if model_name == "random_forest":
-        return random_forest_scores(
-            train_X, train_y, predict_X, seed, n_estimators=50
-        )
+        return random_forest_scores(train_X, train_y, predict_X, seed, n_estimators=50)
     if model_name == "xgboost":
-        return xgboost_scores(
-            train_X, train_y, predict_X, seed, n_estimators=50
-        )
+        return xgboost_scores(train_X, train_y, predict_X, seed, n_estimators=50)
     if model_name == "esm_linear_head":
         return esm_linear_head_scores(train_emb, train_y, predict_emb, seed)
     raise ValueError(f"unknown model: {model_name}")
@@ -831,7 +1051,8 @@ def _evaluate(
     result = ModelResult(model=model_name, seed=seed)
 
     def _scored(
-        features: list[list[float]], labels: list[str],
+        features: list[list[float]],
+        labels: list[str],
     ) -> list[tuple[float, str]]:
         scores = _train_predict(model_name, train_X, train_y, features, seed)
         return list(zip(scores, labels, strict=True))
@@ -852,6 +1073,7 @@ def _evaluate(
 # main
 # ---------------------------------------------------------------------------
 
+
 def run_experiment(config_path: Path) -> ExperimentResults:
     cfg = _load_config(config_path)
     exp_cfg = cfg["experiment"]
@@ -866,6 +1088,7 @@ def run_experiment(config_path: Path) -> ExperimentResults:
         from plantpersulf.proteomics.persulfidation_publish import (
             publish_persulfidation_sites,
         )
+
         interim = Path("data/interim")
         for acc in ("PXD006140", "PXD024061"):
             publish_persulfidation_sites(acc, output_root=interim)
@@ -888,7 +1111,40 @@ def run_experiment(config_path: Path) -> ExperimentResults:
 
     if split_mode in ("leave_study_out", "time_split"):
         _run_study_split_experiment(
-            cfg, exp_cfg, eval_cfg, out_cfg, rows, proteome_path,
+            cfg,
+            exp_cfg,
+            eval_cfg,
+            out_cfg,
+            rows,
+            proteome_path,
+        )
+        return ExperimentResults(experiment=exp_cfg["name"])
+
+    if split_mode == "random_protein":
+        # Literature-comparable regime (Sul-BertGRU-style random protein
+        # split, 10 repetitions). Never ingested into Gate 2 (see
+        # _run_protein_split_experiment docstring).
+        _run_protein_split_experiment(
+            cfg,
+            exp_cfg,
+            eval_cfg,
+            out_cfg,
+            rows,
+            proteome_path,
+        )
+        return ExperimentResults(experiment=exp_cfg["name"])
+
+    if split_mode == "cluster_cv":
+        # Development-stability track: repeated K-fold CV over homology
+        # clusters. Never ingested into Gate 2 (see
+        # _run_cluster_cv_experiment docstring).
+        _run_cluster_cv_experiment(
+            cfg,
+            exp_cfg,
+            eval_cfg,
+            out_cfg,
+            rows,
+            proteome_path,
         )
         return ExperimentResults(experiment=exp_cfg["name"])
 
@@ -898,7 +1154,10 @@ def run_experiment(config_path: Path) -> ExperimentResults:
         cluster_file = _build_singleton_cluster_file(benchmark_path, cluster_file)
     split_config = Path(splits_cfg["split_config"])
     train_rows, val_rows, test_rows = _train_val_test_rows(
-        rows, proteome_path, cluster_file, split_config,
+        rows,
+        proteome_path,
+        cluster_file,
+        split_config,
     )
     print(f"split: train={len(train_rows)} val={len(val_rows)} test={len(test_rows)}")
 
@@ -925,8 +1184,15 @@ def run_experiment(config_path: Path) -> ExperimentResults:
 
     feature_fn = _resolve_feature_fn(cfg)
     results_list = _run_baselines(
-        cfg, train_rows, train_y, val_rows, val_y, test_rows, test_y,
-        proteome_path, exp_cfg["name"],
+        cfg,
+        train_rows,
+        train_y,
+        val_rows,
+        val_y,
+        test_rows,
+        test_y,
+        proteome_path,
+        exp_cfg["name"],
         feature_fn=feature_fn,
     )
     combined = ExperimentResults(experiment=exp_cfg["name"])

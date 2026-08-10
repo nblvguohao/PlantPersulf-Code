@@ -134,11 +134,7 @@ def evaluate_gate2(
     perm_p = evidence.get("permutation_p")
     cond5 = GateCondition(
         name="not_driven_by_single_cluster",
-        passed=(
-            not single_cluster
-            and perm_p is not None
-            and float(perm_p) <= max_p
-        ),
+        passed=(not single_cluster and perm_p is not None and float(perm_p) <= max_p),
         detail=f"single_cluster_driven={single_cluster}, permutation_p={perm_p}",
     )
 
@@ -159,9 +155,7 @@ def verify_predictive_claims(text: str, decision: Gate2Decision) -> list[str]:
         return []
     lowered = text.lower()
     return [
-        pattern
-        for pattern in _PREDICTIVE_CLAIM_PATTERNS
-        if pattern.lower() in lowered
+        pattern for pattern in _PREDICTIVE_CLAIM_PATTERNS if pattern.lower() in lowered
     ]
 
 

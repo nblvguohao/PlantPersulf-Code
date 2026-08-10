@@ -67,7 +67,10 @@ def test_registry_builder_registers_all_official_metadata(tmp_path: Path) -> Non
     assert all(row["sra_experiment_accession"].startswith("SRX") for row in samples)
     assert all(row["sra_run_accessions"].startswith("SRR") for row in samples)
 
-    assert audit_registry(
-        registry_dir=tmp_path,
-        config_path=Path("configs/data_sources.yaml"),
-    ) == summary
+    assert (
+        audit_registry(
+            registry_dir=tmp_path,
+            config_path=Path("configs/data_sources.yaml"),
+        )
+        == summary
+    )
