@@ -11,6 +11,15 @@ import csv
 from dataclasses import dataclass
 from pathlib import Path
 
+POSITIVE_CHARGE_RESIDUES: frozenset[str] = frozenset({"K", "R"})
+"""Lys/Arg only — fully protonated/positive at physiological pH. His (pKa
+~6) is deliberately excluded: it is only partially protonated at pH 7 and
+its inclusion would weaken rather than sharpen the thiolate-stabilization
+signal this feature targets (COPLBI-D-26-00068 review, Figure 1C:
+persulfidation requires nucleophilic attack by the anionic thiolate form of
+Cys, which nearby positive charge favours by lowering the local thiol
+pKa)."""
+
 KYTE_DOOLITTLE: dict[str, float] = {
     "A": 1.8, "C": 2.5, "D": -3.5, "E": -3.5, "F": 2.8,
     "G": -0.4, "H": -3.2, "I": 4.5, "K": -3.9, "L": 3.8,
@@ -38,6 +47,7 @@ class SequenceFeatureRow:
     hydrophobicity: float
     cys_density: float
     protein_length: int
+    local_positive_charge_density: float
 
 
 def _load_labels(path: Path) -> list[dict[str, str]]:
@@ -94,6 +104,18 @@ def _hydrophobicity(window: str) -> float:
     return sum(values) / len(values) if values else 0.0
 
 
+def _local_positive_charge_density(window: str) -> float:
+    """Fraction of the flanking window that is Lys/Arg — a thiolate-
+    stabilization proxy (see ``POSITIVE_CHARGE_RESIDUES`` docstring).
+    Padding 'X' residues count toward the denominator (matching how
+    ``_hydrophobicity`` treats them via ``KYTE_DOOLITTLE['X'] = 0.0``) so a
+    site near a sequence terminus is not artificially inflated."""
+    if not window:
+        return 0.0
+    charged = sum(1 for aa in window if aa in POSITIVE_CHARGE_RESIDUES)
+    return charged / len(window)
+
+
 def extract_sequence_features(
     labels_path: Path,
     proteome_path: Path,
@@ -116,6 +138,7 @@ def extract_sequence_features(
         hydro = _hydrophobicity(flank)
         cys_count = seq.count("C")
         cys_density = cys_count / len(seq) if seq else 0.0
+        charge_density = _local_positive_charge_density(flank)
         rows.append(
             SequenceFeatureRow(
                 protein_accession=protein,
@@ -125,6 +148,7 @@ def extract_sequence_features(
                 hydrophobicity=hydro,
                 cys_density=cys_density,
                 protein_length=len(seq),
+                local_positive_charge_density=charge_density,
             )
         )
     return tuple(rows)

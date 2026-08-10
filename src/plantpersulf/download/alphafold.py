@@ -280,12 +280,25 @@ def register_alphafold_structure(
 
 def audit_alphafold_structures(
     registry_path: Path = Path("data/registry/alphafold_structures.tsv"),
+    *,
+    base_directory: Path | None = None,
 ) -> tuple[AlphaFoldStructureSource, ...]:
-    """Re-verify every registered structure's SHA256 against local bytes."""
+    """Re-verify every registered structure's SHA256 against local bytes.
+
+    ``local_path`` is recorded relative to the directory holding the registry
+    (see ``register_alphafold_structure``), so that is the default resolution
+    root. A frozen *snapshot* of a registry may legitimately be stored
+    somewhere else (e.g. ``data/registry/releases/``) while still describing
+    the same downloaded files; such a caller must state the original registry
+    directory via ``base_directory``. It is passed explicitly and never
+    guessed: silently searching parent directories for a structure file would
+    be exactly the kind of quiet repair this auditor exists to prevent.
+    """
+    root = registry_path.parent if base_directory is None else base_directory
     rows = _read_registry(registry_path)
     sources: list[AlphaFoldStructureSource] = []
     for row in rows:
-        local_path = (registry_path.parent / row["local_path"]).resolve()
+        local_path = (root / row["local_path"]).resolve()
         try:
             size = int(row["size_bytes"])
         except ValueError as exc:

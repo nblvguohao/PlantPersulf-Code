@@ -106,6 +106,68 @@ def test_hydrophobicity_is_frame_centered_on_cys(tmp_path: Path) -> None:
     assert p2.flanking_window[1] == "C"
 
 
+def test_local_positive_charge_density_counts_k_and_r_in_window(
+    tmp_path: Path,
+) -> None:
+    """Thiolate-stabilization prior (COPLBI review, Figure 1C): persulfidation
+    requires the anionic, deprotonated thiolate form, which nearby
+    K/R residues favour by lowering the Cys thiol pKa. This is a
+    sequence-only proxy — computable with zero external database
+    dependency, unlike a lookup against a curated PTM database (which we
+    verified has ~zero plant coverage for our reference proteomes)."""
+    proteome = tmp_path / "mini.fasta"
+    # Cys at position 4, window radius 2 -> "KRCHE" (2 K/R residues either side)
+    proteome.write_text(">sp|P1\nAKRCHE\n", encoding="utf-8")
+    labels = tmp_path / "sites.tsv"
+    labels.write_text(
+        "protein_accession\tcys_position_in_protein\tlabel\t"
+        "study_accession\tevidence_level\tsource_sha256\n"
+        "P1\t4\tpositive\tPXD006140\tsite_ms\taaa\n",
+        encoding="utf-8",
+    )
+    rows = extract_sequence_features(labels, proteome, window_radius=2)
+    row = rows[0]
+    assert row.flanking_window == "KRCHE"
+    # K, R present; H excluded (only weakly/partially charged at pH 7) -> 2/5
+    assert row.local_positive_charge_density == pytest.approx(2 / 5)
+
+
+def test_local_positive_charge_density_is_zero_with_no_basic_residues(
+    tmp_path: Path,
+) -> None:
+    proteome = tmp_path / "mini.fasta"
+    proteome.write_text(">sp|P1\nAACAA\n", encoding="utf-8")
+    labels = tmp_path / "sites.tsv"
+    labels.write_text(
+        "protein_accession\tcys_position_in_protein\tlabel\t"
+        "study_accession\tevidence_level\tsource_sha256\n"
+        "P1\t3\tpositive\tPXD006140\tsite_ms\taaa\n",
+        encoding="utf-8",
+    )
+    rows = extract_sequence_features(labels, proteome, window_radius=2)
+    assert rows[0].local_positive_charge_density == 0.0
+
+
+def test_local_positive_charge_density_ignores_padding_x(tmp_path: Path) -> None:
+    """Padding 'X' residues at sequence termini must not count as basic and
+    must not be excluded from the density denominator (matches how
+    hydrophobicity already treats padding via KYTE_DOOLITTLE['X'] = 0.0)."""
+    proteome = tmp_path / "mini.fasta"
+    proteome.write_text(">sp|P1\nKC\n", encoding="utf-8")  # Cys at position 2
+    labels = tmp_path / "sites.tsv"
+    labels.write_text(
+        "protein_accession\tcys_position_in_protein\tlabel\t"
+        "study_accession\tevidence_level\tsource_sha256\n"
+        "P1\t2\tpositive\tPXD006140\tsite_ms\taaa\n",
+        encoding="utf-8",
+    )
+    rows = extract_sequence_features(labels, proteome, window_radius=2)
+    row = rows[0]
+    # window radius 2 around pos 2 of a 2-residue protein -> "XKCXX" (5 long)
+    assert row.flanking_window == "XKCXX"
+    assert row.local_positive_charge_density == pytest.approx(1 / 5)
+
+
 def test_proteome_loader_accepts_non_uniprot_headers(tmp_path: Path) -> None:
     """EnsemblFungi-style headers (first whitespace token = accession, no
     pipe fields) must load too — the cross-species track scores Magnaporthe

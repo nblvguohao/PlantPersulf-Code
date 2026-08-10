@@ -35,13 +35,31 @@ bit-identical scores and uncertainties.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
+
+import numpy as np
 
 from plantpersulf.models.pu_risk import estimate_label_frequency, pu_example_weights
 from plantpersulf.models.traditional import TrainOnlyScaler
 
 if TYPE_CHECKING:
     import torch
+
+ArmLabel = Literal[
+    "sequence_only",
+    "sequence_coverage_only",
+    "sequence_contact",
+    "sequence_plddt",
+    "sequence_contact_plddt",
+]
+
+ALLOWED_ARMS = frozenset({
+    "sequence_only",
+    "sequence_coverage_only",
+    "sequence_contact",
+    "sequence_plddt",
+    "sequence_contact_plddt",
+})
 
 
 # ---------------------------------------------------------------------------
@@ -80,6 +98,96 @@ class AblationConfig:
     use_plddt: bool = True
     use_accessibility: bool = True
     use_study_context: bool = True
+
+
+@dataclass(frozen=True)
+class ProjectedStructureInputs:
+    """Explicit structure-feature projection for a single ablation arm.
+
+    ``values`` is (n, d) where d is 0 for ``sequence_only``, 1 for
+    ``sequence_coverage_only``, and 2 for contact/plddt/contact_plddt arms.
+    ``mask`` is (n, 1) — 1.0 when a real registered structure is present,
+    0.0 otherwise. This is the boundary that makes prohibited values
+    inaccessible to the arm: coverage-only receives the raw binary mask
+    column, not either scientific structure column.
+    """
+
+    values: np.ndarray
+    mask: np.ndarray
+
+
+def project_structure_inputs(
+    *,
+    structure: np.ndarray,
+    mask: np.ndarray,
+    arm: str,
+) -> ProjectedStructureInputs:
+    """Project raw [contact_proxy, plddt] columns onto the subset the arm
+    is allowed to consume. The coverage-only arm sees only the binary
+    structure-mask column; contact/plddt arms see their respective columns
+    with the other zeroed; ``sequence_only`` sees nothing.
+
+    Arm semantics (columns of ``structure``):
+      col 0 = contact_number_proxy
+      col 1 = pLDDT
+    """
+    if arm not in ALLOWED_ARMS:
+        raise ValueError(f"unknown arm {arm!r}")
+    if structure.ndim != 2 or mask.ndim != 2:
+        raise ValueError("structure and mask must be 2D arrays")
+    if structure.shape[0] != mask.shape[0]:
+        raise ValueError("structure and mask must have same number of rows")
+
+    n_rows = structure.shape[0]
+
+    if arm == "sequence_only":
+        # All-zero values of the same width as the raw structure (2 columns)
+        # and mask all-zero, so the structure branch is disabled entirely.
+        return ProjectedStructureInputs(
+            values=np.zeros((n_rows, structure.shape[1]), dtype=np.float64),
+            mask=np.zeros((n_rows, 1), dtype=np.float64),
+        )
+
+    if arm == "sequence_coverage_only":
+        # Only the binary mask column — zero structure yields a zero value;
+        # present structure yields 1.0. The raw structure columns are never
+        # consulted. Output shape matches d_str=2 so the existing encoder
+        # works without width changes.
+        vals = np.hstack([
+            mask.astype(np.float64),
+            np.zeros_like(mask, dtype=np.float64),
+        ])
+        return ProjectedStructureInputs(
+            values=vals,
+            mask=mask.astype(np.float64),
+        )
+
+    # For contact, plddt, contact_plddt: only allowed columns survive;
+    # rows with mask=0 get zero values regardless.
+    contact_col = structure[:, 0:1]
+    plddt_col = structure[:, 1:2]
+
+    if arm == "sequence_contact":
+        values = np.where(mask > 0, contact_col, 0.0)
+        return ProjectedStructureInputs(
+            values=np.hstack([values, np.zeros_like(values)]),
+            mask=mask,
+        )
+
+    if arm == "sequence_plddt":
+        values = np.where(mask > 0, plddt_col, 0.0)
+        return ProjectedStructureInputs(
+            values=np.hstack([np.zeros_like(values), values]),
+            mask=mask,
+        )
+
+    # sequence_contact_plddt
+    contact_val = np.where(mask > 0, contact_col, 0.0)
+    plddt_val = np.where(mask > 0, plddt_col, 0.0)
+    return ProjectedStructureInputs(
+        values=np.hstack([contact_val, plddt_val]),
+        mask=mask,
+    )
 
 
 @dataclass(frozen=True)
@@ -166,12 +274,51 @@ class _BranchScalers:
         )
 
 
+def _arm_from_ablation(ablation: AblationConfig) -> str:
+    """Infer the structured arm name from the ablation flags.
+
+    The five frozen arms share a single unambiguous mapping."""
+    if not ablation.use_structure:
+        return "sequence_only"
+    if not ablation.use_accessibility and not ablation.use_plddt:
+        return "sequence_coverage_only"
+    if ablation.use_accessibility and not ablation.use_plddt:
+        return "sequence_contact"
+    if not ablation.use_accessibility and ablation.use_plddt:
+        return "sequence_plddt"
+    return "sequence_contact_plddt"
+
+
+def _project_and_apply_ablation(
+    features: BranchFeatures,
+    ablation: AblationConfig,
+) -> tuple[list[list[float]], list[list[float]]]:
+    """Project structure columns through the arm's allowed projection, then
+    return (projected_values, projected_mask) as lists-of-lists for the
+    tensor builder.
+
+    The projection boundary makes prohibited values physically inaccessible
+    to the arm (e.g. a coverage-only arm receives only the raw mask column,
+    never either scientific structure column)."""
+    arm = _arm_from_ablation(ablation)
+    mask_np = np.array(
+        [[1.0 if m else 0.0] for m in features.structure_mask],
+        dtype=np.float64,
+    )
+    projected = project_structure_inputs(
+        structure=np.array(features.structure, dtype=np.float64),
+        mask=mask_np,
+        arm=arm,
+    )
+    return projected.values.tolist(), projected.mask.tolist()
+
+
 def _apply_structure_ablation(
     structure: list[list[float]],
     ablation: AblationConfig,
 ) -> list[list[float]]:
-    """Zero the accessibility (col 0) or pLDDT (col 1) column per the ablation.
-    Column semantics match ``features.structure`` -> [contact_proxy, plddt]."""
+    """DEPRECATED: superseded by ``_project_and_apply_ablation``, kept for
+    backward compatibility with pre-v2 serialised behavior."""
     if ablation.use_accessibility and ablation.use_plddt:
         return structure
     out: list[list[float]] = []
@@ -242,17 +389,13 @@ def _to_tensors(
 ) -> dict[str, torch.Tensor]:
     import torch
 
-    struct = _apply_structure_ablation(features.structure, ablation)
+    struct, struct_active = _project_and_apply_ablation(features, ablation)
     study_onehot, study_known = _study_onehot(features, vocab)
 
     esm_active = 1.0 if ablation.use_esm else 0.0
-    struct_flag = 1.0 if ablation.use_structure else 0.0
     study_flag = 1.0 if ablation.use_study_context else 0.0
 
-    struct_active = [
-        [struct_flag if m else 0.0] for m in features.structure_mask
-    ]
-    study_active = [[study_flag if k else 0.0] for k in study_known]
+    study_active_list = [[study_flag if k else 0.0] for k in study_known]
 
     esm_rows = features.esm
     if not ablation.use_esm:
@@ -264,7 +407,7 @@ def _to_tensors(
         "struct": torch.tensor(struct, dtype=torch.float32),
         "struct_active": torch.tensor(struct_active, dtype=torch.float32),
         "study": torch.tensor(study_onehot, dtype=torch.float32),
-        "study_active": torch.tensor(study_active, dtype=torch.float32),
+        "study_active": torch.tensor(study_active_list, dtype=torch.float32),
     }
 
 

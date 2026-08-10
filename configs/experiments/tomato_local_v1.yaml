@@ -1,0 +1,92 @@
+# Tomato-local model v1 — within-species training & evaluation on kiae271
+# -----------------------------------------------------------------------
+# Framing: the 99 kiae271 coordinate-verified differential persulfidation
+# sites (Zhang et al. 2024, Plant Physiology, doi:10.1093/plphys/kiae271)
+# are used here as TARGET-SPECIES SUPERVISION, not as a cross-species
+# holdout. The question is "can we build a useful tomato-specific model from
+# the real tomato evidence we now have" — a different, legitimate question
+# from "does an Arabidopsis-trained model transfer to tomato" (answered: no).
+#
+# This config is separate from and does not modify pu_ranker_v1.yaml (the
+# frozen Arabidopsis PU ranker experiment) or gate2_v1.yaml (the frozen
+# Gate 2 decision config). Results are written to a separate namespace
+# (results/tomato_local_v1/).
+#
+# Design decisions (frozen before any result was seen):
+#
+# - Cross-validation: 5-fold homology-cluster-grouped. MMseqs2 easy-cluster
+#   (30% identity, >=50% coverage, cov-mode 0) over the full tomato
+#   proteome (36,988 proteins -> 17,758 clusters). Every Cys site of a
+#   protein and all its homologs lands in exactly one fold — no protein
+#   family crosses a fold boundary. Seed: 20260810.
+# - Two evaluation arenas: "proteome" (background = subsampled all-tomato
+#   Cys, realistic candidate-prioritisation) and "panel" (background =
+#   only the other Cys of the 88 kiae271-detected proteins — controls for
+#   MS protein-level detection bias).
+# - Features:
+#     seq_3 = [hydrophobicity, cys_density, local_positive_charge_density]
+#     seq_2 = [hydrophobicity, cys_density]                         (ablation)
+#     seq_struct = seq_3 + [contact_number_proxy, plddt]             (structure)
+# - Models: pu_logistic (Elkan-Noto) for all feature sets.
+# - Ratio: 20 unlabeled per positive, fixed seeds per arena.
+# - Seeds: 0, 1, 2, 3, 4 for model seeds (pu_logistic Elkan-Noto
+#   internal randomness); fold assignment is deterministic (one seed).
+# - Ensemble: mean score across model seeds for the final ranking.
+
+version: 1
+
+experiment:
+  name: tomato_local_v1
+  kiae271_xlsx: data/raw/supplements/KIAE271_SUPPL/kiae271_DSs.xlsx
+  reference_proteome: data/raw/references/tomato_ref_proteome_v1.fasta
+  cluster_file: data/processed/clusters/tomato_proteome_clusters_v1.tsv
+
+splits:
+  mode: grouped_cluster_k_fold
+  n_folds: 5
+  seed: 20260810
+
+features:
+  - name: sequence
+    module: plantpersulf.features.sequence
+    fields: [hydrophobicity, cys_density, local_positive_charge_density]
+  - name: structure
+    module: plantpersulf.features.structure
+    fields: [contact_number_proxy, plddt]
+
+models:
+  - pu_logistic
+
+arms:
+  - name: seq_2
+    description: "baseline: hydrophobicity + cys_density (2 features, replicates the cross-species panel evaluation exactly)"
+  - name: seq_3
+    description: "sequence-only: + local_positive_charge_density (thiolate-stabilisation proxy)"
+  - name: seq_structure
+    description: "sequence + structure: 5 features, missing structure filled with 0.0"
+
+evaluation:
+  arenas:
+    - proteome
+    - panel
+  ratio: 20
+  arena_seeds:
+    proteome: 12345
+    panel: 12346
+  model_seeds: [0, 1, 2, 3, 4]
+  n_boot: 1000
+  bootstrap_seed: 0
+
+output:
+  directory: results/tomato_local_v1
+
+limitation: |
+  Single-study, single-laboratory (Zhang lab, College of Life Sciences,
+  South China Agricultural University), single-chemistry (4D label-free
+  quantitative MS with iodoTMT labelling), single-species (Solanum
+  lycopersicum, tomato). The 99 verified positives span 88 proteins of
+  a ~37,000-protein proteome. Cross-validation here is method-level
+  only — it does not demonstrate chemical-, laboratory-, or species-
+  independent predictive value. This is a candidate-prioritisation model
+  for hypothesis generation within one experimental context, not a
+  general persulfidation predictor.

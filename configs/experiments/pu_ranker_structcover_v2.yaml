@@ -1,0 +1,97 @@
+# Phase S0 frozen experiment config — structure-coverage v2 validation.
+#
+# Paired comparison of PU ranker scoring under two frozen AlphaFold structure
+# registry releases (7 vs 2,006 accessions), with five non-tunable ESM-free
+# ablation arms. The experiment is additive: it cannot mutate pu_ranker_v1,
+# Gate 2, external-validation outputs, or the mutable registry.
+#
+# Five arms:
+#   sequence_only          — [hydrophobicity, cys_density] only (no structure)
+#   sequence_coverage_only — coverage binary mask (1.0 if structure registered)
+#   sequence_contact       — contact_number_proxy from structure
+#   sequence_plddt         — pLDDT from structure
+#   sequence_contact_plddt — both contact_number_proxy + pLDDT
+#
+# All arms are ESM-free and study-context-free. Identical
+# rows/splits/seeds/hyperparameters for both releases.
+#
+# MANDATORY LIMITATION (carried into every downstream claim): both studies are
+# from the same laboratory (Romero/Gotor, U. Sevilla), the same tag-switch
+# persulfidation chemistry, and the same species (Arabidopsis thaliana).
+
+version: 2
+
+experiment:
+  name: pu_ranker_structcover_v2
+  benchmark_labels:
+    path: data/processed/benchmark_v1/sites.tsv
+    sha256: 386178330DF17897606650FBD8C356BA66132CD1C3DB10F8E33AD53F46D5904C
+  reference_proteome:
+    path: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+    sha256: 51559016416634D52E2C92F6C30BB4297149841B01A60F683394CACF9D1033BF
+  protein_clusters:
+    path: data/processed/clusters/protein_clusters_v2.tsv
+    sha256: E13D16AEE81E0B98C9687BC98F8565122FBC027249D9E020A336A4F509671978
+  legacy_config:
+    path: configs/experiments/pu_ranker_v1.yaml
+    sha256: 079D17A8BD91D77E2CC5C138FA8D414500B843DD5E17E16177D1561BE3097AE0
+registries:
+  structcover_v1:
+    path: data/registry/releases/alphafold_structures_release_v1.tsv
+    sha256: E09D18D334A3CF41233E59EB6CF66C9611EF9B13CD407C30770F608674128326
+    records: 7
+  structcover_v2:
+    path: data/registry/releases/alphafold_structures_release_v2.tsv
+    sha256: BEE2D30ED28D754A7162283BB3C6080928DBC6A4CFA563958C48BD0146188075
+    records: 2006
+splits:
+  mode: leave_study_out
+  studies: [PXD006140, PXD024061]
+evaluation:
+  seeds: [0, 1, 2, 3, 4]
+  cluster_bootstrap_seed: 1729
+  cluster_bootstrap_replicates: 5000
+  permutation_seed: 2718
+  permutation_replicates: 5000
+subsample:
+  unlabeled_per_positive: 20
+  seed: 12345
+ranker:
+  hidden: 16
+  dropout: 0.2
+  epochs: 200
+  lr: 0.05
+  n_mc_dropout: 16
+arms:
+  sequence_only:
+    use_esm: false
+    use_structure: false
+    use_plddt: false
+    use_accessibility: false
+    use_study_context: false
+  sequence_coverage_only:
+    use_esm: false
+    use_structure: true
+    use_plddt: false
+    use_accessibility: false
+    use_study_context: false
+  sequence_contact:
+    use_esm: false
+    use_structure: true
+    use_plddt: false
+    use_accessibility: true
+    use_study_context: false
+  sequence_plddt:
+    use_esm: false
+    use_structure: true
+    use_plddt: true
+    use_accessibility: false
+    use_study_context: false
+  sequence_contact_plddt:
+    use_esm: false
+    use_structure: true
+    use_plddt: true
+    use_accessibility: true
+    use_study_context: false
+output:
+  directory: results/experiments/pu_ranker_structcover_v2

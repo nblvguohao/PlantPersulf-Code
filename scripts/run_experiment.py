@@ -27,9 +27,16 @@ from typing import Any, cast
 
 import yaml
 
+from plantpersulf.download.alphafold import audit_alphafold_structures
+
 # ---------------------------------------------------------------------------
 # helpers
 # ---------------------------------------------------------------------------
+
+#: Registry consulted when a caller does not name one explicitly. Kept as the
+#: mutable project registry so every pre-existing v1 caller behaves exactly as
+#: before; new experiments that must pin a frozen release pass their own path.
+DEFAULT_STRUCTURE_REGISTRY = Path("data/registry/alphafold_structures.tsv")
 
 BENCHMARK_FIELDS = (
     "protein_accession", "cys_position_in_protein", "label",
@@ -349,17 +356,29 @@ def _structure_feature_vectors_with_mask(
     proteome_path: Path,
     scratch_dir: Path,
     tag: str,
+    *,
+    structure_registry_path: Path = DEFAULT_STRUCTURE_REGISTRY,
+    structure_registry_base: Path | None = None,
 ) -> tuple[list[list[float]], list[bool]]:
     """Extract [contact_number_proxy, plddt] per benchmark row plus a
     per-row ``has_structure`` mask, from real AlphaFold/SWISS-MODEL
     structures. Rows without a resolvable structure get a zero vector and a
     ``False`` mask — the mask (not a placeholder value) is what downstream
-    consumers must honour."""
-    from plantpersulf.download.alphafold import audit_alphafold_structures
+    consumers must honour.
+
+    ``structure_registry_path`` selects *which* registry of registered
+    structures is consulted, and ``structure_registry_base`` states the
+    directory that registry's relative ``local_path`` values resolve against
+    (needed when a frozen release snapshot has been relocated). Both are
+    explicit so a paired coverage comparison cannot accidentally read two
+    different structure sets, or drift when the mutable registry grows.
+    """
     from plantpersulf.features.structure import extract_cys_structure_features
 
     # Build a lookup: (accession) -> pdb_text (cached, one read per protein)
-    sources = audit_alphafold_structures()
+    sources = audit_alphafold_structures(
+        structure_registry_path, base_directory=structure_registry_base
+    )
     pdb_cache: dict[str, str] = {}
     for s in sources:
         pdb_cache[s.accession] = s.local_path.read_text(encoding="utf-8")
@@ -392,11 +411,19 @@ def _structure_feature_vectors(
     proteome_path: Path,
     scratch_dir: Path,
     tag: str,
+    *,
+    structure_registry_path: Path = DEFAULT_STRUCTURE_REGISTRY,
+    structure_registry_base: Path | None = None,
 ) -> list[list[float]]:
     """Flat-feature view of the structure branch (for the traditional
     baselines): the [contact, plddt] vectors only, missing rows zero-filled."""
     vectors, _ = _structure_feature_vectors_with_mask(
-        rows, proteome_path, scratch_dir, tag
+        rows,
+        proteome_path,
+        scratch_dir,
+        tag,
+        structure_registry_path=structure_registry_path,
+        structure_registry_base=structure_registry_base,
     )
     return vectors
 
@@ -410,6 +437,9 @@ def _build_branch_features(
     scratch_dir: Path,
     tag: str,
     need_esm: bool = True,
+    *,
+    structure_registry_path: Path = DEFAULT_STRUCTURE_REGISTRY,
+    structure_registry_base: Path | None = None,
 ) -> Any:
     """Assemble a multi-branch ``BranchFeatures`` (sequence + frozen-ESM +
     structure + missingness mask + study context) for the structure-aware
@@ -426,7 +456,12 @@ def _build_branch_features(
     else:
         esm = [[0.0] for _ in rows]
     struct, mask = _structure_feature_vectors_with_mask(
-        rows, proteome_path, scratch_dir, tag
+        rows,
+        proteome_path,
+        scratch_dir,
+        tag,
+        structure_registry_path=structure_registry_path,
+        structure_registry_base=structure_registry_base,
     )
     study_ids = [r.get("study_accession") or "__unlabeled__" for r in rows]
     return BranchFeatures(
