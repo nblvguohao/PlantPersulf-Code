@@ -64,6 +64,15 @@ def sensitivity_priors(
     )
 
 
+def deduplicated_additive_seed_configs(
+    priors: tuple[float, ...], model_seeds: tuple[int, ...]
+) -> tuple[tuple[int, float], ...]:
+    """Fit one deterministic additive model per prior, not per seed copy."""
+    if not priors or not model_seeds:
+        raise ValueError("priors and model_seeds must not be empty")
+    return tuple((model_seeds[0], prior) for prior in priors)
+
+
 def select_release_model(candidate_admitted: bool) -> str:
     return "additive_pu" if candidate_admitted else "pu_logistic"
 
@@ -161,7 +170,7 @@ def _validate_config(cfg: dict[str, Any]) -> None:
         raise RuntimeError(
             "core feature order differs from the frozen biological contract"
         )
-    if cfg["compute"] != {"device": "auto", "score_batch_size": 16384}:
+    if cfg["compute"] != {"device": "cpu", "score_batch_size": 16384}:
         raise RuntimeError("compute policy differs from the frozen config")
 
 
@@ -234,7 +243,8 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
                     tuple(float(x) for x in cfg["pu"]["prior_multipliers"]),
                     float(cfg["pu"]["prior_cap"]),
                 )
-                candidate_columns, baseline_columns = [], []
+                candidate_columns: list[tuple[float, ...]] = []
+                baseline_columns: list[list[float]] = []
                 proteins = [folded[i].protein_accession for i in train]
                 for model_seed in cfg["evaluation"]["model_seeds"]:
                     baseline_columns.append(
@@ -242,24 +252,31 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
                             train_x, train_y, test_x, int(model_seed)
                         )
                     )
-                    for prior in priors:
-                        candidate_columns.append(
-                            fit_additive_pu_ranker(
-                                train_x,
-                                train_y,
-                                proteins,
-                                BIOLOGY_FEATURE_NAMES,
-                                AdditivePuConfig(
-                                    class_prior=prior,
-                                    seed=int(model_seed),
-                                    device=device,
-                                ),
-                            ).score(
-                                test_x,
-                                device=device,
-                                batch_size=score_batch_size,
-                            )
-                        )
+                additive_by_prior: dict[float, tuple[float, ...]] = {}
+                for representative_seed, prior in deduplicated_additive_seed_configs(
+                    priors,
+                    tuple(int(value) for value in cfg["evaluation"]["model_seeds"]),
+                ):
+                    additive_by_prior[prior] = fit_additive_pu_ranker(
+                        train_x,
+                        train_y,
+                        proteins,
+                        BIOLOGY_FEATURE_NAMES,
+                        AdditivePuConfig(
+                            class_prior=prior,
+                            seed=representative_seed,
+                            device=device,
+                        ),
+                    ).score(
+                        test_x,
+                        device=device,
+                        batch_size=score_batch_size,
+                    )
+                candidate_columns.extend(
+                    additive_by_prior[prior]
+                    for _ in cfg["evaluation"]["model_seeds"]
+                    for prior in priors
+                )
                 candidate_scores = [
                     statistics.median(column[i] for column in candidate_columns)
                     for i in range(len(test))
@@ -361,45 +378,53 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
     release_models: list[dict[str, object]] = []
     percentile_columns: list[tuple[float, ...]] = []
     if selected_model == "additive_pu":
+        release_by_prior: dict[float, tuple[dict[str, object], tuple[float, ...]]] = {}
+        for representative_seed, prior in deduplicated_additive_seed_configs(
+            full_priors,
+            tuple(int(value) for value in cfg["evaluation"]["model_seeds"]),
+        ):
+            logger.info(
+                "phase=release_refit_start model=additive_pu seed=%s prior=%s",
+                representative_seed,
+                prior,
+            )
+            model = fit_additive_pu_ranker(
+                full_x,
+                full_y,
+                full_proteins,
+                BIOLOGY_FEATURE_NAMES,
+                AdditivePuConfig(
+                    class_prior=prior,
+                    seed=representative_seed,
+                    device=device,
+                ),
+            )
+            release_by_prior[prior] = (
+                model.to_dict(),
+                _percentiles(
+                    model.score(
+                        candidate_x,
+                        device=device,
+                        batch_size=score_batch_size,
+                    )
+                ),
+            )
+            logger.info(
+                "phase=release_refit_complete model=additive_pu seed=%s prior=%s",
+                representative_seed,
+                prior,
+            )
         for model_seed in cfg["evaluation"]["model_seeds"]:
             for prior in full_priors:
-                logger.info(
-                    "phase=release_refit_start model=additive_pu seed=%s prior=%s",
-                    model_seed,
-                    prior,
-                )
-                model = fit_additive_pu_ranker(
-                    full_x,
-                    full_y,
-                    full_proteins,
-                    BIOLOGY_FEATURE_NAMES,
-                    AdditivePuConfig(
-                        class_prior=prior,
-                        seed=int(model_seed),
-                        device=device,
-                    ),
-                )
+                model_dict, percentiles = release_by_prior[prior]
                 release_models.append(
                     {
                         "seed": int(model_seed),
                         "class_prior": prior,
-                        "model": model.to_dict(),
+                        "model": model_dict,
                     }
                 )
-                percentile_columns.append(
-                    _percentiles(
-                        model.score(
-                            candidate_x,
-                            device=device,
-                            batch_size=score_batch_size,
-                        )
-                    )
-                )
-                logger.info(
-                    "phase=release_refit_complete model=additive_pu seed=%s prior=%s",
-                    model_seed,
-                    prior,
-                )
+                percentile_columns.append(percentiles)
     else:
         for model_seed in cfg["evaluation"]["model_seeds"]:
             logger.info(

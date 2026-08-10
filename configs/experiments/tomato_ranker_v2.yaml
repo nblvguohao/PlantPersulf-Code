@@ -31,7 +31,7 @@ structure:
 observation_propensity:
   enabled: false
 compute:
-  device: auto
+  device: cpu
   score_batch_size: 16384
 output:
   include_per_site_oof_scores: true
