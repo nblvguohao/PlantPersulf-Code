@@ -33,6 +33,14 @@ from typing import Any
 Row = dict[str, str]
 
 
+def _parse_fold_study(model_name: str) -> str | None:
+    """Return only canonical leave-study-out identifiers for Gate 2 input."""
+    head = model_name.split("|", maxsplit=1)[0]
+    if head.startswith("leave_") and head.endswith("_out"):
+        return head[len("leave_") : -len("_out")]
+    return None
+
+
 def partition_leave_study_out(
     rows: list[Row],
     holdout_study: str,
