@@ -1,0 +1,16 @@
+experiment:
+  name: cross_crop_target_label_free_v1
+claim_class: target_label_free_transfer_not_gate2
+target_species: Solanum lycopersicum
+source_species: [Arabidopsis thaliana, Oryza sativa]
+minimum_source_studies_per_species: 2
+forbidden_target_label_sources: [KIAE271_SUPPL, tomato_local_v1, tomato_ranker_v2]
+evaluation:
+  source_selection: leave_source_species_and_study_out
+  target_labels_visible_during_fit: false
+  target_labels_visible_during_tuning: false
+applicability:
+  min_target_in_domain_fraction: 0.80
+wetlab:
+  enabled: false
+  max_noncontrol_fraction: 0.25
