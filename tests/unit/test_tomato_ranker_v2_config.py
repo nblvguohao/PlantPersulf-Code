@@ -17,6 +17,7 @@ def test_tomato_v2_config_freezes_primary_arena_and_structure_default() -> None:
     assert cfg["evaluation"]["repetitions"] == 5
     assert cfg["structure"]["delta_default"] == 0
     assert cfg["observation_propensity"]["enabled"] is False
+    assert cfg["compute"] == {"device": "auto", "score_batch_size": 16384}
     assert cfg["models"]["fallback_on_admission_failure"] is True
     assert cfg["claim_class"] == "development_candidate_ranking_not_gate2"
     assert select_release_model(False) == "pu_logistic"

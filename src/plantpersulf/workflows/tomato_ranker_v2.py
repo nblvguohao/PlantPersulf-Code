@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 import json
+import logging
 import statistics
 from pathlib import Path
 from typing import Any, cast
@@ -115,6 +116,23 @@ def _percentiles(scores: tuple[float, ...]) -> tuple[float, ...]:
     return tuple(percentiles)
 
 
+def configure_run_logger(log_path: Path) -> logging.Logger:
+    """Create a per-run progress logger without mutating global logging."""
+    logger = logging.getLogger(f"tomato_ranker_v2.{log_path.resolve()}")
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    if logger.handlers:
+        return logger
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+    for handler in (
+        logging.FileHandler(log_path, encoding="utf-8"),
+        logging.StreamHandler(),
+    ):
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    return logger
+
+
 def _validate_config(cfg: dict[str, Any]) -> None:
     if cfg.get("claim_class") != "development_candidate_ranking_not_gate2":
         raise RuntimeError("tomato v2 cannot emit a Gate 2 claim")
@@ -143,6 +161,8 @@ def _validate_config(cfg: dict[str, Any]) -> None:
         raise RuntimeError(
             "core feature order differs from the frozen biological contract"
         )
+    if cfg["compute"] != {"device": "auto", "score_batch_size": 16384}:
+        raise RuntimeError("compute policy differs from the frozen config")
 
 
 def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, object]:
@@ -151,6 +171,9 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
     _validate_config(cfg)
     if output_dir.exists():
         raise FileExistsError(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=False)
+    logger = configure_run_logger(output_dir / "run.log")
+    logger.info("phase=run_start config=%s", config_path)
     data = cfg["data"]
     xlsx, fasta, clusters = (
         Path(data["kiae271_xlsx"]),
@@ -168,6 +191,8 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
     if set(proteome) - set(cluster_map):
         raise RuntimeError("registered cluster table misses proteins")
     seed = int(data["subsample_seed"])
+    device = str(cfg["compute"]["device"])
+    score_batch_size = int(cfg["compute"]["score_batch_size"])
     folds, repetitions = (
         int(cfg["evaluation"]["folds"]),
         int(cfg["evaluation"]["repetitions"]),
@@ -176,13 +201,23 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
     baseline_runs: dict[str, tuple[float, float, float]] = {}
     oof_rows: list[dict[str, object]] = []
     for arena in (ARENA_PANEL, ARENA_PROTEOME):
+        logger.info("phase=arena_start arena=%s", arena)
         rows = build_tomato_pu_rows(
             xlsx, proteome, arena, int(data["arena_ratio"]), seed
         )
         features = _matrix(rows, proteome)
         for repetition in range(repetitions):
+            logger.info(
+                "phase=repetition_start arena=%s repetition=%s", arena, repetition
+            )
             folded = assign_grouped_folds(rows, cluster_map, folds, seed + repetition)
             for fold in range(folds):
+                logger.info(
+                    "phase=fold_start arena=%s repetition=%s fold=%s",
+                    arena,
+                    repetition,
+                    fold,
+                )
                 train = [i for i, row in enumerate(folded) if row.fold != fold]
                 test = [i for i, row in enumerate(folded) if row.fold == fold]
                 train_x, test_x = (
@@ -215,9 +250,15 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
                                 proteins,
                                 BIOLOGY_FEATURE_NAMES,
                                 AdditivePuConfig(
-                                    class_prior=prior, seed=int(model_seed)
+                                    class_prior=prior,
+                                    seed=int(model_seed),
+                                    device=device,
                                 ),
-                            ).score(test_x)
+                            ).score(
+                                test_x,
+                                device=device,
+                                batch_size=score_batch_size,
+                            )
                         )
                 candidate_scores = [
                     statistics.median(column[i] for column in candidate_columns)
@@ -247,6 +288,13 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
                         "in_domain": envelope.contains(test_x[local]),
                     }
                     for local, index in enumerate(test)
+                )
+                logger.info(
+                    "phase=fold_complete arena=%s repetition=%s fold=%s rows=%s",
+                    arena,
+                    repetition,
+                    fold,
+                    len(test),
                 )
     panel_candidate = {
         key: value for key, value in candidate_runs.items() if key.startswith("panel_")
@@ -290,6 +338,11 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
         ]
 
     selected_model = select_release_model(decision.admitted)
+    logger.info(
+        "phase=admission_complete selected_model=%s admitted=%s",
+        selected_model,
+        decision.admitted,
+    )
     full_rows = build_tomato_pu_rows(
         xlsx, proteome, ARENA_PANEL, int(data["arena_ratio"]), seed
     )
@@ -303,18 +356,28 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
         float(cfg["pu"]["prior_cap"]),
     )
     registry = build_tomato_candidate_registry(xlsx, fasta, supplementary, model_inputs)
+    logger.info("phase=candidate_registry_complete count=%s", len(registry.candidates))
     candidate_x = _matrix(list(registry.candidates), proteome)
     release_models: list[dict[str, object]] = []
     percentile_columns: list[tuple[float, ...]] = []
     if selected_model == "additive_pu":
         for model_seed in cfg["evaluation"]["model_seeds"]:
             for prior in full_priors:
+                logger.info(
+                    "phase=release_refit_start model=additive_pu seed=%s prior=%s",
+                    model_seed,
+                    prior,
+                )
                 model = fit_additive_pu_ranker(
                     full_x,
                     full_y,
                     full_proteins,
                     BIOLOGY_FEATURE_NAMES,
-                    AdditivePuConfig(class_prior=prior, seed=int(model_seed)),
+                    AdditivePuConfig(
+                        class_prior=prior,
+                        seed=int(model_seed),
+                        device=device,
+                    ),
                 )
                 release_models.append(
                     {
@@ -323,9 +386,25 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
                         "model": model.to_dict(),
                     }
                 )
-                percentile_columns.append(_percentiles(model.score(candidate_x)))
+                percentile_columns.append(
+                    _percentiles(
+                        model.score(
+                            candidate_x,
+                            device=device,
+                            batch_size=score_batch_size,
+                        )
+                    )
+                )
+                logger.info(
+                    "phase=release_refit_complete model=additive_pu seed=%s prior=%s",
+                    model_seed,
+                    prior,
+                )
     else:
         for model_seed in cfg["evaluation"]["model_seeds"]:
+            logger.info(
+                "phase=release_refit_start model=pu_logistic seed=%s", model_seed
+            )
             scores = pu_logistic_regression_scores(
                 full_x, full_y, candidate_x, int(model_seed)
             )
@@ -337,6 +416,9 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
                 }
             )
             percentile_columns.append(_percentiles(tuple(scores)))
+            logger.info(
+                "phase=release_refit_complete model=pu_logistic seed=%s", model_seed
+            )
     release_envelope = ApplicabilityEnvelope.fit(full_x)
     candidate_score_rows = [
         {
@@ -356,7 +438,6 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
     model_release_created = bool(percentile_columns and candidate_score_rows)
     if not model_release_created:
         raise RuntimeError("selected model produced no frozen candidate scores")
-    output_dir.mkdir(parents=True, exist_ok=False)
     summary: dict[str, object] = {
         "experiment": cfg["experiment"]["name"],
         "claim_class": cfg["claim_class"],
@@ -403,4 +484,5 @@ def run_tomato_ranker_v2(config_path: Path, output_dir: Path) -> dict[str, objec
     (output_dir / "manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
+    logger.info("phase=run_complete output_dir=%s", output_dir)
     return summary

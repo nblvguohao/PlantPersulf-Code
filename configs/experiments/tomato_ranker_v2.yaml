@@ -30,6 +30,9 @@ structure:
   delta_default: 0
 observation_propensity:
   enabled: false
+compute:
+  device: auto
+  score_batch_size: 16384
 output:
   include_per_site_oof_scores: true
   include_input_sha256: true
