@@ -1,0 +1,33 @@
+experiment:
+  name: cross_crop_target_label_free_materialization_v1
+  purpose: task9a_traceable_four_source_domain_materialization
+input_registry: data/registry/cross_crop_target_label_free_inputs_v1.tsv
+request_registry: data/registry/cross_crop_target_label_free_requests_v1.tsv
+source_unlabeled_sampling:
+  label_semantics: positive_unlabeled_only
+  unlabeled_per_positive: 20
+  selection: deterministic_sha256_site_key_order
+  deterministic_hash_seed: 20260811
+sources:
+  - species: Arabidopsis thaliana
+    study_accession: PXD006140
+    parser: benchmark_v1_study_subset
+    input_ids: [AT_BENCHMARK_V1, AT_PROTEOME_V1, AT_PANTHER_V1, PXD006140_S3, AT_P42737_2_ISOFORM]
+  - species: Arabidopsis thaliana
+    study_accession: PXD024061
+    parser: benchmark_v1_study_subset
+    input_ids: [AT_BENCHMARK_V1, AT_PROTEOME_V1, AT_PANTHER_V1, PXD024061_SULFIDE, PXD024061_CIANOBIOTIN]
+  - species: Oryza sativa
+    study_accession: PXD072089
+    parser: pxd072089_coordinate_verified_union
+    input_ids: [RICE_SD01, RICE_SD04, RICE_SS_ALL, RICE_PROTEOME_V1, RICE_PANTHER_V1]
+  - species: Magnaporthe oryzae
+    study_accession: PXD063170
+    parser: pxd063170_coordinate_verified_sites
+    input_ids: [MAGNAPORTHE_SITES_TSV, MAGNAPORTHE_SITES_XLSX, MAGNAPORTHE_PROTEOME_V1, MAGNAPORTHE_PANTHER_V1]
+target:
+  species: Solanum lycopersicum
+  candidate_universe: every_cysteine_in_frozen_reference_proteome
+  labels_visible: false
+  forbidden_target_label_sources: [KIAE271_SUPPL, tomato_local_v1, tomato_ranker_v2]
+  input_ids: [TOMATO_PROTEOME_V1]
