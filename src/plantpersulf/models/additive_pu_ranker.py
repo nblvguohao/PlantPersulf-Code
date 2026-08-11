@@ -7,7 +7,10 @@ from typing import Any
 
 import torch
 
-from plantpersulf.models.ranking_loss import combined_pu_ranking_loss
+from plantpersulf.models.ranking_loss import (
+    combined_pu_ranking_loss,
+    within_protein_pairs,
+)
 from plantpersulf.models.traditional import TrainOnlyScaler
 
 
@@ -130,6 +133,7 @@ def fit_additive_pu_ranker(
     weights = torch.zeros(features.shape[1], requires_grad=True, device=device)
     intercept = torch.zeros(1, requires_grad=True, device=device)
     optimizer = torch.optim.Adam([weights, intercept], lr=config.learning_rate)
+    pairs = within_protein_pairs(train_labels, train_protein_ids)
     for _ in range(config.epochs):
         optimizer.zero_grad()
         logits = features @ weights + intercept
@@ -139,6 +143,7 @@ def fit_additive_pu_ranker(
             train_protein_ids,
             config.class_prior,
             config.pairwise_weight,
+            pairs,
         )
         loss = loss + config.l1 * weights.abs().sum()
         loss = loss + config.l2 * weights.square().sum()

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
+
 import torch
 
 ALLOWED_LABELS = frozenset({"positive", "unlabeled"})
@@ -20,13 +22,17 @@ def within_protein_pairs(
     _validate_labels(labels)
     if len(labels) != len(protein_ids):
         raise ValueError("labels and protein_ids length mismatch")
+    unlabeled_by_protein: dict[str, list[int]] = defaultdict(list)
+    for index, (label, protein) in enumerate(zip(labels, protein_ids, strict=True)):
+        if label == "unlabeled":
+            unlabeled_by_protein[protein].append(index)
     return tuple(
         (positive_index, unlabeled_index)
-        for positive_index, positive_label in enumerate(labels)
-        for unlabeled_index, unlabeled_label in enumerate(labels)
-        if positive_label == "positive"
-        and unlabeled_label == "unlabeled"
-        and protein_ids[positive_index] == protein_ids[unlabeled_index]
+        for positive_index, (label, protein) in enumerate(
+            zip(labels, protein_ids, strict=True)
+        )
+        if label == "positive"
+        for unlabeled_index in unlabeled_by_protein[protein]
     )
 
 
@@ -60,18 +66,21 @@ def combined_pu_ranking_loss(
     protein_ids: list[str],
     class_prior: float,
     pairwise_weight: float,
+    pairs: tuple[tuple[int, int], ...] | None = None,
 ) -> torch.Tensor:
     """Combine nnPU risk with protein-local positive-to-unlabeled ranking."""
     if pairwise_weight < 0.0:
         raise ValueError("pairwise_weight must be non-negative")
     risk = nnpu_logistic_risk(logits, labels, class_prior)
-    pairs = within_protein_pairs(labels, protein_ids)
-    if not pairs:
+    resolved_pairs = (
+        within_protein_pairs(labels, protein_ids) if pairs is None else pairs
+    )
+    if not resolved_pairs:
         return risk
     pair_loss = torch.stack(
         [
             torch.nn.functional.softplus(-(logits[positive] - logits[unlabeled]))
-            for positive, unlabeled in pairs
+            for positive, unlabeled in resolved_pairs
         ]
     ).mean()
     return risk + pairwise_weight * pair_loss

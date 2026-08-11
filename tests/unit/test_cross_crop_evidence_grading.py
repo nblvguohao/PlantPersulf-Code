@@ -17,9 +17,12 @@ from plantpersulf.workflows.cross_crop_target_label_free import (
     TrainFoldPreprocessor,
     WithinSourceEvidence,
     build_within_source_split_plan,
+    cross_crop_arm_admissible,
     evaluate_pu_fold,
     evaluate_within_source,
     leave_one_source_domain_out,
+    magnaporthe_pressure_test,
+    partition_plant_main_and_pressure_sources,
     repeated_grouped_folds,
     run_cross_crop_target_label_free,
     source_evidence_profile,
@@ -63,6 +66,65 @@ def test_single_study_species_is_admitted_but_not_called_replicated() -> None:
     }
     assert profile.pure_species_effect_supported is False
     assert profile.universal_cross_crop_generalization_supported is False
+
+
+def test_plant_main_and_magnaporthe_pressure_sources_are_disjoint() -> None:
+    sources = (
+        _source("Arabidopsis thaliana", "at-1"),
+        _source("Arabidopsis thaliana", "at-2"),
+        _source("Oryza sativa", "os-1"),
+        _source("Magnaporthe oryzae", "mo-1"),
+    )
+
+    plant_main, pressure = partition_plant_main_and_pressure_sources(sources)
+
+    assert tuple(source.study_accession for source in plant_main) == (
+        "at-1",
+        "at-2",
+        "os-1",
+    )
+    assert tuple(source.study_accession for source in pressure) == ("mo-1",)
+    assert not {id(source) for source in plant_main} & {
+        id(source) for source in pressure
+    }
+
+
+def test_cross_crop_arm_requires_plant_transfer_pressure_and_applicability() -> None:
+    assert cross_crop_arm_admissible(True, True, True) is True
+    assert cross_crop_arm_admissible(False, True, True) is False
+    assert cross_crop_arm_admissible(True, False, True) is False
+    assert cross_crop_arm_admissible(True, True, False) is False
+
+
+def test_magnaporthe_pressure_test_trains_only_on_plant_sources(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    plant_main = (
+        _source("Arabidopsis thaliana", "at-1"),
+        _source("Oryza sativa", "os-1"),
+    )
+    pressure = (_source("Magnaporthe oryzae", "mo-1"),)
+    calls: list[object] = []
+
+    def _evaluate(**kwargs: object) -> FoldEvaluation:
+        calls.append(kwargs)
+        return FoldEvaluation(candidate_ap=0.8, baseline_ap=0.5)
+
+    monkeypatch.setattr(workflow, "evaluate_pu_fold", _evaluate)
+    decision = magnaporthe_pressure_test(plant_main, pressure)
+
+    assert decision.admitted is True
+    assert decision.reason == "all_pressure_domains_better"
+    assert tuple(item.source_domain for item in decision.domain_evidence) == (
+        "Magnaporthe oryzae|mo-1",
+    )
+    assert len(calls) == 1
+    assert calls[0]["train_protein_ids"] == (
+        "at-1|at-1-protein",
+        "at-1|at-1-protein",
+        "os-1|os-1-protein",
+        "os-1|os-1-protein",
+    )
 
 
 def test_repeated_ten_fold_split_never_separates_a_protein_group() -> None:
@@ -279,6 +341,73 @@ def test_task9_manifest_reports_graded_evidence_without_species_claims(
     assert "phase=run_complete" in log
 
 
+def test_v2_scores_tomato_from_plant_main_and_reports_fungal_pressure_only(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    sources = (
+        _source("Arabidopsis thaliana", "at-1"),
+        _source("Arabidopsis thaliana", "at-2"),
+        _source("Oryza sativa", "os-1"),
+        _source("Magnaporthe oryzae", "mo-1"),
+    )
+    within_calls: list[str] = []
+    transfer_calls: list[tuple[str, ...]] = []
+    pressure_calls: list[tuple[str, ...]] = []
+
+    def _within(source: SourceBatch, **_: object) -> WithinSourceEvidence:
+        within_calls.append(source.study_accession)
+        return WithinSourceEvidence(
+            species=source.species,
+            study_accession=source.study_accession,
+            grouping_unit="protein",
+            grouped_fold_count=50,
+            batch_condition_holdout_count=0,
+            median_candidate_ap=0.8,
+            median_baseline_ap=0.5,
+        )
+
+    def _transfer(items: tuple[SourceBatch, ...]) -> SourceTransferDecision:
+        transfer_calls.append(tuple(item.study_accession for item in items))
+        return SourceTransferDecision(True, "all_source_domains_better")
+
+    def _pressure(
+        plant_main: tuple[SourceBatch, ...], pressure: tuple[SourceBatch, ...]
+    ) -> SourceTransferDecision:
+        pressure_calls.append(
+            tuple(item.study_accession for item in (*plant_main, *pressure))
+        )
+        return SourceTransferDecision(True, "all_pressure_domains_better")
+
+    class _Model:
+        def score(self, features: list[list[float]]) -> tuple[float, ...]:
+            return tuple(row[0] for row in features)
+
+    monkeypatch.setattr(workflow, "evaluate_within_source", _within)
+    monkeypatch.setattr(workflow, "source_transfer_gate", _transfer)
+    monkeypatch.setattr(workflow, "magnaporthe_pressure_test", _pressure)
+    monkeypatch.setattr(workflow, "fit_additive_pu_ranker", lambda *_, **__: _Model())
+    target = TargetCandidateBatch(
+        site_keys=("tomato-protein|C1", "tomato-protein|C2"),
+        feature_names=BIOLOGY_FEATURE_NAMES,
+        features=((0.25,) * 6, (0.75,) * 6),
+        source_sha256="marker-tomato-candidates",
+    )
+
+    result = run_cross_crop_target_label_free(
+        Path("configs/experiments/cross_crop_target_label_free_v2.yaml"),
+        sources,
+        target,
+        tmp_path / "task9-v2",
+    )
+
+    assert within_calls == ["at-1", "at-2", "os-1"]
+    assert transfer_calls == [("at-1", "at-2", "os-1")]
+    assert pressure_calls == [("at-1", "at-2", "os-1", "mo-1")]
+    assert result["cross_crop_arm_admissible"] is True
+    assert result["cross_crop_k_policy"] == "result_dependent_else_zero"
+    assert result["magnaporthe_pressure_test"]["admitted"] is True
+
+
 def test_ten_fold_split_rejects_fewer_than_ten_groups() -> None:
     with pytest.raises(ValueError, match="10 groups"):
         repeated_grouped_folds(
@@ -400,6 +529,7 @@ def test_within_source_evaluation_executes_grouped_and_condition_holdouts() -> N
             "condition-a" if index < 8 else "condition-b" for index in range(rows)
         ),
     )
+    completed: list[object] = []
     evidence = evaluate_within_source(
         source,
         n_folds=2,
@@ -407,12 +537,14 @@ def test_within_source_evaluation_executes_grouped_and_condition_holdouts() -> N
         seed=0,
         model_seeds=(0,),
         additive_epochs=2,
+        on_split_complete=completed.append,
     )
     assert evidence.grouping_unit == "protein"
     assert evidence.grouped_fold_count == 2
     assert evidence.batch_condition_holdout_count == 2
     assert evidence.preprocessing_fit_scope == "training_fold_only"
     assert len(evidence.fold_evaluations) == 4
+    assert len(completed) == 4
     assert {item.split_type for item in evidence.fold_evaluations} == {
         "repeated_grouped_cv",
         "leave_batch_condition_out",

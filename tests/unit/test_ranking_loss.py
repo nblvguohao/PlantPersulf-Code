@@ -26,3 +26,21 @@ def test_forbidden_label_is_rejected() -> None:
             class_prior=0.5,
             pairwise_weight=1.0,
         )
+
+
+def test_precomputed_pairs_can_be_reused_across_training_epochs() -> None:
+    logits = torch.tensor([0.1, -0.2, 0.3], requires_grad=True)
+    labels = ["positive", "unlabeled", "unlabeled"]
+    proteins = ["group-a", "group-a", "group-b"]
+    pairs = within_protein_pairs(labels, proteins)
+
+    loss = combined_pu_ranking_loss(
+        logits,
+        labels,
+        proteins,
+        class_prior=0.5,
+        pairwise_weight=1.0,
+        pairs=pairs,
+    )
+
+    assert loss.item() > 0.0

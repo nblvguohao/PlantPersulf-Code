@@ -6,6 +6,7 @@ import json
 import math
 import random
 import statistics
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -84,6 +85,44 @@ class SourceEvidenceProfile:
     within_species_replication_by_species: dict[str, bool]
     pure_species_effect_supported: bool = False
     universal_cross_crop_generalization_supported: bool = False
+
+
+PLANT_MAIN_SPECIES = frozenset({"Arabidopsis thaliana", "Oryza sativa"})
+MAGNAPORTHE_PRESSURE_SPECIES = "Magnaporthe oryzae"
+
+
+def partition_plant_main_and_pressure_sources(
+    sources: tuple[SourceBatch, ...],
+) -> tuple[tuple[SourceBatch, ...], tuple[SourceBatch, ...]]:
+    """Keep fungal stress data out of the plant model and tomato scoring fit."""
+    plant_main = tuple(
+        source for source in sources if source.species in PLANT_MAIN_SPECIES
+    )
+    pressure = tuple(
+        source for source in sources if source.species == MAGNAPORTHE_PRESSURE_SPECIES
+    )
+    if {source.species for source in plant_main} != PLANT_MAIN_SPECIES:
+        raise RuntimeError("plant main analysis lacks a required source species")
+    if len(pressure) != 1:
+        raise RuntimeError(
+            "Magnaporthe pressure test requires exactly one source batch"
+        )
+    if len(plant_main) + len(pressure) != len(sources):
+        raise RuntimeError("source partition contains an unsupported non-plant domain")
+    return plant_main, pressure
+
+
+def cross_crop_arm_admissible(
+    plant_transfer_passed: bool,
+    pressure_test_passed: bool,
+    target_applicability_passed: bool,
+) -> bool:
+    """Admit no X-arm candidates unless every frozen cross-crop check passes."""
+    return (
+        plant_transfer_passed
+        and pressure_test_passed
+        and target_applicability_passed
+    )
 
 
 @dataclass(frozen=True)
@@ -348,6 +387,7 @@ def evaluate_within_source(
     seed: int,
     model_seeds: tuple[int, ...] = (0, 1, 2, 3, 4),
     additive_epochs: int = 200,
+    on_split_complete: Callable[[WithinSourceFoldEvidence], None] | None = None,
 ) -> WithinSourceEvidence:
     plan = build_within_source_split_plan(source, n_folds, repetitions, seed)
     splits: list[
@@ -383,14 +423,15 @@ def evaluate_within_source(
             additive_epochs=additive_epochs,
         )
         evaluations.append(evaluation)
-        fold_evaluations.append(
-            WithinSourceFoldEvidence(
-                split_type=split_type,
-                split_id=split_id,
-                candidate_ap=evaluation.candidate_ap,
-                baseline_ap=evaluation.baseline_ap,
-            )
+        fold_evidence = WithinSourceFoldEvidence(
+            split_type=split_type,
+            split_id=split_id,
+            candidate_ap=evaluation.candidate_ap,
+            baseline_ap=evaluation.baseline_ap,
         )
+        fold_evaluations.append(fold_evidence)
+        if on_split_complete is not None:
+            on_split_complete(fold_evidence)
     return WithinSourceEvidence(
         species=source.species,
         study_accession=source.study_accession,
@@ -513,6 +554,72 @@ def source_transfer_gate(sources: tuple[SourceBatch, ...]) -> SourceTransferDeci
     return SourceTransferDecision(True, "all_source_domains_better", evidence)
 
 
+def magnaporthe_pressure_test(
+    plant_main_sources: tuple[SourceBatch, ...],
+    pressure_sources: tuple[SourceBatch, ...],
+) -> SourceTransferDecision:
+    """Stress-test the plant-only fit on Magnaporthe without scoring tomato from it."""
+    if not plant_main_sources or len(pressure_sources) != 1:
+        raise RuntimeError("pressure test requires plant sources and one fungal source")
+    if any(source.species not in PLANT_MAIN_SPECIES for source in plant_main_sources):
+        raise RuntimeError("pressure-test training sources must be plant-only")
+    if pressure_sources[0].species != MAGNAPORTHE_PRESSURE_SPECIES:
+        raise RuntimeError("pressure-test holdout must be Magnaporthe")
+    train_x = tuple(row for batch in plant_main_sources for row in batch.features)
+    train_y = tuple(label for batch in plant_main_sources for label in batch.labels)
+    train_proteins = tuple(
+        f"{batch.study_accession}|{protein}"
+        for batch in plant_main_sources
+        for protein in batch.protein_ids
+    )
+    held_out = pressure_sources[0]
+    evaluation = evaluate_pu_fold(
+        train_features=train_x,
+        train_labels=train_y,
+        train_protein_ids=train_proteins,
+        test_features=held_out.features,
+        test_labels=held_out.labels,
+        feature_names=held_out.feature_names,
+    )
+    evidence = (
+        SourceDomainEvidence(
+            source_domain=f"{held_out.species}|{held_out.study_accession}",
+            candidate_ap=evaluation.candidate_ap,
+            baseline_ap=evaluation.baseline_ap,
+        ),
+    )
+    if evaluation.candidate_ap <= evaluation.baseline_ap:
+        return SourceTransferDecision(
+            False, "pressure_domain_transfer_not_better", evidence
+        )
+    return SourceTransferDecision(True, "all_pressure_domains_better", evidence)
+
+
+def _is_frozen_v2_partition(cfg: dict[str, Any]) -> bool:
+    partition = cfg.get("analysis_partition")
+    if partition is None:
+        return False
+    if partition != {
+        "plant_main_source_species": ["Arabidopsis thaliana", "Oryza sativa"],
+        "plant_main_minimum_source_species": 2,
+        "plant_main_minimum_total_source_studies": 3,
+        "pressure_test_species": "Magnaporthe oryzae",
+        "pressure_test_role": "held_out_stress_test_only",
+        "target_scoring_sources": "plant_main_only",
+    }:
+        raise RuntimeError("plant-main and pressure-test partition differs from v2")
+    if cfg.get("x_arm_policy") != {
+        "required_checks": [
+            "plant_source_domain_transfer",
+            "magnaporthe_pressure_test",
+            "target_applicability",
+        ],
+        "on_any_failure": "cross_crop_k_zero",
+    }:
+        raise RuntimeError("cross-crop candidate-arm policy differs from v2")
+    return True
+
+
 def run_cross_crop_target_label_free(
     config_path: Path,
     sources: tuple[SourceBatch, ...],
@@ -523,6 +630,7 @@ def run_cross_crop_target_label_free(
     if cfg.get("claim_class") != "target_label_free_transfer_not_gate2":
         raise RuntimeError("cross-crop workflow cannot emit a Gate 2 claim")
     target_species = str(cfg["target_species"])
+    v2_partitioned_analysis = _is_frozen_v2_partition(cfg)
     evaluation = dict(cfg["evaluation"])
     within_source_validation = dict(cfg["within_source_validation"])
     claims = dict(cfg["claims"])
@@ -566,6 +674,19 @@ def run_cross_crop_target_label_free(
         or int(cfg["ideal_source_studies_per_species"]) < 2
     ):
         raise RuntimeError("source evidence grading differs from frozen config")
+    if v2_partitioned_analysis:
+        scoring_sources, pressure_sources = partition_plant_main_and_pressure_sources(
+            sources
+        )
+        validate_source_coverage(
+            scoring_sources,
+            minimum_source_species=2,
+            minimum_total_source_studies=3,
+            minimum_source_studies_per_species=1,
+        )
+    else:
+        scoring_sources = sources
+        pressure_sources = ()
     if output_dir.exists():
         raise FileExistsError(output_dir)
     if (
@@ -589,22 +710,39 @@ def run_cross_crop_target_label_free(
     logger = configure_run_logger(output_dir / "run.log")
     logger.info("phase=run_start config=%s", config_path)
     profile = source_evidence_profile(
-        sources, int(cfg["ideal_source_studies_per_species"])
+        scoring_sources, int(cfg["ideal_source_studies_per_species"])
     )
     within_source_results = []
     for source in sorted(
-        sources, key=lambda item: (item.species, item.study_accession)
+        scoring_sources, key=lambda item: (item.species, item.study_accession)
     ):
         logger.info(
             "phase=within_source_start species=%s study=%s",
             source.species,
             source.study_accession,
         )
+
+        def _log_split_complete(
+            fold: WithinSourceFoldEvidence,
+            source: SourceBatch = source,
+        ) -> None:
+            logger.info(
+                "phase=within_source_split_complete species=%s study=%s "
+                "split_type=%s split_id=%s candidate_ap=%.6f baseline_ap=%.6f",
+                source.species,
+                source.study_accession,
+                fold.split_type,
+                fold.split_id,
+                fold.candidate_ap,
+                fold.baseline_ap,
+            )
+
         evidence = evaluate_within_source(
             source,
             n_folds=int(within_source_validation["folds"]),
             repetitions=int(within_source_validation["repetitions"]),
             seed=0,
+            on_split_complete=_log_split_complete,
         )
         within_source_results.append(evidence)
         logger.info(
@@ -619,18 +757,29 @@ def run_cross_crop_target_label_free(
             evidence.median_baseline_ap,
         )
     within_source_evidence = tuple(within_source_results)
-    decision = source_transfer_gate(sources)
+    decision = source_transfer_gate(scoring_sources)
     logger.info(
         "phase=source_domain_gate_complete admitted=%s domains=%s reason=%s",
         decision.admitted,
         len(decision.domain_evidence),
         decision.reason,
     )
-    raw_train_x = tuple(row for batch in sources for row in batch.features)
-    train_y = [label for batch in sources for label in batch.labels]
+    pressure_decision = (
+        magnaporthe_pressure_test(scoring_sources, pressure_sources)
+        if v2_partitioned_analysis
+        else None
+    )
+    if pressure_decision is not None:
+        logger.info(
+            "phase=magnaporthe_pressure_test_complete admitted=%s reason=%s",
+            pressure_decision.admitted,
+            pressure_decision.reason,
+        )
+    raw_train_x = tuple(row for batch in scoring_sources for row in batch.features)
+    train_y = [label for batch in scoring_sources for label in batch.labels]
     proteins = [
         f"{batch.species}|{batch.study_accession}|{protein}"
-        for batch in sources
+        for batch in scoring_sources
         for protein in batch.protein_ids
     ]
     processor = TrainFoldPreprocessor.fit(raw_train_x)
@@ -670,6 +819,18 @@ def run_cross_crop_target_label_free(
     (output_dir / "scores.json").write_text(
         json.dumps({"scores": scores}, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
+    )
+    applicability_passed = fraction >= float(
+        dict(cfg["applicability"])["min_target_in_domain_fraction"]
+    )
+    cross_crop_eligible = (
+        cross_crop_arm_admissible(
+            decision.admitted,
+            pressure_decision.admitted,
+            applicability_passed,
+        )
+        if pressure_decision is not None
+        else decision.admitted and applicability_passed
     )
     result: dict[str, object] = {
         "complete": True,
@@ -720,9 +881,28 @@ def run_cross_crop_target_label_free(
         "wetlab_eligible": False,
         "scores_sha256": hash_file(output_dir / "scores.json", "sha256"),
     }
-    result["wetlab_eligible"] = bool(
-        result["source_gate_admitted"] and result["applicability_passed"]
-    )
+    if pressure_decision is not None:
+        result["analysis_partition"] = {
+            "plant_main_source_species": sorted(PLANT_MAIN_SPECIES),
+            "plant_main_studies": [
+                source.study_accession for source in scoring_sources
+            ],
+            "pressure_test_species": MAGNAPORTHE_PRESSURE_SPECIES,
+            "pressure_test_studies": [
+                source.study_accession for source in pressure_sources
+            ],
+            "target_scoring_sources": "plant_main_only",
+        }
+        result["magnaporthe_pressure_test"] = {
+            "admitted": pressure_decision.admitted,
+            "reason": pressure_decision.reason,
+            "domain_evidence": [
+                evidence.to_dict() for evidence in pressure_decision.domain_evidence
+            ],
+        }
+        result["cross_crop_arm_admissible"] = cross_crop_eligible
+        result["cross_crop_k_policy"] = "result_dependent_else_zero"
+    result["wetlab_eligible"] = cross_crop_eligible
     (output_dir / "manifest.json").write_text(
         json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
