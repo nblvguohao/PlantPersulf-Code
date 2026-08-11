@@ -1747,6 +1747,43 @@ Stop. Running the real configuration is a distinct reviewer approval and must pr
 
 **Reviewer gate:** Task 8 implementation and its real run must be reviewed. This task cannot read any tomato positive-label table, including KIAE271.
 
+**Approved graded-evidence amendment (2026-08-11; supersedes any conflicting
+Task 9 threshold, split, holdout, or claim text below):**
+
+- Task 9 is an auxiliary innovation arm. The final generalization evidence is
+  the preregistered, blinded tomato candidate validation, not internal source
+  cross-validation.
+- Use three labeled source species—Arabidopsis thaliana, Oryza sativa, and
+  Magnaporthe oryzae—and unlabeled Solanum lycopersicum as the fourth, target
+  species. Magnaporthe is a source-domain distance stress test and must not be
+  described as a crop.
+- Require at least one registered study per source species. Two or more studies
+  per species is the ideal evidence tier, not an absolute admission barrier.
+  Emit `within_species_replication_supported=false` globally whenever any
+  source species is below the ideal tier, plus a per-species status map.
+- Within every source study, run repeated 10-fold positive-unlabeled
+  cross-validation grouped by homology cluster when registered cluster IDs are
+  available, otherwise by protein. All sites from a protein or cluster stay in
+  one fold. Five repetitions are frozen for v1. Random site-level splitting is
+  forbidden.
+- Missing-value imputation, standardization, class-prior sensitivity, and any
+  model selection must be fitted or derived from training rows only. Frozen
+  hyperparameters may be used instead of inner-fold tuning; the outer held-out
+  fold must never select them.
+- When registered batch, condition, or independent-experiment IDs exist, add
+  complete leave-one-batch/condition-out evaluations.
+- Cross-source evaluation uses leave-one-source-domain-out, where one domain is
+  exactly one `species-study` batch. It supports a cross-source domain-transfer
+  statement only. With singleton-study species it cannot identify a pure
+  species effect and cannot support a universal cross-crop generalization
+  claim.
+- The manifest must preserve fold-level within-source metrics, all source-domain
+  metrics, study counts, preprocessing scope, and the three negative/conditional
+  claim flags. Tomato labels remain structurally unavailable during fit and
+  tuning.
+- PLM-v3 remains a later, independent method-development enhancement and is not
+  required for this Task 9 evidence tier.
+
 **Files:**
 - Create: `src/plantpersulf/workflows/cross_crop_target_label_free.py`
 - Create: `scripts/run_cross_crop_target_label_free_v1.py`
@@ -1757,7 +1794,8 @@ Stop. Running the real configuration is a distinct reviewer approval and must pr
 
 **Interfaces:**
 - Produces: `SourceBatch`, `TargetCandidateBatch`, `validate_target_label_free_sources(sources, target_species)`, `run_cross_crop_target_label_free(config_path, source_batches, target_candidates, output_dir)`, `scores.json`, and a last-written `manifest.json`
-- Source species: registered Arabidopsis and rice only for the crop-transfer claim; Magnaporthe is an optional distance stress test
+- Source species: registered Arabidopsis, rice, and Magnaporthe batches; the
+  latter is a distance stress-test domain rather than a crop-transfer replicate
 - Target input: every tomato reference-proteome Cys and its six core features, materialized from the registered proteome only, without using Task 7 or any KIAE271-derived exclusion during scoring. The later frozen release may apply the pre-registered “novel site” eligibility filter only after X scores are immutable.
 
 - [ ] **Step 1: Write the dependency-firewall RED test**
@@ -1867,36 +1905,7 @@ def source_transfer_gate(sources: tuple[SourceBatch, ...]) -> SourceTransferDeci
 
     if len({source.species for source in sources}) < 2:
         return SourceTransferDecision(False, "fewer_than_two_source_species")
-    for species in {source.species for source in sources}:
-        studies = {
-            source.study_accession
-            for source in sources
-            if source.species == species
-        }
-        if len(studies) < 2:
-            return SourceTransferDecision(
-                False, f"single_study_source_species:{species}"
-            )
-    species_holdouts = [
-        (
-            f"species:{species}",
-            tuple(source for source in sources if source.species == species),
-        )
-        for species in sorted({source.species for source in sources})
-    ]
-    study_holdouts = [
-        (f"study:{source.study_accession}", (source,))
-        for source in sources
-    ]
-    for holdout_name, held_out in (*species_holdouts, *study_holdouts):
-        held_out_keys = {
-            (source.species, source.study_accession) for source in held_out
-        }
-        training = tuple(
-            source
-            for source in sources
-            if (source.species, source.study_accession) not in held_out_keys
-        )
+    for holdout_name, training, held_out in leave_one_source_domain_out(sources):
         train_x = [list(row) for batch in training for row in batch.features]
         train_y = [label for batch in training for label in batch.labels]
         train_proteins = [
@@ -1955,15 +1964,32 @@ target_species: Solanum lycopersicum
 source_species:
   - Arabidopsis thaliana
   - Oryza sativa
-minimum_source_studies_per_species: 2
+  - Magnaporthe oryzae
+minimum_source_species: 3
+minimum_total_source_studies: 4
+minimum_source_studies_per_species: 1
+ideal_source_studies_per_species: 2
 forbidden_target_label_sources:
   - KIAE271_SUPPL
   - tomato_local_v1
   - tomato_ranker_v2
+within_source_validation:
+  split: repeated_grouped_protein_or_homology_cluster_cv
+  folds: 10
+  repetitions: 5
+  grouping_preference: homology_cluster_then_protein
+  preprocessing_fit_scope: training_fold_only
+  missing_value_policy: training_fold_median
+  leave_batch_condition_out_when_available: true
 evaluation:
-  source_selection: leave_source_species_and_study_out
+  source_selection: leave_one_source_domain_out
+  source_domain_unit: species_study
   target_labels_visible_during_fit: false
   target_labels_visible_during_tuning: false
+claims:
+  pure_species_effect_supported: false
+  universal_cross_crop_generalization_supported: false
+  final_generalization_requires_tomato_blind_validation: true
 applicability:
   min_target_in_domain_fraction: 0.80
 wetlab:

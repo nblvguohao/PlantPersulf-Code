@@ -89,6 +89,22 @@ class ReleaseInputs:
                 or transfer.get("target_label_hash") is not None
             ):
                 raise RuntimeError("cross-crop transfer manifest is not admitted")
+            if (
+                transfer.get("cross_source_domain_transfer_supported") is not True
+                or transfer.get("pure_species_effect_supported") is not False
+                or transfer.get("universal_cross_crop_generalization_supported")
+                is not False
+                or transfer.get("final_generalization_requires_tomato_blind_validation")
+                is not True
+                or not isinstance(
+                    transfer.get("within_species_replication_supported"), bool
+                )
+                or not transfer.get("within_source_evidence")
+                or not transfer.get("source_domain_evidence")
+            ):
+                raise RuntimeError(
+                    "cross-crop transfer manifest lacks graded evidence safeguards"
+                )
 
 
 @dataclass(frozen=True)
