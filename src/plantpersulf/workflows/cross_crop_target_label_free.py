@@ -76,14 +76,30 @@ def validate_target_label_free_sources(
             raise RuntimeError("source feature width mismatch")
 
 
+def validate_source_coverage(
+    sources: tuple[SourceBatch, ...],
+    minimum_source_species: int,
+    minimum_total_source_studies: int,
+    minimum_source_studies_per_species: int,
+) -> None:
+    """Enforce multi-species coverage while permitting singleton species."""
+    species = {source.species for source in sources}
+    if len(species) < minimum_source_species:
+        raise RuntimeError("source species coverage is below the frozen minimum")
+    studies = {(source.species, source.study_accession) for source in sources}
+    if len(studies) < minimum_total_source_studies:
+        raise RuntimeError("total source study coverage is below the frozen minimum")
+    for name in species:
+        species_studies = {
+            source.study_accession for source in sources if source.species == name
+        }
+        if len(species_studies) < minimum_source_studies_per_species:
+            raise RuntimeError(f"source species lacks study support: {name}")
+
+
 def source_transfer_gate(sources: tuple[SourceBatch, ...]) -> SourceTransferDecision:
     if len({source.species for source in sources}) < 2:
         return SourceTransferDecision(False, "fewer_than_two_source_species")
-    for species in {source.species for source in sources}:
-        if len({s.study_accession for s in sources if s.species == species}) < 2:
-            return SourceTransferDecision(
-                False, f"single_study_source_species:{species}"
-            )
     species_holdouts = [
         (f"species:{species}", tuple(s for s in sources if s.species == species))
         for species in sorted({source.species for source in sources})
@@ -162,6 +178,12 @@ def run_cross_crop_target_label_free(
     validate_target_label_free_sources(sources, target_species)
     if {source.species for source in sources} != set(cfg["source_species"]):
         raise RuntimeError("source species differ from frozen config")
+    validate_source_coverage(
+        sources,
+        int(cfg["minimum_source_species"]),
+        int(cfg["minimum_total_source_studies"]),
+        int(cfg["minimum_source_studies_per_species"]),
+    )
     if output_dir.exists():
         raise FileExistsError(output_dir)
     if (
@@ -238,6 +260,10 @@ def run_cross_crop_target_label_free(
         ],
         "target_candidate_sha256": target_candidates.source_sha256,
         "target_label_hash": None,
+        "source_design_limitation": (
+            "Source species represented by one study confound species with study; "
+            "the workflow does not claim within-species independent replication."
+        ),
         "source_gate_admitted": decision.admitted,
         "source_gate_reason": decision.reason,
         "target_in_domain_fraction": fraction,

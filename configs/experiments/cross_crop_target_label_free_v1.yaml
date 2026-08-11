@@ -2,8 +2,10 @@ experiment:
   name: cross_crop_target_label_free_v1
 claim_class: target_label_free_transfer_not_gate2
 target_species: Solanum lycopersicum
-source_species: [Arabidopsis thaliana, Oryza sativa]
-minimum_source_studies_per_species: 2
+source_species: [Arabidopsis thaliana, Oryza sativa, Magnaporthe oryzae]
+minimum_source_species: 3
+minimum_total_source_studies: 4
+minimum_source_studies_per_species: 1
 forbidden_target_label_sources: [KIAE271_SUPPL, tomato_local_v1, tomato_ranker_v2]
 evaluation:
   source_selection: leave_source_species_and_study_out
