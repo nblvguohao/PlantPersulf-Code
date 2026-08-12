@@ -38,7 +38,7 @@ import csv
 import random
 from collections import defaultdict
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 SPECIES_ARABIDOPSIS = "arabidopsis"
@@ -60,6 +60,7 @@ class MultispeciesSite:
     species: str
     study_accession: str
     panther_family: str  # family-level PANTHER id, e.g. "PTHR10782"
+    study_accessions: tuple[str, ...] = ()
 
 
 # ---------------------------------------------------------------------------
@@ -125,16 +126,31 @@ def build_multispecies_sites(
 ) -> tuple[MultispeciesSite, ...]:
     """Merge per-species site lists into one deduplicated, sorted tuple.
 
-    Duplicate (accession, position) keys collapse to the first occurrence
-    (identical sites reported by more than one study are not double
+    Duplicate (species, accession, position) keys collapse to the first
+    occurrence (identical sites reported by more than one study are not double
     counted). Sorting is by (species, accession, position) for
     determinism.
     """
-    seen: dict[tuple[str, int], MultispeciesSite] = {}
+    seen: dict[tuple[str, str, int], MultispeciesSite] = {}
     for site in (*arabidopsis, *tomato, *rice, *magnaporthe):
-        key = (site.protein_accession, site.cys_position)
+        key = (site.species, site.protein_accession, site.cys_position)
         if key not in seen:
-            seen[key] = site
+            studies = tuple(sorted(set(site.study_accessions) | {site.study_accession}))
+            seen[key] = replace(site, study_accessions=studies)
+        else:
+            previous = seen[key]
+            studies = tuple(
+                sorted(
+                    set(previous.study_accessions)
+                    | set(site.study_accessions)
+                    | {previous.study_accession, site.study_accession}
+                )
+            )
+            seen[key] = replace(
+                previous,
+                study_accession=studies[0],
+                study_accessions=studies,
+            )
     order = {s: i for i, s in enumerate(ALL_SPECIES)}
     return tuple(
         sorted(

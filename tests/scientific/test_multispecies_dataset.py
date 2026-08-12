@@ -77,6 +77,32 @@ def test_duplicate_accession_position_collapses() -> None:
     assert len(sites) == 1
 
 
+def test_same_accession_position_in_different_species_is_not_collapsed() -> None:
+    """Deduplicating without species would erase one source species' evidence."""
+    arab = _site("P_SHARED", 5, "arabidopsis", "PTHR10000")
+    tomato = _site("P_SHARED", 5, "tomato", "PTHR10000")
+
+    sites = build_multispecies_sites(arabidopsis=[arab], tomato=[tomato])
+
+    observed = {
+        (site.species, site.protein_accession, site.cys_position) for site in sites
+    }
+    assert observed == {
+        ("arabidopsis", "P_SHARED", 5),
+        ("tomato", "P_SHARED", 5),
+    }
+
+
+def test_duplicate_site_preserves_all_study_accessions() -> None:
+    """Keeping only the first study would erase the site provenance chain."""
+    first = MultispeciesSite("AT1", 5, "arabidopsis", "PXD_A", "F1")
+    second = MultispeciesSite("AT1", 5, "arabidopsis", "PXD_B", "F1")
+
+    merged = build_multispecies_sites(arabidopsis=[first, second])
+
+    assert merged[0].study_accessions == ("PXD_A", "PXD_B")
+
+
 # --- family-grouped CV -------------------------------------------------------
 
 

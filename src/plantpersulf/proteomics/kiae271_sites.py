@@ -114,6 +114,7 @@ def parse_kiae271_sites(
     proteome: dict[str, str],
     localization_min: float = DEFAULT_LOCALIZATION_MIN,
     sheet_name: str = SHEET_NAME,
+    allowed_accessions: set[str] | None = None,
 ) -> Kiae271SiteTable:
     """Parse Supplementary Dataset S1 into a coordinate-verified site table.
 
@@ -163,6 +164,8 @@ def parse_kiae271_sites(
             continue
 
         accession = _header_accession(leading)
+        if allowed_accessions is not None and accession not in allowed_accessions:
+            continue
         sequence = proteome.get(accession)
         if sequence is None:
             dropped_missing_accession += 1

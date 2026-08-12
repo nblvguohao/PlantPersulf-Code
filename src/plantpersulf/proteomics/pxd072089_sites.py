@@ -141,6 +141,7 @@ def parse_pxd072089_sites(
     sd04_path: Path,
     proteome: dict[str, str],
     ss_all_peptides_path: Path | None = None,
+    allowed_accessions: set[str] | None = None,
 ) -> PXD072089SiteTable:
     """Parse SD01 + SD04 (+ optional SS-all-peptides) into a coordinate-verified
     site union.
@@ -177,6 +178,8 @@ def parse_pxd072089_sites(
         if not accession:
             sd01_dropped_missing_accession += 1
             continue
+        if allowed_accessions is not None and accession not in allowed_accessions:
+            continue
 
         try:
             position = int(positions[0])
@@ -206,6 +209,8 @@ def parse_pxd072089_sites(
         accession = str(row.get("leading razor protein", "") or "").strip()
         if not accession:
             sd04_dropped_missing_accession += 1
+            continue
+        if allowed_accessions is not None and accession not in allowed_accessions:
             continue
 
         pos_val = row.get("-SSH Cys position")
@@ -250,6 +255,8 @@ def parse_pxd072089_sites(
             accession = (row.get("Leading razor protein") or "").strip()
             if not accession:
                 ss_dropped_missing_accession += 1
+                continue
+            if allowed_accessions is not None and accession not in allowed_accessions:
                 continue
 
             sequence = proteome.get(accession)

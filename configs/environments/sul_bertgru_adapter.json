@@ -1,0 +1,29 @@
+{
+  "isolated": true,
+  "python_executable": "../../.venv/sul_bertgru/Scripts/python.exe",
+  "environment_lock": "sul_bertgru_adapter.lock",
+  "environment_lock_sha256": "ee989b83641b4ef443e6968793a78d131be61bffe6e29ffc21c1a315e43f722c",
+  "adapter_path": "../../scripts/run_sul_bertgru_adapter.py",
+  "adapter_sha256": "972c92b094ab86496ed388f92c44e623d19e0646515b11638d5d23638372894f",
+  "repo_commit": "52c030c3b23e20ff8170d73a417ce852bd46c627",
+  "input_artifacts": [
+    {
+      "path": "../../src/plantpersulf/competitors/sul_bertgru.py",
+      "sha256": "fb7bcf34313946c10c36eafbae8a35b8055b78eeeef7397d32482dc67f822633"
+    },
+    {
+      "path": "../../data/interim/huggingface/hub/models--google-bert--bert-base-cased/snapshots/cd5ef92a9fb2f889e972770a36d4ed042daf221e",
+      "sha256": "2507781244b86fcf1e6402fa0b06df04d9b74317f8f8a67ff0067352c713e0c7"
+    }
+  ],
+  "parameters": {
+    "bert_snapshot": "C:/CC/PlantPersulf-Code/data/interim/huggingface/hub/models--google-bert--bert-base-cased/snapshots/cd5ef92a9fb2f889e972770a36d4ed042daf221e",
+    "device": "cuda",
+    "bert_batch_size": 128,
+    "train_batch_size": 128,
+    "hidden_size": 128,
+    "num_layers": 3,
+    "epochs": 50,
+    "learning_rate": 0.002
+  }
+}

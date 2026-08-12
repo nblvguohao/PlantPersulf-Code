@@ -13,6 +13,7 @@ Expected RED: ``plantpersulf.models.esm_baseline`` does not exist yet.
 
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
 from plantpersulf.models.esm_baseline import (  # RED: module missing
@@ -90,3 +91,31 @@ def test_rejects_mismatched_embedding_dimensions() -> None:
 
     with pytest.raises(ValueError, match="dimension"):
         esm_linear_head_scores(train_embeddings, train_y, mismatched_predict, seed=0)
+
+
+def test_accepts_memory_mapped_float32_embeddings(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    path = tmp_path / "embeddings.npy"
+    np.save(
+        path,
+        np.asarray(
+            [
+                [1.0, 2.0, 3.0],
+                [1.1, 2.1, 3.1],
+                [10.0, 20.0, 30.0],
+                [10.1, 20.1, 30.1],
+                [1.05, 2.05, 3.05],
+            ],
+            dtype=np.float32,
+        ),
+    )
+    matrix = np.load(path, mmap_mode="r")
+
+    scores = esm_linear_head_scores(
+        matrix[:4],
+        ["positive", "positive", "unlabeled", "unlabeled"],
+        matrix[4:],
+        seed=0,
+    )
+
+    assert len(scores) == 1
+    assert 0.0 <= scores[0] <= 1.0

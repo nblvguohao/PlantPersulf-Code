@@ -464,6 +464,7 @@ def run_multispecies_v1(
             panther_family=panther_by_species[s.species].get(
                 s.protein_accession, NO_FAMILY
             ),
+            study_accessions=s.study_accessions,
         )
         for s in merged
     ]

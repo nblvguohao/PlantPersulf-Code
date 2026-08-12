@@ -67,6 +67,7 @@ def parse_pxd063170_sites(
     source_tsv: Path,
     proteome: dict[str, str],
     min_localization: float = 0.75,
+    allowed_accessions: set[str] | None = None,
 ) -> PXD063170SiteTable:
     """Parse, filter, and coordinate-verify the PXD063170 site table.
 
@@ -92,6 +93,8 @@ def parse_pxd063170_sites(
             if amino != "C":
                 raise RuntimeError(f"non-cysteine row in PXD063170 site table: {row}")
             accession = (row["Protein accession"] or "").strip()
+            if allowed_accessions is not None and accession not in allowed_accessions:
+                continue
             try:
                 position = int((row["Position"] or "").strip())
                 localization = float((row["Localization probability"] or "").strip())

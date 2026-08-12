@@ -1,0 +1,9 @@
+{
+  "input_sha256": {
+    "data\\raw\\references\\arabidopsis_ref_proteome_v1.fasta": "51559016416634d52e2c92f6c30bb4297149841b01a60f683394cacf9d1033bf",
+    "data\\raw\\supplements\\_ref_fasta\\P42737-2.fasta": "e682a45b02b61deea9070d6f9d7a5435cb5efefbed52c814d180b24dad0bcab5"
+  },
+  "output_path": "data\\raw\\references\\arabidopsis_ref_proteome_v2.fasta",
+  "output_sha256": "17323007f7a024a0e2279894ef9432999139a4519983a7cfd87afbd73b74ad73",
+  "protein_count": 54647
+}

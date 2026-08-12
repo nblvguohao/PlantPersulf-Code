@@ -1,0 +1,56 @@
+version: 2
+experiment: {name: multispecies_v2_global_clusters_v4, claim_class: multispecies_within_dataset_ranking_not_gate2}
+species: {primary: [arabidopsis, rice, tomato], pressure: [magnaporthe]}
+reference_proteomes:
+  - {species: arabidopsis, path: data/raw/references/arabidopsis_ref_proteome_v2.fasta, sha256: 17323007f7a024a0e2279894ef9432999139a4519983a7cfd87afbd73b74ad73}
+  - {species: tomato, path: data/raw/references/tomato_ref_proteome_v1.fasta, sha256: 1a46efe6461b239ec80b915a4c23ea39bbe39e37d43f9cc7c38b648523efca0f}
+  - {species: rice, path: data/raw/references/rice_proteome_v1/uniprot_rice_v1.fasta, sha256: fc20c76a58c6e5695e57cf2f389b91cff2af15bd7d23182b1dc1f99123b9322b}
+  - {species: magnaporthe, path: data/raw/supplements/PXD063170/Magnaporthe_oryzae.MG8.pep.all.fa, sha256: 0466bf3d2af6fa6a6d44cf74d72a6aa717dc948963ef8b52f7224e70f0470293}
+positive_evidence:
+  registry: data/registry/cross_crop_target_label_free_inputs_v1.tsv
+  arabidopsis_benchmark: data/processed/benchmark_v1/sites.tsv
+  tomato_kiae271: data/raw/supplements/KIAE271_SUPPL/kiae271_DSs.xlsx
+  rice_sd01: data/raw/supplements/PXD072089/pnas.2608150123.sd01.xlsx
+  rice_sd04: data/raw/supplements/PXD072089/pnas.2608150123.sd04.xlsx
+  rice_ss_all: data/raw/supplements/PXD072089/SS-all-peptides.tsv
+  magnaporthe_sites: data/raw/supplements/PXD063170/PXD063170_sites_moesm3.tsv
+development_positive_manifest:
+  path: data/processed/positives/multispecies_v2_development_positives_v4.tsv
+  sha256: 58444a14d2c7abfcff13c8fcb6124533cb4a4f8b1f2fba38ab68ad2bbaacc296
+global_mmseqs2: {cluster_table: data/processed/clusters/global_multispecies_mmseqs2_30_v2.tsv}
+strict_cluster_holdout:
+  seed: 20260811
+  test_fraction: 0.2
+  development_folds: 5
+  min_development_positive_sites: 10
+  min_development_positive_proteins: 5
+  split_path: data/processed/splits/multispecies_strict_v4.tsv
+  test_unlock_required: true
+literature_random_protein: {test_fraction: 0.2, validation_fraction_of_remaining: 0.2, seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+unlabeled_panel: {per_positive: 20, seed: 12345}
+data_isolation: {split_before_unlabeled_sampling: true, development_fit_scope: training_fold_only, panther_role: unlabelled_evolutionary_feature_only}
+evaluation: {model_seeds: [0, 1, 2, 3, 4], primary_metric: macro_species_average_precision, bootstrap_replicates: 10000, bootstrap_seed: 20260811, full_proteome_audit_after_selection: true}
+compute: {device: auto, score_batch_size: 16384, max_parallel_tasks: 1, gpu_map: []}
+models: [pu_logistic, random_forest, xgboost, esm_linear_head, structure_ranker]
+comparison_inputs:
+  esm_features: data/processed/features/multispecies_v2_esm2_t33_windows_v1/manifest.json
+  structure_features: data/registry/releases/alphafold_structures_release_v2.tsv
+  sul_environment_manifest: configs/environments/sul_bertgru_adapter.json
+  pcysmod_scores: null
+comparison_feature_build:
+  esm_checkpoint: data/raw/models/esm2_t33_650M_UR50D.pt
+  esm_output_directory: data/processed/features/multispecies_v2_esm2_t33_windows_v1
+  esm_batch_size: 128
+  structure_registry_base: data/registry
+comparator_policy:
+  pcysmod: quantitative_only_with_complete_frozen_scores
+  tree_graft: architecture_reference_only
+  gate2_eligible: false
+literature_baseline_parameters:
+  pu_logistic: {holdout_fraction: 0.2}
+  random_forest: {n_estimators: 100}
+  xgboost: {n_estimators: 100}
+  esm_linear_head: {}
+  structure_ranker: {epochs: 200, hidden: 16, dropout: 0.2, lr: 0.05, holdout_fraction: 0.2, n_mc_dropout: 16, use_esm: 0}
+output: {directory: results/experiments/multispecies_v2_global_clusters_v4, jsonl_log: training.jsonl, manifest: manifest.json}
+limitation: INTERNAL MULTISPECIES EVALUATION ONLY; must never enter Gate 2.

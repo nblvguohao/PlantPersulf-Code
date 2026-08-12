@@ -60,6 +60,16 @@ class DownloadSummary:
     cached_count: int
 
 
+@dataclass(frozen=True)
+class DownloadAuditSummary:
+    """Aggregate of fail-closed audits for every approved accession."""
+
+    accession_count: int
+    selected_count: int
+    downloaded_count: int
+    cached_count: int
+
+
 def _load_approved(path: Path) -> dict[str, dict[str, list[str]]]:
     try:
         loaded: object = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -388,3 +398,29 @@ def audit_downloaded_files(
             )
         downloaded_count += 1
     return DownloadSummary(len(selected), downloaded_count, cached_count)
+
+
+def audit_all_downloaded_files(
+    selection_path: Path,
+    files_registry_path: Path,
+    datasets_registry_path: Path,
+    downloads_registry_path: Path,
+) -> DownloadAuditSummary:
+    """Audit every explicit selection entry; do not silently skip an accession."""
+    approved = _load_approved(selection_path)
+    summaries = tuple(
+        audit_downloaded_files(
+            accession=accession,
+            selection_path=selection_path,
+            files_registry_path=files_registry_path,
+            datasets_registry_path=datasets_registry_path,
+            downloads_registry_path=downloads_registry_path,
+        )
+        for accession in sorted(approved)
+    )
+    return DownloadAuditSummary(
+        accession_count=len(summaries),
+        selected_count=sum(summary.selected_count for summary in summaries),
+        downloaded_count=sum(summary.downloaded_count for summary in summaries),
+        cached_count=sum(summary.cached_count for summary in summaries),
+    )
