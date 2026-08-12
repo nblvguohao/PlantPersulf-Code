@@ -292,10 +292,16 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
             repo_commit="52c030c3b23e20ff8170d73a417ce852bd46c627",
         ),
     )
-    calls: list[tuple[int, tuple[str, ...]]] = []
+    calls: list[tuple[int, int]] = []
+    oom_once = True
 
     def score_models(run, **kwargs):
-        calls.append((run.seed, tuple(sorted(kwargs))))
+        nonlocal oom_once
+        batch_size = kwargs["structure_batch_size"]
+        calls.append((run.seed, batch_size))
+        if oom_once:
+            oom_once = False
+            raise RuntimeError("CUDA out of memory")
         partitions = tuple(
             (name, {(row.global_protein_id, row.cys_position): 0.5 for row in values})
             for name, values in run.partitions.items()
@@ -348,7 +354,24 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
     payload = json.loads(
         (output_dir / "literature_random_protein" / "summary.json").read_text()
     )
-    assert len(calls) == 10
+    assert len(calls) == 11
+    assert sum(batch_size == 4 for _, batch_size in calls) == 1
+    structure_checkpoints = list(
+        (output_dir / "literature_random_protein" / "checkpoints").glob(
+            "structure_ranker_seed*.json"
+        )
+    )
+    assert (
+        sum(
+            bool(
+                json.loads(checkpoint.read_text(encoding="utf-8"))["state"][
+                    "oom_batch_deviations"
+                ]
+            )
+            for checkpoint in structure_checkpoints
+        )
+        == 1
+    )
     assert {report["model"] for report in payload["runs"]} == {
         "pu_logistic",
         "random_forest",
@@ -371,3 +394,16 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
         )
         == 60
     )
+
+    # Model an interrupted process after all task checkpoints exist but before
+    # the final summary/manifest were atomically published.  Resume must use
+    # those byte-bound task states rather than re-running direct or Sul tasks.
+    (output_dir / "literature_random_protein" / "summary.json").unlink()
+    (output_dir / "literature_random_protein" / "manifest.json").unlink()
+    calls_before_resume = len(calls)
+    sul_before_resume = len(sul_timeouts)
+
+    cli.main(["--config", str(config), "--run-literature-baselines", "--resume"])
+
+    assert len(calls) == calls_before_resume
+    assert len(sul_timeouts) == sul_before_resume

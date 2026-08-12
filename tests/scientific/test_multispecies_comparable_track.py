@@ -332,6 +332,7 @@ def test_direct_roster_executes_all_five_models_on_one_shared_panel() -> None:
                 "use_esm": 0,
             },
         },
+        structure_batch_size=2,
     )
 
     assert {result.model for result in scores} == {

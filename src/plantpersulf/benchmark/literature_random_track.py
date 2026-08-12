@@ -60,9 +60,7 @@ class ComparisonModelScores:
     model: str
     seed: int
     panel_sha256: str
-    partition_scores: tuple[
-        tuple[str, dict[tuple[str, int], float]], ...
-    ]
+    partition_scores: tuple[tuple[str, dict[tuple[str, int], float]], ...]
 
 
 def _site_key(row: MultispeciesV2SiteRow) -> tuple[str, int]:
@@ -127,17 +125,12 @@ def build_literature_random_track(
         random.Random(seed).shuffle(shuffled)
         n_test = max(1, round(len(shuffled) * test_fraction))
         remaining = shuffled[n_test:]
-        n_validation = max(
-            1, round(len(remaining) * validation_fraction_of_remaining)
-        )
+        n_validation = max(1, round(len(remaining) * validation_fraction_of_remaining))
         if n_test + n_validation >= len(shuffled):
             raise RuntimeError("random protein split leaves no training proteins")
         protein_partition = {
             **{protein: "test" for protein in shuffled[:n_test]},
-            **{
-                protein: "validation"
-                for protein in remaining[:n_validation]
-            },
+            **{protein: "validation" for protein in remaining[:n_validation]},
             **{protein: "train" for protein in remaining[n_validation:]},
         }
         unsampled: dict[str, list[MultispeciesV2SiteRow]] = {
@@ -313,12 +306,8 @@ def run_tabular_direct_baseline(
         )
     else:
         try:
-            tabular_train_features = [
-                list(features[row.site_key]) for row in train
-            ]
-            tabular_predict_features = [
-                list(features[row.site_key]) for row in predict
-            ]
+            tabular_train_features = [list(features[row.site_key]) for row in train]
+            tabular_predict_features = [list(features[row.site_key]) for row in predict]
         except KeyError as exc:
             message = f"missing registered comparison feature: {exc.args[0]}"
             raise RuntimeError(message) from exc
@@ -384,11 +373,10 @@ def run_structure_direct_baseline(
     model_input: ComparisonModelInput,
     sequence_features: dict[tuple[str, int], tuple[float, ...]],
     esm_features: dict[tuple[str, int], tuple[float, ...]] | None,
-    structure_features: dict[
-        tuple[str, int], tuple[tuple[float, float], bool]
-    ],
+    structure_features: dict[tuple[str, int], tuple[tuple[float, float], bool]],
     parameters: dict[str, int | float] | None = None,
     device: str = "cpu",
+    batch_size: int | None = None,
 ) -> ComparisonModelScores:
     """Fit the current structure-aware ranker on one shared protein panel."""
     if model_input.model != "structure_ranker":
@@ -444,11 +432,10 @@ def run_structure_direct_baseline(
         holdout_fraction=float(parameters.get("holdout_fraction", 0.2)),
         n_mc_dropout=int(parameters.get("n_mc_dropout", 16)),
         device_name=device,
+        batch_size=batch_size,
     )
     n_validation = len(partitions["validation"])
-    partition_scores: list[
-        tuple[str, dict[tuple[str, int], float]]
-    ] = []
+    partition_scores: list[tuple[str, dict[tuple[str, int], float]]] = []
     for name, rows, values in (
         (
             "validation",
@@ -458,8 +445,7 @@ def run_structure_direct_baseline(
         ("test", partitions["test"], output.scores[n_validation:]),
     ):
         scores = {
-            row.site_key: float(value)
-            for row, value in zip(rows, values, strict=True)
+            row.site_key: float(value) for row, value in zip(rows, values, strict=True)
         }
         assert_complete_model_scores(model_input, name, scores)
         partition_scores.append((name, scores))
@@ -476,11 +462,10 @@ def run_direct_comparison_roster(
     *,
     sequence_features: dict[tuple[str, int], tuple[float, ...]],
     esm_features: dict[tuple[str, int], tuple[float, ...]],
-    structure_features: dict[
-        tuple[str, int], tuple[tuple[float, float], bool]
-    ],
+    structure_features: dict[tuple[str, int], tuple[tuple[float, float], bool]],
     parameters: dict[str, dict[str, int | float]],
     device: str = "cpu",
+    structure_batch_size: int | None = None,
 ) -> tuple[ComparisonModelScores, ...]:
     """Execute all five direct baselines on one byte-identical panel."""
     results: list[ComparisonModelScores] = []
@@ -507,6 +492,7 @@ def run_direct_comparison_roster(
             structure_features,
             parameters=parameters.get("structure_ranker"),
             device=device,
+            batch_size=structure_batch_size,
         )
     )
     if {result.panel_sha256 for result in results} != {run.panel_sha256}:

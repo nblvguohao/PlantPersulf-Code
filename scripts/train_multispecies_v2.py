@@ -633,6 +633,37 @@ def main(argv: list[str] | None = None) -> None:
             task_roster: list[TaskFingerprint] = []
             checkpoint_paths: dict[str, Path] = {}
 
+            def comparator_fingerprint(
+                *,
+                model: str,
+                seed: int,
+                extra_input_paths: dict[str, Path] | None = None,
+            ) -> TaskFingerprint:
+                return build_task_fingerprint(
+                    track="literature_random_protein",
+                    fold=0,
+                    seed=seed,
+                    model=model,
+                    input_paths={**runtime_inputs, **(extra_input_paths or {})},
+                    config_path=args.config,
+                    code_revision=code_revision,
+                    dirty_paths=dirty_code_paths,
+                )
+
+            def checkpoint_path_for(model: str, seed: int) -> Path:
+                return checkpoint_directory / f"{model}_seed{seed}.json"
+
+            def register_resumed_task(
+                fingerprint: TaskFingerprint,
+                checkpoint_path: Path,
+            ) -> dict[str, object]:
+                state = load_resumable_checkpoint(checkpoint_path, fingerprint)
+                task_roster.append(fingerprint)
+                checkpoint_paths[f"{fingerprint.model}_seed{fingerprint.seed}"] = (
+                    checkpoint_path
+                )
+                return state
+
             def record_comparator_task(
                 *,
                 model: str,
@@ -643,17 +674,12 @@ def main(argv: list[str] | None = None) -> None:
                 deviations: list[dict[str, int]] | None = None,
                 extra_input_paths: dict[str, Path] | None = None,
             ) -> None:
-                fingerprint = build_task_fingerprint(
-                    track="literature_random_protein",
-                    fold=0,
-                    seed=seed,
+                fingerprint = comparator_fingerprint(
                     model=model,
-                    input_paths={**runtime_inputs, **(extra_input_paths or {})},
-                    config_path=args.config,
-                    code_revision=code_revision,
-                    dirty_paths=dirty_code_paths,
+                    seed=seed,
+                    extra_input_paths=extra_input_paths,
                 )
-                checkpoint_path = checkpoint_directory / f"{model}_seed{seed}.json"
+                checkpoint_path = checkpoint_path_for(model, seed)
                 write_task_checkpoint(
                     checkpoint_path,
                     fingerprint,
@@ -682,6 +708,9 @@ def main(argv: list[str] | None = None) -> None:
             max_parallel_tasks = compute_cfg.get("max_parallel_tasks")
             if not isinstance(max_parallel_tasks, int) or max_parallel_tasks < 1:
                 raise RuntimeError("compute.max_parallel_tasks must be positive")
+            structure_batch_size = compute_cfg.get("score_batch_size")
+            if not isinstance(structure_batch_size, int) or structure_batch_size < 1:
+                raise RuntimeError("compute.score_batch_size must be positive")
             raw_sul_timeout = compute_cfg.get("sul_timeout_seconds", 21600.0)
             if not isinstance(raw_sul_timeout, int | float) or raw_sul_timeout <= 0.0:
                 raise RuntimeError("compute.sul_timeout_seconds must be positive")
@@ -689,27 +718,79 @@ def main(argv: list[str] | None = None) -> None:
 
             def run_direct_task(
                 run: object, device: str
-            ) -> tuple[object, str, object, float]:
+            ) -> tuple[
+                object,
+                str,
+                object,
+                float,
+                dict[str, dict[str, object]],
+                list[dict[str, int]],
+            ]:
+                resumed: dict[str, dict[str, object]] = {}
+                for model in (
+                    "pu_logistic",
+                    "random_forest",
+                    "xgboost",
+                    "esm_linear_head",
+                    "structure_ranker",
+                ):
+                    fingerprint = comparator_fingerprint(model=model, seed=run.seed)
+                    checkpoint_path = checkpoint_path_for(model, run.seed)
+                    if args.resume and checkpoint_path.is_file():
+                        resumed[model] = register_resumed_task(
+                            fingerprint, checkpoint_path
+                        )
+                if len(resumed) == 5:
+                    return run, device, (), 0.0, resumed, []
                 start = time.monotonic()
-                return (
-                    run,
-                    device,
-                    run_direct_comparison_roster(
+                direct_scores, _, deviations = run_with_oom_batch_retry(
+                    lambda batch_size: run_direct_comparison_roster(
                         run,
                         sequence_features=features,
                         esm_features=esm_features,
                         structure_features=structure_features,
                         parameters=cfg["literature_baseline_parameters"],
                         device=device,
+                        structure_batch_size=batch_size,
                     ),
+                    initial_batch_size=structure_batch_size,
+                )
+                return (
+                    run,
+                    device,
+                    direct_scores,
                     time.monotonic() - start,
+                    resumed,
+                    deviations,
                 )
 
             def complete_direct_task(
-                _task_index: int, result: tuple[object, str, object, float]
+                _task_index: int,
+                result: tuple[
+                    object,
+                    str,
+                    object,
+                    float,
+                    dict[str, dict[str, object]],
+                    list[dict[str, int]],
+                ],
             ) -> None:
-                run, assigned_device, direct_scores, wall_seconds = result
+                (
+                    run,
+                    assigned_device,
+                    direct_scores,
+                    wall_seconds,
+                    resumed,
+                    deviations,
+                ) = result
+                for state in resumed.values():
+                    report = state.get("report")
+                    if not isinstance(report, dict):
+                        raise RuntimeError("resumed comparator checkpoint lacks report")
+                    reports.append(report)
                 for scores in direct_scores:
+                    if scores.model in resumed:
+                        continue
                     model_input = bind_model_to_comparison_panel(run, scores.model)
                     report = summarize_comparable_scores(
                         model_input,
@@ -728,6 +809,9 @@ def main(argv: list[str] | None = None) -> None:
                             else "cpu"
                         ),
                         wall_seconds=wall_seconds,
+                        deviations=(
+                            deviations if scores.model == "structure_ranker" else []
+                        ),
                     )
                     print(
                         f"literature seed {run.seed} model={scores.model} "
@@ -757,6 +841,21 @@ def main(argv: list[str] | None = None) -> None:
                 def run_sul_task(
                     run: object, device: str
                 ) -> tuple[object, str, object, float, list[dict[str, int]]]:
+                    work_directory = output_dir / f"sul_bertgru_seed{run.seed}"
+                    extra_input_paths = {
+                        "shared_panel": work_directory / "shared_panel.tsv"
+                    }
+                    checkpoint_path = checkpoint_path_for("sul_bertgru", run.seed)
+                    if args.resume and checkpoint_path.is_file():
+                        state = register_resumed_task(
+                            comparator_fingerprint(
+                                model="sul_bertgru",
+                                seed=run.seed,
+                                extra_input_paths=extra_input_paths,
+                            ),
+                            checkpoint_path,
+                        )
+                        return run, device, state, 0.0, []
                     model_input = bind_model_to_comparison_panel(run, "sul_bertgru")
                     start = time.monotonic()
                     deviations: list[dict[str, int]] = []
@@ -764,7 +863,7 @@ def main(argv: list[str] | None = None) -> None:
                         model_input,
                         global_sequences,
                         sul_environment,
-                        work_directory=output_dir / f"sul_bertgru_seed{run.seed}",
+                        work_directory=work_directory,
                         timeout_seconds=sul_timeout_seconds,
                         device=device,
                         oom_deviations=deviations,
@@ -779,6 +878,14 @@ def main(argv: list[str] | None = None) -> None:
                     runner=run_sul_task,
                 )
                 for run, device, scores, wall_seconds, deviations in sul_results:
+                    if isinstance(scores, dict):
+                        report = scores.get("report")
+                        if not isinstance(report, dict):
+                            raise RuntimeError(
+                                "resumed Sul-BertGRU checkpoint lacks report"
+                            )
+                        reports.append(report)
+                        continue
                     model_input = bind_model_to_comparison_panel(run, "sul_bertgru")
                     report = summarize_comparable_scores(
                         model_input,
@@ -837,7 +944,10 @@ def main(argv: list[str] | None = None) -> None:
                 code_revision=code_revision,
                 code_sha256=first_fingerprint.code_sha256,
                 input_sha256=first_fingerprint.input_sha256,
-                command=[sys.executable, *sys.argv],
+                command=[
+                    sys.executable,
+                    *(argument for argument in sys.argv if argument != "--resume"),
+                ],
                 device=default_device,
                 environment=collect_runtime_environment(),
                 external_environments=(
