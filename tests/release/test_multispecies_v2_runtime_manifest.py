@@ -61,3 +61,22 @@ def test_release_manifest_rejects_missing_required_field(tmp_path: Path) -> None
 
     with pytest.raises(RuntimeError, match="required fields"):
         audit_v2_run_manifest(manifest)
+
+
+def test_manifest_refuses_to_replace_nonidentical_existing_output(
+    tmp_path: Path,
+) -> None:
+    """A second invocation cannot silently replace a different release record."""
+    path = tmp_path / "manifest.json"
+    path.write_text('{"policy":"old"}\n', encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="non-identical manifest"):
+        write_run_manifest(
+            path,
+            config_sha256="a" * 64,
+            split_sha256="b" * 64,
+            code_revision="commit-marker",
+            input_sha256={"development_sites": "c" * 64},
+            command=["python", "script.py"],
+            device="cpu",
+        )

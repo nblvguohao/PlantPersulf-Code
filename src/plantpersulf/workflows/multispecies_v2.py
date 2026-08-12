@@ -465,11 +465,16 @@ def write_run_manifest(
         "artifacts": artifact_records,
     }
     path.parent.mkdir(parents=True, exist_ok=True)
+    serialized = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
+    if path.exists():
+        if path.read_text(encoding="utf-8") != serialized:
+            raise RuntimeError(f"refusing to overwrite non-identical manifest: {path}")
+        return manifest
     with tempfile.NamedTemporaryFile(
         mode="w", encoding="utf-8", dir=path.parent, delete=False
     ) as handle:
         temporary = Path(handle.name)
-        handle.write(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+        handle.write(serialized)
     temporary.replace(path)
     return manifest
 

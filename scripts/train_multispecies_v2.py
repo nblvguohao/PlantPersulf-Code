@@ -13,9 +13,13 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import platform
 import subprocess
+import sys
 import tempfile
+import time
 from dataclasses import asdict
+from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
@@ -56,9 +60,17 @@ from plantpersulf.proteomics.multispecies_v2_sources import (
 )
 from plantpersulf.provenance.audit import assert_registered_input
 from plantpersulf.workflows.multispecies_v2 import (
+    TaskFingerprint,
+    TrainingEvent,
+    append_training_event,
+    assign_task_device,
+    audit_v2_run_manifest,
+    load_resumable_checkpoint,
     run_multispecies_experiment,
     select_v2_development_hyperparameters,
     train_v2_development_fold,
+    write_run_manifest,
+    write_task_checkpoint,
 )
 
 
@@ -67,6 +79,33 @@ def _code_revision() -> str:
         ["git", "rev-parse", "HEAD"], check=True, capture_output=True, text=True
     )
     return completed.stdout.strip()
+
+
+def _dirty_paths() -> tuple[str, ...]:
+    completed = subprocess.run(
+        ["git", "status", "--porcelain"], check=True, capture_output=True, text=True
+    )
+    return tuple(
+        sorted(line[3:] for line in completed.stdout.splitlines() if len(line) >= 4)
+    )
+
+
+def _development_rows_sha256(rows: tuple[MultispeciesV2SiteRow, ...]) -> str:
+    lines = [
+        "\t".join(
+            (
+                row.global_protein_id,
+                str(row.cys_position),
+                row.label,
+                row.cluster_id,
+                str(row.development_fold),
+            )
+        )
+        for row in sorted(
+            rows, key=lambda row: (row.global_protein_id, row.cys_position)
+        )
+    ]
+    return hashlib.sha256("\n".join(lines).encode()).hexdigest()
 
 
 def _registered(path: Path) -> None:
@@ -158,6 +197,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--score-test", action="store_true")
     parser.add_argument("--test-unlock", type=Path)
     parser.add_argument("--prepare-development", action="store_true")
+    parser.add_argument("--resume", action="store_true")
     parser.add_argument("--prepare-literature-track", action="store_true")
     parser.add_argument("--build-comparison-features", action="store_true")
     parser.add_argument("--run-literature-baselines", action="store_true")
@@ -179,7 +219,43 @@ def main(argv: list[str] | None = None) -> None:
     if args.prepare_development:
         rows, frozen, proteomes = _development_rows(args.config)
         features = sequence_feature_map(rows, proteomes)
+        cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
+        if not isinstance(cfg, dict):
+            raise RuntimeError("multispecies v2 config is required")
+        output_cfg = cfg.get("output")
+        compute_cfg = cfg.get("compute")
+        if not isinstance(output_cfg, dict) or not isinstance(compute_cfg, dict):
+            raise RuntimeError("output and compute configuration are required")
+        output_directory = Path(str(output_cfg["directory"]))
+        log_path = output_directory / str(output_cfg["jsonl_log"])
+        checkpoint_directory = output_directory / "checkpoints"
+        default_device = str(compute_cfg["device"])
+        raw_gpu_map = compute_cfg.get("gpu_map", [])
+        if not isinstance(raw_gpu_map, list) or not all(
+            isinstance(value, str) for value in raw_gpu_map
+        ):
+            raise RuntimeError("compute.gpu_map must be a list of device names")
+        gpu_map = tuple(raw_gpu_map)
+        input_sha256 = {
+            "development_rows": _development_rows_sha256(rows),
+            "frozen_split": frozen.sha256,
+        }
+        code_revision = _code_revision()
+        dirty_paths = _dirty_paths()
+        checkpoint_paths: dict[str, Path] = {}
         for fold in range(frozen.n_development_folds):
+            device = assign_task_device(fold, gpu_map, default_device)
+            fingerprint = TaskFingerprint(
+                track="strict_cluster_holdout",
+                fold=fold,
+                seed=fold,
+                model="pu_logistic",
+                input_sha256=input_sha256,
+                config_sha256=prepared.config_sha256,
+                code_revision=code_revision,
+            )
+            checkpoint_path = checkpoint_directory / f"fold{fold}.checkpoint.json"
+            checkpoint_paths[f"fold{fold}"] = checkpoint_path
             prepared_fold = prepare_v2_development_fold(
                 rows,
                 validation_fold=fold,
@@ -198,34 +274,84 @@ def main(argv: list[str] | None = None) -> None:
                     f"development fold has no positive v2 rows: {fold}; "
                     "frozen split requires reviewer remediation"
                 )
-            selected_holdout = select_v2_development_hyperparameters(
-                prepared_fold.fit_rows,
-                prepared_fold.validation_rows,
-                features,
-                candidates=(0.1, 0.2),
-                seed=fold,
-            )
-            result = train_v2_development_fold(
-                prepared_fold.fit_rows,
-                prepared_fold.validation_rows,
-                features,
-                seed=fold,
-                holdout_fraction=selected_holdout,
+            start = time.monotonic()
+            if args.resume:
+                state = load_resumable_checkpoint(checkpoint_path, fingerprint)
+                selected_holdout = float(state["pu_holdout"])
+                validation_ap = float(state["validation_ap"])
+            else:
+                selected_holdout = select_v2_development_hyperparameters(
+                    prepared_fold.fit_rows,
+                    prepared_fold.validation_rows,
+                    features,
+                    candidates=(0.1, 0.2),
+                    seed=fold,
+                )
+                result = train_v2_development_fold(
+                    prepared_fold.fit_rows,
+                    prepared_fold.validation_rows,
+                    features,
+                    seed=fold,
+                    holdout_fraction=selected_holdout,
+                )
+                validation_ap = result.validation_ap
+                write_task_checkpoint(
+                    checkpoint_path,
+                    fingerprint,
+                    {
+                        "pu_holdout": selected_holdout,
+                        "validation_ap": validation_ap,
+                    },
+                )
+            append_training_event(
+                log_path,
+                TrainingEvent(
+                    timestamp=datetime.now(timezone.utc).isoformat(),
+                    track=fingerprint.track,
+                    fold=fold,
+                    seed=fold,
+                    model=fingerprint.model,
+                    epoch=0,
+                    loss=None,
+                    val_ap=validation_ap,
+                    lr=None,
+                    device=device,
+                    gpu_memory=None,
+                    wall_seconds=time.monotonic() - start,
+                ),
             )
             print(
                 f"development fold {fold}: fit={len(prepared_fold.fit_rows)} "
                 f"validation={len(prepared_fold.validation_rows)} "
-                f"val_ap={result.validation_ap:.6f} "
+                f"val_ap={validation_ap:.6f} "
                 f"pu_holdout={selected_holdout:.2f}"
             )
+        manifest_path = output_directory / str(output_cfg["manifest"])
+        write_run_manifest(
+            manifest_path,
+            config_sha256=prepared.config_sha256,
+            split_sha256=frozen.sha256,
+            code_revision=code_revision,
+            input_sha256=input_sha256,
+            command=[sys.executable, *sys.argv],
+            device=default_device,
+            environment={
+                "python": platform.python_version(),
+                "platform": platform.platform(),
+            },
+            gpu_map=gpu_map,
+            artifacts={"training_log": log_path},
+            checkpoint_paths=checkpoint_paths,
+            dirty=bool(dirty_paths),
+            dirty_paths=dirty_paths,
+        )
+        audit_v2_run_manifest(manifest_path)
     if (
         args.prepare_literature_track
         or args.build_comparison_features
         or args.run_literature_baselines
     ):
-        rows, _, proteomes = _development_rows(
-            args.config, sample_unlabeled=False
-        )
+        rows, _, proteomes = _development_rows(args.config, sample_unlabeled=False)
         cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
         random_cfg = cfg["literature_random_protein"]
         seeds = tuple(random_cfg["seeds"])
@@ -324,9 +450,7 @@ def main(argv: list[str] | None = None) -> None:
             prerequisite_paths = {
                 "esm_features": optional_path("esm_features"),
                 "structure_features": optional_path("structure_features"),
-                "sul_environment_manifest": optional_path(
-                    "sul_environment_manifest"
-                ),
+                "sul_environment_manifest": optional_path("sul_environment_manifest"),
                 "pcysmod_scores": optional_path("pcysmod_scores"),
             }
             registered_paths: set[Path] = set()
@@ -396,8 +520,7 @@ def main(argv: list[str] | None = None) -> None:
                     for accession, sequence in species_sequences.items()
                 }
                 output_dir = (
-                    Path(cfg["output"]["directory"])
-                    / "literature_random_protein"
+                    Path(cfg["output"]["directory"]) / "literature_random_protein"
                 )
                 for run in runs:
                     model_input = bind_model_to_comparison_panel(run, "sul_bertgru")
