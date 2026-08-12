@@ -164,6 +164,24 @@ def test_v2_cli_exposes_registered_comparison_feature_build() -> None:
     assert arguments.score_test is False
 
 
+def test_v2_cli_exposes_hash_bound_development_resume() -> None:
+    """Development resume is explicit and must not imply frozen-test scoring."""
+    cli = _load_cli_module()
+
+    arguments = cli.build_argument_parser().parse_args(
+        [
+            "--config",
+            "configs/experiments/multispecies_v2_global_clusters_v5.yaml",
+            "--prepare-development",
+            "--resume",
+        ]
+    )
+
+    assert arguments.prepare_development is True
+    assert arguments.resume is True
+    assert arguments.score_test is False
+
+
 def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
     tmp_path: Path, monkeypatch
 ) -> None:

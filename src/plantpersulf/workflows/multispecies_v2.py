@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import random
+import re
 import tempfile
 from collections.abc import Iterable
 from dataclasses import asdict, dataclass
@@ -42,6 +44,128 @@ class TrainingEvent:
     device: str
     gpu_memory: int | None
     wall_seconds: float
+
+
+@dataclass(frozen=True)
+class TaskFingerprint:
+    """Immutable identity required before a task checkpoint may be resumed."""
+
+    track: str
+    fold: int
+    seed: int
+    model: str
+    input_sha256: dict[str, str]
+    config_sha256: str
+    code_revision: str
+
+
+def _canonical_json_bytes(payload: object) -> bytes:
+    try:
+        serialized = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        return f"{serialized}\n".encode()
+    except (TypeError, ValueError) as exc:
+        raise ValueError("runtime payload must be JSON serializable") from exc
+
+
+def _validate_task_fingerprint(fingerprint: TaskFingerprint) -> None:
+    if (
+        not fingerprint.track
+        or fingerprint.fold < 0
+        or fingerprint.seed < 0
+        or not fingerprint.model
+        or not fingerprint.code_revision
+        or not _valid_sha256(fingerprint.config_sha256)
+        or not fingerprint.input_sha256
+        or any(
+            not name or not _valid_sha256(value)
+            for name, value in fingerprint.input_sha256.items()
+        )
+    ):
+        raise ValueError("task fingerprint is invalid")
+
+
+def write_task_checkpoint(
+    path: Path, fingerprint: TaskFingerprint, state: dict[str, object]
+) -> dict[str, object]:
+    """Atomically persist state only when the target is new or identical."""
+    _validate_task_fingerprint(fingerprint)
+    state_sha256 = hashlib.sha256(_canonical_json_bytes(state)).hexdigest()
+    payload: dict[str, object] = {
+        "fingerprint": asdict(fingerprint),
+        "state": state,
+        "state_sha256": state_sha256,
+    }
+    encoded = _canonical_json_bytes(payload)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists():
+        if path.read_bytes() != encoded:
+            raise RuntimeError(
+                f"refusing to overwrite non-identical checkpoint: {path}"
+            )
+        return state
+    with tempfile.NamedTemporaryFile(
+        mode="wb", dir=path.parent, delete=False
+    ) as handle:
+        temporary = Path(handle.name)
+        handle.write(encoded)
+    temporary.replace(path)
+    return state
+
+
+def load_resumable_checkpoint(
+    path: Path, fingerprint: TaskFingerprint
+) -> dict[str, object]:
+    """Return state only after exact fingerprint and state-hash verification."""
+    _validate_task_fingerprint(fingerprint)
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"checkpoint is invalid: {path}") from exc
+    if not isinstance(payload, dict) or set(payload) != {
+        "fingerprint",
+        "state",
+        "state_sha256",
+    }:
+        raise RuntimeError("checkpoint payload is incomplete")
+    stored_fingerprint = payload["fingerprint"]
+    state = payload["state"]
+    state_sha256 = payload["state_sha256"]
+    if stored_fingerprint != asdict(fingerprint):
+        raise RuntimeError("checkpoint fingerprint mismatch")
+    if (
+        not isinstance(state, dict)
+        or not isinstance(state_sha256, str)
+        or hashlib.sha256(_canonical_json_bytes(state)).hexdigest() != state_sha256
+    ):
+        raise RuntimeError("checkpoint state hash mismatch")
+    return state
+
+
+def assign_task_device(
+    task_index: int, gpu_map: tuple[str, ...], default_device: str
+) -> str:
+    """Map independent tasks round-robin onto configured GPUs without DDP."""
+    if task_index < 0 or not default_device:
+        raise ValueError("task index and default device are required")
+    if any(re.fullmatch(r"cuda:\d+", device) is None for device in gpu_map):
+        raise ValueError("gpu_map entries must be cuda:<integer>")
+    return gpu_map[task_index % len(gpu_map)] if gpu_map else default_device
+
+
+def record_oom_batch_deviation(
+    original_batch_size: int, replacement_batch_size: int
+) -> dict[str, int]:
+    """Record the sole permitted OOM deviation: a strictly smaller batch."""
+    if (
+        original_batch_size <= 0
+        or replacement_batch_size <= 0
+        or replacement_batch_size >= original_batch_size
+    ):
+        raise ValueError("OOM replacement batch size must be positive and smaller")
+    return {
+        "original_batch_size": original_batch_size,
+        "replacement_batch_size": replacement_batch_size,
+    }
 
 
 @dataclass(frozen=True)
@@ -221,6 +345,27 @@ def select_v2_development_hyperparameters(
 
 def append_training_event(path: Path, event: TrainingEvent) -> None:
     """Append one complete, machine-readable training event."""
+    numeric_values = (
+        event.loss,
+        event.val_ap,
+        event.lr,
+        event.wall_seconds,
+    )
+    if any(value is not None and not math.isfinite(value) for value in numeric_values):
+        raise ValueError("training event numeric values must be finite")
+    if event.gpu_memory is not None and event.gpu_memory < 0:
+        raise ValueError("training event GPU memory must be non-negative")
+    if (
+        not event.timestamp
+        or not event.track
+        or event.fold < 0
+        or event.seed < 0
+        or not event.model
+        or event.epoch < 0
+        or not event.device
+        or event.wall_seconds < 0.0
+    ):
+        raise ValueError("training event fields are invalid")
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(asdict(event), sort_keys=True) + "\n")
@@ -272,6 +417,12 @@ def write_run_manifest(
     input_sha256: dict[str, str],
     command: list[str],
     device: str,
+    environment: dict[str, str] | None = None,
+    gpu_map: tuple[str, ...] = (),
+    artifacts: dict[str, Path] | None = None,
+    checkpoint_paths: dict[str, Path] | None = None,
+    dirty: bool = False,
+    dirty_paths: tuple[str, ...] = (),
 ) -> dict[str, object]:
     """Write an atomic run manifest after verifying every input hash."""
     if not _valid_sha256(config_sha256) or not _valid_sha256(split_sha256):
@@ -282,21 +433,97 @@ def write_run_manifest(
         raise ValueError("input_sha256 must contain complete SHA256 values")
     if not code_revision or not command or not device:
         raise ValueError("code_revision, command, and device are required")
+    if any(re.fullmatch(r"cuda:\d+", value) is None for value in gpu_map):
+        raise ValueError("gpu_map entries must be cuda:<integer>")
+    if any(not name or not value for name, value in (environment or {}).items()):
+        raise ValueError("environment entries must be complete")
+    declared_artifacts = {**(artifacts or {}), **(checkpoint_paths or {})}
+    if any(
+        not name or not artifact.is_file()
+        for name, artifact in declared_artifacts.items()
+    ):
+        raise ValueError("manifest artifacts must name existing files")
+    artifact_records = {
+        name: {
+            "path": artifact.resolve().as_posix(),
+            "sha256": _sha256_file(artifact),
+        }
+        for name, artifact in sorted(declared_artifacts.items())
+    }
     manifest: dict[str, object] = {
+        "schema_version": 2,
         "config_sha256": config_sha256,
         "split_sha256": split_sha256,
         "code_revision": code_revision,
         "input_sha256": dict(sorted(input_sha256.items())),
         "command": command,
         "device": device,
+        "environment": dict(sorted((environment or {}).items())),
+        "gpu_map": list(gpu_map),
+        "dirty": dirty,
+        "dirty_paths": sorted(dirty_paths),
+        "artifacts": artifact_records,
     }
     path.parent.mkdir(parents=True, exist_ok=True)
+    serialized = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
+    if path.exists():
+        if path.read_text(encoding="utf-8") != serialized:
+            raise RuntimeError(f"refusing to overwrite non-identical manifest: {path}")
+        return manifest
     with tempfile.NamedTemporaryFile(
         mode="w", encoding="utf-8", dir=path.parent, delete=False
     ) as handle:
         temporary = Path(handle.name)
-        handle.write(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+        handle.write(serialized)
     temporary.replace(path)
+    return manifest
+
+
+def audit_v2_run_manifest(path: Path) -> dict[str, object]:
+    """Fail closed if a v2 runtime manifest or declared artifact changed."""
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"runtime manifest is invalid: {path}") from exc
+    required = {
+        "schema_version",
+        "config_sha256",
+        "split_sha256",
+        "code_revision",
+        "input_sha256",
+        "command",
+        "device",
+        "environment",
+        "gpu_map",
+        "dirty",
+        "dirty_paths",
+        "artifacts",
+    }
+    if not isinstance(manifest, dict) or set(manifest) != required:
+        raise RuntimeError("runtime manifest required fields are missing")
+    if manifest["schema_version"] != 2:
+        raise RuntimeError("runtime manifest schema is invalid")
+    if not all(
+        isinstance(manifest.get(name), str) and _valid_sha256(manifest[name])
+        for name in ("config_sha256", "split_sha256")
+    ):
+        raise RuntimeError("runtime manifest hashes are invalid")
+    artifacts = manifest["artifacts"]
+    if not isinstance(artifacts, dict):
+        raise RuntimeError("runtime manifest artifacts are invalid")
+    for name, record in artifacts.items():
+        if not isinstance(name, str) or not isinstance(record, dict):
+            raise RuntimeError("runtime manifest artifacts are invalid")
+        artifact_path = record.get("path")
+        artifact_sha256 = record.get("sha256")
+        if (
+            not isinstance(artifact_path, str)
+            or not isinstance(artifact_sha256, str)
+            or not _valid_sha256(artifact_sha256)
+            or not Path(artifact_path).is_file()
+            or _sha256_file(Path(artifact_path)) != artifact_sha256
+        ):
+            raise RuntimeError("artifact SHA256 mismatch")
     return manifest
 
 
