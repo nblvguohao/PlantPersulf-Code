@@ -39,14 +39,19 @@ def test_v4_config_locks_registered_development_positive_manifest() -> None:
     }
 
 
-def test_v4_config_makes_comparator_input_gaps_explicit() -> None:
+def test_v4_config_locks_registered_comparator_inputs() -> None:
     path = Path("configs/experiments/multispecies_v2_global_clusters_v4.yaml")
     cfg = yaml.safe_load(path.read_text(encoding="utf-8"))
 
     assert cfg["comparison_inputs"] == {
-        "esm_features": None,
-        "structure_features": None,
-        "sul_environment_manifest": None,
+        "esm_features": (
+            "data/processed/features/"
+            "multispecies_v2_esm2_t33_windows_v1/manifest.json"
+        ),
+        "structure_features": (
+            "data/registry/releases/alphafold_structures_release_v2.tsv"
+        ),
+        "sul_environment_manifest": "configs/environments/sul_bertgru_adapter.json",
         "pcysmod_scores": None,
     }
     assert cfg["comparator_policy"] == {
@@ -58,4 +63,14 @@ def test_v4_config_makes_comparator_input_gaps_explicit() -> None:
         "pu_logistic": {"holdout_fraction": 0.2},
         "random_forest": {"n_estimators": 100},
         "xgboost": {"n_estimators": 100},
+        "esm_linear_head": {},
+        "structure_ranker": {
+            "epochs": 200,
+            "hidden": 16,
+            "dropout": 0.2,
+            "lr": 0.05,
+            "holdout_fraction": 0.2,
+            "n_mc_dropout": 16,
+            "use_esm": 0,
+        },
     }

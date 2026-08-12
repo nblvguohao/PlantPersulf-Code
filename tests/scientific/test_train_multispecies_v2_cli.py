@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
+from plantpersulf.benchmark.literature_random_track import ComparisonModelScores
 from plantpersulf.benchmark.multispecies_splits import (
     DEVELOPMENT_SPLIT,
     FrozenMultispeciesSplit,
@@ -15,7 +16,6 @@ from plantpersulf.benchmark.multispecies_splits import (
     GlobalClusterRow,
     MultispeciesSiteRow,
 )
-from plantpersulf.benchmark.literature_random_track import ComparisonModelScores
 from plantpersulf.evaluation.comparable_track import ComparatorStatus
 from plantpersulf.proteomics.multispecies_v2_dataset import MultispeciesV2SiteRow
 
@@ -55,8 +55,8 @@ def test_development_cli_path_passes_only_development_proteins_to_source_parser(
         "development_positive_manifest:\n"
         f"  path: {development_manifest.as_posix()}\n"
         f"  sha256: {development_manifest_sha256}\n"
-            "global_mmseqs2: {cluster_table: clusters.tsv}\n"
-            "strict_cluster_holdout: {split_path: split.tsv}\n"
+        "global_mmseqs2: {cluster_table: clusters.tsv}\n"
+        "strict_cluster_holdout: {split_path: split.tsv}\n"
         "unlabeled_panel: {per_positive: 1, seed: 7}\n",
         encoding="utf-8",
     )
@@ -178,7 +178,10 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
     config = tmp_path / "config.yaml"
     config.write_text(
         "species: {primary: [arabidopsis, rice, tomato], pressure: [magnaporthe]}\n"
-        "literature_random_protein: {test_fraction: 0.2, validation_fraction_of_remaining: 0.2, seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}\n"
+        "literature_random_protein:\n"
+        "  test_fraction: 0.2\n"
+        "  validation_fraction_of_remaining: 0.2\n"
+        "  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n"
         "unlabeled_panel: {per_positive: 1, seed: 3}\n"
         "comparison_inputs:\n"
         f"  esm_features: {esm_manifest.as_posix()}\n"
@@ -186,7 +189,12 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
         f"  sul_environment_manifest: {sul_manifest.as_posix()}\n"
         "  pcysmod_scores: null\n"
         "comparison_feature_build: {structure_registry_base: data/registry}\n"
-        "literature_baseline_parameters: {pu_logistic: {}, random_forest: {}, xgboost: {}, esm_linear_head: {}, structure_ranker: {}}\n"
+        "literature_baseline_parameters:\n"
+        "  pu_logistic: {}\n"
+        "  random_forest: {}\n"
+        "  xgboost: {}\n"
+        "  esm_linear_head: {}\n"
+        "  structure_ranker: {}\n"
         f"output: {{directory: {output_dir.as_posix()}}}\n",
         encoding="utf-8",
     )
@@ -206,22 +214,46 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
         for position, label in ((2, "positive"), (4, "unlabeled"))
     )
     monkeypatch.setattr(
-        cli, "run_multispecies_experiment", lambda *args, **kwargs: SimpleNamespace(cluster_count=3, test_scoring_enabled=False)
+        cli,
+        "run_multispecies_experiment",
+        lambda *args, **kwargs: SimpleNamespace(
+            cluster_count=3, test_scoring_enabled=False
+        ),
     )
     monkeypatch.setattr(
-        cli, "_development_rows", lambda *args, **kwargs: (rows, None, {"arabidopsis": {"P0": "MCAMC", "P1": "MCAMC", "P2": "MCAMC"}})
+        cli,
+        "_development_rows",
+        lambda *args, **kwargs: (
+            rows,
+            None,
+            {"arabidopsis": {"P0": "MCAMC", "P1": "MCAMC", "P2": "MCAMC"}},
+        ),
     )
     monkeypatch.setattr(
-        cli, "sequence_feature_map", lambda selected, proteomes: { (row.global_protein_id, row.cys_position): (0.1, 0.2) for row in selected }
+        cli,
+        "sequence_feature_map",
+        lambda selected, proteomes: {
+            (row.global_protein_id, row.cys_position): (0.1, 0.2) for row in selected
+        },
     )
     monkeypatch.setattr(cli, "_registered", lambda path: None)
     ready = tuple(
         ComparatorStatus(model, "direct_baseline", "ready", "registered")
-        for model in ("pu_logistic", "random_forest", "xgboost", "esm_linear_head", "structure_ranker")
+        for model in (
+            "pu_logistic",
+            "random_forest",
+            "xgboost",
+            "esm_linear_head",
+            "structure_ranker",
+        )
     ) + (ComparatorStatus("sul_bertgru", "external_comparator", "ready", "registered"),)
     monkeypatch.setattr(cli, "comparator_statuses", lambda **kwargs: ready)
-    monkeypatch.setattr(cli, "load_window_embedding_artifact", lambda *args, **kwargs: {})
-    monkeypatch.setattr(cli, "build_registered_structure_features", lambda *args, **kwargs: {})
+    monkeypatch.setattr(
+        cli, "load_window_embedding_artifact", lambda *args, **kwargs: {}
+    )
+    monkeypatch.setattr(
+        cli, "build_registered_structure_features", lambda *args, **kwargs: {}
+    )
     monkeypatch.setattr(cli, "validate_sul_environment_manifest", lambda path: object())
     calls: list[tuple[int, tuple[str, ...]]] = []
 
@@ -233,7 +265,13 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
         )
         return tuple(
             ComparisonModelScores(model, run.seed, run.panel_sha256, partitions)
-            for model in ("pu_logistic", "random_forest", "xgboost", "esm_linear_head", "structure_ranker")
+            for model in (
+                "pu_logistic",
+                "random_forest",
+                "xgboost",
+                "esm_linear_head",
+                "structure_ranker",
+            )
         )
 
     monkeypatch.setattr(cli, "run_direct_comparison_roster", score_models)
@@ -241,10 +279,13 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
         cli,
         "run_sul_bertgru_adapter",
         lambda model_input, *args, **kwargs: ComparisonModelScores(
-            "sul_bertgru", model_input.seed, model_input.panel_sha256, tuple(
+            "sul_bertgru",
+            model_input.seed,
+            model_input.panel_sha256,
+            tuple(
                 (name, {(row.site_key): 0.5 for row in values})
                 for name, values in model_input.partition_rows
-            )
+            ),
         ),
     )
     monkeypatch.setattr(
@@ -260,9 +301,16 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
 
     cli.main(["--config", str(config), "--run-literature-baselines"])
 
-    payload = json.loads((output_dir / "literature_random_protein" / "summary.json").read_text())
+    payload = json.loads(
+        (output_dir / "literature_random_protein" / "summary.json").read_text()
+    )
     assert len(calls) == 10
     assert {report["model"] for report in payload["runs"]} == {
-        "pu_logistic", "random_forest", "xgboost", "esm_linear_head", "structure_ranker", "sul_bertgru"
+        "pu_logistic",
+        "random_forest",
+        "xgboost",
+        "esm_linear_head",
+        "structure_ranker",
+        "sul_bertgru",
     }
     assert len(payload["runs"]) == 60
