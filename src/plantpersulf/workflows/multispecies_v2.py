@@ -3,14 +3,21 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.metadata
 import json
 import math
+import platform
 import random
 import re
+import subprocess
+import sys
 import tempfile
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict, dataclass
+from functools import cache
 from pathlib import Path
+from typing import TypeVar
 
 import yaml
 
@@ -28,6 +35,22 @@ from plantpersulf.proteomics.multispecies_v2_dataset import MultispeciesV2SiteRo
 
 def _sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+@cache
+def _sha256_path(path: Path) -> str:
+    """Hash a physical file or a directory tree with stable relative framing."""
+    resolved = path.resolve()
+    if resolved.is_file():
+        return _sha256_file(resolved)
+    if not resolved.is_dir():
+        raise FileNotFoundError(resolved)
+    digest = hashlib.sha256()
+    for child in sorted(item for item in resolved.rglob("*") if item.is_file()):
+        digest.update(child.relative_to(resolved).as_posix().encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(bytes.fromhex(_sha256_file(child)))
+    return digest.hexdigest()
 
 
 @dataclass(frozen=True)
@@ -57,6 +80,7 @@ class TaskFingerprint:
     input_sha256: dict[str, str]
     config_sha256: str
     code_revision: str
+    code_sha256: str
 
 
 def _canonical_json_bytes(payload: object) -> bytes:
@@ -74,6 +98,7 @@ def _validate_task_fingerprint(fingerprint: TaskFingerprint) -> None:
         or fingerprint.seed < 0
         or not fingerprint.model
         or not fingerprint.code_revision
+        or not _valid_sha256(fingerprint.code_sha256)
         or not _valid_sha256(fingerprint.config_sha256)
         or not fingerprint.input_sha256
         or any(
@@ -82,6 +107,58 @@ def _validate_task_fingerprint(fingerprint: TaskFingerprint) -> None:
         )
     ):
         raise ValueError("task fingerprint is invalid")
+
+
+def _hash_existing_paths(paths: tuple[Path, ...]) -> str:
+    """Hash one dirty file directly or many files with stable path framing."""
+    if not paths:
+        return hashlib.sha256(b"").hexdigest()
+    if len(paths) == 1:
+        if not paths[0].is_file():
+            raise RuntimeError(f"dirty code path is not a file: {paths[0]}")
+        return _sha256_file(paths[0])
+    digest = hashlib.sha256()
+    for path in sorted(paths, key=lambda item: item.as_posix()):
+        if not path.is_file():
+            raise RuntimeError(f"dirty code path is not a file: {path}")
+        digest.update(path.as_posix().encode())
+        digest.update(b"\0")
+        digest.update(bytes.fromhex(_sha256_file(path)))
+    return digest.hexdigest()
+
+
+def build_task_fingerprint(
+    *,
+    track: str,
+    fold: int,
+    seed: int,
+    model: str,
+    input_paths: dict[str, Path],
+    config_path: Path,
+    code_revision: str,
+    dirty_paths: tuple[Path, ...],
+) -> TaskFingerprint:
+    """Bind a runtime task to the exact bytes consumed by that process."""
+    if not input_paths or any(
+        not name or not path.exists() for name, path in input_paths.items()
+    ):
+        raise ValueError("task inputs must name existing files")
+    if not config_path.is_file():
+        raise ValueError("task config must be an existing file")
+    fingerprint = TaskFingerprint(
+        track=track,
+        fold=fold,
+        seed=seed,
+        model=model,
+        input_sha256={
+            name: _sha256_path(path) for name, path in sorted(input_paths.items())
+        },
+        config_sha256=_sha256_file(config_path),
+        code_revision=code_revision,
+        code_sha256=_hash_existing_paths(dirty_paths),
+    )
+    _validate_task_fingerprint(fingerprint)
+    return fingerprint
 
 
 def write_task_checkpoint(
@@ -165,6 +242,131 @@ def record_oom_batch_deviation(
     return {
         "original_batch_size": original_batch_size,
         "replacement_batch_size": replacement_batch_size,
+    }
+
+
+TaskValue = TypeVar("TaskValue")
+TaskResult = TypeVar("TaskResult")
+
+
+def run_task_group(
+    tasks: tuple[TaskValue, ...],
+    *,
+    max_parallel_tasks: int,
+    gpu_map: tuple[str, ...],
+    default_device: str,
+    runner: Callable[[TaskValue, str], TaskResult],
+    on_complete: Callable[[int, TaskResult], None] | None = None,
+) -> list[TaskResult]:
+    """Run independent tasks concurrently and preserve their declared order."""
+    if max_parallel_tasks < 1:
+        raise ValueError("max_parallel_tasks must be positive")
+    assignments = [
+        (task, assign_task_device(index, gpu_map, default_device))
+        for index, task in enumerate(tasks)
+    ]
+    with ThreadPoolExecutor(max_workers=max_parallel_tasks) as executor:
+        futures = {
+            executor.submit(runner, task, device): index
+            for index, (task, device) in enumerate(assignments)
+        }
+        results: dict[int, TaskResult] = {}
+        for future in as_completed(futures):
+            index = futures[future]
+            result = future.result()
+            results[index] = result
+            if on_complete is not None:
+                on_complete(index, result)
+    return [results[index] for index in range(len(tasks))]
+
+
+def run_with_oom_batch_retry(
+    operation: Callable[[int], TaskResult], *, initial_batch_size: int
+) -> tuple[TaskResult, int, list[dict[str, int]]]:
+    """Retry an unchanged scoring operation after CUDA OOM by halving its batch."""
+    if initial_batch_size <= 0:
+        raise ValueError("positive initial batch size is required")
+    batch_size = initial_batch_size
+    deviations: list[dict[str, int]] = []
+    while True:
+        try:
+            return operation(batch_size), batch_size, deviations
+        except RuntimeError as exc:
+            if "out of memory" not in str(exc).lower() or batch_size == 1:
+                raise
+            replacement = max(1, batch_size // 2)
+            deviations.append(record_oom_batch_deviation(batch_size, replacement))
+            batch_size = replacement
+
+
+def collect_runtime_environment(
+    python_executable: Path | None = None,
+) -> dict[str, object]:
+    """Capture exact Python packages and current GPU inventory for provenance."""
+    executable = python_executable or Path(sys.executable)
+    if (
+        python_executable is None
+        or executable.resolve() == Path(sys.executable).resolve()
+    ):
+        dependencies: dict[str, str] = {}
+        for distribution in importlib.metadata.distributions():
+            try:
+                name = distribution.metadata["Name"]
+            except KeyError:
+                continue
+            if name:
+                dependencies[name] = distribution.version
+        python_version = platform.python_version()
+        platform_name = platform.platform()
+    else:
+        probe_code = (
+            "import importlib.metadata,json,platform;"
+            "print(json.dumps({'python_version':platform.python_version(),"
+            "'platform':platform.platform(),'dependencies':"
+            "{d.metadata['Name']:d.version for d in importlib.metadata.distributions() "
+            "if d.metadata['Name']}}))"
+        )
+        try:
+            isolated = subprocess.run(
+                [str(executable), "-c", probe_code],
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+            isolated_payload = json.loads(isolated.stdout)
+        except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as exc:
+            raise RuntimeError("isolated runtime environment probe failed") from exc
+        dependencies = isolated_payload.get("dependencies")
+        python_version = isolated_payload.get("python_version")
+        platform_name = isolated_payload.get("platform")
+        if (
+            not isinstance(dependencies, dict)
+            or not isinstance(python_version, str)
+            or not isinstance(platform_name, str)
+        ):
+            raise RuntimeError("isolated runtime environment probe is invalid")
+    try:
+        probe = subprocess.run(
+            [
+                "nvidia-smi",
+                "--query-gpu=index,name,driver_version,memory.total",
+                "--format=csv,noheader",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        gpu_probe: object = [line.strip() for line in probe.stdout.splitlines() if line]
+    except (FileNotFoundError, subprocess.SubprocessError):
+        gpu_probe = []
+    return {
+        "python_executable": str(executable.resolve()),
+        "python_version": python_version,
+        "platform": platform_name,
+        "dependencies": dict(sorted(dependencies.items())),
+        "gpu_probe": gpu_probe,
     }
 
 
@@ -362,13 +564,142 @@ def append_training_event(path: Path, event: TrainingEvent) -> None:
         or event.seed < 0
         or not event.model
         or event.epoch < 0
-        or not event.device
+        or re.fullmatch(r"cpu|cuda(?::\d+)?", event.device) is None
         or event.wall_seconds < 0.0
     ):
         raise ValueError("training event fields are invalid")
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(asdict(event), sort_keys=True) + "\n")
+
+
+def _task_identity(payload: dict[str, object]) -> tuple[str, int, int, str]:
+    track = payload.get("track")
+    fold = payload.get("fold")
+    seed = payload.get("seed")
+    model = payload.get("model")
+    if (
+        not isinstance(track, str)
+        or not isinstance(fold, int)
+        or not isinstance(seed, int)
+        or not isinstance(model, str)
+    ):
+        raise RuntimeError("task identity is invalid")
+    return track, fold, seed, model
+
+
+def audit_training_event_log(
+    path: Path, task_roster: tuple[TaskFingerprint, ...]
+) -> None:
+    """Require complete JSONL schema and exact per-task release coverage."""
+    expected = {
+        (entry.track, entry.fold, entry.seed, entry.model) for entry in task_roster
+    }
+    if not expected or len(expected) != len(task_roster):
+        raise RuntimeError("task roster must contain unique tasks")
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError as exc:
+        raise RuntimeError("training log is unavailable") from exc
+    seen: set[tuple[str, int, int, str]] = set()
+    required = set(TrainingEvent.__dataclass_fields__)
+    for line in lines:
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError("training log contains invalid JSON") from exc
+        if not isinstance(event, dict) or set(event) != required:
+            raise RuntimeError("training log required fields are missing")
+        _audit_training_event_payload(event)
+        identity = _task_identity(event)
+        if identity in seen:
+            raise RuntimeError("training log contains duplicate task event")
+        seen.add(identity)
+    if seen != expected:
+        raise RuntimeError("training log task coverage is incomplete")
+
+
+def _audit_training_event_payload(event: dict[str, object]) -> None:
+    """Apply the producer's semantic validation to untrusted JSONL bytes."""
+    nullable_floats = ("loss", "val_ap", "lr")
+    if any(
+        event[name] is not None
+        and (not isinstance(event[name], int | float) or isinstance(event[name], bool))
+        for name in nullable_floats
+    ):
+        raise RuntimeError("training event fields are invalid")
+    gpu_memory = event["gpu_memory"]
+    if gpu_memory is not None and (
+        not isinstance(gpu_memory, int) or isinstance(gpu_memory, bool)
+    ):
+        raise RuntimeError("training event fields are invalid")
+    try:
+        parsed = TrainingEvent(**event)  # type: ignore[arg-type]
+        if not isinstance(parsed.timestamp, str) or not isinstance(parsed.track, str):
+            raise ValueError
+        if not isinstance(parsed.model, str) or not isinstance(parsed.device, str):
+            raise ValueError
+        if any(
+            not isinstance(value, int) or isinstance(value, bool)
+            for value in (parsed.fold, parsed.seed, parsed.epoch)
+        ):
+            raise ValueError
+        if not isinstance(parsed.wall_seconds, int | float) or isinstance(
+            parsed.wall_seconds, bool
+        ):
+            raise ValueError
+        if re.fullmatch(r"cpu|cuda(?::\d+)?", parsed.device) is None:
+            raise ValueError
+        numeric_values = (parsed.loss, parsed.val_ap, parsed.lr, parsed.wall_seconds)
+        if any(
+            value is not None and not math.isfinite(value) for value in numeric_values
+        ):
+            raise ValueError
+        if (
+            parsed.fold < 0
+            or parsed.seed < 0
+            or parsed.epoch < 0
+            or parsed.wall_seconds < 0
+            or (parsed.gpu_memory is not None and parsed.gpu_memory < 0)
+            or not parsed.timestamp
+            or not parsed.track
+            or not parsed.model
+        ):
+            raise ValueError
+    except (TypeError, ValueError) as exc:
+        raise RuntimeError("training event fields are invalid") from exc
+
+
+def _audit_checkpoint_coverage(
+    artifacts: dict[str, object], roster: tuple[TaskFingerprint, ...]
+) -> None:
+    expected = {_task_identity(asdict(item)): asdict(item) for item in roster}
+    observed: dict[tuple[str, int, int, str], dict[str, object]] = {}
+    for record in artifacts.values():
+        if not isinstance(record, dict) or not isinstance(record.get("path"), str):
+            continue
+        artifact_path = Path(record["path"])
+        try:
+            payload = json.loads(artifact_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if not isinstance(payload, dict) or set(payload) != {
+            "fingerprint",
+            "state",
+            "state_sha256",
+        }:
+            continue
+        fingerprint = payload["fingerprint"]
+        if not isinstance(fingerprint, dict):
+            continue
+        identity = _task_identity(fingerprint)
+        if identity in observed:
+            raise RuntimeError("runtime checkpoint coverage is duplicated")
+        observed[identity] = fingerprint
+    if set(observed) != set(expected) or any(
+        observed[identity] != expected[identity] for identity in expected
+    ):
+        raise RuntimeError("runtime checkpoint coverage is incomplete")
 
 
 def _valid_sha256(value: str) -> bool:
@@ -412,31 +743,77 @@ def write_run_manifest(
     path: Path,
     *,
     config_sha256: str,
+    config_path: Path | None = None,
     split_sha256: str,
     code_revision: str,
+    code_sha256: str,
     input_sha256: dict[str, str],
     command: list[str],
     device: str,
-    environment: dict[str, str] | None = None,
+    environment: dict[str, object] | None = None,
     gpu_map: tuple[str, ...] = (),
     artifacts: dict[str, Path] | None = None,
     checkpoint_paths: dict[str, Path] | None = None,
+    task_roster: tuple[TaskFingerprint, ...] = (),
+    external_environments: dict[str, dict[str, object]] | None = None,
     dirty: bool = False,
     dirty_paths: tuple[str, ...] = (),
 ) -> dict[str, object]:
     """Write an atomic run manifest after verifying every input hash."""
-    if not _valid_sha256(config_sha256) or not _valid_sha256(split_sha256):
-        raise ValueError("config_sha256 and split_sha256 must be SHA256 values")
+    if not all(
+        _valid_sha256(value) for value in (config_sha256, split_sha256, code_sha256)
+    ):
+        raise ValueError("config_sha256, split_sha256, and code_sha256 are required")
     if not input_sha256 or any(
         not name or not _valid_sha256(value) for name, value in input_sha256.items()
     ):
         raise ValueError("input_sha256 must contain complete SHA256 values")
     if not code_revision or not command or not device:
         raise ValueError("code_revision, command, and device are required")
+    if config_path is not None and (
+        not config_path.is_file() or _sha256_file(config_path) != config_sha256
+    ):
+        raise ValueError("config path does not match config_sha256")
+    if (
+        any(
+            flag in command
+            for flag in ("--prepare-development", "--run-literature-baselines")
+        )
+        and config_path is None
+    ):
+        raise ValueError("production runtime manifests require config_path")
     if any(re.fullmatch(r"cuda:\d+", value) is None for value in gpu_map):
         raise ValueError("gpu_map entries must be cuda:<integer>")
-    if any(not name or not value for name, value in (environment or {}).items()):
-        raise ValueError("environment entries must be complete")
+    environment_payload = environment or {}
+    if not {
+        "python_executable",
+        "python_version",
+        "platform",
+        "dependencies",
+        "gpu_probe",
+    }.issubset(environment_payload):
+        raise ValueError("environment provenance is incomplete")
+    if (
+        not all(
+            isinstance(environment_payload[name], str) and environment_payload[name]
+            for name in ("python_executable", "python_version", "platform")
+        )
+        or not isinstance(environment_payload["dependencies"], dict)
+        or not isinstance(environment_payload["gpu_probe"], list)
+    ):
+        raise ValueError("environment provenance is invalid")
+    for fingerprint in task_roster:
+        _validate_task_fingerprint(fingerprint)
+    external_environment_payload = external_environments or {}
+    for name, payload in external_environment_payload.items():
+        if not name or not {
+            "python_executable",
+            "python_version",
+            "platform",
+            "dependencies",
+            "gpu_probe",
+        }.issubset(payload):
+            raise ValueError("external environment provenance is incomplete")
     declared_artifacts = {**(artifacts or {}), **(checkpoint_paths or {})}
     if any(
         not name or not artifact.is_file()
@@ -451,18 +828,22 @@ def write_run_manifest(
         for name, artifact in sorted(declared_artifacts.items())
     }
     manifest: dict[str, object] = {
-        "schema_version": 2,
+        "schema_version": 4,
         "config_sha256": config_sha256,
+        "config_path": config_path.resolve().as_posix() if config_path else None,
         "split_sha256": split_sha256,
         "code_revision": code_revision,
+        "code_sha256": code_sha256,
         "input_sha256": dict(sorted(input_sha256.items())),
         "command": command,
         "device": device,
-        "environment": dict(sorted((environment or {}).items())),
+        "environment": dict(sorted(environment_payload.items())),
+        "external_environments": external_environment_payload,
         "gpu_map": list(gpu_map),
         "dirty": dirty,
         "dirty_paths": sorted(dirty_paths),
         "artifacts": artifact_records,
+        "task_roster": [asdict(entry) for entry in task_roster],
     }
     path.parent.mkdir(parents=True, exist_ok=True)
     serialized = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
@@ -488,24 +869,28 @@ def audit_v2_run_manifest(path: Path) -> dict[str, object]:
     required = {
         "schema_version",
         "config_sha256",
+        "config_path",
         "split_sha256",
         "code_revision",
+        "code_sha256",
         "input_sha256",
         "command",
         "device",
         "environment",
+        "external_environments",
         "gpu_map",
         "dirty",
         "dirty_paths",
         "artifacts",
+        "task_roster",
     }
     if not isinstance(manifest, dict) or set(manifest) != required:
         raise RuntimeError("runtime manifest required fields are missing")
-    if manifest["schema_version"] != 2:
+    if manifest["schema_version"] != 4:
         raise RuntimeError("runtime manifest schema is invalid")
     if not all(
         isinstance(manifest.get(name), str) and _valid_sha256(manifest[name])
-        for name in ("config_sha256", "split_sha256")
+        for name in ("config_sha256", "split_sha256", "code_sha256")
     ):
         raise RuntimeError("runtime manifest hashes are invalid")
     artifacts = manifest["artifacts"]
@@ -524,7 +909,125 @@ def audit_v2_run_manifest(path: Path) -> dict[str, object]:
             or _sha256_file(Path(artifact_path)) != artifact_sha256
         ):
             raise RuntimeError("artifact SHA256 mismatch")
+    environment = manifest["environment"]
+    if not isinstance(environment, dict) or not {
+        "python_executable",
+        "python_version",
+        "platform",
+        "dependencies",
+        "gpu_probe",
+    }.issubset(environment):
+        raise RuntimeError("runtime environment provenance is incomplete")
+    if not isinstance(environment["dependencies"], dict) or not isinstance(
+        environment["gpu_probe"], list
+    ):
+        raise RuntimeError("runtime environment provenance is invalid")
+    external_environments = manifest["external_environments"]
+    if not isinstance(external_environments, dict):
+        raise RuntimeError("external runtime environment provenance is invalid")
+    for payload in external_environments.values():
+        if not isinstance(payload, dict) or not {
+            "python_executable",
+            "python_version",
+            "platform",
+            "dependencies",
+            "gpu_probe",
+        }.issubset(payload):
+            raise RuntimeError("external runtime environment provenance is incomplete")
+    roster_payload = manifest["task_roster"]
+    if not isinstance(roster_payload, list):
+        raise RuntimeError("runtime task roster is invalid")
+    try:
+        roster = tuple(TaskFingerprint(**entry) for entry in roster_payload)
+    except (TypeError, ValueError) as exc:
+        raise RuntimeError("runtime task roster is invalid") from exc
+    for fingerprint in roster:
+        _validate_task_fingerprint(fingerprint)
+    _audit_configured_task_roster(manifest, roster)
+    training_log = artifacts.get("training_log")
+    if not isinstance(training_log, dict) or not isinstance(
+        training_log.get("path"), str
+    ):
+        raise RuntimeError("runtime training log is missing")
+    audit_training_event_log(Path(training_log["path"]), roster)
+    logged_events = [
+        json.loads(line)
+        for line in Path(training_log["path"]).read_text(encoding="utf-8").splitlines()
+    ]
+    if any(str(event["device"]).startswith("cuda") for event in logged_events):
+        probes = [environment.get("gpu_probe")]
+        probes.extend(
+            payload.get("gpu_probe")
+            for payload in external_environments.values()
+            if isinstance(payload, dict)
+        )
+        if not any(isinstance(probe, list) and probe for probe in probes):
+            raise RuntimeError("CUDA task lacks GPU provenance")
+    _audit_checkpoint_coverage(artifacts, roster)
     return manifest
+
+
+def _audit_configured_task_roster(
+    manifest: dict[str, object], roster: tuple[TaskFingerprint, ...]
+) -> None:
+    """Derive production task identities from the immutable experiment config."""
+    command = manifest.get("command")
+    if not isinstance(command, list) or not all(
+        isinstance(item, str) for item in command
+    ):
+        raise RuntimeError("runtime command provenance is invalid")
+    production_flags = {
+        flag
+        for flag in ("--prepare-development", "--run-literature-baselines")
+        if flag in command
+    }
+    if not production_flags:
+        return
+    config_text = manifest.get("config_path")
+    if not isinstance(config_text, str):
+        raise RuntimeError("runtime configuration provenance is missing")
+    config_path = Path(config_text)
+    if not config_path.is_file() or _sha256_file(config_path) != manifest.get(
+        "config_sha256"
+    ):
+        raise RuntimeError("runtime configuration SHA256 mismatch")
+    config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    if not isinstance(config, dict):
+        raise RuntimeError("runtime configuration is invalid")
+    expected: set[tuple[str, int, int, str]] = set()
+    if "--prepare-development" in production_flags:
+        strict = config.get("strict_cluster_holdout")
+        folds = strict.get("development_folds") if isinstance(strict, dict) else None
+        if not isinstance(folds, int) or folds < 1:
+            raise RuntimeError("runtime strict task configuration is invalid")
+        expected.update(
+            ("strict_cluster_holdout", fold, fold, "pu_logistic")
+            for fold in range(folds)
+        )
+    if "--run-literature-baselines" in production_flags:
+        random_track = config.get("literature_random_protein")
+        seeds = random_track.get("seeds") if isinstance(random_track, dict) else None
+        models = config.get("models")
+        comparison_inputs = config.get("comparison_inputs")
+        if (
+            not isinstance(seeds, list)
+            or not all(isinstance(seed, int) for seed in seeds)
+            or not isinstance(models, list)
+            or not all(isinstance(model, str) and model for model in models)
+            or not isinstance(comparison_inputs, dict)
+        ):
+            raise RuntimeError("runtime literature task configuration is invalid")
+        configured_models = list(models)
+        if comparison_inputs.get("sul_environment_manifest"):
+            configured_models.append("sul_bertgru")
+        expected.update(
+            ("literature_random_protein", 0, seed, model)
+            for seed in seeds
+            for model in configured_models
+        )
+    observed = {(item.track, item.fold, item.seed, item.model) for item in roster}
+    if observed != expected:
+        raise RuntimeError("runtime configured task roster coverage is incomplete")
 
 
 def random_protein_train_validation_test(

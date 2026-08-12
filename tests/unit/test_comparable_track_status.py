@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import subprocess
 import sys
 from pathlib import Path
 
@@ -194,3 +195,136 @@ def test_sul_adapter_returns_complete_shared_panel_scores(tmp_path: Path) -> Non
     )
 
     assert set(dict(scores.partition_scores)) == {"validation", "test"}
+
+
+def test_sul_adapter_fails_closed_when_isolated_process_times_out(
+    tmp_path: Path,
+) -> None:
+    """An interrupted adapter cannot be mistaken for a scored comparator run."""
+    rows = (
+        ComparisonSite("arabidopsis", "P1", 3, "positive", ()),
+        ComparisonSite("arabidopsis", "P1", 7, "unlabeled", ()),
+    )
+    model_input = ComparisonModelInput(
+        model="sul_bertgru",
+        seed=0,
+        panel_sha256="c" * 64,
+        partition_rows=(("train", rows), ("validation", rows), ("test", rows)),
+    )
+    adapter = tmp_path / "slow_adapter.py"
+    adapter.write_text("import time\ntime.sleep(2)\n", encoding="utf-8")
+    environment = SulEnvironment(
+        python_executable=Path(sys.executable),
+        environment_lock=tmp_path / "lock",
+        adapter_path=adapter,
+        repo_commit="52c030c3b23e20ff8170d73a417ce852bd46c627",
+    )
+    sequences = {"arabidopsis|P1": "MMC" + "AAA" + "C" + "M" * 20}
+
+    with pytest.raises(RuntimeError, match="timed out"):
+        run_sul_bertgru_adapter(
+            model_input,
+            sequences,
+            environment,
+            work_directory=tmp_path / "run",
+            timeout_seconds=0.01,
+        )
+    assert not (tmp_path / "run" / "scores.tsv").exists()
+
+
+def test_sul_adapter_passes_assigned_device_to_isolated_process(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The scheduler GPU assignment must reach the external adapter command."""
+    rows = (ComparisonSite("arabidopsis", "P1", 3, "positive", ()),)
+    model_input = ComparisonModelInput(
+        model="sul_bertgru",
+        seed=0,
+        panel_sha256="c" * 64,
+        partition_rows=(("train", rows), ("validation", rows), ("test", rows)),
+    )
+    adapter = tmp_path / "adapter.py"
+    adapter.write_text("# marker\n", encoding="utf-8")
+    environment = SulEnvironment(
+        python_executable=Path(sys.executable),
+        environment_lock=tmp_path / "lock",
+        adapter_path=adapter,
+        repo_commit="52c030c3b23e20ff8170d73a417ce852bd46c627",
+    )
+    sequences = {"arabidopsis|P1": "MMC"}
+    commands: list[list[str]] = []
+
+    def execute(command, **kwargs):
+        commands.append(command)
+        output = Path(command[command.index("--output") + 1])
+        output.write_text(
+            "partition\tglobal_protein_id\tcys_position\tscore\n"
+            "validation\tarabidopsis|P1\t3\t0.5\n"
+            "test\tarabidopsis|P1\t3\t0.5\n",
+            encoding="utf-8",
+        )
+
+    monkeypatch.setattr(
+        "plantpersulf.evaluation.comparable_track.subprocess.run", execute
+    )
+    run_sul_bertgru_adapter(
+        model_input,
+        sequences,
+        environment,
+        work_directory=tmp_path / "run",
+        device="cuda:1",
+    )
+
+    assert commands[0][commands[0].index("--device") + 1] == "cuda:1"
+
+
+def test_sul_adapter_retries_cuda_oom_by_batch_only(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    rows = (ComparisonSite("arabidopsis", "P1", 3, "positive", ()),)
+    model_input = ComparisonModelInput(
+        model="sul_bertgru",
+        seed=0,
+        panel_sha256="c" * 64,
+        partition_rows=(("train", rows), ("validation", rows), ("test", rows)),
+    )
+    adapter = tmp_path / "adapter.py"
+    adapter.write_text("# marker\n", encoding="utf-8")
+    environment = SulEnvironment(
+        python_executable=Path(sys.executable),
+        environment_lock=tmp_path / "lock",
+        adapter_path=adapter,
+        repo_commit="52c030c3b23e20ff8170d73a417ce852bd46c627",
+        parameters=(("bert_batch_size", "8"), ("train_batch_size", "8")),
+    )
+    sequences = {"arabidopsis|P1": "MMC"}
+    attempts: list[int] = []
+
+    def execute(command, **kwargs):
+        batch = int(command[command.index("--train-batch-size") + 1])
+        attempts.append(batch)
+        if batch == 8:
+            raise subprocess.CalledProcessError(1, command, stderr="CUDA out of memory")
+        output = Path(command[command.index("--output") + 1])
+        output.write_text(
+            "partition\tglobal_protein_id\tcys_position\tscore\n"
+            "validation\tarabidopsis|P1\t3\t0.5\n"
+            "test\tarabidopsis|P1\t3\t0.5\n",
+            encoding="utf-8",
+        )
+
+    monkeypatch.setattr(
+        "plantpersulf.evaluation.comparable_track.subprocess.run", execute
+    )
+    deviations: list[dict[str, int]] = []
+    run_sul_bertgru_adapter(
+        model_input,
+        sequences,
+        environment,
+        work_directory=tmp_path / "run",
+        device="cuda:0",
+        oom_deviations=deviations,
+    )
+
+    assert attempts == [8, 4]
+    assert deviations == [{"original_batch_size": 8, "replacement_batch_size": 4}]

@@ -56,10 +56,11 @@ def test_manifest_rejects_missing_input_hash(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="input_sha256"):
         write_run_manifest(
             tmp_path / "manifest.json",
-            config_sha256="a" * 64,
-            split_sha256="b" * 64,
-            code_revision="abc123",
-            input_sha256={},
+                config_sha256="a" * 64,
+                split_sha256="b" * 64,
+                code_revision="abc123",
+                code_sha256="c" * 64,
+                input_sha256={},
             command=["python", "script.py"],
             device="cpu",
         )

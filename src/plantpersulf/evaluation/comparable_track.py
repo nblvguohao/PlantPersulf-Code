@@ -375,12 +375,16 @@ def run_sul_bertgru_adapter(
     environment: SulEnvironment,
     *,
     work_directory: Path,
+    timeout_seconds: float = 21600.0,
+    device: str | None = None,
+    oom_deviations: list[dict[str, int]] | None = None,
 ) -> ComparisonModelScores:
     """Run the isolated Sul-BertGRU adapter on the exact shared panel."""
+    if timeout_seconds <= 0.0:
+        raise ValueError("Sul-BertGRU timeout must be positive")
     adapter_rows = prepare_sul_bertgru_adapter_rows(model_input, sequences)
     work_directory.mkdir(parents=True, exist_ok=False)
     input_path = work_directory / "shared_panel.tsv"
-    output_path = work_directory / "scores.tsv"
     with input_path.open("x", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle, delimiter="\t", lineterminator="\n")
         writer.writerow(
@@ -403,7 +407,20 @@ def run_sul_bertgru_adapter(
                     row.adapter_label,
                 )
             )
-    try:
+    parameters = dict(environment.parameters)
+    if device is not None:
+        if re.fullmatch(r"cpu|cuda(?::\d+)?", device) is None:
+            raise ValueError("Sul-BertGRU device is invalid")
+        parameters["device"] = device
+    batch_values = [
+        int(parameters[name])
+        for name in ("bert_batch_size", "train_batch_size")
+        if name in parameters
+    ]
+    initial_batch_size = min(batch_values) if batch_values else 1
+
+    def execute(batch_size: int) -> Path:
+        output_path = work_directory / f"scores_batch{batch_size}.tsv"
         command = [
                 str(environment.python_executable),
                 str(environment.adapter_path),
@@ -414,16 +431,36 @@ def run_sul_bertgru_adapter(
                 "--seed",
                 str(model_input.seed),
             ]
-        for name, value in environment.parameters:
+        attempt_parameters = dict(parameters)
+        for name in ("bert_batch_size", "train_batch_size"):
+            if name in attempt_parameters:
+                attempt_parameters[name] = str(batch_size)
+        for name, value in sorted(attempt_parameters.items()):
             command.extend((f"--{name.replace('_', '-')}", value))
-        subprocess.run(
-            command,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-    except subprocess.CalledProcessError as exc:
-        raise RuntimeError("Sul-BertGRU adapter execution failed") from exc
+        try:
+            subprocess.run(
+                command,
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=timeout_seconds,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise RuntimeError("Sul-BertGRU adapter timed out") from exc
+        except subprocess.CalledProcessError as exc:
+            diagnostic = f"{exc.stdout or ''}\n{exc.stderr or ''}"
+            if "out of memory" in diagnostic.lower():
+                raise RuntimeError("CUDA out of memory") from exc
+            raise RuntimeError("Sul-BertGRU adapter execution failed") from exc
+        return output_path
+
+    from plantpersulf.workflows.multispecies_v2 import run_with_oom_batch_retry
+
+    output_path, _, deviations = run_with_oom_batch_retry(
+        execute, initial_batch_size=initial_batch_size
+    )
+    if oom_deviations is not None:
+        oom_deviations.extend(deviations)
     if not output_path.is_file():
         raise RuntimeError("Sul-BertGRU adapter did not produce scores")
 

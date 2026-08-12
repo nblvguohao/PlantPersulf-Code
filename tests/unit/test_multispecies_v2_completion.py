@@ -75,6 +75,26 @@ def test_audit_leakage_cli_rejects_path_like_version(tmp_path: Path) -> None:
         ])
 
 
+def test_runtime_manifest_audit_cli_invokes_release_audit(
+    tmp_path: Path, monkeypatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Task 9.5 logs must be auditable through the release CLI."""
+    import plantpersulf.cli as cli
+
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text("{}\n", encoding="utf-8")
+    monkeypatch.setattr(
+        cli,
+        "audit_v2_run_manifest",
+        lambda path: {"audited_manifest": path.as_posix()},
+    )
+
+    assert main(["audit-runtime-manifest", "--manifest", str(manifest)]) == 0
+    assert json.loads(capsys.readouterr().out) == {
+        "audited_manifest": manifest.as_posix()
+    }
+
+
 def test_leakage_audit_rejects_unknown_partition() -> None:
     invalid = _split()
     invalid = FrozenMultispeciesSplit(

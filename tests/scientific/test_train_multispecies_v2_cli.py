@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -16,8 +17,9 @@ from plantpersulf.benchmark.multispecies_splits import (
     GlobalClusterRow,
     MultispeciesSiteRow,
 )
-from plantpersulf.evaluation.comparable_track import ComparatorStatus
+from plantpersulf.evaluation.comparable_track import ComparatorStatus, SulEnvironment
 from plantpersulf.proteomics.multispecies_v2_dataset import MultispeciesV2SiteRow
+from plantpersulf.workflows.multispecies_v2 import audit_v2_run_manifest
 
 
 def _load_cli_module():
@@ -200,6 +202,8 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
         "  test_fraction: 0.2\n"
         "  validation_fraction_of_remaining: 0.2\n"
         "  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n"
+        "models: [pu_logistic, random_forest, xgboost, "
+        "esm_linear_head, structure_ranker]\n"
         "unlabeled_panel: {per_positive: 1, seed: 3}\n"
         "comparison_inputs:\n"
         f"  esm_features: {esm_manifest.as_posix()}\n"
@@ -207,6 +211,9 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
         f"  sul_environment_manifest: {sul_manifest.as_posix()}\n"
         "  pcysmod_scores: null\n"
         "comparison_feature_build: {structure_registry_base: data/registry}\n"
+        "compute:\n"
+        "  {device: cpu, score_batch_size: 8, max_parallel_tasks: 2,\n"
+        "   gpu_map: [], sul_timeout_seconds: 123}\n"
         "literature_baseline_parameters:\n"
         "  pu_logistic: {}\n"
         "  random_forest: {}\n"
@@ -243,7 +250,7 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
         "_development_rows",
         lambda *args, **kwargs: (
             rows,
-            None,
+            SimpleNamespace(sha256="f" * 64),
             {"arabidopsis": {"P0": "MCAMC", "P1": "MCAMC", "P2": "MCAMC"}},
         ),
     )
@@ -255,6 +262,9 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
         },
     )
     monkeypatch.setattr(cli, "_registered", lambda path: None)
+    monkeypatch.setattr(
+        cli, "_strict_runtime_input_paths", lambda cfg: {"rows": config}
+    )
     ready = tuple(
         ComparatorStatus(model, "direct_baseline", "ready", "registered")
         for model in (
@@ -272,7 +282,16 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
     monkeypatch.setattr(
         cli, "build_registered_structure_features", lambda *args, **kwargs: {}
     )
-    monkeypatch.setattr(cli, "validate_sul_environment_manifest", lambda path: object())
+    monkeypatch.setattr(
+        cli,
+        "validate_sul_environment_manifest",
+        lambda path: SulEnvironment(
+            python_executable=Path(sys.executable),
+            environment_lock=config,
+            adapter_path=config,
+            repo_commit="52c030c3b23e20ff8170d73a417ce852bd46c627",
+        ),
+    )
     calls: list[tuple[int, tuple[str, ...]]] = []
 
     def score_models(run, **kwargs):
@@ -293,10 +312,16 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
         )
 
     monkeypatch.setattr(cli, "run_direct_comparison_roster", score_models)
-    monkeypatch.setattr(
-        cli,
-        "run_sul_bertgru_adapter",
-        lambda model_input, *args, **kwargs: ComparisonModelScores(
+    sul_timeouts: list[float] = []
+
+    def run_sul(model_input, *args, **kwargs):
+        sul_timeouts.append(kwargs["timeout_seconds"])
+        work_directory = kwargs["work_directory"]
+        work_directory.mkdir(parents=True)
+        (work_directory / "shared_panel.tsv").write_text(
+            "software policy marker\n", encoding="utf-8"
+        )
+        return ComparisonModelScores(
             "sul_bertgru",
             model_input.seed,
             model_input.panel_sha256,
@@ -304,8 +329,9 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
                 (name, {(row.site_key): 0.5 for row in values})
                 for name, values in model_input.partition_rows
             ),
-        ),
-    )
+        )
+
+    monkeypatch.setattr(cli, "run_sul_bertgru_adapter", run_sul)
     monkeypatch.setattr(
         cli,
         "summarize_comparable_scores",
@@ -332,3 +358,16 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
         "sul_bertgru",
     }
     assert len(payload["runs"]) == 60
+    assert sul_timeouts == [123.0] * 10
+    manifest = audit_v2_run_manifest(
+        output_dir / "literature_random_protein" / "manifest.json"
+    )
+    assert len(manifest["task_roster"]) == 60
+    assert (
+        len(
+            (output_dir / "literature_random_protein" / "training.jsonl")
+            .read_text(encoding="utf-8")
+            .splitlines()
+        )
+        == 60
+    )

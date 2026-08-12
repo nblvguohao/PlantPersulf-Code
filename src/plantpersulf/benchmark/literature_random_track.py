@@ -388,6 +388,7 @@ def run_structure_direct_baseline(
         tuple[str, int], tuple[tuple[float, float], bool]
     ],
     parameters: dict[str, int | float] | None = None,
+    device: str = "cpu",
 ) -> ComparisonModelScores:
     """Fit the current structure-aware ranker on one shared protein panel."""
     if model_input.model != "structure_ranker":
@@ -442,6 +443,7 @@ def run_structure_direct_baseline(
         lr=float(parameters.get("lr", 0.05)),
         holdout_fraction=float(parameters.get("holdout_fraction", 0.2)),
         n_mc_dropout=int(parameters.get("n_mc_dropout", 16)),
+        device_name=device,
     )
     n_validation = len(partitions["validation"])
     partition_scores: list[
@@ -478,6 +480,7 @@ def run_direct_comparison_roster(
         tuple[str, int], tuple[tuple[float, float], bool]
     ],
     parameters: dict[str, dict[str, int | float]],
+    device: str = "cpu",
 ) -> tuple[ComparisonModelScores, ...]:
     """Execute all five direct baselines on one byte-identical panel."""
     results: list[ComparisonModelScores] = []
@@ -503,6 +506,7 @@ def run_direct_comparison_roster(
             esm_features,
             structure_features,
             parameters=parameters.get("structure_ranker"),
+            device=device,
         )
     )
     if {result.panel_sha256 for result in results} != {run.panel_sha256}:

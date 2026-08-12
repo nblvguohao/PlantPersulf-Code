@@ -31,6 +31,7 @@ from plantpersulf.evidence.preflight import (
 from plantpersulf.proteomics.peptide_parser import parse_proteomics_accession
 from plantpersulf.proteomics.site_normalizer import audit_site_output
 from plantpersulf.provenance.registry import audit_registry
+from plantpersulf.workflows.multispecies_v2 import audit_v2_run_manifest
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -75,6 +76,11 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("data/processed/splits"),
     )
+    audit_runtime_manifest = subparsers.add_parser(
+        "audit-runtime-manifest",
+        help="audit Task 9.5 runtime logs, checkpoints, and provenance",
+    )
+    audit_runtime_manifest.add_argument("--manifest", type=Path, required=True)
     parse_proteomics = subparsers.add_parser(
         "parse-proteomics",
         help="parse registered proteomics results without assigning labels",
@@ -266,6 +272,10 @@ def main(argv: list[str] | None = None) -> int:
             split_version=arguments.split_version,
         )
         print(json.dumps(asdict(leakage_summary), sort_keys=True))
+        return 0
+    if arguments.command == "audit-runtime-manifest":
+        manifest = audit_v2_run_manifest(arguments.manifest)
+        print(json.dumps(manifest, sort_keys=True))
         return 0
     if arguments.command == "parse-proteomics":
         parse_summary = parse_proteomics_accession(

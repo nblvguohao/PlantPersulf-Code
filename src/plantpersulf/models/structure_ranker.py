@@ -495,6 +495,7 @@ def structure_ranker_scores(
     lr: float = 0.05,
     holdout_fraction: float = 0.2,
     n_mc_dropout: int = 16,
+    device_name: str | None = None,
 ) -> RankerOutput:
     """Fit the gated-fusion PU ranker and score ``predict``.
 
@@ -520,7 +521,7 @@ def structure_ranker_scores(
 
     torch.manual_seed(seed)
     torch.use_deterministic_algorithms(True, warn_only=True)
-    device = _select_ranker_device(torch)
+    device = torch.device(device_name) if device_name else _select_ranker_device(torch)
 
     vocab = _study_vocab(train)
     scalers = _BranchScalers.fit(train, ablation)

@@ -13,7 +13,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import platform
 import subprocess
 import sys
 import tempfile
@@ -21,6 +20,7 @@ import time
 from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import cast
 
 import yaml
 
@@ -63,10 +63,13 @@ from plantpersulf.workflows.multispecies_v2 import (
     TaskFingerprint,
     TrainingEvent,
     append_training_event,
-    assign_task_device,
     audit_v2_run_manifest,
+    build_task_fingerprint,
+    collect_runtime_environment,
     load_resumable_checkpoint,
     run_multispecies_experiment,
+    run_task_group,
+    run_with_oom_batch_retry,
     select_v2_development_hyperparameters,
     train_v2_development_fold,
     write_run_manifest,
@@ -88,6 +91,49 @@ def _dirty_paths() -> tuple[str, ...]:
     return tuple(
         sorted(line[3:] for line in completed.stdout.splitlines() if len(line) >= 4)
     )
+
+
+def _dirty_code_paths(dirty_paths: tuple[str, ...]) -> tuple[Path, ...]:
+    """Return changed executable files whose bytes affect the active code state."""
+    code_paths = tuple(
+        Path(path)
+        for path in dirty_paths
+        if Path(path).suffix == ".py" and Path(path).is_file()
+    )
+    missing = [
+        path
+        for path in dirty_paths
+        if Path(path).suffix == ".py" and not Path(path).is_file()
+    ]
+    if missing:
+        raise RuntimeError(f"cannot fingerprint deleted dirty code paths: {missing}")
+    return code_paths
+
+
+def _strict_runtime_input_paths(cfg: dict[str, object]) -> dict[str, Path]:
+    """List every physical input read by strict development task preparation."""
+    references = cfg.get("reference_proteomes")
+    strict = cfg.get("strict_cluster_holdout")
+    global_clusters = cfg.get("global_mmseqs2")
+    positives = cfg.get("development_positive_manifest")
+    if not all(
+        isinstance(value, dict) for value in (strict, global_clusters, positives)
+    ) or not isinstance(references, list):
+        raise RuntimeError("strict runtime inputs are not configured")
+    paths: dict[str, Path] = {
+        "development_positive_manifest": Path(str(positives["path"])),
+        "frozen_split": Path(str(strict["split_path"])),
+        "global_cluster_table": Path(str(global_clusters["cluster_table"])),
+    }
+    for reference in references:
+        if not isinstance(reference, dict):
+            raise RuntimeError("reference proteome entry is invalid")
+        species = reference.get("species")
+        source_path = reference.get("path")
+        if not isinstance(species, str) or not isinstance(source_path, str):
+            raise RuntimeError("reference proteome entry is invalid")
+        paths[f"reference_proteome:{species}"] = Path(source_path)
+    return paths
 
 
 def _development_rows_sha256(rows: tuple[MultispeciesV2SiteRow, ...]) -> str:
@@ -236,26 +282,26 @@ def main(argv: list[str] | None = None) -> None:
         ):
             raise RuntimeError("compute.gpu_map must be a list of device names")
         gpu_map = tuple(raw_gpu_map)
-        input_sha256 = {
-            "development_rows": _development_rows_sha256(rows),
-            "frozen_split": frozen.sha256,
-        }
+        max_parallel_tasks = compute_cfg.get("max_parallel_tasks")
+        if not isinstance(max_parallel_tasks, int) or max_parallel_tasks < 1:
+            raise RuntimeError("compute.max_parallel_tasks must be a positive integer")
         code_revision = _code_revision()
         dirty_paths = _dirty_paths()
-        checkpoint_paths: dict[str, Path] = {}
-        for fold in range(frozen.n_development_folds):
-            device = assign_task_device(fold, gpu_map, default_device)
-            fingerprint = TaskFingerprint(
+        input_paths = _strict_runtime_input_paths(cfg)
+        dirty_code_paths = _dirty_code_paths(dirty_paths)
+
+        def run_fold(fold: int, device: str) -> dict[str, object]:
+            fingerprint = build_task_fingerprint(
                 track="strict_cluster_holdout",
                 fold=fold,
                 seed=fold,
                 model="pu_logistic",
-                input_sha256=input_sha256,
-                config_sha256=prepared.config_sha256,
+                input_paths=input_paths,
+                config_path=args.config,
                 code_revision=code_revision,
+                dirty_paths=dirty_code_paths,
             )
             checkpoint_path = checkpoint_directory / f"fold{fold}.checkpoint.json"
-            checkpoint_paths[f"fold{fold}"] = checkpoint_path
             prepared_fold = prepare_v2_development_fold(
                 rows,
                 validation_fold=fold,
@@ -304,48 +350,75 @@ def main(argv: list[str] | None = None) -> None:
                     },
                 )
             if not args.resume:
-                append_training_event(
-                    log_path,
-                    TrainingEvent(
-                        timestamp=datetime.now(timezone.utc).isoformat(),
-                        track=fingerprint.track,
-                        fold=fold,
-                        seed=fold,
-                        model=fingerprint.model,
-                        epoch=0,
-                        loss=None,
-                        val_ap=validation_ap,
-                        lr=None,
-                        device=device,
-                        gpu_memory=None,
-                        wall_seconds=time.monotonic() - start,
-                    ),
+                event = TrainingEvent(
+                    timestamp=datetime.now(timezone.utc).isoformat(),
+                    track=fingerprint.track,
+                    fold=fold,
+                    seed=fold,
+                    model=fingerprint.model,
+                    epoch=0,
+                    loss=None,
+                    val_ap=validation_ap,
+                    lr=None,
+                    device=device,
+                    gpu_memory=None,
+                    wall_seconds=time.monotonic() - start,
                 )
+            else:
+                event = None
+            return {
+                "fingerprint": fingerprint,
+                "checkpoint_path": checkpoint_path,
+                "event": event,
+                "fit_count": len(prepared_fold.fit_rows),
+                "validation_count": len(prepared_fold.validation_rows),
+                "validation_ap": validation_ap,
+                "selected_holdout": selected_holdout,
+            }
+
+        task_records = run_task_group(
+            tuple(range(frozen.n_development_folds)),
+            max_parallel_tasks=max_parallel_tasks,
+            gpu_map=gpu_map,
+            default_device=default_device,
+            runner=run_fold,
+        )
+        checkpoint_paths: dict[str, Path] = {}
+        task_roster = []
+        for record in task_records:
+            fingerprint = cast(TaskFingerprint, record["fingerprint"])
+            checkpoint_path = cast(Path, record["checkpoint_path"])
+            event = cast(TrainingEvent | None, record["event"])
+            checkpoint_paths[f"fold{fingerprint.fold}"] = checkpoint_path
+            task_roster.append(fingerprint)
+            if event is not None:
+                append_training_event(log_path, event)
             print(
-                f"development fold {fold}: fit={len(prepared_fold.fit_rows)} "
-                f"validation={len(prepared_fold.validation_rows)} "
-                f"val_ap={validation_ap:.6f} "
-                f"pu_holdout={selected_holdout:.2f}"
+                f"development fold {fingerprint.fold}: fit={record['fit_count']} "
+                f"validation={record['validation_count']} "
+                f"val_ap={record['validation_ap']:.6f} "
+                f"pu_holdout={record['selected_holdout']:.2f}"
             )
+        first_fingerprint = task_roster[0]
         manifest_path = output_directory / str(output_cfg["manifest"])
         write_run_manifest(
             manifest_path,
             config_sha256=prepared.config_sha256,
+            config_path=args.config,
             split_sha256=frozen.sha256,
             code_revision=code_revision,
-            input_sha256=input_sha256,
+            code_sha256=first_fingerprint.code_sha256,
+            input_sha256=first_fingerprint.input_sha256,
             command=[
                 sys.executable,
                 *(argument for argument in sys.argv if argument != "--resume"),
             ],
             device=default_device,
-            environment={
-                "python": platform.python_version(),
-                "platform": platform.platform(),
-            },
+            environment=collect_runtime_environment(),
             gpu_map=gpu_map,
             artifacts={"training_log": log_path},
             checkpoint_paths=checkpoint_paths,
+            task_roster=tuple(task_roster),
             dirty=bool(dirty_paths),
             dirty_paths=dirty_paths,
         )
@@ -355,7 +428,7 @@ def main(argv: list[str] | None = None) -> None:
         or args.build_comparison_features
         or args.run_literature_baselines
     ):
-        rows, _, proteomes = _development_rows(args.config, sample_unlabeled=False)
+        rows, frozen, proteomes = _development_rows(args.config, sample_unlabeled=False)
         cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
         random_cfg = cfg["literature_random_protein"]
         seeds = tuple(random_cfg["seeds"])
@@ -409,16 +482,35 @@ def main(argv: list[str] | None = None) -> None:
                 for accession, sequence in species_sequences.items()
             }
             windows = build_cysteine_windows(shared_site_keys, global_sequences)
-            extract_esm2_window_artifact(
-                windows,
-                Path(str(build_cfg["esm_output_directory"])),
-                model_checkpoint=checkpoint,
-                input_sha256={
-                    str(item["species"]): str(item["sha256"])
-                    for item in cfg["reference_proteomes"]
-                },
-                batch_size=int(build_cfg["esm_batch_size"]),
+            compute_cfg = cfg.get("compute")
+            if not isinstance(compute_cfg, dict):
+                raise RuntimeError("compute configuration is required")
+            score_batch_size = compute_cfg.get("score_batch_size")
+            if not isinstance(score_batch_size, int) or score_batch_size < 1:
+                raise RuntimeError("compute.score_batch_size must be positive")
+            configured_batch = int(build_cfg["esm_batch_size"])
+
+            def extract(batch_size: int) -> None:
+                extract_esm2_window_artifact(
+                    windows,
+                    Path(str(build_cfg["esm_output_directory"])),
+                    model_checkpoint=checkpoint,
+                    input_sha256={
+                        str(item["species"]): str(item["sha256"])
+                        for item in cfg["reference_proteomes"]
+                    },
+                    batch_size=batch_size,
+                )
+
+            _, effective_batch, deviations = run_with_oom_batch_retry(
+                extract,
+                initial_batch_size=min(score_batch_size, configured_batch),
             )
+            if deviations:
+                print(
+                    "comparison ESM OOM recovery: "
+                    f"effective_batch_size={effective_batch} deviations={deviations}"
+                )
             print(
                 "comparison ESM artifact: "
                 f"{build_cfg['esm_output_directory']} sites={len(windows)}"
@@ -492,14 +584,131 @@ def main(argv: list[str] | None = None) -> None:
                 registry_base=Path(str(build_cfg["structure_registry_base"])),
             )
             reports: list[dict[str, object]] = []
-            for run in runs:
-                direct_scores = run_direct_comparison_roster(
-                    run,
-                    sequence_features=features,
-                    esm_features=esm_features,
-                    structure_features=structure_features,
-                    parameters=cfg["literature_baseline_parameters"],
+            sul_manifest = prerequisite_paths["sul_environment_manifest"]
+            sul_environment = None
+            if status_by_model["sul_bertgru"].status == "ready":
+                assert sul_manifest is not None
+                sul_environment = validate_sul_environment_manifest(sul_manifest)
+            output_dir = Path(cfg["output"]["directory"]) / "literature_random_protein"
+            log_path = output_dir / "training.jsonl"
+            checkpoint_directory = output_dir / "checkpoints"
+            compute_cfg = cfg.get("compute")
+            if not isinstance(compute_cfg, dict):
+                raise RuntimeError("compute configuration is required")
+            default_device = str(compute_cfg.get("device", "cpu"))
+            raw_gpu_map = compute_cfg.get("gpu_map", [])
+            if not isinstance(raw_gpu_map, list) or not all(
+                isinstance(device, str) for device in raw_gpu_map
+            ):
+                raise RuntimeError("compute.gpu_map must be a list of device names")
+            gpu_map = tuple(raw_gpu_map)
+            code_revision = _code_revision()
+            dirty_paths = _dirty_paths()
+            dirty_code_paths = _dirty_code_paths(dirty_paths)
+            runtime_inputs = {
+                **_strict_runtime_input_paths(cfg),
+                "esm_features": esm_manifest,
+                "structure_features": structure_registry,
+            }
+            if prerequisite_paths["sul_environment_manifest"] is not None:
+                runtime_inputs["sul_environment_manifest"] = prerequisite_paths[
+                    "sul_environment_manifest"
+                ]
+            if sul_environment is not None:
+                runtime_inputs.update(
+                    {
+                        "sul_python_executable": sul_environment.python_executable,
+                        "sul_environment_lock": sul_environment.environment_lock,
+                        "sul_adapter": sul_environment.adapter_path,
+                    }
                 )
+                runtime_inputs.update(
+                    {
+                        f"sul_input_artifact_{index}": artifact
+                        for index, (artifact, _sha256) in enumerate(
+                            sul_environment.input_artifacts
+                        )
+                    }
+                )
+            task_roster: list[TaskFingerprint] = []
+            checkpoint_paths: dict[str, Path] = {}
+
+            def record_comparator_task(
+                *,
+                model: str,
+                seed: int,
+                report: dict[str, object],
+                device: str,
+                wall_seconds: float,
+                deviations: list[dict[str, int]] | None = None,
+                extra_input_paths: dict[str, Path] | None = None,
+            ) -> None:
+                fingerprint = build_task_fingerprint(
+                    track="literature_random_protein",
+                    fold=0,
+                    seed=seed,
+                    model=model,
+                    input_paths={**runtime_inputs, **(extra_input_paths or {})},
+                    config_path=args.config,
+                    code_revision=code_revision,
+                    dirty_paths=dirty_code_paths,
+                )
+                checkpoint_path = checkpoint_directory / f"{model}_seed{seed}.json"
+                write_task_checkpoint(
+                    checkpoint_path,
+                    fingerprint,
+                    {"report": report, "oom_batch_deviations": deviations or []},
+                )
+                task_roster.append(fingerprint)
+                checkpoint_paths[f"{model}_seed{seed}"] = checkpoint_path
+                append_training_event(
+                    log_path,
+                    TrainingEvent(
+                        timestamp=datetime.now(timezone.utc).isoformat(),
+                        track=fingerprint.track,
+                        fold=fingerprint.fold,
+                        seed=seed,
+                        model=model,
+                        epoch=0,
+                        loss=None,
+                        val_ap=float(report["three_crop_macro_average_precision"]),
+                        lr=None,
+                        device=device,
+                        gpu_memory=None,
+                        wall_seconds=wall_seconds,
+                    ),
+                )
+
+            max_parallel_tasks = compute_cfg.get("max_parallel_tasks")
+            if not isinstance(max_parallel_tasks, int) or max_parallel_tasks < 1:
+                raise RuntimeError("compute.max_parallel_tasks must be positive")
+            raw_sul_timeout = compute_cfg.get("sul_timeout_seconds", 21600.0)
+            if not isinstance(raw_sul_timeout, int | float) or raw_sul_timeout <= 0.0:
+                raise RuntimeError("compute.sul_timeout_seconds must be positive")
+            sul_timeout_seconds = float(raw_sul_timeout)
+
+            def run_direct_task(
+                run: object, device: str
+            ) -> tuple[object, str, object, float]:
+                start = time.monotonic()
+                return (
+                    run,
+                    device,
+                    run_direct_comparison_roster(
+                        run,
+                        sequence_features=features,
+                        esm_features=esm_features,
+                        structure_features=structure_features,
+                        parameters=cfg["literature_baseline_parameters"],
+                        device=device,
+                    ),
+                    time.monotonic() - start,
+                )
+
+            def complete_direct_task(
+                _task_index: int, result: tuple[object, str, object, float]
+            ) -> None:
+                run, assigned_device, direct_scores, wall_seconds = result
                 for scores in direct_scores:
                     model_input = bind_model_to_comparison_panel(run, scores.model)
                     report = summarize_comparable_scores(
@@ -509,15 +718,33 @@ def main(argv: list[str] | None = None) -> None:
                         pressure_species=tuple(cfg["species"]["pressure"]),
                     )
                     reports.append(report)
+                    record_comparator_task(
+                        model=scores.model,
+                        seed=run.seed,
+                        report=report,
+                        device=(
+                            assigned_device
+                            if scores.model == "structure_ranker"
+                            else "cpu"
+                        ),
+                        wall_seconds=wall_seconds,
+                    )
                     print(
                         f"literature seed {run.seed} model={scores.model} "
                         "three_crop_macro_ap="
                         f"{report['three_crop_macro_average_precision']:.6f}"
                     )
-            sul_manifest = prerequisite_paths["sul_environment_manifest"]
+
+            run_task_group(
+                tuple(runs),
+                max_parallel_tasks=max_parallel_tasks,
+                gpu_map=gpu_map,
+                default_device=default_device,
+                runner=run_direct_task,
+                on_complete=complete_direct_task,
+            )
             if status_by_model["sul_bertgru"].status == "ready":
-                assert sul_manifest is not None
-                sul_environment = validate_sul_environment_manifest(sul_manifest)
+                assert sul_environment is not None
                 global_sequences = {
                     f"{species}|{accession}": sequence
                     for species, species_sequences in proteomes.items()
@@ -526,14 +753,33 @@ def main(argv: list[str] | None = None) -> None:
                 output_dir = (
                     Path(cfg["output"]["directory"]) / "literature_random_protein"
                 )
-                for run in runs:
+
+                def run_sul_task(
+                    run: object, device: str
+                ) -> tuple[object, str, object, float, list[dict[str, int]]]:
                     model_input = bind_model_to_comparison_panel(run, "sul_bertgru")
+                    start = time.monotonic()
+                    deviations: list[dict[str, int]] = []
                     scores = run_sul_bertgru_adapter(
                         model_input,
                         global_sequences,
                         sul_environment,
                         work_directory=output_dir / f"sul_bertgru_seed{run.seed}",
+                        timeout_seconds=sul_timeout_seconds,
+                        device=device,
+                        oom_deviations=deviations,
                     )
+                    return run, device, scores, time.monotonic() - start, deviations
+
+                sul_results = run_task_group(
+                    tuple(runs),
+                    max_parallel_tasks=max_parallel_tasks,
+                    gpu_map=gpu_map,
+                    default_device=default_device,
+                    runner=run_sul_task,
+                )
+                for run, device, scores, wall_seconds, deviations in sul_results:
+                    model_input = bind_model_to_comparison_panel(run, "sul_bertgru")
                     report = summarize_comparable_scores(
                         model_input,
                         scores,
@@ -541,11 +787,26 @@ def main(argv: list[str] | None = None) -> None:
                         pressure_species=tuple(cfg["species"]["pressure"]),
                     )
                     reports.append(report)
+                    record_comparator_task(
+                        model="sul_bertgru",
+                        seed=run.seed,
+                        report=report,
+                        device=device,
+                        wall_seconds=wall_seconds,
+                        deviations=deviations,
+                        extra_input_paths={
+                            "shared_panel": output_dir
+                            / f"sul_bertgru_seed{run.seed}"
+                            / "shared_panel.tsv"
+                        },
+                    )
                     print(
                         f"literature seed {run.seed} model=sul_bertgru "
                         "three_crop_macro_ap="
                         f"{report['three_crop_macro_average_precision']:.6f}"
                     )
+            reports.sort(key=lambda item: (int(item["seed"]), str(item["model"])))
+            task_roster.sort(key=lambda item: (item.seed, item.model))
             payload = {
                 "track": "literature_random_protein_development_zone",
                 "config_sha256": hashlib.sha256(args.config.read_bytes()).hexdigest(),
@@ -555,7 +816,6 @@ def main(argv: list[str] | None = None) -> None:
                 "runs": reports,
                 "limitation": "within_dataset_literature_comparable_not_gate2",
             }
-            output_dir = Path(cfg["output"]["directory"]) / "literature_random_protein"
             output_dir.mkdir(parents=True, exist_ok=True)
             output_path = output_dir / "summary.json"
             with tempfile.NamedTemporaryFile(
@@ -567,6 +827,36 @@ def main(argv: list[str] | None = None) -> None:
                 temporary = Path(handle.name)
                 handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
             temporary.replace(output_path)
+            first_fingerprint = task_roster[0]
+            manifest_path = output_dir / "manifest.json"
+            write_run_manifest(
+                manifest_path,
+                config_sha256=first_fingerprint.config_sha256,
+                config_path=args.config,
+                split_sha256=frozen.sha256,
+                code_revision=code_revision,
+                code_sha256=first_fingerprint.code_sha256,
+                input_sha256=first_fingerprint.input_sha256,
+                command=[sys.executable, *sys.argv],
+                device=default_device,
+                environment=collect_runtime_environment(),
+                external_environments=(
+                    {
+                        "sul_bertgru": collect_runtime_environment(
+                            sul_environment.python_executable
+                        )
+                    }
+                    if sul_environment is not None
+                    else {}
+                ),
+                gpu_map=gpu_map,
+                artifacts={"training_log": log_path, "summary": output_path},
+                checkpoint_paths=checkpoint_paths,
+                task_roster=tuple(task_roster),
+                dirty=bool(dirty_paths),
+                dirty_paths=dirty_paths,
+            )
+            audit_v2_run_manifest(manifest_path)
             print(f"literature comparison summary: {output_path}")
 
 
