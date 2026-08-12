@@ -45,6 +45,101 @@ class TrainingEvent:
 
 
 @dataclass(frozen=True)
+class TaskFingerprint:
+    """Immutable identity required before a task checkpoint may be resumed."""
+
+    track: str
+    fold: int
+    seed: int
+    model: str
+    input_sha256: dict[str, str]
+    config_sha256: str
+    code_revision: str
+
+
+def _canonical_json_bytes(payload: object) -> bytes:
+    try:
+        serialized = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        return f"{serialized}\n".encode("utf-8")
+    except (TypeError, ValueError) as exc:
+        raise ValueError("runtime payload must be JSON serializable") from exc
+
+
+def _validate_task_fingerprint(fingerprint: TaskFingerprint) -> None:
+    if (
+        not fingerprint.track
+        or fingerprint.fold < 0
+        or fingerprint.seed < 0
+        or not fingerprint.model
+        or not fingerprint.code_revision
+        or not _valid_sha256(fingerprint.config_sha256)
+        or not fingerprint.input_sha256
+        or any(
+            not name or not _valid_sha256(value)
+            for name, value in fingerprint.input_sha256.items()
+        )
+    ):
+        raise ValueError("task fingerprint is invalid")
+
+
+def write_task_checkpoint(
+    path: Path, fingerprint: TaskFingerprint, state: dict[str, object]
+) -> dict[str, object]:
+    """Atomically persist state only when the target is new or identical."""
+    _validate_task_fingerprint(fingerprint)
+    state_sha256 = hashlib.sha256(_canonical_json_bytes(state)).hexdigest()
+    payload: dict[str, object] = {
+        "fingerprint": asdict(fingerprint),
+        "state": state,
+        "state_sha256": state_sha256,
+    }
+    encoded = _canonical_json_bytes(payload)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists():
+        if path.read_bytes() != encoded:
+            raise RuntimeError(
+                f"refusing to overwrite non-identical checkpoint: {path}"
+            )
+        return state
+    with tempfile.NamedTemporaryFile(
+        mode="wb", dir=path.parent, delete=False
+    ) as handle:
+        temporary = Path(handle.name)
+        handle.write(encoded)
+    temporary.replace(path)
+    return state
+
+
+def load_resumable_checkpoint(
+    path: Path, fingerprint: TaskFingerprint
+) -> dict[str, object]:
+    """Return state only after exact fingerprint and state-hash verification."""
+    _validate_task_fingerprint(fingerprint)
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"checkpoint is invalid: {path}") from exc
+    if not isinstance(payload, dict) or set(payload) != {
+        "fingerprint",
+        "state",
+        "state_sha256",
+    }:
+        raise RuntimeError("checkpoint payload is incomplete")
+    stored_fingerprint = payload["fingerprint"]
+    state = payload["state"]
+    state_sha256 = payload["state_sha256"]
+    if stored_fingerprint != asdict(fingerprint):
+        raise RuntimeError("checkpoint fingerprint mismatch")
+    if (
+        not isinstance(state, dict)
+        or not isinstance(state_sha256, str)
+        or hashlib.sha256(_canonical_json_bytes(state)).hexdigest() != state_sha256
+    ):
+        raise RuntimeError("checkpoint state hash mismatch")
+    return state
+
+
+@dataclass(frozen=True)
 class MultispeciesExperimentPreparation:
     config_path: Path
     config_sha256: str
