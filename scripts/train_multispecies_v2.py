@@ -303,23 +303,24 @@ def main(argv: list[str] | None = None) -> None:
                         "validation_ap": validation_ap,
                     },
                 )
-            append_training_event(
-                log_path,
-                TrainingEvent(
-                    timestamp=datetime.now(timezone.utc).isoformat(),
-                    track=fingerprint.track,
-                    fold=fold,
-                    seed=fold,
-                    model=fingerprint.model,
-                    epoch=0,
-                    loss=None,
-                    val_ap=validation_ap,
-                    lr=None,
-                    device=device,
-                    gpu_memory=None,
-                    wall_seconds=time.monotonic() - start,
-                ),
-            )
+            if not args.resume:
+                append_training_event(
+                    log_path,
+                    TrainingEvent(
+                        timestamp=datetime.now(timezone.utc).isoformat(),
+                        track=fingerprint.track,
+                        fold=fold,
+                        seed=fold,
+                        model=fingerprint.model,
+                        epoch=0,
+                        loss=None,
+                        val_ap=validation_ap,
+                        lr=None,
+                        device=device,
+                        gpu_memory=None,
+                        wall_seconds=time.monotonic() - start,
+                    ),
+                )
             print(
                 f"development fold {fold}: fit={len(prepared_fold.fit_rows)} "
                 f"validation={len(prepared_fold.validation_rows)} "
@@ -333,7 +334,10 @@ def main(argv: list[str] | None = None) -> None:
             split_sha256=frozen.sha256,
             code_revision=code_revision,
             input_sha256=input_sha256,
-            command=[sys.executable, *sys.argv],
+            command=[
+                sys.executable,
+                *(argument for argument in sys.argv if argument != "--resume"),
+            ],
             device=default_device,
             environment={
                 "python": platform.python_version(),
