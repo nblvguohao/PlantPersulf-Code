@@ -417,6 +417,12 @@ def write_run_manifest(
     input_sha256: dict[str, str],
     command: list[str],
     device: str,
+    environment: dict[str, str] | None = None,
+    gpu_map: tuple[str, ...] = (),
+    artifacts: dict[str, Path] | None = None,
+    checkpoint_paths: dict[str, Path] | None = None,
+    dirty: bool = False,
+    dirty_paths: tuple[str, ...] = (),
 ) -> dict[str, object]:
     """Write an atomic run manifest after verifying every input hash."""
     if not _valid_sha256(config_sha256) or not _valid_sha256(split_sha256):
@@ -427,13 +433,36 @@ def write_run_manifest(
         raise ValueError("input_sha256 must contain complete SHA256 values")
     if not code_revision or not command or not device:
         raise ValueError("code_revision, command, and device are required")
+    if any(re.fullmatch(r"cuda:\d+", value) is None for value in gpu_map):
+        raise ValueError("gpu_map entries must be cuda:<integer>")
+    if any(not name or not value for name, value in (environment or {}).items()):
+        raise ValueError("environment entries must be complete")
+    declared_artifacts = {**(artifacts or {}), **(checkpoint_paths or {})}
+    if any(
+        not name or not artifact.is_file()
+        for name, artifact in declared_artifacts.items()
+    ):
+        raise ValueError("manifest artifacts must name existing files")
+    artifact_records = {
+        name: {
+            "path": artifact.resolve().as_posix(),
+            "sha256": _sha256_file(artifact),
+        }
+        for name, artifact in sorted(declared_artifacts.items())
+    }
     manifest: dict[str, object] = {
+        "schema_version": 2,
         "config_sha256": config_sha256,
         "split_sha256": split_sha256,
         "code_revision": code_revision,
         "input_sha256": dict(sorted(input_sha256.items())),
         "command": command,
         "device": device,
+        "environment": dict(sorted((environment or {}).items())),
+        "gpu_map": list(gpu_map),
+        "dirty": dirty,
+        "dirty_paths": sorted(dirty_paths),
+        "artifacts": artifact_records,
     }
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(
@@ -442,6 +471,54 @@ def write_run_manifest(
         temporary = Path(handle.name)
         handle.write(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     temporary.replace(path)
+    return manifest
+
+
+def audit_v2_run_manifest(path: Path) -> dict[str, object]:
+    """Fail closed if a v2 runtime manifest or declared artifact changed."""
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"runtime manifest is invalid: {path}") from exc
+    required = {
+        "schema_version",
+        "config_sha256",
+        "split_sha256",
+        "code_revision",
+        "input_sha256",
+        "command",
+        "device",
+        "environment",
+        "gpu_map",
+        "dirty",
+        "dirty_paths",
+        "artifacts",
+    }
+    if not isinstance(manifest, dict) or set(manifest) != required:
+        raise RuntimeError("runtime manifest required fields are missing")
+    if manifest["schema_version"] != 2:
+        raise RuntimeError("runtime manifest schema is invalid")
+    if not all(
+        isinstance(manifest.get(name), str) and _valid_sha256(manifest[name])
+        for name in ("config_sha256", "split_sha256")
+    ):
+        raise RuntimeError("runtime manifest hashes are invalid")
+    artifacts = manifest["artifacts"]
+    if not isinstance(artifacts, dict):
+        raise RuntimeError("runtime manifest artifacts are invalid")
+    for name, record in artifacts.items():
+        if not isinstance(name, str) or not isinstance(record, dict):
+            raise RuntimeError("runtime manifest artifacts are invalid")
+        artifact_path = record.get("path")
+        artifact_sha256 = record.get("sha256")
+        if (
+            not isinstance(artifact_path, str)
+            or not isinstance(artifact_sha256, str)
+            or not _valid_sha256(artifact_sha256)
+            or not Path(artifact_path).is_file()
+            or _sha256_file(Path(artifact_path)) != artifact_sha256
+        ):
+            raise RuntimeError("artifact SHA256 mismatch")
     return manifest
 
 
