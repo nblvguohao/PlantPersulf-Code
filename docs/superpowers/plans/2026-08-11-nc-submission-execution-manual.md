@@ -12,7 +12,7 @@
 | 阶段 | 状态 | 负责人 | 关键产物 |
 |---|---|---|---|
 | 0 版本清理与可复现 | 未开始 | 我们 | 干净 clone 全绿 |
-| 1 展示轨数字 + 开发稳定性轨 + 决策记录 | **进行中** | 我们 | 蛋白切分 summary、cluster CV 轨、决策附录 |
+| 1 展示轨数字 + 开发稳定性轨 + 决策记录 | **进行中**（展示轨✅ 决策附录✅ 稳定性轨运行中） | 我们 | 蛋白切分 summary、cluster CV 轨、决策附录 |
 | 2 实验设计冻结（含 lockbox 协议） | 未开始 | 我们起草 / 张华确认 | 冻结协议包 + candidate_release_v1 |
 | 3 番茄发现队列 | 未开始 | 张华提供 / 我们接收 | tomato_benchmark_v1 |
 | 4 lockbox 外部验证 + 公平比较 | 未开始 | 双方 | lockbox 解盲分析（**NC 主结论**） |
@@ -132,10 +132,14 @@ codex §12）。
 
 ## 附录 A：措辞锁定
 
-（阶段 1 完成后填充，逐条过 `verify_predictive_claims`）
-- 降级声明（Gate 2 STOP 期间）：现有冻结文本 verbatim
-- 展示轨 limitation（蛋白切分 / cluster CV）：对应 config limitation verbatim
-- 跨物种转移措辞：per phase_z §5.2-5.4
+（阶段 1 完成 ✅，逐条过 `verify_predictive_claims`）
+
+1. **降级声明（Gate 2 STOP 期间，binding）**：`docs/phase_f_gate2_decision.md` 顶部冻结文本 verbatim（"当前公开数据不足以证明跨研究预测能力……"）
+2. **展示轨措辞（2026-08-11 数字，binding）**：
+   > 蛋白切分（Sul-BertGRU 同口径）数字显示数据集内存在可学习信号（结构增益 +0.0372 [0.0167, 0.0606]、效应 delta +0.0594 [0.0400, 0.0785]，95% CI 均排除零），但该轨与 LSO/cluster 轨同属数据集内评估，不构成跨研究、跨实验室或跨物种证据；NC 主结论锚定于未来番茄 lockbox 队列。
+3. **展示轨 limitation（verbatim）**：`configs/experiments/pu_ranker_protein_split_v1.yaml` 的 `limitation` 字段（已进 manifest/summary.json）
+4. **cluster CV 轨 limitation（verbatim）**：`configs/experiments/pu_ranker_cluster_cv_v1.yaml` 的 `limitation` 字段
+5. **跨物种转移措辞**：per `docs/phase_z_evidence_audit.md` §5.2-5.4（"transfer only, not Gate 2 evidence"）
 
 ## 附录 B：产物清单
 

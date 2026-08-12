@@ -291,3 +291,49 @@ mask-gated like any other missing branch. See
   unknown. If pursued, this needs its own frozen `pu_ranker_v2` release under
   the full TDD Codex process (frozen split, fixed seeds, no cherry-picking),
   not an ad hoc rerun. Filed here so it is not lost, not acted on.
+
+---
+
+## 2026-08-11 附录：评估架构变更声明 + 蛋白切分展示轨数字
+
+### A. 评估架构变更（用户决策，本文档为决策记录）
+
+| 场景 | 评估方式 | 角色 |
+|---|---|---|
+| 番茄本地模型 | 5 折同源簇分组（MMseqs2 cluster CV） | 主评估（番茄侧） |
+| 拟南芥（现有基准） | 补充重复 5/10 折同源簇分组（`pu_ranker_cluster_cv_v1`） | 开发稳定性（模型选择/消融） |
+| **NC 主结论** | **未来新番茄队列 = lockbox**（隐藏验证，标签冻结前不开放） | **主证据——文章核心主张的唯一锚点** |
+| leave-one-study-out | **有第二个独立研究后**再做 | 补充/未来 |
+| 跨物种（PXD063170/PXD072089） | 额外挑战集 | robustness 展示，不替代外部验证 |
+
+含义：
+- 现有 `pu_ranker_v1` leave-study-out 冻结结果**保留为参考轨**（本附录下方表格仍可引用），不再承担 NC 主证据角色；`gate2_decision.json` 未重判、字节不变（2026-08-11 验证）。
+- NC 稿件"外部验证/泛化"主张只能引用 lockbox 结果；Level 2 在跨研究证据出现前不可声称（codex §12）。
+- lockbox 协议进入阶段 2 冻结文档（见 `docs/superpowers/plans/2026-08-11-nc-submission-execution-manual.md`）。
+
+### B. 蛋白切分展示轨数字（Sul-BertGRU 同口径，2026-08-11 A100 完成）
+
+配置 `configs/experiments/pu_ranker_protein_split_v1.yaml`：随机 20% 蛋白留出 × 10 seeds（10 次重复）、无同源控制、subsample 1:20。结果 `results/experiments/pu_ranker_protein_split_v1/{metrics.tsv,manifest.json,summary.json,summary.md}`。
+
+| ablation | 蛋白切分 test_ap (10 seeds) | LSO 参考（冻结 5 seeds） | Split A cluster 参考 |
+|---|---|---|---|
+| sequence_only | 0.0763 ± 0.0202 | 0.0613 | 0.0504 |
+| seq_esm | 0.0493 ± 0.0145 | 0.0461 | 0.0399 |
+| **seq_structure** | **0.1135 ± 0.0332** | **0.1017** | **0.0837** |
+| full | 0.0358 ± 0.0063 | 0.0484 | 0.0342 |
+| no_plddt | 0.0382 ± 0.0114 | 0.0412 | 0.0342 |
+| no_accessibility | 0.0356 ± 0.0048 | 0.0406 | 0.1695 ⚠️(单 seed 离群) |
+| no_study_context | 0.0478 ± 0.0094 | 0.0545 | 0.0435 |
+
+- 结构增益（seq_structure − sequence_only，10 paired deltas → `paired_delta_ci`）：**+0.0372 [95% CI 0.0167, 0.0606]** —— CI 排除零
+- 效应 delta（seq_structure − pu_logistic，Route A 基线逐 seed 配对）：**+0.0594 [95% CI 0.0400, 0.0785]** —— CI 排除零；基线配置 `pu_ranker_protein_split_v1_baseline.yaml`（切分/抽样与展示轨逐 seed 一致，本地 CPU 10 seeds）
+- base rate 0.0476；seq_structure = 2.4x base rate
+
+**解读（如实）**：蛋白切分（无同源控制）数字高于 LSO/cluster 参考轨，且两个关键 CI 排除零——这是"数据集内可学习信号"在同行口径下的量化，同时量化了**同行口径的乐观上限**（同源蛋白跨划分的泄漏贡献）。**不构成跨研究证据**：本轨 structurally 排除于 Gate 2（测试锁定），条件 1 数据来源锁不变（`studies_are_independent: false`），Gate 2 仍为 STOP 3/5。对外展示必须附 limitation verbatim（见 `summary.json` / 两轨政策文档）。
+
+### C. Route 记录
+- 基线缺口（展示轨 `models: [structure_ranker]` 未含基线）→ **Route A 执行**：冻结 `pu_ranker_protein_split_v1_baseline.yaml`，本地 CPU 10 seeds 完成，逐 seed 配对成立（切分/抽样模型无关性，`_run_protein_split_experiment`）。Route B 措辞未启用。
+- 开发稳定性轨 `pu_ranker_cluster_cv_v1`（5 折 × 5 重复同源簇分组）运行记录见 `docs/superpowers/plans/2026-08-11-nc-submission-execution-manual.md` 阶段 1。
+
+### D. 措辞锁定（本附录数字可伴随的唯一表述）
+> 蛋白切分（Sul-BertGRU 同口径）数字显示数据集内存在可学习信号（结构增益与效应 delta 的 95% CI 均排除零），但该轨与 LSO/cluster 轨同属数据集内评估，不构成跨研究、跨实验室或跨物种证据；NC 主结论锚定于未来番茄 lockbox 队列。
