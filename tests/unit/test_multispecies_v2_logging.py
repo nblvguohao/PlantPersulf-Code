@@ -63,3 +63,25 @@ def test_manifest_rejects_missing_input_hash(tmp_path: Path) -> None:
             command=["python", "script.py"],
             device="cpu",
         )
+
+
+def test_training_event_rejects_non_finite_metric(tmp_path: Path) -> None:
+    """NaN metrics would make a JSONL training audit non-reproducible."""
+    with pytest.raises(ValueError, match="finite"):
+        append_training_event(
+            tmp_path / "training.jsonl",
+            TrainingEvent(
+                timestamp="2026-08-11T00:00:00Z",
+                track="strict_cluster_holdout",
+                fold=0,
+                seed=0,
+                model="pu_logistic",
+                epoch=0,
+                loss=float("nan"),
+                val_ap=None,
+                lr=0.01,
+                device="cpu",
+                gpu_memory=None,
+                wall_seconds=0.0,
+            ),
+        )

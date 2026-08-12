@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import random
+import re
 import tempfile
 from collections.abc import Iterable
 from dataclasses import asdict, dataclass
@@ -60,7 +62,7 @@ class TaskFingerprint:
 def _canonical_json_bytes(payload: object) -> bytes:
     try:
         serialized = json.dumps(payload, sort_keys=True, separators=(",", ":"))
-        return f"{serialized}\n".encode("utf-8")
+        return f"{serialized}\n".encode()
     except (TypeError, ValueError) as exc:
         raise ValueError("runtime payload must be JSON serializable") from exc
 
@@ -137,6 +139,33 @@ def load_resumable_checkpoint(
     ):
         raise RuntimeError("checkpoint state hash mismatch")
     return state
+
+
+def assign_task_device(
+    task_index: int, gpu_map: tuple[str, ...], default_device: str
+) -> str:
+    """Map independent tasks round-robin onto configured GPUs without DDP."""
+    if task_index < 0 or not default_device:
+        raise ValueError("task index and default device are required")
+    if any(re.fullmatch(r"cuda:\d+", device) is None for device in gpu_map):
+        raise ValueError("gpu_map entries must be cuda:<integer>")
+    return gpu_map[task_index % len(gpu_map)] if gpu_map else default_device
+
+
+def record_oom_batch_deviation(
+    original_batch_size: int, replacement_batch_size: int
+) -> dict[str, int]:
+    """Record the sole permitted OOM deviation: a strictly smaller batch."""
+    if (
+        original_batch_size <= 0
+        or replacement_batch_size <= 0
+        or replacement_batch_size >= original_batch_size
+    ):
+        raise ValueError("OOM replacement batch size must be positive and smaller")
+    return {
+        "original_batch_size": original_batch_size,
+        "replacement_batch_size": replacement_batch_size,
+    }
 
 
 @dataclass(frozen=True)
@@ -316,6 +345,27 @@ def select_v2_development_hyperparameters(
 
 def append_training_event(path: Path, event: TrainingEvent) -> None:
     """Append one complete, machine-readable training event."""
+    numeric_values = (
+        event.loss,
+        event.val_ap,
+        event.lr,
+        event.wall_seconds,
+    )
+    if any(value is not None and not math.isfinite(value) for value in numeric_values):
+        raise ValueError("training event numeric values must be finite")
+    if event.gpu_memory is not None and event.gpu_memory < 0:
+        raise ValueError("training event GPU memory must be non-negative")
+    if (
+        not event.timestamp
+        or not event.track
+        or event.fold < 0
+        or event.seed < 0
+        or not event.model
+        or event.epoch < 0
+        or not event.device
+        or event.wall_seconds < 0.0
+    ):
+        raise ValueError("training event fields are invalid")
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(asdict(event), sort_keys=True) + "\n")

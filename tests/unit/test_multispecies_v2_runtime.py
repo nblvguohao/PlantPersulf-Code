@@ -51,3 +51,20 @@ def test_checkpoint_rejects_tampered_state(tmp_path: Path) -> None:
 
     with pytest.raises(RuntimeError, match="checkpoint state hash mismatch"):
         runtime.load_resumable_checkpoint(checkpoint, fingerprint)
+
+
+def test_task_device_assignment_round_robins_configured_gpus() -> None:
+    """Independent fold tasks must be mapped deterministically, not by DDP."""
+    assert runtime.assign_task_device(0, ("cuda:0", "cuda:1"), "cpu") == "cuda:0"
+    assert runtime.assign_task_device(3, ("cuda:0", "cuda:1"), "cpu") == "cuda:1"
+    assert runtime.assign_task_device(2, (), "cpu") == "cpu"
+
+
+def test_oom_deviation_only_allows_smaller_batch() -> None:
+    """OOM recovery must not alter a model or increase the evaluation batch."""
+    assert runtime.record_oom_batch_deviation(128, 64) == {
+        "original_batch_size": 128,
+        "replacement_batch_size": 64,
+    }
+    with pytest.raises(ValueError, match="smaller"):
+        runtime.record_oom_batch_deviation(128, 128)
