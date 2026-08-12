@@ -457,6 +457,47 @@ def run_structure_direct_baseline(
     )
 
 
+def run_single_direct_model(
+    run: LiteratureRandomRun,
+    model: str,
+    *,
+    sequence_features: dict[tuple[str, int], tuple[float, ...]],
+    esm_features: dict[tuple[str, int], tuple[float, ...]],
+    structure_features: dict[tuple[str, int], tuple[tuple[float, float], bool]],
+    parameters: dict[str, int | float] | None = None,
+    device: str = "cpu",
+    structure_batch_size: int | None = None,
+) -> ComparisonModelScores:
+    """Run one direct baseline on a byte-identical shared panel.
+
+    This is the smallest resumable unit for the literature comparison track:
+    each (seed, model) tuple gets its own checkpoint and TaskFingerprint.
+    """
+    if model in ("pu_logistic", "random_forest", "xgboost"):
+        return run_tabular_direct_baseline(
+            bind_model_to_comparison_panel(run, model),
+            sequence_features,
+            parameters=parameters,
+        )
+    if model == "esm_linear_head":
+        return run_tabular_direct_baseline(
+            bind_model_to_comparison_panel(run, "esm_linear_head"),
+            esm_features,
+            parameters=parameters,
+        )
+    if model == "structure_ranker":
+        return run_structure_direct_baseline(
+            bind_model_to_comparison_panel(run, "structure_ranker"),
+            sequence_features,
+            esm_features,
+            structure_features,
+            parameters=parameters,
+            device=device,
+            batch_size=structure_batch_size,
+        )
+    raise ValueError(f"unknown direct comparison model: {model}")
+
+
 def run_direct_comparison_roster(
     run: LiteratureRandomRun,
     *,
@@ -469,32 +510,25 @@ def run_direct_comparison_roster(
 ) -> tuple[ComparisonModelScores, ...]:
     """Execute all five direct baselines on one byte-identical panel."""
     results: list[ComparisonModelScores] = []
-    for model in ("pu_logistic", "random_forest", "xgboost"):
+    for model in (
+        "pu_logistic",
+        "random_forest",
+        "xgboost",
+        "esm_linear_head",
+        "structure_ranker",
+    ):
         results.append(
-            run_tabular_direct_baseline(
-                bind_model_to_comparison_panel(run, model),
-                sequence_features,
+            run_single_direct_model(
+                run,
+                model,
+                sequence_features=sequence_features,
+                esm_features=esm_features,
+                structure_features=structure_features,
                 parameters=parameters.get(model),
+                device=device,
+                structure_batch_size=structure_batch_size,
             )
         )
-    results.append(
-        run_tabular_direct_baseline(
-            bind_model_to_comparison_panel(run, "esm_linear_head"),
-            esm_features,
-            parameters=parameters.get("esm_linear_head"),
-        )
-    )
-    results.append(
-        run_structure_direct_baseline(
-            bind_model_to_comparison_panel(run, "structure_ranker"),
-            sequence_features,
-            esm_features,
-            structure_features,
-            parameters=parameters.get("structure_ranker"),
-            device=device,
-            batch_size=structure_batch_size,
-        )
-    )
     if {result.panel_sha256 for result in results} != {run.panel_sha256}:
         raise RuntimeError("direct roster escaped its bound comparison panel")
     return tuple(results)

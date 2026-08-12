@@ -295,29 +295,17 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
     calls: list[tuple[int, int]] = []
     oom_once = True
 
-    def score_models(run, **kwargs):
+    def single_model(run, model, **kwargs):
         nonlocal oom_once
-        batch_size = kwargs["structure_batch_size"]
-        calls.append((run.seed, batch_size))
-        if oom_once:
-            oom_once = False
-            raise RuntimeError("CUDA out of memory")
-        partitions = tuple(
-            (name, {(row.global_protein_id, row.cys_position): 0.5 for row in values})
-            for name, values in run.partitions.items()
-        )
-        return tuple(
-            ComparisonModelScores(model, run.seed, run.panel_sha256, partitions)
-            for model in (
-                "pu_logistic",
-                "random_forest",
-                "xgboost",
-                "esm_linear_head",
-                "structure_ranker",
-            )
-        )
+        batch_size = kwargs.get("structure_batch_size")
+        if model == "structure_ranker":
+            calls.append((run.seed, batch_size))
+            if oom_once and run.seed == 0:
+                oom_once = False
+                raise RuntimeError("CUDA out of memory")
+        return _comparison_scores_for_run(run, model)
 
-    monkeypatch.setattr(cli, "run_direct_comparison_roster", score_models)
+    monkeypatch.setattr(cli, "run_single_direct_model", single_model)
     sul_timeouts: list[float] = []
 
     def run_sul(model_input, *args, **kwargs):
@@ -407,3 +395,313 @@ def test_cli_executes_complete_comparator_roster_on_shared_random_panel(
 
     assert len(calls) == calls_before_resume
     assert len(sul_timeouts) == sul_before_resume
+
+
+def _comparison_scores_for_run(run: object, model: str) -> ComparisonModelScores:
+    """Return a complete placeholder score set for one shared panel."""
+    partitions = tuple(
+        (name, {(row.global_protein_id, row.cys_position): 0.5 for row in values})
+        for name, values in run.partitions.items()
+    )
+    return ComparisonModelScores(model, run.seed, run.panel_sha256, partitions)
+
+
+def test_literature_resume_runs_only_missing_models(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Resume must skip every (seed, model) whose checkpoint already matches."""
+    cli = _load_cli_module()
+    output_dir = tmp_path / "output"
+    esm_manifest = tmp_path / "esm_manifest.json"
+    structure_registry = tmp_path / "structures.tsv"
+    sul_manifest = tmp_path / "sul.json"
+    for path in (esm_manifest, structure_registry, sul_manifest):
+        path.write_text("registered policy marker\n", encoding="utf-8")
+    config = tmp_path / "config.yaml"
+    config.write_text(
+        "species: {primary: [arabidopsis, rice, tomato], pressure: [magnaporthe]}\n"
+        "literature_random_protein:\n"
+        "  test_fraction: 0.2\n"
+        "  validation_fraction_of_remaining: 0.2\n"
+        "  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n"
+        "models: [pu_logistic, random_forest, xgboost, "
+        "esm_linear_head, structure_ranker]\n"
+        "unlabeled_panel: {per_positive: 1, seed: 3}\n"
+        "comparison_inputs:\n"
+        f"  esm_features: {esm_manifest.as_posix()}\n"
+        f"  structure_features: {structure_registry.as_posix()}\n"
+        f"  sul_environment_manifest: {sul_manifest.as_posix()}\n"
+        "  pcysmod_scores: null\n"
+        "comparison_feature_build: {structure_registry_base: data/registry}\n"
+        "compute:\n"
+        "  {device: cpu, score_batch_size: 8, max_parallel_tasks: 2,\n"
+        "   gpu_map: [], sul_timeout_seconds: 123}\n"
+        "literature_baseline_parameters:\n"
+        "  pu_logistic: {}\n"
+        "  random_forest: {}\n"
+        "  xgboost: {}\n"
+        "  esm_linear_head: {}\n"
+        "  structure_ranker: {}\n"
+        f"output: {{directory: {output_dir.as_posix()}}}\n",
+        encoding="utf-8",
+    )
+    rows = tuple(
+        MultispeciesV2SiteRow(
+            species="arabidopsis",
+            protein_accession=f"P{index}",
+            cys_position=position,
+            label=label,
+            study_accessions=("REAL_SOURCE",) if label == "positive" else (),
+            global_protein_id=f"arabidopsis|P{index}",
+            cluster_id=f"C{index}",
+            split="development",
+            development_fold=0,
+        )
+        for index in range(3)
+        for position, label in ((2, "positive"), (4, "unlabeled"))
+    )
+    monkeypatch.setattr(
+        cli,
+        "run_multispecies_experiment",
+        lambda *args, **kwargs: SimpleNamespace(
+            cluster_count=3, test_scoring_enabled=False
+        ),
+    )
+    monkeypatch.setattr(
+        cli,
+        "_development_rows",
+        lambda *args, **kwargs: (
+            rows,
+            SimpleNamespace(sha256="f" * 64),
+            {"arabidopsis": {"P0": "MCAMC", "P1": "MCAMC", "P2": "MCAMC"}},
+        ),
+    )
+    monkeypatch.setattr(
+        cli,
+        "sequence_feature_map",
+        lambda selected, proteomes: {
+            (row.global_protein_id, row.cys_position): (0.1, 0.2) for row in selected
+        },
+    )
+    monkeypatch.setattr(cli, "_registered", lambda path: None)
+    monkeypatch.setattr(
+        cli, "_strict_runtime_input_paths", lambda cfg: {"rows": config}
+    )
+    ready = tuple(
+        ComparatorStatus(model, "direct_baseline", "ready", "registered")
+        for model in (
+            "pu_logistic",
+            "random_forest",
+            "xgboost",
+            "esm_linear_head",
+            "structure_ranker",
+        )
+    ) + (
+        ComparatorStatus("sul_bertgru", "external_comparator", "blocked", "missing"),
+    )
+    monkeypatch.setattr(cli, "comparator_statuses", lambda **kwargs: ready)
+    monkeypatch.setattr(
+        cli, "load_window_embedding_artifact", lambda *args, **kwargs: {}
+    )
+    monkeypatch.setattr(
+        cli, "build_registered_structure_features", lambda *args, **kwargs: {}
+    )
+    calls: list[tuple[int, str, int | None]] = []
+
+    def single_model(run, model, **kwargs):
+        batch_size = kwargs.get("structure_batch_size")
+        calls.append((run.seed, model, batch_size))
+        return _comparison_scores_for_run(run, model)
+
+    monkeypatch.setattr(cli, "run_single_direct_model", single_model)
+    monkeypatch.setattr(
+        cli,
+        "summarize_comparable_scores",
+        lambda model_input, scores, **kwargs: {
+            "model": scores.model,
+            "seed": scores.seed,
+            "panel_sha256": scores.panel_sha256,
+            "three_crop_macro_average_precision": 0.5,
+        },
+    )
+
+    cli.main(["--config", str(config), "--run-literature-baselines"])
+
+    assert len(calls) == 50  # 10 seeds * 5 models
+    checkpoint_dir = output_dir / "literature_random_protein" / "checkpoints"
+    assert checkpoint_dir.is_dir()
+
+    # Delete the summary/manifest to simulate an interrupted final publish.
+    (output_dir / "literature_random_protein" / "summary.json").unlink()
+    (output_dir / "literature_random_protein" / "manifest.json").unlink()
+    calls.clear()
+
+    cli.main(["--config", str(config), "--run-literature-baselines", "--resume"])
+
+    # Every model/seed already had a matching checkpoint, so no work is rerun.
+    assert len(calls) == 0
+    manifest = audit_v2_run_manifest(
+        output_dir / "literature_random_protein" / "manifest.json"
+    )
+    assert len(manifest["task_roster"]) == 50
+
+    # Remove exactly one checkpoint and resume again.  The manifest and summary
+    # must also be absent so the fail-closed writer can atomically republish.
+    (checkpoint_dir / "structure_ranker_seed0.json").unlink()
+    (output_dir / "literature_random_protein" / "summary.json").unlink()
+    (output_dir / "literature_random_protein" / "manifest.json").unlink()
+    calls.clear()
+
+    cli.main(["--config", str(config), "--run-literature-baselines", "--resume"])
+
+    assert len(calls) == 1
+    assert calls[0] == (0, "structure_ranker", 8)
+
+
+def test_structure_ranker_gpu_oom_recovery_reduces_batch_size(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """GPU structure ranker OOM must only lower batch size and record deviation."""
+    cli = _load_cli_module()
+    output_dir = tmp_path / "output"
+    esm_manifest = tmp_path / "esm_manifest.json"
+    structure_registry = tmp_path / "structures.tsv"
+    sul_manifest = tmp_path / "sul.json"
+    for path in (esm_manifest, structure_registry, sul_manifest):
+        path.write_text("registered policy marker\n", encoding="utf-8")
+    config = tmp_path / "config.yaml"
+    config.write_text(
+        "species: {primary: [arabidopsis, rice, tomato], pressure: [magnaporthe]}\n"
+        "literature_random_protein:\n"
+        "  test_fraction: 0.2\n"
+        "  validation_fraction_of_remaining: 0.2\n"
+        "  seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n"
+        "models: [pu_logistic, random_forest, xgboost, "
+        "esm_linear_head, structure_ranker]\n"
+        "unlabeled_panel: {per_positive: 1, seed: 3}\n"
+        "comparison_inputs:\n"
+        f"  esm_features: {esm_manifest.as_posix()}\n"
+        f"  structure_features: {structure_registry.as_posix()}\n"
+        f"  sul_environment_manifest: {sul_manifest.as_posix()}\n"
+        "  pcysmod_scores: null\n"
+        "comparison_feature_build: {structure_registry_base: data/registry}\n"
+        "compute:\n"
+        "  {device: cuda, score_batch_size: 8, max_parallel_tasks: 1,\n"
+        "   gpu_map: [cuda:0], sul_timeout_seconds: 123}\n"
+        "literature_baseline_parameters:\n"
+        "  pu_logistic: {}\n"
+        "  random_forest: {}\n"
+        "  xgboost: {}\n"
+        "  esm_linear_head: {}\n"
+        "  structure_ranker: {}\n"
+        f"output: {{directory: {output_dir.as_posix()}}}\n",
+        encoding="utf-8",
+    )
+    rows = tuple(
+        MultispeciesV2SiteRow(
+            species="arabidopsis",
+            protein_accession=f"P{index}",
+            cys_position=position,
+            label=label,
+            study_accessions=("REAL_SOURCE",) if label == "positive" else (),
+            global_protein_id=f"arabidopsis|P{index}",
+            cluster_id=f"C{index}",
+            split="development",
+            development_fold=0,
+        )
+        for index in range(3)
+        for position, label in ((2, "positive"), (4, "unlabeled"))
+    )
+    monkeypatch.setattr(
+        cli,
+        "run_multispecies_experiment",
+        lambda *args, **kwargs: SimpleNamespace(
+            cluster_count=3, test_scoring_enabled=False
+        ),
+    )
+    monkeypatch.setattr(
+        cli,
+        "_development_rows",
+        lambda *args, **kwargs: (
+            rows,
+            SimpleNamespace(sha256="f" * 64),
+            {"arabidopsis": {"P0": "MCAMC", "P1": "MCAMC", "P2": "MCAMC"}},
+        ),
+    )
+    monkeypatch.setattr(
+        cli,
+        "sequence_feature_map",
+        lambda selected, proteomes: {
+            (row.global_protein_id, row.cys_position): (0.1, 0.2) for row in selected
+        },
+    )
+    monkeypatch.setattr(cli, "_registered", lambda path: None)
+    monkeypatch.setattr(
+        cli, "_strict_runtime_input_paths", lambda cfg: {"rows": config}
+    )
+    ready = tuple(
+        ComparatorStatus(model, "direct_baseline", "ready", "registered")
+        for model in (
+            "pu_logistic",
+            "random_forest",
+            "xgboost",
+            "esm_linear_head",
+            "structure_ranker",
+        )
+    ) + (
+        ComparatorStatus("sul_bertgru", "external_comparator", "blocked", "missing"),
+    )
+    monkeypatch.setattr(cli, "comparator_statuses", lambda **kwargs: ready)
+    monkeypatch.setattr(
+        cli, "load_window_embedding_artifact", lambda *args, **kwargs: {}
+    )
+    monkeypatch.setattr(
+        cli, "build_registered_structure_features", lambda *args, **kwargs: {}
+    )
+    calls: list[tuple[str, int]] = []
+
+    def single_model(run, model, **kwargs):
+        batch_size = kwargs.get("structure_batch_size")
+        if model == "structure_ranker":
+            calls.append((model, batch_size))
+            if run.seed == 0 and batch_size == 8:
+                raise RuntimeError("CUDA out of memory")
+        return _comparison_scores_for_run(run, model)
+
+    monkeypatch.setattr(cli, "run_single_direct_model", single_model)
+    monkeypatch.setattr(
+        cli,
+        "summarize_comparable_scores",
+        lambda model_input, scores, **kwargs: {
+            "model": scores.model,
+            "seed": scores.seed,
+            "panel_sha256": scores.panel_sha256,
+            "three_crop_macro_average_precision": 0.5,
+        },
+    )
+
+    cli.main(["--config", str(config), "--run-literature-baselines"])
+
+    # Seed 0 OOMs at the configured batch size and recovers by halving it.
+    assert calls[0] == ("structure_ranker", 8)
+    assert calls[1] == ("structure_ranker", 4)
+    assert all(model == "structure_ranker" for model, _ in calls)
+    checkpoint = json.loads(
+        (
+            output_dir / "literature_random_protein" / "checkpoints"
+            / "structure_ranker_seed0.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert checkpoint["state"]["oom_batch_deviations"] == [
+        {"original_batch_size": 8, "replacement_batch_size": 4}
+    ]
+    event = checkpoint["state"]["training_event"]
+    assert event["model"] == "structure_ranker"
+    assert event["device"] == "cuda:0"
+    manifest = audit_v2_run_manifest(
+        output_dir / "literature_random_protein" / "manifest.json"
+    )
+    assert any(
+        task["model"] == "structure_ranker" and task["seed"] == 0
+        for task in manifest["task_roster"]
+    )

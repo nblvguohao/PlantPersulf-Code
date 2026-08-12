@@ -16,6 +16,7 @@ import json
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from dataclasses import asdict
 from datetime import datetime, timezone
@@ -25,9 +26,10 @@ from typing import cast
 import yaml
 
 from plantpersulf.benchmark.literature_random_track import (
+    ComparisonModelScores,
     bind_model_to_comparison_panel,
     build_literature_random_track,
-    run_direct_comparison_roster,
+    run_single_direct_model,
 )
 from plantpersulf.benchmark.multispecies_splits import (
     DEVELOPMENT_SPLIT,
@@ -591,7 +593,10 @@ def main(argv: list[str] | None = None) -> None:
                 sul_environment = validate_sul_environment_manifest(sul_manifest)
             output_dir = Path(cfg["output"]["directory"]) / "literature_random_protein"
             log_path = output_dir / "training.jsonl"
+            log_lock = threading.Lock()
             checkpoint_directory = output_dir / "checkpoints"
+            if args.resume and log_path.is_file():
+                log_path.write_text("", encoding="utf-8")
             compute_cfg = cfg.get("compute")
             if not isinstance(compute_cfg, dict):
                 raise RuntimeError("compute configuration is required")
@@ -662,6 +667,10 @@ def main(argv: list[str] | None = None) -> None:
                 checkpoint_paths[f"{fingerprint.model}_seed{fingerprint.seed}"] = (
                     checkpoint_path
                 )
+                event_dict = state.get("training_event")
+                if isinstance(event_dict, dict):
+                    with log_lock:
+                        append_training_event(log_path, TrainingEvent(**event_dict))
                 return state
 
             def record_comparator_task(
@@ -680,30 +689,33 @@ def main(argv: list[str] | None = None) -> None:
                     extra_input_paths=extra_input_paths,
                 )
                 checkpoint_path = checkpoint_path_for(model, seed)
+                event = TrainingEvent(
+                    timestamp=datetime.now(timezone.utc).isoformat(),
+                    track=fingerprint.track,
+                    fold=fingerprint.fold,
+                    seed=seed,
+                    model=model,
+                    epoch=0,
+                    loss=None,
+                    val_ap=float(report["three_crop_macro_average_precision"]),
+                    lr=None,
+                    device=device,
+                    gpu_memory=None,
+                    wall_seconds=wall_seconds,
+                )
                 write_task_checkpoint(
                     checkpoint_path,
                     fingerprint,
-                    {"report": report, "oom_batch_deviations": deviations or []},
+                    {
+                        "report": report,
+                        "oom_batch_deviations": deviations or [],
+                        "training_event": asdict(event),
+                    },
                 )
                 task_roster.append(fingerprint)
                 checkpoint_paths[f"{model}_seed{seed}"] = checkpoint_path
-                append_training_event(
-                    log_path,
-                    TrainingEvent(
-                        timestamp=datetime.now(timezone.utc).isoformat(),
-                        track=fingerprint.track,
-                        fold=fingerprint.fold,
-                        seed=seed,
-                        model=model,
-                        epoch=0,
-                        loss=None,
-                        val_ap=float(report["three_crop_macro_average_precision"]),
-                        lr=None,
-                        device=device,
-                        gpu_memory=None,
-                        wall_seconds=wall_seconds,
-                    ),
-                )
+                with log_lock:
+                    append_training_event(log_path, event)
 
             max_parallel_tasks = compute_cfg.get("max_parallel_tasks")
             if not isinstance(max_parallel_tasks, int) or max_parallel_tasks < 1:
@@ -721,12 +733,15 @@ def main(argv: list[str] | None = None) -> None:
             ) -> tuple[
                 object,
                 str,
-                object,
-                float,
+                tuple[ComparisonModelScores, ...],
+                dict[str, list[dict[str, int]]],
                 dict[str, dict[str, object]],
-                list[dict[str, int]],
+                dict[str, float],
             ]:
                 resumed: dict[str, dict[str, object]] = {}
+                ran_scores: list[ComparisonModelScores] = []
+                ran_deviations: dict[str, list[dict[str, int]]] = {}
+                ran_wall_seconds: dict[str, float] = {}
                 for model in (
                     "pu_logistic",
                     "random_forest",
@@ -740,28 +755,47 @@ def main(argv: list[str] | None = None) -> None:
                         resumed[model] = register_resumed_task(
                             fingerprint, checkpoint_path
                         )
-                if len(resumed) == 5:
-                    return run, device, (), 0.0, resumed, []
-                start = time.monotonic()
-                direct_scores, _, deviations = run_with_oom_batch_retry(
-                    lambda batch_size: run_direct_comparison_roster(
-                        run,
-                        sequence_features=features,
-                        esm_features=esm_features,
-                        structure_features=structure_features,
-                        parameters=cfg["literature_baseline_parameters"],
-                        device=device,
-                        structure_batch_size=batch_size,
-                    ),
-                    initial_batch_size=structure_batch_size,
-                )
+                        continue
+                    start = time.monotonic()
+                    if model == "structure_ranker":
+                        scores, _, deviations = run_with_oom_batch_retry(
+                            lambda batch_size, model=model: run_single_direct_model(
+                                run,
+                                model,
+                                sequence_features=features,
+                                esm_features=esm_features,
+                                structure_features=structure_features,
+                                parameters=cfg[
+                                    "literature_baseline_parameters"
+                                ].get(model),
+                                device=device,
+                                structure_batch_size=batch_size,
+                            ),
+                            initial_batch_size=structure_batch_size,
+                        )
+                        ran_deviations[model] = deviations
+                    else:
+                        scores = run_single_direct_model(
+                            run,
+                            model,
+                            sequence_features=features,
+                            esm_features=esm_features,
+                            structure_features=structure_features,
+                            parameters=cfg["literature_baseline_parameters"].get(
+                                model
+                            ),
+                            device=device,
+                            structure_batch_size=structure_batch_size,
+                        )
+                    ran_wall_seconds[model] = time.monotonic() - start
+                    ran_scores.append(scores)
                 return (
                     run,
                     device,
-                    direct_scores,
-                    time.monotonic() - start,
+                    tuple(ran_scores),
+                    ran_deviations,
                     resumed,
-                    deviations,
+                    ran_wall_seconds,
                 )
 
             def complete_direct_task(
@@ -769,28 +803,28 @@ def main(argv: list[str] | None = None) -> None:
                 result: tuple[
                     object,
                     str,
-                    object,
-                    float,
+                    tuple[ComparisonModelScores, ...],
+                    dict[str, list[dict[str, int]]],
                     dict[str, dict[str, object]],
-                    list[dict[str, int]],
+                    dict[str, float],
                 ],
             ) -> None:
                 (
                     run,
                     assigned_device,
                     direct_scores,
-                    wall_seconds,
+                    direct_deviations,
                     resumed,
-                    deviations,
+                    ran_wall_seconds,
                 ) = result
                 for state in resumed.values():
                     report = state.get("report")
                     if not isinstance(report, dict):
-                        raise RuntimeError("resumed comparator checkpoint lacks report")
+                        raise RuntimeError(
+                            "resumed comparator checkpoint lacks report"
+                        )
                     reports.append(report)
                 for scores in direct_scores:
-                    if scores.model in resumed:
-                        continue
                     model_input = bind_model_to_comparison_panel(run, scores.model)
                     report = summarize_comparable_scores(
                         model_input,
@@ -808,10 +842,8 @@ def main(argv: list[str] | None = None) -> None:
                             if scores.model == "structure_ranker"
                             else "cpu"
                         ),
-                        wall_seconds=wall_seconds,
-                        deviations=(
-                            deviations if scores.model == "structure_ranker" else []
-                        ),
+                        wall_seconds=ran_wall_seconds[scores.model],
+                        deviations=direct_deviations.get(scores.model, []),
                     )
                     print(
                         f"literature seed {run.seed} model={scores.model} "
