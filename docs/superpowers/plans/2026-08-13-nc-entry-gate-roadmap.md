@@ -174,3 +174,4 @@
   - `sap_protocol.json` / `analysis_plan.json` 草案已起草（含 K 功效表、解盲条件、排除规则、敏感性分析）；**待张华实验室共同签署**。
   - 措辞纪律：发布包全部文本 `verify_predictive_claims → []`。
   - 待办：联合签署 → 预注册提交 → git tag + SHA256 全包冻结。
+  - 新增 `2026-08-13-model-improvement-register.md`：模型改进杠杆登记册（番茄结构覆盖/ESM/数据扩充等 7 项），**登记不实施**，冻结期内禁止改动；解锁条件 = Gate 3 盲法完成后的新一代模型 + 新预注册。
