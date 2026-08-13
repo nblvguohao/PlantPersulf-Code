@@ -166,3 +166,11 @@
 ### 更新日志
 
 - 2026-08-13：根据当前 v11 双轨实验结果与张华合作策略，建立 NC 入场门计划；锁定 Plant Physiology 预注册降级路径。
+- 2026-08-13（Task 1，Gate 0 冻结包）：
+  - `structure_ranker` 序列化 API 完成（`fit_structure_ranker` → `StructureRankerBundle` → `score_structure_ranker_bundle`；save/load 原子化，往返位级一致；655 tests 全绿）。
+  - 冻结模型已拟合并保存：389,609 开发位点（10 种子面板并集，面板 SHA256 `30e432fb…`）、种子 20260813、`model_weights/structure_ranker_bundle.pt`（SHA256 `ab8a0353…`）。
+  - 番茄蛋白组 Top-K 候选已生成：179,736 位点（排除训练面板 72,051），分数区间 [0.0053, 0.3053]；966 对照对；生成清单 `top_k_generation_manifest.json`。
+  - 特征模式 `feature_schema.json`、盲法打分脚本 `inference_script.py`（无训练代码，bundle 哈希核验）已入包。
+  - `sap_protocol.json` / `analysis_plan.json` 草案已起草（含 K 功效表、解盲条件、排除规则、敏感性分析）；**待张华实验室共同签署**。
+  - 措辞纪律：发布包全部文本 `verify_predictive_claims → []`。
+  - 待办：联合签署 → 预注册提交 → git tag + SHA256 全包冻结。
