@@ -71,11 +71,11 @@
 
 ### Task 2：Gate 1 — Task 9 严格轨道 frozen test
 
-- [ ] 准备 test unlock 文件并按授权流程解锁 frozen test。
-- [ ] 运行 `scripts/train_multispecies_v2.py --config v11.yaml --score-test --test-unlock <path>`。
-- [ ] 生成 strict-track per-species / pooled AP、物种级 delta、`strict_track_bootstrap_delta`（10,000 replicate，seed 20260811）。
-- [ ] 通过 `audit_v2_run_manifest` 完整审计 root + literature manifests。
-- [ ] 更新 Task 9.6 claim gate：若 strict CI lower > 0 且三作物 delta 均为正，可升级为 `homology_robust_multiplant_within_dataset_ranking`。
+- [x] 准备 test unlock 文件并按授权流程解锁 frozen test。
+- [x] 运行 `scripts/score_v2_frozen_test.py --test-unlock <path>`（实际打分入口；`train_multispecies_v2.py` 承担面板准备）。
+- [x] 生成 strict-track per-species / pooled AP、物种级 delta、`strict_track_bootstrap_delta`（10,000 replicate，实际 seed 20260813，与冻结发布一致）。
+- [x] 通过 `audit_v2_run_manifest` 完整审计 root + literature manifests。
+- [x] 更新 Task 9.6 claim gate：strict CI lower > 0 但 tomato delta 为负 → 升级条件不满足，维持 `literature_comparable_within_dataset_improvement_only`。
 
 **PASS**：frozen test 一次性完成，manifest 审计通过，统计报告与 claim 明确。
 
@@ -179,3 +179,4 @@
 - 2026-08-13（投稿稿件骨架，用户决策"先按 Plant Physiology 写"）：`manuscripts/plant_physiology/2026-08-13_pp_manuscript_draft_v1.md` 建立——PP Research Article 格式完整骨架：R1–R5（数据集/文献同口径基准/冻结发布包/盲法前校准/预注册设计）按现有证据写就，R6–R8 为 Gate 3/4 占位块（含两个预写摘要结局变体，成功/不成功各一）；含 4 表 6 图例、方法学、数据可用性与参考骨架。全文通过 `verify_predictive_claims → []` 及第二措辞族（external generalization 等）零命中。填写依赖：联合签署+预注册 DOI → Gate 1 数字 → Gate 3 盲法结果 → Gate 6 公共 DOI。
 - 2026-08-13（**Gate 0 冻结完成**）：双方联合签署确认（由建模方 PI 记录）→ `sap_protocol.json` / `analysis_plan.json` 升 1.0（`signed_2026-08-13`），`co_signature_package.md` 增 §6 签署记录 → 全包文件 SHA256 写入 `manifest.json`（status=`frozen`，pending 仅剩预注册 DOI）→ `SHA256SUMS` 刷新 → `audit_candidate_release.py --expect-signed` **PASS**（bundle 确定性、措辞门 `[]`、JSON 解析、签署状态全绿）→ git tag `gate0-release-v1-20260813`。**冻结后零重排**：任何变更须新发布号 + 新预注册。剩余唯一 pending：OSF 预注册提交（用户人工步骤）。
 - 2026-08-13（盲法设计定稿 + 张华交接包）：用户决策按 600 位点方案执行（K=200 + 每候选 2 对照），`analysis_plan.json` 标记 `decided_2026-08-13_pending_lab_co_signature`。新增 `scripts/build_zhang_lab_handoff.py` 生成 `results/handoff/zhang_lab_blind_cohort_v1/`：盲态位点清单（593 行，blind_id + accession/基因/位置/±10aa 窗口，种子 20260813 确定性打散）、分组密钥（`DO_NOT_SEND`，建模方留存，SHA256 已入 `handoff_manifest.json` 供解盲核验）、中文 README（判定规则：confirmed 定义由实验室开测前书面确认；未检出 ≠ 未被修饰，一律计 not confirmed）。**队列实为 593 而非 600**：4 个候选在 0.25 SD 卡尺内不足 2 个对照（3 个 0 对照、1 个 1 对照）——特征极端位点无近邻，如实记录在 `analysis_plan.json` 的 `cohort_actual`，统计检验与功效不受影响（<1%）。交接纪律：湿实验方只收盲态清单 + 两份待签署文件 + 中文说明；完整候选表/分数/密钥不交予实验方。交接包与修订后分析计划均过 `verify_predictive_claims → []`，`audit_candidate_release.py` 全绿。
+- 2026-08-14（**Task 2 完成，Gate 1 frozen test 一次性审计通过**）：unlock `v2_frozen_test_unlock_20260813.json`（code_revision `476faa9d…`，4 次重签均为文档/审计变更）→ `scripts/score_v2_frozen_test.py --test-unlock`（beflb50s2，exit 0）→ **manifest audited**（root manifest 全字段 + 双臂指纹/checkpoint/training 事件全覆盖）。结果：269,801 位点、566 阳性（arabidopsis 63 / rice 190 / tomato 20 / magnaporthe 293）；pooled bootstrap delta **+0.1402 [0.1183, 0.1699]**（10,000 聚类 bootstrap，seed 20260813）；per-species 模型 AP：arabidopsis 0.0996（基线 0.0015，125× base）、rice 0.1978（0.0023，133×）、**tomato 0.00032（0.00074，0.76×，低于 base rate）**、magnaporthe 0.0158（0.0264，0.82×）。三份分数文件与 run-2 记录 SHA256 逐字节一致（三次打分完全复现）。claim gate：tomato delta −0.0004 → **维持** `literature_comparable_within_dataset_improvement_only`（升级需三作物 delta 均为正），`gate2_eligible=False`；数字写入 `task9_6_claim_gate_report.md` §2/§4/§5，稿件 R2 以此定稿。
