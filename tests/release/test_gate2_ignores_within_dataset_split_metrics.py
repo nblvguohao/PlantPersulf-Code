@@ -43,6 +43,21 @@ def test_cluster_cv_model_name_is_not_recognised_as_a_fold() -> None:
     assert _parse_fold_study("cluster_cv_r4f4|structure_ranker:full") is None
 
 
+def test_multispecies_v2_track_tags_are_not_recognised_as_a_fold() -> None:
+    # Task 9.6: neither multispecies v2 track (strict homology-cluster split
+    # nor the literature-comparable random-protein split) may silently
+    # satisfy Gate 2 evidence. This locks in the existing prefix guarantee
+    # rather than adding a parallel isolation mechanism — both tags already
+    # fail the ``leave_<study>_out`` prefix check.
+    assert (
+        _parse_fold_study("strict_cluster_holdout|structure_ranker:full") is None
+    )
+    assert (
+        _parse_fold_study("literature_random_protein|structure_ranker:full")
+        is None
+    )
+
+
 def test_cluster_split_rows_never_enter_gate2_fold_metrics() -> None:
     cluster_rows = [
         {

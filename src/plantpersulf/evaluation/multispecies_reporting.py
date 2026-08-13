@@ -227,3 +227,51 @@ def find_forbidden_external_claims(text: str) -> list[str]:
         for phrase in FORBIDDEN_EXTERNAL_CLAIM_PHRASES
         if phrase.lower() in lowered
     ]
+
+
+def build_multispecies_statistical_report(
+    *,
+    scored_by_species: dict[str, list[tuple[float, str]]],
+    primary_species: tuple[str, ...],
+    pressure_species: tuple[str, ...],
+    strict_ci_lower: float,
+    species_deltas: dict[str, float],
+    same_frozen_inputs: bool,
+    candidate_literature_macro_aps: list[float],
+    baseline_literature_macro_aps: list[float],
+) -> dict[str, object]:
+    """Compose the full Task 9.6 frozen-test statistical report and claim.
+
+    This is the single orchestrator a future frozen-test run calls: per-
+    species metrics, the pooled primary-species AP, the literature-track lead
+    check, the resulting claim class, and its mandated wording. It never
+    unlocks or scores a frozen test itself — every scored row is supplied by
+    the caller, which is responsible for having obtained it through the
+    already-existing `assert_test_unlocked` gate.
+    """
+    metrics = [
+        compute_species_metric(scored_by_species[species], species)
+        for species in (*primary_species, *pressure_species)
+    ]
+    report = summarize_species_metrics(
+        metrics, primary_species=primary_species, pressure_species=pressure_species
+    )
+    report["primary_pooled_average_precision"] = pooled_average_precision(
+        scored_by_species, primary_species
+    )
+    leads = literature_track_leads(
+        candidate_literature_macro_aps, baseline_literature_macro_aps
+    )
+    claim_class = claim_class_for_multispecies_result(
+        strict_ci_lower=strict_ci_lower,
+        species_deltas=species_deltas,
+        same_frozen_inputs=same_frozen_inputs,
+        literature_leads=leads,
+    )
+    report["strict_ci_lower"] = strict_ci_lower
+    report["species_deltas"] = dict(species_deltas)
+    report["literature_track_leads"] = leads
+    report["claim_class"] = claim_class
+    report["claim_statement"] = claim_statement_for_class(claim_class)
+    report["gate2_eligible"] = False
+    return report

@@ -11,6 +11,7 @@ from plantpersulf.evaluation.multispecies_reporting import (
     STRICT_BOOTSTRAP_N_BOOT,
     STRICT_BOOTSTRAP_SEED,
     SpeciesMetric,
+    build_multispecies_statistical_report,
     claim_class_for_multispecies_result,
     claim_statement_for_class,
     compute_species_metric,
@@ -81,6 +82,37 @@ def test_forbidden_external_claim_phrases_are_flagged() -> None:
     forbidden in any multispecies v2 outward text."""
     assert find_forbidden_external_claims("这是外部泛化结果") == ["外部泛化"]
     assert find_forbidden_external_claims("within-dataset improvement only") == []
+
+
+def test_statistical_report_composes_species_pooled_and_claim() -> None:
+    """The Task 9.6 orchestrator must wire raw scored rows all the way
+    through to one claim class and its mandated wording."""
+    scored_by_species = {
+        "arabidopsis": [(0.9, "positive"), (0.1, "unlabeled")],
+        "rice": [(0.8, "positive"), (0.2, "unlabeled")],
+        "tomato": [(0.7, "positive"), (0.3, "unlabeled")],
+        "magnaporthe": [(0.6, "positive"), (0.4, "unlabeled")],
+    }
+
+    report = build_multispecies_statistical_report(
+        scored_by_species=scored_by_species,
+        primary_species=("arabidopsis", "rice", "tomato"),
+        pressure_species=("magnaporthe",),
+        strict_ci_lower=0.01,
+        species_deltas={"arabidopsis": 0.01, "rice": 0.02, "tomato": 0.03},
+        same_frozen_inputs=True,
+        candidate_literature_macro_aps=[0.5, 0.6],
+        baseline_literature_macro_aps=[0.4, 0.4],
+    )
+
+    assert report["claim_class"] == HOMOLOGY_ROBUST_CLAIM
+    assert report["claim_statement"] == claim_statement_for_class(
+        HOMOLOGY_ROBUST_CLAIM
+    )
+    assert report["gate2_eligible"] is False
+    assert report["literature_track_leads"] is True
+    assert "primary_pooled_average_precision" in report
+    assert report["primary_macro_average_precision"] == pytest.approx(1.0)
 
 
 def test_compute_species_metric_matches_underlying_pu_metrics() -> None:
