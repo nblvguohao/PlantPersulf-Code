@@ -176,3 +176,4 @@
   - 待办：联合签署 → 预注册提交 → git tag + SHA256 全包冻结。
   - 新增 `2026-08-13-model-improvement-register.md`：模型改进杠杆登记册（番茄结构覆盖/ESM/数据扩充等 7 项），**登记不实施**，冻结期内禁止改动；解锁条件 = Gate 3 盲法完成后的新一代模型 + 新预注册。
 - 2026-08-13（Task 7，Gate 6 数据透明骨架）：`scripts/build_nc_data_archive.py` 生成 `results/data_archive/nc_entry_gates/`——注册输入清单（243 文件+SHA256）、实验产物哈希、发布包清单、排除账本（8 项）、阴性结果登记（7 项，永不删除）、pip freeze 环境锁与复现命令索引；全档案文本 `verify_predictive_claims → []`。待办：公共 DOI/仓库链接（随预注册一并提交）。
+- 2026-08-13（投稿稿件骨架，用户决策"先按 Plant Physiology 写"）：`manuscripts/plant_physiology/2026-08-13_pp_manuscript_draft_v1.md` 建立——PP Research Article 格式完整骨架：R1–R5（数据集/文献同口径基准/冻结发布包/盲法前校准/预注册设计）按现有证据写就，R6–R8 为 Gate 3/4 占位块（含两个预写摘要结局变体，成功/不成功各一）；含 4 表 6 图例、方法学、数据可用性与参考骨架。全文通过 `verify_predictive_claims → []` 及第二措辞族（external generalization 等）零命中。填写依赖：联合签署+预注册 DOI → Gate 1 数字 → Gate 3 盲法结果 → Gate 6 公共 DOI。
