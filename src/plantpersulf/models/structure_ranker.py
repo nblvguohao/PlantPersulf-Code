@@ -36,7 +36,9 @@ from __future__ import annotations
 
 import threading
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Literal
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, TYPE_CHECKING, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -205,6 +207,69 @@ def project_structure_inputs(
 class RankerOutput:
     scores: list[float] = field(default_factory=list)
     uncertainty: list[float] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class StructureRankerBundle:
+    """Serialisable, deterministic snapshot of a fitted structure-aware ranker.
+
+    Contains the final network state dict, train-only scalers, study vocab,
+    ablation policy, input dimensions, hyperparameters and seed. Saving/loading
+    is performed with ``torch.save`` / ``torch.load`` so the state dict is
+    preserved exactly; the wrapped metadata is plain and hash-verifiable via the
+    release manifest.
+    """
+
+    net_state_dict: dict[str, Any]
+    scalers: _BranchScalers
+    vocab: dict[str, int]
+    ablation: AblationConfig
+    input_dims: dict[str, int]
+    hyperparameters: dict[str, Any]
+    seed: int
+    timestamp: str = field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
+
+    def save(self, path: Path) -> None:
+        """Persist bundle to ``path`` (atomic via temporary file).
+
+        The nested dataclasses (``scalers``, ``ablation``) are stored as
+        instances — not flattened by ``asdict`` — so ``load`` can rebuild the
+        bundle with ``cls(**raw)``.
+        """
+        import torch
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_suffix(path.suffix + ".tmp")
+        torch.save(
+            {
+                "net_state_dict": self.net_state_dict,
+                "scalers": self.scalers,
+                "vocab": self.vocab,
+                "ablation": self.ablation,
+                "input_dims": self.input_dims,
+                "hyperparameters": self.hyperparameters,
+                "seed": self.seed,
+                "timestamp": self.timestamp,
+            },
+            temporary,
+            pickle_protocol=4,
+        )
+        temporary.replace(path)
+
+    @classmethod
+    def load(cls, path: Path) -> StructureRankerBundle:
+        """Load a previously saved bundle on CPU."""
+        import torch
+
+        try:
+            raw = torch.load(path, map_location="cpu", weights_only=False)
+        except Exception as exc:  # corrupt / truncated / wrong file type
+            raise RuntimeError(f"structure ranker bundle is corrupt: {path}") from exc
+        if not isinstance(raw, dict):
+            raise RuntimeError(f"structure ranker bundle is corrupt: {path}")
+        return cls(**raw)
 
 
 # ---------------------------------------------------------------------------
@@ -508,10 +573,9 @@ def _select_ranker_device(torch_mod: object) -> torch.device:
 # ---------------------------------------------------------------------------
 
 
-def structure_ranker_scores(
+def fit_structure_ranker(
     train: BranchFeatures,
     train_y: list[str],
-    predict: BranchFeatures,
     seed: int,
     ablation: AblationConfig | None = None,
     *,
@@ -523,13 +587,14 @@ def structure_ranker_scores(
     n_mc_dropout: int = 16,
     device_name: str | None = None,
     batch_size: int | None = None,
-) -> RankerOutput:
-    """Fit the gated-fusion PU ranker and score ``predict``.
+) -> StructureRankerBundle:
+    """Fit the gated-fusion PU ranker and return a frozen, serialisable bundle.
 
-    Returns per-row point scores (dropout off) and MC-dropout uncertainties
-    (std over ``n_mc_dropout`` stochastic passes). Deterministic for a fixed
-    seed. Requires >=2 labeled positives (Elkan-Noto needs a held-out positive
-    slice to estimate the label frequency).
+    The bundle holds the final network state dict, train-only scalers, study
+    vocab, ablation policy, input dims, hyperparameters and seed — everything
+    needed to re-score blind rows later with ``score_structure_ranker_bundle``.
+    Deterministic for a fixed seed. Requires >=2 labeled positives (Elkan-Noto
+    needs a held-out positive slice to estimate the label frequency).
     """
     import random
 
@@ -538,7 +603,6 @@ def structure_ranker_scores(
     if ablation is None:
         ablation = AblationConfig()
     _validate(train)
-    _validate(predict)
     if len(train_y) != train.n_rows():
         raise ValueError("train_y must have equal length (n_rows)")
 
@@ -558,9 +622,7 @@ def structure_ranker_scores(
         vocab = _study_vocab(train)
         scalers = _BranchScalers.fit(train, ablation)
         train_s = scalers.apply(train)
-        predict_s = scalers.apply(predict)
         train_t = _to_tensors(train_s, vocab, ablation)
-        predict_t = _to_tensors(predict_s, vocab, ablation)
         s_labels = torch.tensor(
             [1.0 if y == "positive" else 0.0 for y in train_y], dtype=torch.float32
         )
@@ -620,18 +682,101 @@ def structure_ranker_scores(
             net_b, fit_t, fit_s, weight_t, seed, epochs, lr, effective_batch_size
         )
 
-        net_b.eval()
+        # State dict moved to CPU so the bundle is device-portable; scoring
+        # moves it back onto whichever device the caller selects.
+        net_state_dict = {k: v.detach().cpu() for k, v in net_b.state_dict().items()}
+
+        return StructureRankerBundle(
+            net_state_dict=net_state_dict,
+            scalers=scalers,
+            vocab=vocab,
+            ablation=ablation,
+            input_dims={"d_seq": d_seq, "d_esm": d_esm, "d_str": d_str, "d_study": d_study},
+            hyperparameters={
+                "hidden": hidden,
+                "dropout": dropout,
+                "epochs": epochs,
+                "lr": lr,
+                "holdout_fraction": holdout_fraction,
+                "n_mc_dropout": n_mc_dropout,
+            },
+            seed=seed,
+        )
+
+
+def score_structure_ranker_bundle(
+    bundle: StructureRankerBundle,
+    predict: BranchFeatures,
+    *,
+    device_name: str | None = None,
+    batch_size: int | None = None,
+) -> RankerOutput:
+    """Score ``predict`` with a previously fitted bundle (blind-time path).
+
+    Rebuilds the network from the stored dims/hyperparameters, restores the
+    state dict, and reproduces the point scores and MC-dropout uncertainties
+    bit-identically to the fit-time call, using the bundle's stored seed. This
+    is the only scoring entry point allowed after Gate 0 — a fresh fit on blind
+    data is never performed.
+    """
+    import torch
+
+    _validate(predict)
+    if predict.n_rows() == 0:
+        return RankerOutput(scores=[], uncertainty=[])
+
+    dims = bundle.input_dims
+    if (
+        len(predict.sequence[0]) != dims["d_seq"]
+        or len(predict.esm[0]) != dims["d_esm"]
+        or len(predict.structure[0]) != dims["d_str"]
+    ):
+        raise ValueError(
+            "predict feature dims do not match the fitted bundle "
+            f"(expected seq={dims['d_seq']}, esm={dims['d_esm']}, "
+            f"struct={dims['d_str']})"
+        )
+
+    with _TORCH_RNG_LOCK:
+        torch.manual_seed(bundle.seed)
+        torch.use_deterministic_algorithms(True, warn_only=True)
+        device = (
+            torch.device(device_name)
+            if device_name
+            else _select_ranker_device(torch)
+        )
+
+        hp = bundle.hyperparameters
+        net = _build_network(
+            dims["d_seq"],
+            dims["d_esm"],
+            dims["d_str"],
+            dims["d_study"],
+            hp["hidden"],
+            hp["dropout"],
+        )
+        net.load_state_dict(
+            {k: v.to(device) for k, v in bundle.net_state_dict.items()}
+        )
+
+        predict_s = bundle.scalers.apply(predict)
+        predict_t = _to_tensors(predict_s, bundle.vocab, bundle.ablation)
+        effective_batch_size = batch_size or predict.n_rows()
+        if effective_batch_size < 1:
+            raise ValueError("structure ranker batch size must be positive")
+
+        net.eval()
         point_scores = [
             float(x)
-            for x in _forward_scores(net_b, predict_t, effective_batch_size).tolist()
+            for x in _forward_scores(net, predict_t, effective_batch_size).tolist()
         ]
 
         # --- MC-dropout uncertainty (dropout ON), re-seeded for reproducibility ---
-        torch.manual_seed(seed + 1)
-        net_b.train()
+        torch.manual_seed(bundle.seed + 1)
+        net.train()
         samples: list[list[float]] = []
         with torch.no_grad():
-            for _ in range(n_mc_dropout):
+            for _ in range(hp["n_mc_dropout"]):
                 sample: list[float] = []
                 for start in range(0, predict.n_rows(), effective_batch_size):
                     stop = min(start + effective_batch_size, predict.n_rows())
@@ -639,7 +784,7 @@ def structure_ranker_scores(
                         key: value[start:stop].to(device)
                         for key, value in predict_t.items()
                     }
-                    logits = net_b(
+                    logits = net(
                         batch["seq"],
                         batch["esm"],
                         batch["struct"],
@@ -654,6 +799,49 @@ def structure_ranker_scores(
 
         uncertainty = _column_std(samples, len(point_scores))
         return RankerOutput(scores=point_scores, uncertainty=uncertainty)
+
+
+def structure_ranker_scores(
+    train: BranchFeatures,
+    train_y: list[str],
+    predict: BranchFeatures,
+    seed: int,
+    ablation: AblationConfig | None = None,
+    *,
+    hidden: int = 16,
+    dropout: float = 0.2,
+    epochs: int = 200,
+    lr: float = 0.05,
+    holdout_fraction: float = 0.2,
+    n_mc_dropout: int = 16,
+    device_name: str | None = None,
+    batch_size: int | None = None,
+) -> RankerOutput:
+    """Fit the gated-fusion PU ranker and score ``predict`` in one call.
+
+    Thin wrapper over ``fit_structure_ranker`` + ``score_structure_ranker_bundle``
+    kept for the existing production call path
+    (``literature_random_track.run_structure_direct_baseline``). Returns
+    per-row point scores (dropout off) and MC-dropout uncertainties (std over
+    ``n_mc_dropout`` stochastic passes). Deterministic for a fixed seed.
+    """
+    bundle = fit_structure_ranker(
+        train,
+        train_y,
+        seed,
+        ablation,
+        hidden=hidden,
+        dropout=dropout,
+        epochs=epochs,
+        lr=lr,
+        holdout_fraction=holdout_fraction,
+        n_mc_dropout=n_mc_dropout,
+        device_name=device_name,
+        batch_size=batch_size,
+    )
+    return score_structure_ranker_bundle(
+        bundle, predict, device_name=device_name, batch_size=batch_size
+    )
 
 
 def _column_std(samples: list[list[float]], n_cols: int) -> list[float]:
