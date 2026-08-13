@@ -23,3 +23,7 @@ mmseqs/
 
 # Scratch / transient working files (not project artifacts).
 tmp/
+*.aux
+*.log
+*.out
+*.synctex.gz
