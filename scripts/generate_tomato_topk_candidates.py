@@ -113,6 +113,18 @@ def build_argument_parser() -> argparse.ArgumentParser:
         default=Path("results/candidates/multispecies_v2_candidate_release_v1"),
     )
     parser.add_argument(
+        "--species",
+        choices=("tomato", "arabidopsis", "rice"),
+        default="tomato",
+        help="scan species; non-tomato runs are diagnostics (output to --output-dir)",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=None,
+        help="default: release dir for tomato; results/diagnostics/candidates_<species> otherwise",
+    )
+    parser.add_argument(
         "--device", type=str, default=None, help="default CPU; PLANTPERSULF_DEVICE honored"
     )
     parser.add_argument("--batch-size", type=int, default=16384)
@@ -170,35 +182,38 @@ def main(argv: list[str] | None = None) -> None:
             f"{panel_sha256} != {pinned_panel_sha256}"
         )
     print(f"release training panel verified: {len(panel_rows)} rows, sha256={panel_sha256}")
-    tomato_panel_keys = {
+    species_panel_keys = {
         (row.global_protein_id, row.cys_position)
         for row in panel_rows
-        if row.species == "tomato"
+        if row.species == args.species
     }
-    print(f"tomato panel sites excluded from candidates: {len(tomato_panel_keys)}")
-
-    # --- tomato proteome + all Cys sites --------------------------------------
-    tomato_ref = next(
-        item for item in cfg["reference_proteomes"] if item["species"] == "tomato"
+    print(
+        f"{args.species} panel sites excluded from candidates: "
+        f"{len(species_panel_keys)}"
     )
-    tomato_path = Path(str(tomato_ref["path"]))
-    if _sha256_bytes(tomato_path) != tomato_ref["sha256"]:
-        raise RuntimeError("tomato reference proteome SHA256 mismatch")
-    proteome = _load_proteome(tomato_path)
+
+    # --- species proteome + all Cys sites --------------------------------------
+    species_ref = next(
+        item for item in cfg["reference_proteomes"] if item["species"] == args.species
+    )
+    species_path = Path(str(species_ref["path"]))
+    if _sha256_bytes(species_path) != species_ref["sha256"]:
+        raise RuntimeError(f"{args.species} reference proteome SHA256 mismatch")
+    proteome = _load_proteome(species_path)
     scan_rows: list[MultispeciesV2SiteRow] = []
     for accession, sequence in sorted(proteome.items()):
-        global_id = f"tomato|{accession}"
+        global_id = f"{args.species}|{accession}"
         if not sequence:
             continue
         for position, residue in enumerate(sequence, start=1):
             if residue != "C":
                 continue
             key = (global_id, position)
-            if key in tomato_panel_keys:
+            if key in species_panel_keys:
                 continue
             scan_rows.append(
                 MultispeciesV2SiteRow(
-                    species="tomato",
+                    species=args.species,
                     protein_accession=accession,
                     cys_position=position,
                     label="unlabeled",
@@ -209,12 +224,12 @@ def main(argv: list[str] | None = None) -> None:
                     development_fold=None,
                 )
             )
-    print(f"tomato scan sites (panel-excluded): {len(scan_rows)}")
+    print(f"{args.species} scan sites (panel-excluded): {len(scan_rows)}")
     if not scan_rows:
-        raise RuntimeError("tomato scan produced no candidate sites")
+        raise RuntimeError(f"{args.species} scan produced no candidate sites")
 
     # --- features -------------------------------------------------------------
-    raw_features = sequence_feature_map(scan_rows, {"tomato": proteome})
+    raw_features = sequence_feature_map(scan_rows, {args.species: proteome})
     if any(any(value is None for value in values) for values in raw_features.values()):
         raise RuntimeError("sequence comparison features contain missing values")
     sequence_features = {
@@ -267,7 +282,15 @@ def main(argv: list[str] | None = None) -> None:
     )
 
     # --- outputs --------------------------------------------------------------
-    candidates_path = release_dir / "top_k_candidates.tsv"
+    if args.species == "tomato" and args.output_dir is None:
+        output_dir = release_dir  # frozen package artifact (unchanged behaviour)
+    else:
+        output_dir = args.output_dir or (
+            _REPO_ROOT / "results" / "diagnostics" / f"candidates_{args.species}"
+        )
+    output_dir.mkdir(parents=True, exist_ok=True)
+    print(f"output directory: {output_dir}")
+    candidates_path = output_dir / "top_k_candidates.tsv"
     with candidates_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(
             handle,
@@ -315,7 +338,7 @@ def main(argv: list[str] | None = None) -> None:
                 continue
             pairs.append((key, control, distance))
             used_controls.add(control)
-    controls_path = release_dir / "matched_controls.tsv"
+    controls_path = output_dir / "matched_controls.tsv"
     with controls_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(
             handle,
@@ -344,19 +367,21 @@ def main(argv: list[str] | None = None) -> None:
 
     generation_manifest = {
         "release_id": RELEASE_ID,
+        "species": args.species,
         "artifact": {
             "candidates": "top_k_candidates.tsv",
             "candidates_sha256": _sha256_bytes(candidates_path),
             "matched_controls": "matched_controls.tsv",
             "matched_controls_sha256": _sha256_bytes(controls_path),
         },
-        "tomato_reference_proteome": {
-            "path": tomato_ref["path"],
-            "sha256": tomato_ref["sha256"],
+        "reference_proteome": {
+            "species": args.species,
+            "path": species_ref["path"],
+            "sha256": species_ref["sha256"],
         },
         "training_panel": {
             "n_rows": len(panel_rows),
-            "tomato_sites_excluded": len(tomato_panel_keys),
+            f"{args.species}_sites_excluded": len(species_panel_keys),
             "sha256": panel_sha256,
         },
         "scan": {
@@ -384,7 +409,7 @@ def main(argv: list[str] | None = None) -> None:
         },
         "created": datetime.now(timezone.utc).isoformat(),
     }
-    generation_path = release_dir / "top_k_generation_manifest.json"
+    generation_path = output_dir / "top_k_generation_manifest.json"
     generation_path.write_text(
         json.dumps(generation_manifest, indent=2) + "\n", encoding="utf-8"
     )
