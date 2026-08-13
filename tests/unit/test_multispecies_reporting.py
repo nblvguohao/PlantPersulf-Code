@@ -5,6 +5,8 @@ from __future__ import annotations
 from plantpersulf.evaluation.multispecies_reporting import (
     SpeciesMetric,
     claim_class_for_multispecies_result,
+    compute_species_metric,
+    pooled_average_precision,
     summarize_species_metrics,
 )
 
@@ -38,3 +40,35 @@ def test_claim_requires_strict_track_ci_and_all_three_positive_deltas() -> None:
         species_deltas={"arabidopsis": 0.01, "rice": 0.02, "tomato": 0.03},
         same_frozen_inputs=True,
     ) == "literature_comparable_within_dataset_improvement_only"
+
+
+def test_compute_species_metric_matches_underlying_pu_metrics() -> None:
+    """The frozen-test report must derive Recall@K/MRR from the same
+    PU-appropriate metric functions used everywhere else, not reimplement
+    them ad hoc."""
+    scored = [
+        (0.9, "positive"),
+        (0.8, "unlabeled"),
+        (0.7, "positive"),
+        (0.1, "unlabeled"),
+    ]
+
+    metric = compute_species_metric(scored, "arabidopsis")
+
+    assert metric.species == "arabidopsis"
+    assert metric.base_rate == 0.5
+    assert metric.recall_at_50 == 1.0
+    assert metric.mean_reciprocal_rank == 1.0
+
+
+def test_pooled_average_precision_differs_from_macro_average() -> None:
+    """Pooling ranks across species is not the same statistic as macro-
+    averaging their independent APs; the report must expose both."""
+    scored_by_species = {
+        "arabidopsis": [(0.9, "positive"), (0.1, "unlabeled")],
+        "rice": [(0.2, "positive")] + [(0.8, "unlabeled")] * 9,
+    }
+
+    pooled = pooled_average_precision(scored_by_species, ("arabidopsis", "rice"))
+
+    assert 0.0 < pooled < 1.0
