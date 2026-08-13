@@ -175,3 +175,4 @@
   - 措辞纪律：发布包全部文本 `verify_predictive_claims → []`。
   - 待办：联合签署 → 预注册提交 → git tag + SHA256 全包冻结。
   - 新增 `2026-08-13-model-improvement-register.md`：模型改进杠杆登记册（番茄结构覆盖/ESM/数据扩充等 7 项），**登记不实施**，冻结期内禁止改动；解锁条件 = Gate 3 盲法完成后的新一代模型 + 新预注册。
+- 2026-08-13（Task 7，Gate 6 数据透明骨架）：`scripts/build_nc_data_archive.py` 生成 `results/data_archive/nc_entry_gates/`——注册输入清单（243 文件+SHA256）、实验产物哈希、发布包清单、排除账本（8 项）、阴性结果登记（7 项，永不删除）、pip freeze 环境锁与复现命令索引；全档案文本 `verify_predictive_claims → []`。待办：公共 DOI/仓库链接（随预注册一并提交）。
