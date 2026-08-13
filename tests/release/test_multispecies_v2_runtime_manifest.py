@@ -9,12 +9,16 @@ from pathlib import Path
 import pytest
 
 from plantpersulf.workflows.multispecies_v2 import (
+    FROZEN_TEST_MODELS,
+    FROZEN_TEST_SEED,
+    FROZEN_TEST_TRACK,
     TaskFingerprint,
     TrainingEvent,
     append_training_event,
     audit_v2_run_manifest,
     collect_runtime_environment,
     write_run_manifest,
+    write_task_checkpoint,
 )
 
 
@@ -270,6 +274,90 @@ def test_release_manifest_derives_strict_roster_from_configuration(
         checkpoint_paths={"fold0": checkpoint},
         task_roster=(roster,),
     )
+
+    with pytest.raises(RuntimeError, match="configured task roster"):
+        audit_v2_run_manifest(manifest_path)
+
+
+def _frozen_test_fingerprint(config_sha256: str, model: str) -> TaskFingerprint:
+    return TaskFingerprint(
+        track=FROZEN_TEST_TRACK,
+        fold=0,
+        seed=FROZEN_TEST_SEED,
+        model=model,
+        input_sha256={"development_sites": "c" * 64},
+        config_sha256=config_sha256,
+        code_revision="commit-marker",
+        code_sha256="d" * 64,
+    )
+
+
+def _write_frozen_test_manifest(
+    tmp_path: Path, roster: list[TaskFingerprint]
+) -> Path:
+    config = _config(tmp_path)
+    config_sha = hashlib.sha256(config.read_bytes()).hexdigest()
+    log = tmp_path / "training.jsonl"
+    artifacts: dict[str, Path] = {"training_log": log}
+    checkpoint_paths: dict[str, Path] = {}
+    for fingerprint in roster:
+        append_training_event(
+            log,
+            TrainingEvent(
+                timestamp="2026-08-13T00:00:00+00:00",
+                track=FROZEN_TEST_TRACK,
+                fold=0,
+                seed=FROZEN_TEST_SEED,
+                model=fingerprint.model,
+                epoch=0,
+                loss=None,
+                val_ap=None,
+                lr=None,
+                device="cpu",
+                gpu_memory=None,
+                wall_seconds=1.0,
+            ),
+        )
+        checkpoint = tmp_path / f"{fingerprint.model}.checkpoint.json"
+        write_task_checkpoint(checkpoint, fingerprint, {"arm": fingerprint.model})
+        checkpoint_paths[fingerprint.model] = checkpoint
+    manifest_path = tmp_path / "manifest.json"
+    write_run_manifest(
+        manifest_path,
+        config_sha256=config_sha,
+        config_path=config,
+        split_sha256="b" * 64,
+        code_revision="commit-marker",
+        code_sha256="d" * 64,
+        input_sha256={"development_sites": "c" * 64},
+        command=["python", "script.py", "--score-test"],
+        device="cpu",
+        environment=collect_runtime_environment(),
+        artifacts=artifacts,
+        checkpoint_paths=checkpoint_paths,
+        task_roster=tuple(roster),
+    )
+    return manifest_path
+
+
+def test_frozen_test_roster_passes_with_both_frozen_arms(tmp_path: Path) -> None:
+    """The one-shot frozen-test track is audited against its pinned roster."""
+    config = _config(tmp_path)
+    config_sha = hashlib.sha256(config.read_bytes()).hexdigest()
+    roster = [
+        _frozen_test_fingerprint(config_sha, model) for model in FROZEN_TEST_MODELS
+    ]
+    manifest_path = _write_frozen_test_manifest(tmp_path, roster)
+
+    audit_v2_run_manifest(manifest_path)
+
+
+def test_frozen_test_roster_rejects_missing_baseline_arm(tmp_path: Path) -> None:
+    """Dropping the baseline arm from the one-shot roster must fail the audit."""
+    config = _config(tmp_path)
+    config_sha = hashlib.sha256(config.read_bytes()).hexdigest()
+    roster = [_frozen_test_fingerprint(config_sha, "structure_ranker")]
+    manifest_path = _write_frozen_test_manifest(tmp_path, roster)
 
     with pytest.raises(RuntimeError, match="configured task roster"):
         audit_v2_run_manifest(manifest_path)

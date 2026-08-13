@@ -41,6 +41,8 @@ import csv
 import hashlib
 import json
 import sys
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -77,12 +79,18 @@ from plantpersulf.proteomics.multispecies_v2_sources import (  # noqa: E402
     sequence_feature_map,
 )
 from plantpersulf.workflows.multispecies_v2 import (  # noqa: E402
+    FROZEN_TEST_MODELS,
+    FROZEN_TEST_SEED,
+    FROZEN_TEST_TRACK,
+    TrainingEvent,
+    append_training_event,
     audit_v2_run_manifest,
     build_task_fingerprint,
     collect_runtime_environment,
     fit_v2_development_pipeline,
     run_multispecies_experiment,
     write_run_manifest,
+    write_task_checkpoint,
 )
 from scripts.train_multispecies_v2 import (  # noqa: E402
     _code_revision,
@@ -94,7 +102,6 @@ from scripts.train_multispecies_v2 import (  # noqa: E402
 
 PRIMARY_SPECIES = ("arabidopsis", "rice", "tomato")
 PRESSURE_SPECIES = ("magnaporthe",)
-FROZEN_TEST_SEED = 20260813  # freeze-day convention, never performance-selected
 BASELINE_HOLDOUT = 0.1  # modal selection of the 5 strict development folds
 
 DEFAULT_OUTPUT_DIR = (
@@ -307,6 +314,7 @@ def main(argv: list[str] | None = None) -> None:
         f"model arm: fit structure_ranker on {len(dev_keys)} dev rows "
         f"(seed={FROZEN_TEST_SEED}, device={device})"
     )
+    model_start = time.monotonic()
     bundle = fit_structure_ranker(
         _branch_features(dev_rows, sequence_features, structure_features, dev_keys),
         [row.label for row in dev_rows],
@@ -328,12 +336,14 @@ def main(argv: list[str] | None = None) -> None:
         batch_size=args.batch_size,
     )
     model_scores = dict(zip(test_keys, model_output.scores, strict=True))
+    model_wall = time.monotonic() - model_start
 
     # --- baseline arm: pu_logistic on the same dev rows ----------------------
     print(
         f"baseline arm: pu_logistic (holdout={BASELINE_HOLDOUT}, "
         "modal dev-fold choice)"
     )
+    baseline_start = time.monotonic()
     pipeline = fit_v2_development_pipeline(dev_rows, sequence_features)
     baseline_scores_list = pu_logistic_regression_scores(
         pipeline.transform(dev_rows, sequence_features),
@@ -343,6 +353,7 @@ def main(argv: list[str] | None = None) -> None:
         holdout_fraction=BASELINE_HOLDOUT,
     )
     baseline_scores = dict(zip(test_keys, baseline_scores_list, strict=True))
+    baseline_wall = time.monotonic() - baseline_start
 
     # --- statistics (frozen Task 9.6 policy) ----------------------------------
     def scored_by_species(scores: dict[tuple[str, int], float]) -> dict[str, list]:
@@ -495,16 +506,57 @@ def main(argv: list[str] | None = None) -> None:
     input_paths["evidence_config"] = args.evidence_config
     input_paths["literature_summary"] = summary_path
     dirty_paths = _dirty_paths()
-    fingerprint = build_task_fingerprint(
-        track="strict_cluster_holdout_frozen_test",
-        fold=0,
-        seed=FROZEN_TEST_SEED,
-        model="structure_ranker",
-        input_paths=input_paths,
-        config_path=args.config,
-        code_revision=code_revision,
-        dirty_paths=_dirty_code_paths(dirty_paths),
-    )
+
+    # one fingerprint + checkpoint + training event per arm (the audit requires
+    # exact roster/log/checkpoint coverage)
+    arm_walls = {"structure_ranker": model_wall, "pu_logistic": baseline_wall}
+    fingerprints = {}
+    checkpoints = {}
+    checkpoint_dir = args.output_dir / "checkpoints"
+    log_path = args.output_dir / "training.jsonl"
+    if log_path.is_file():
+        log_path.write_text("", encoding="utf-8")
+    for model in FROZEN_TEST_MODELS:
+        fingerprint = build_task_fingerprint(
+            track=FROZEN_TEST_TRACK,
+            fold=0,
+            seed=FROZEN_TEST_SEED,
+            model=model,
+            input_paths=input_paths,
+            config_path=args.config,
+            code_revision=code_revision,
+            dirty_paths=_dirty_code_paths(dirty_paths),
+        )
+        fingerprints[model] = fingerprint
+        checkpoint_path = checkpoint_dir / f"{model}.checkpoint.json"
+        write_task_checkpoint(
+            checkpoint_path,
+            fingerprint,
+            {
+                "arm": model,
+                "n_dev_rows": len(dev_rows),
+                "n_test_rows": len(test_rows),
+            },
+        )
+        checkpoints[model] = checkpoint_path
+        append_training_event(
+            log_path,
+            TrainingEvent(
+                timestamp=datetime.now(timezone.utc).isoformat(),
+                track=FROZEN_TEST_TRACK,
+                fold=0,
+                seed=FROZEN_TEST_SEED,
+                model=model,
+                epoch=0,
+                loss=None,
+                val_ap=None,
+                lr=None,
+                device=device,
+                gpu_memory=None,
+                wall_seconds=arm_walls[model],
+            ),
+        )
+    first_fingerprint = fingerprints[FROZEN_TEST_MODELS[0]]
     manifest_path = args.output_dir / "manifest.json"
     write_run_manifest(
         manifest_path,
@@ -512,18 +564,23 @@ def main(argv: list[str] | None = None) -> None:
         config_path=args.config,
         split_sha256=frozen.sha256,
         code_revision=code_revision,
-        code_sha256=fingerprint.code_sha256,
-        input_sha256=fingerprint.input_sha256,
+        code_sha256=first_fingerprint.code_sha256,
+        input_sha256=first_fingerprint.input_sha256,
         command=[sys.executable, *sys.argv],
         device=device,
         environment=collect_runtime_environment(),
         artifacts={
+            "training_log": log_path,
             "statistical_report": report_path,
             "scores_model": args.output_dir / "scores_model.tsv",
             "scores_baseline": args.output_dir / "scores_baseline.tsv",
             "unlock_record": unlock_copy,
         },
-        task_roster=(fingerprint,),
+        checkpoint_paths={
+            "model_arm": checkpoints["structure_ranker"],
+            "baseline_arm": checkpoints["pu_logistic"],
+        },
+        task_roster=tuple(fingerprints[model] for model in FROZEN_TEST_MODELS),
         dirty=bool(dirty_paths),
         dirty_paths=dirty_paths,
     )

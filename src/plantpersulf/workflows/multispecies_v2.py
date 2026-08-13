@@ -993,6 +993,15 @@ def _is_registered_comparison_input(path: Path) -> bool:
     return False
 
 
+# Gate 1 one-shot frozen-test scoring track. Unlike the training tracks, the
+# frozen test is a single administrative event, so its expected roster is
+# pinned here rather than derived from the experiment config: exactly the two
+# frozen arms (model + baseline), fold 0, freeze-day seed 20260813.
+FROZEN_TEST_TRACK = "strict_cluster_holdout_frozen_test"
+FROZEN_TEST_SEED = 20260813
+FROZEN_TEST_MODELS = ("structure_ranker", "pu_logistic")
+
+
 def _audit_configured_task_roster(
     manifest: dict[str, object], roster: tuple[TaskFingerprint, ...]
 ) -> None:
@@ -1052,6 +1061,11 @@ def _audit_configured_task_roster(
             ("literature_random_protein", 0, seed, model)
             for seed in seeds
             for model in configured_models
+        )
+    if FROZEN_TEST_TRACK in tracks:
+        expected.update(
+            (FROZEN_TEST_TRACK, 0, FROZEN_TEST_SEED, model)
+            for model in FROZEN_TEST_MODELS
         )
     observed = {(item.track, item.fold, item.seed, item.model) for item in roster}
     if observed != expected:
