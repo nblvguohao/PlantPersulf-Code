@@ -31,6 +31,7 @@ from plantpersulf.benchmark.multispecies_splits import (
 )
 from plantpersulf.models.traditional import pu_logistic_regression_scores
 from plantpersulf.proteomics.multispecies_v2_dataset import MultispeciesV2SiteRow
+from plantpersulf.provenance.audit import assert_registered_input
 
 
 def _sha256_file(path: Path) -> str:
@@ -261,6 +262,10 @@ def run_task_group(
     """Run independent tasks concurrently and preserve their declared order."""
     if max_parallel_tasks < 1:
         raise ValueError("max_parallel_tasks must be positive")
+    if gpu_map and max_parallel_tasks > len(gpu_map):
+        raise ValueError(
+            "max_parallel_tasks must not exceed the number of configured GPUs"
+        )
     assignments = [
         (task, assign_task_device(index, gpu_map, default_device))
         for index, task in enumerate(tasks)
@@ -967,6 +972,27 @@ def audit_v2_run_manifest(path: Path) -> dict[str, object]:
     return manifest
 
 
+_COMPARISON_INPUT_REGISTRIES = (
+    Path("data/registry/cross_crop_target_label_free_inputs_v1.tsv"),
+    Path("data/registry/supplementary_sources.tsv"),
+    Path("data/registry/model_inputs.tsv"),
+)
+
+
+def _is_registered_comparison_input(path: Path) -> bool:
+    """Mirror the runtime's registered-input gate so the audit reflects the
+    same ready/blocked decision the run itself made, not config presence."""
+    if not path.is_file():
+        return False
+    for registry in _COMPARISON_INPUT_REGISTRIES:
+        try:
+            assert_registered_input(path, registry)
+            return True
+        except RuntimeError:
+            continue
+    return False
+
+
 def _audit_configured_task_roster(
     manifest: dict[str, object], roster: tuple[TaskFingerprint, ...]
 ) -> None:
@@ -1018,7 +1044,10 @@ def _audit_configured_task_roster(
         ):
             raise RuntimeError("runtime literature task configuration is invalid")
         configured_models = list(models)
-        if comparison_inputs.get("sul_environment_manifest"):
+        sul_manifest_value = comparison_inputs.get("sul_environment_manifest")
+        if sul_manifest_value and _is_registered_comparison_input(
+            Path(str(sul_manifest_value))
+        ):
             configured_models.append("sul_bertgru")
         expected.update(
             ("literature_random_protein", 0, seed, model)

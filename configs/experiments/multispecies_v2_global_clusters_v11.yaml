@@ -13,7 +13,7 @@ literature_random_protein: {test_fraction: 0.2, validation_fraction_of_remaining
 unlabeled_panel: {per_positive: 20, seed: 12345}
 data_isolation: {split_before_unlabeled_sampling: true, development_fit_scope: training_fold_only, panther_role: unlabelled_evolutionary_feature_only}
 evaluation: {model_seeds: [0, 1, 2, 3, 4], primary_metric: macro_species_average_precision, bootstrap_replicates: 10000, bootstrap_seed: 20260811, full_proteome_audit_after_selection: true}
-compute: {device: cuda:0, score_batch_size: 16384, max_parallel_tasks: 2, gpu_map: [cuda:0], sul_timeout_seconds: 21600}
+compute: {device: cuda:0, score_batch_size: 16384, max_parallel_tasks: 1, gpu_map: [cuda:0], sul_timeout_seconds: 21600}
 models: [pu_logistic, random_forest, xgboost, esm_linear_head, structure_ranker]
 comparison_inputs:
   esm_features: data/processed/features/multispecies_v2_esm2_t33_windows_v1/manifest.json

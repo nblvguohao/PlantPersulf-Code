@@ -86,13 +86,28 @@ def _code_revision() -> str:
     return completed.stdout.strip()
 
 
+def _resolve_device(raw_device: str) -> str:
+    """Resolve a configured device policy to a concrete cpu/cuda string."""
+    if raw_device != "auto":
+        return raw_device
+    import torch
+
+    return "cuda" if torch.cuda.is_available() else "cpu"
+
+
 def _dirty_paths() -> tuple[str, ...]:
     completed = subprocess.run(
         ["git", "status", "--porcelain"], check=True, capture_output=True, text=True
     )
-    return tuple(
-        sorted(line[3:] for line in completed.stdout.splitlines() if len(line) >= 4)
-    )
+    paths: list[str] = []
+    for line in completed.stdout.splitlines():
+        if len(line) < 4:
+            continue
+        entry = line[3:]
+        if " -> " in entry:
+            entry = entry.split(" -> ", 1)[1]
+        paths.append(entry)
+    return tuple(sorted(paths))
 
 
 def _dirty_code_paths(dirty_paths: tuple[str, ...]) -> tuple[Path, ...]:
@@ -277,7 +292,9 @@ def main(argv: list[str] | None = None) -> None:
         output_directory = Path(str(output_cfg["directory"]))
         log_path = output_directory / str(output_cfg["jsonl_log"])
         checkpoint_directory = output_directory / "checkpoints"
-        default_device = str(compute_cfg["device"])
+        if log_path.is_file():
+            log_path.write_text("", encoding="utf-8")
+        default_device = _resolve_device(str(compute_cfg["device"]))
         raw_gpu_map = compute_cfg.get("gpu_map", [])
         if not isinstance(raw_gpu_map, list) or not all(
             isinstance(value, str) for value in raw_gpu_map
@@ -323,10 +340,16 @@ def main(argv: list[str] | None = None) -> None:
                     "frozen split requires reviewer remediation"
                 )
             start = time.monotonic()
-            if args.resume:
+            if args.resume and checkpoint_path.is_file():
                 state = load_resumable_checkpoint(checkpoint_path, fingerprint)
                 selected_holdout = float(state["pu_holdout"])
                 validation_ap = float(state["validation_ap"])
+                event_dict = state.get("training_event")
+                event = (
+                    TrainingEvent(**event_dict)
+                    if isinstance(event_dict, dict)
+                    else None
+                )
             else:
                 selected_holdout = select_v2_development_hyperparameters(
                     prepared_fold.fit_rows,
@@ -343,15 +366,6 @@ def main(argv: list[str] | None = None) -> None:
                     holdout_fraction=selected_holdout,
                 )
                 validation_ap = result.validation_ap
-                write_task_checkpoint(
-                    checkpoint_path,
-                    fingerprint,
-                    {
-                        "pu_holdout": selected_holdout,
-                        "validation_ap": validation_ap,
-                    },
-                )
-            if not args.resume:
                 event = TrainingEvent(
                     timestamp=datetime.now(timezone.utc).isoformat(),
                     track=fingerprint.track,
@@ -366,8 +380,15 @@ def main(argv: list[str] | None = None) -> None:
                     gpu_memory=None,
                     wall_seconds=time.monotonic() - start,
                 )
-            else:
-                event = None
+                write_task_checkpoint(
+                    checkpoint_path,
+                    fingerprint,
+                    {
+                        "pu_holdout": selected_holdout,
+                        "validation_ap": validation_ap,
+                        "training_event": asdict(event),
+                    },
+                )
             return {
                 "fingerprint": fingerprint,
                 "checkpoint_path": checkpoint_path,
@@ -600,7 +621,7 @@ def main(argv: list[str] | None = None) -> None:
             compute_cfg = cfg.get("compute")
             if not isinstance(compute_cfg, dict):
                 raise RuntimeError("compute configuration is required")
-            default_device = str(compute_cfg.get("device", "cpu"))
+            default_device = _resolve_device(str(compute_cfg.get("device", "cpu")))
             raw_gpu_map = compute_cfg.get("gpu_map", [])
             if not isinstance(raw_gpu_map, list) or not all(
                 isinstance(device, str) for device in raw_gpu_map

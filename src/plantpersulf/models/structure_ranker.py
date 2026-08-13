@@ -34,6 +34,7 @@ bit-identical scores and uncertainties.
 
 from __future__ import annotations
 
+import threading
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Literal
 
@@ -42,6 +43,11 @@ from numpy.typing import NDArray
 
 from plantpersulf.models.pu_risk import estimate_label_frequency, pu_example_weights
 from plantpersulf.models.traditional import TrainOnlyScaler
+
+# torch's RNG (manual_seed, dropout sampling) is process-global; concurrent
+# callers (e.g. multispecies_v2 task-group threads) would otherwise race on
+# it and break the bit-identical reproducibility this module promises.
+_TORCH_RNG_LOCK = threading.Lock()
 
 if TYPE_CHECKING:
     import torch
@@ -540,104 +546,114 @@ def structure_ranker_scores(
     if len(positive_idx) < 2:
         raise ValueError("ranker requires at least 2 labeled positives")
 
-    torch.manual_seed(seed)
-    torch.use_deterministic_algorithms(True, warn_only=True)
-    device = torch.device(device_name) if device_name else _select_ranker_device(torch)
+    with _TORCH_RNG_LOCK:
+        torch.manual_seed(seed)
+        torch.use_deterministic_algorithms(True, warn_only=True)
+        device = (
+            torch.device(device_name)
+            if device_name
+            else _select_ranker_device(torch)
+        )
 
-    vocab = _study_vocab(train)
-    scalers = _BranchScalers.fit(train, ablation)
-    train_s = scalers.apply(train)
-    predict_s = scalers.apply(predict)
-    train_t = _to_tensors(train_s, vocab, ablation)
-    predict_t = _to_tensors(predict_s, vocab, ablation)
-    s_labels = torch.tensor(
-        [1.0 if y == "positive" else 0.0 for y in train_y], dtype=torch.float32
-    )
-    effective_batch_size = batch_size or train.n_rows()
-    if effective_batch_size < 1:
-        raise ValueError("structure ranker batch size must be positive")
+        vocab = _study_vocab(train)
+        scalers = _BranchScalers.fit(train, ablation)
+        train_s = scalers.apply(train)
+        predict_s = scalers.apply(predict)
+        train_t = _to_tensors(train_s, vocab, ablation)
+        predict_t = _to_tensors(predict_s, vocab, ablation)
+        s_labels = torch.tensor(
+            [1.0 if y == "positive" else 0.0 for y in train_y], dtype=torch.float32
+        )
+        effective_batch_size = batch_size or train.n_rows()
+        if effective_batch_size < 1:
+            raise ValueError("structure ranker batch size must be positive")
 
-    d_seq = len(train.sequence[0])
-    d_esm = len(train.esm[0])
-    d_str = len(train.structure[0])
-    d_study = len(vocab)
+        d_seq = len(train.sequence[0])
+        d_esm = len(train.esm[0])
+        d_str = len(train.structure[0])
+        d_study = len(vocab)
 
-    # --- Elkan-Noto held-out slice of positives (only used to estimate c) ---
-    rng = random.Random(seed)
-    shuffled_pos = positive_idx[:]
-    rng.shuffle(shuffled_pos)
-    n_holdout = max(1, int(len(shuffled_pos) * holdout_fraction))
-    holdout = set(shuffled_pos[:n_holdout])
-    fit_idx = [i for i in range(train.n_rows()) if i not in holdout]
+        # --- Elkan-Noto held-out slice of positives (only used to estimate c) ---
+        rng = random.Random(seed)
+        shuffled_pos = positive_idx[:]
+        rng.shuffle(shuffled_pos)
+        n_holdout = max(1, int(len(shuffled_pos) * holdout_fraction))
+        holdout = set(shuffled_pos[:n_holdout])
+        fit_idx = [i for i in range(train.n_rows()) if i not in holdout]
 
-    def _subset(t: dict[str, torch.Tensor], idx: list[int]) -> dict[str, torch.Tensor]:
-        sel = torch.tensor(idx, dtype=torch.long)
-        return {k: v.index_select(0, sel) for k, v in t.items()}
+        def _subset(
+            t: dict[str, torch.Tensor], idx: list[int]
+        ) -> dict[str, torch.Tensor]:
+            sel = torch.tensor(idx, dtype=torch.long)
+            return {k: v.index_select(0, sel) for k, v in t.items()}
 
-    fit_t = _subset(train_t, fit_idx)
-    fit_s = s_labels.index_select(0, torch.tensor(fit_idx, dtype=torch.long))
-    unit_w = torch.ones_like(fit_s)
+        fit_t = _subset(train_t, fit_idx)
+        fit_s = s_labels.index_select(0, torch.tensor(fit_idx, dtype=torch.long))
+        unit_w = torch.ones_like(fit_s)
 
-    # --- Pass A: non-traditional classifier (positive vs unlabeled) ---
-    net_a = _build_network(d_seq, d_esm, d_str, d_study, hidden, dropout).to(device)
-    _train_network(net_a, fit_t, fit_s, unit_w, seed, epochs, lr, effective_batch_size)
+        # --- Pass A: non-traditional classifier (positive vs unlabeled) ---
+        net_a = _build_network(d_seq, d_esm, d_str, d_study, hidden, dropout).to(device)
+        _train_network(
+            net_a, fit_t, fit_s, unit_w, seed, epochs, lr, effective_batch_size
+        )
 
-    holdout_idx = sorted(holdout)
-    holdout_t = _subset(train_t, holdout_idx)
-    net_a.eval()
-    holdout_scores = [
-        float(x)
-        for x in _forward_scores(net_a, holdout_t, effective_batch_size).tolist()
-    ]
-    c = estimate_label_frequency(holdout_scores)
+        holdout_idx = sorted(holdout)
+        holdout_t = _subset(train_t, holdout_idx)
+        net_a.eval()
+        holdout_scores = [
+            float(x)
+            for x in _forward_scores(net_a, holdout_t, effective_batch_size).tolist()
+        ]
+        c = estimate_label_frequency(holdout_scores)
 
-    fit_scores = [
-        float(x) for x in _forward_scores(net_a, fit_t, effective_batch_size).tolist()
-    ]
-    is_labeled_positive = [train_y[i] == "positive" for i in fit_idx]
-    weights = pu_example_weights(fit_scores, is_labeled_positive, c)
-    weight_t = torch.tensor(weights, dtype=torch.float32)
+        fit_scores = [
+            float(x)
+            for x in _forward_scores(net_a, fit_t, effective_batch_size).tolist()
+        ]
+        is_labeled_positive = [train_y[i] == "positive" for i in fit_idx]
+        weights = pu_example_weights(fit_scores, is_labeled_positive, c)
+        weight_t = torch.tensor(weights, dtype=torch.float32)
 
-    # --- Pass B: reweighted refit -> final model ---
-    net_b = _build_network(d_seq, d_esm, d_str, d_study, hidden, dropout).to(device)
-    _train_network(
-        net_b, fit_t, fit_s, weight_t, seed, epochs, lr, effective_batch_size
-    )
+        # --- Pass B: reweighted refit -> final model ---
+        net_b = _build_network(d_seq, d_esm, d_str, d_study, hidden, dropout).to(device)
+        _train_network(
+            net_b, fit_t, fit_s, weight_t, seed, epochs, lr, effective_batch_size
+        )
 
-    net_b.eval()
-    point_scores = [
-        float(x)
-        for x in _forward_scores(net_b, predict_t, effective_batch_size).tolist()
-    ]
+        net_b.eval()
+        point_scores = [
+            float(x)
+            for x in _forward_scores(net_b, predict_t, effective_batch_size).tolist()
+        ]
 
-    # --- MC-dropout uncertainty (dropout ON), re-seeded for reproducibility ---
-    torch.manual_seed(seed + 1)
-    net_b.train()
-    samples: list[list[float]] = []
-    with torch.no_grad():
-        for _ in range(n_mc_dropout):
-            sample: list[float] = []
-            for start in range(0, predict.n_rows(), effective_batch_size):
-                stop = min(start + effective_batch_size, predict.n_rows())
-                batch = {
-                    key: value[start:stop].to(device)
-                    for key, value in predict_t.items()
-                }
-                logits = net_b(
-                    batch["seq"],
-                    batch["esm"],
-                    batch["struct"],
-                    batch["struct_active"],
-                    batch["study"],
-                    batch["study_active"],
-                )
-                sample.extend(
-                    float(x) for x in torch.sigmoid(logits).to("cpu").tolist()
-                )
-            samples.append(sample)
+        # --- MC-dropout uncertainty (dropout ON), re-seeded for reproducibility ---
+        torch.manual_seed(seed + 1)
+        net_b.train()
+        samples: list[list[float]] = []
+        with torch.no_grad():
+            for _ in range(n_mc_dropout):
+                sample: list[float] = []
+                for start in range(0, predict.n_rows(), effective_batch_size):
+                    stop = min(start + effective_batch_size, predict.n_rows())
+                    batch = {
+                        key: value[start:stop].to(device)
+                        for key, value in predict_t.items()
+                    }
+                    logits = net_b(
+                        batch["seq"],
+                        batch["esm"],
+                        batch["struct"],
+                        batch["struct_active"],
+                        batch["study"],
+                        batch["study_active"],
+                    )
+                    sample.extend(
+                        float(x) for x in torch.sigmoid(logits).to("cpu").tolist()
+                    )
+                samples.append(sample)
 
-    uncertainty = _column_std(samples, len(point_scores))
-    return RankerOutput(scores=point_scores, uncertainty=uncertainty)
+        uncertainty = _column_std(samples, len(point_scores))
+        return RankerOutput(scores=point_scores, uncertainty=uncertainty)
 
 
 def _column_std(samples: list[list[float]], n_cols: int) -> list[float]:

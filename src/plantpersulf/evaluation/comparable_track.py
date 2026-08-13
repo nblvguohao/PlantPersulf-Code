@@ -432,9 +432,10 @@ def run_sul_bertgru_adapter(
                 str(model_input.seed),
             ]
         attempt_parameters = dict(parameters)
-        for name in ("bert_batch_size", "train_batch_size"):
-            if name in attempt_parameters:
-                attempt_parameters[name] = str(batch_size)
+        if batch_size < initial_batch_size:
+            for name in ("bert_batch_size", "train_batch_size"):
+                if name in attempt_parameters:
+                    attempt_parameters[name] = str(batch_size)
         for name, value in sorted(attempt_parameters.items()):
             command.extend((f"--{name.replace('_', '-')}", value))
         try:

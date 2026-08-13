@@ -375,7 +375,7 @@ def run_structure_direct_baseline(
     esm_features: dict[tuple[str, int], tuple[float, ...]] | None,
     structure_features: dict[tuple[str, int], tuple[tuple[float, float], bool]],
     parameters: dict[str, int | float] | None = None,
-    device: str = "cpu",
+    device: str | None = None,
     batch_size: int | None = None,
 ) -> ComparisonModelScores:
     """Fit the current structure-aware ranker on one shared protein panel."""
@@ -465,7 +465,7 @@ def run_single_direct_model(
     esm_features: dict[tuple[str, int], tuple[float, ...]],
     structure_features: dict[tuple[str, int], tuple[tuple[float, float], bool]],
     parameters: dict[str, int | float] | None = None,
-    device: str = "cpu",
+    device: str | None = None,
     structure_batch_size: int | None = None,
 ) -> ComparisonModelScores:
     """Run one direct baseline on a byte-identical shared panel.
@@ -505,7 +505,7 @@ def run_direct_comparison_roster(
     esm_features: dict[tuple[str, int], tuple[float, ...]],
     structure_features: dict[tuple[str, int], tuple[tuple[float, float], bool]],
     parameters: dict[str, dict[str, int | float]],
-    device: str = "cpu",
+    device: str | None = None,
     structure_batch_size: int | None = None,
 ) -> tuple[ComparisonModelScores, ...]:
     """Execute all five direct baselines on one byte-identical panel."""
