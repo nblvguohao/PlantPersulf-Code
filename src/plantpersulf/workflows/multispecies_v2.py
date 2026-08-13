@@ -1002,13 +1002,6 @@ def _audit_configured_task_roster(
         isinstance(item, str) for item in command
     ):
         raise RuntimeError("runtime command provenance is invalid")
-    production_flags = {
-        flag
-        for flag in ("--prepare-development", "--run-literature-baselines")
-        if flag in command
-    }
-    if not production_flags:
-        return
     config_text = manifest.get("config_path")
     if not isinstance(config_text, str):
         raise RuntimeError("runtime configuration provenance is missing")
@@ -1020,8 +1013,12 @@ def _audit_configured_task_roster(
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     if not isinstance(config, dict):
         raise RuntimeError("runtime configuration is invalid")
+
+    tracks = {item.track for item in roster}
+    if not tracks:
+        return
     expected: set[tuple[str, int, int, str]] = set()
-    if "--prepare-development" in production_flags:
+    if "strict_cluster_holdout" in tracks:
         strict = config.get("strict_cluster_holdout")
         folds = strict.get("development_folds") if isinstance(strict, dict) else None
         if not isinstance(folds, int) or folds < 1:
@@ -1030,7 +1027,7 @@ def _audit_configured_task_roster(
             ("strict_cluster_holdout", fold, fold, "pu_logistic")
             for fold in range(folds)
         )
-    if "--run-literature-baselines" in production_flags:
+    if "literature_random_protein" in tracks:
         random_track = config.get("literature_random_protein")
         seeds = random_track.get("seeds") if isinstance(random_track, dict) else None
         models = config.get("models")
@@ -1045,8 +1042,10 @@ def _audit_configured_task_roster(
             raise RuntimeError("runtime literature task configuration is invalid")
         configured_models = list(models)
         sul_manifest_value = comparison_inputs.get("sul_environment_manifest")
-        if sul_manifest_value and _is_registered_comparison_input(
-            Path(str(sul_manifest_value))
+        external_environments = manifest.get("external_environments") or {}
+        if sul_manifest_value and (
+            "sul_bertgru" in external_environments
+            or _is_registered_comparison_input(Path(str(sul_manifest_value)))
         ):
             configured_models.append("sul_bertgru")
         expected.update(

@@ -337,3 +337,21 @@ mask-gated like any other missing branch. See
 
 ### D. 措辞锁定（本附录数字可伴随的唯一表述）
 > 蛋白切分（Sul-BertGRU 同口径）数字显示数据集内存在可学习信号（结构增益与效应 delta 的 95% CI 均排除零），但该轨与 LSO/cluster 轨同属数据集内评估，不构成跨研究、跨实验室或跨物种证据；NC 主结论锚定于未来番茄 lockbox 队列。
+
+---
+
+## 2026-08-13 附录：multispecies v2 双轨结果与 Gate 2 关系
+
+`configs/experiments/multispecies_v2_global_clusters_v11.yaml` 已完成：
+
+- **严格同源簇 development 轨**：5 folds（结构：`strict_cluster_holdout|...`）。
+- **文献同口径随机蛋白轨**：6 models × 10 seeds，含 Sul-BertGRU baseline（结构：`literature_random_protein|...`）。
+
+两轨均**结构性地排除于 Gate 2**：
+
+1. 数据仍来自同一实验室/同一化学体系的拟南芥 + 水稻 + 番茄整合集（`studies_are_independent: false` 未变）。
+2. 模型名前缀 `strict_cluster_holdout` 与 `literature_random_protein` 均无法通过 `leave_<study>_out` 前缀检查（`tests/release/test_gate2_ignores_within_dataset_split_metrics.py` 已锁定）。
+3. 配置中显式声明 `limitation: INTERNAL MULTISPECIES EVALUATION ONLY; must never enter Gate 2` 与 `comparator_policy.gate2_eligible: false`。
+
+因此，multispecies v2 结果可作为**数据集内可学习信号与文献同口径改进**的证据，并支撑番茄盲法 lockbox 候选工具的选择，但**不能**用于声称跨研究、跨实验室或跨物种预测能力。NC 主结论仍唯一锚定于未来独立番茄 lockbox 队列的结果。
+
