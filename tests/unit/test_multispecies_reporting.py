@@ -5,11 +5,16 @@ from __future__ import annotations
 import pytest
 
 from plantpersulf.evaluation.multispecies_reporting import (
+    HOMOLOGY_ROBUST_CLAIM,
+    LITERATURE_COMPARABLE_CLAIM,
+    NO_SUPPORTED_CLAIM,
     STRICT_BOOTSTRAP_N_BOOT,
     STRICT_BOOTSTRAP_SEED,
     SpeciesMetric,
     claim_class_for_multispecies_result,
+    claim_statement_for_class,
     compute_species_metric,
+    find_forbidden_external_claims,
     literature_track_leads,
     pooled_average_precision,
     strict_track_bootstrap_delta,
@@ -40,12 +45,42 @@ def test_claim_requires_strict_track_ci_and_all_three_positive_deltas() -> None:
         strict_ci_lower=0.01,
         species_deltas={"arabidopsis": 0.01, "rice": 0.02, "tomato": 0.03},
         same_frozen_inputs=True,
-    ) == "homology_robust_multiplant_within_dataset_ranking"
+        literature_leads=False,
+    ) == HOMOLOGY_ROBUST_CLAIM
     assert claim_class_for_multispecies_result(
         strict_ci_lower=-0.01,
         species_deltas={"arabidopsis": 0.01, "rice": 0.02, "tomato": 0.03},
         same_frozen_inputs=True,
-    ) == "literature_comparable_within_dataset_improvement_only"
+        literature_leads=True,
+    ) == LITERATURE_COMPARABLE_CLAIM
+
+
+def test_claim_gate_returns_no_supported_claim_without_either_track_win() -> None:
+    """Previously this silently fell back to the literature-improvement claim
+    even though the literature track never won anything — a fail-open bug.
+    With neither track's evidence clearing its bar, no positive claim is
+    allowed at all."""
+    assert claim_class_for_multispecies_result(
+        strict_ci_lower=-0.02,
+        species_deltas={"arabidopsis": -0.01, "rice": 0.0, "tomato": -0.02},
+        same_frozen_inputs=True,
+        literature_leads=False,
+    ) == NO_SUPPORTED_CLAIM
+
+
+def test_claim_statement_matches_mandated_wording() -> None:
+    assert "文献同口径" in claim_statement_for_class(LITERATURE_COMPARABLE_CLAIM)
+    assert "对未见同源家族稳健" in claim_statement_for_class(HOMOLOGY_ROBUST_CLAIM)
+    assert "两条轨道均未证明" in claim_statement_for_class(NO_SUPPORTED_CLAIM)
+    with pytest.raises(ValueError, match="unknown"):
+        claim_statement_for_class("made_up_class")
+
+
+def test_forbidden_external_claim_phrases_are_flagged() -> None:
+    """No blind tomato cohort exists yet, so these phrases are unconditionally
+    forbidden in any multispecies v2 outward text."""
+    assert find_forbidden_external_claims("这是外部泛化结果") == ["外部泛化"]
+    assert find_forbidden_external_claims("within-dataset improvement only") == []
 
 
 def test_compute_species_metric_matches_underlying_pu_metrics() -> None:

@@ -146,13 +146,58 @@ def summarize_species_metrics(
     }
 
 
+HOMOLOGY_ROBUST_CLAIM = "homology_robust_multiplant_within_dataset_ranking"
+LITERATURE_COMPARABLE_CLAIM = "literature_comparable_within_dataset_improvement_only"
+NO_SUPPORTED_CLAIM = "no_supported_multispecies_claim"
+
+_CLAIM_STATEMENTS = {
+    LITERATURE_COMPARABLE_CLAIM: (
+        "文献同口径的数据集内性能提升。 "
+        "Literature-comparable within-dataset performance improvement."
+    ),
+    HOMOLOGY_ROBUST_CLAIM: (
+        "对未见同源家族稳健的多植物数据集内排序。 "
+        "Multiplant within-dataset ranking robust to unseen homology "
+        "families."
+    ),
+    NO_SUPPORTED_CLAIM: (
+        "两条轨道均未证明相对基线的优势，不得声称任何跨物种性能提升。 "
+        "Neither track demonstrates an advantage over baselines; no "
+        "multispecies performance-improvement claim may be made."
+    ),
+}
+
+# Task 9.6: multispecies v2 is internal/within-dataset only until a tomato
+# blind cohort returns real prospective data. These phrases are therefore
+# unconditionally forbidden at this project stage — there is no flag to
+# unlock them; that decision belongs to a future task once a blind cohort
+# actually exists.
+FORBIDDEN_EXTERNAL_CLAIM_PHRASES = (
+    "external generalization",
+    "external generalisation",
+    "cross-crop generalization",
+    "cross-crop generalisation",
+    "prospective validation",
+    "外部泛化",
+    "跨作物泛化",
+    "前瞻验证",
+)
+
+
 def claim_class_for_multispecies_result(
     *,
     strict_ci_lower: float,
     species_deltas: dict[str, float],
     same_frozen_inputs: bool,
+    literature_leads: bool,
 ) -> str:
-    """Return only the claim class allowed by strict-track evidence."""
+    """Return only the claim class allowed by strict- and literature-track
+    evidence.
+
+    Fails closed to ``NO_SUPPORTED_CLAIM`` when neither track's evidence
+    clears its bar — a result with zero demonstrated advantage must never be
+    presented as a literature-comparable improvement.
+    """
     required = {"arabidopsis", "rice", "tomato"}
     if (
         same_frozen_inputs
@@ -160,5 +205,25 @@ def claim_class_for_multispecies_result(
         and strict_ci_lower > 0.0
         and all(species_deltas[species] > 0.0 for species in required)
     ):
-        return "homology_robust_multiplant_within_dataset_ranking"
-    return "literature_comparable_within_dataset_improvement_only"
+        return HOMOLOGY_ROBUST_CLAIM
+    if literature_leads:
+        return LITERATURE_COMPARABLE_CLAIM
+    return NO_SUPPORTED_CLAIM
+
+
+def claim_statement_for_class(claim_class: str) -> str:
+    """Map a claim class to its exact mandated bilingual wording."""
+    try:
+        return _CLAIM_STATEMENTS[claim_class]
+    except KeyError as exc:
+        raise ValueError(f"unknown multispecies claim class: {claim_class}") from exc
+
+
+def find_forbidden_external_claims(text: str) -> list[str]:
+    """Return the forbidden external/prospective phrases present in ``text``."""
+    lowered = text.lower()
+    return [
+        phrase
+        for phrase in FORBIDDEN_EXTERNAL_CLAIM_PHRASES
+        if phrase.lower() in lowered
+    ]
