@@ -118,6 +118,15 @@ def build_argument_parser() -> argparse.ArgumentParser:
         default=Path("configs/experiments/multispecies_v2_global_clusters_v11.yaml"),
     )
     parser.add_argument("--test-unlock", type=Path, required=True)
+    parser.add_argument(
+        "--evidence-config",
+        type=Path,
+        default=Path("configs/experiments/multispecies_v2_global_clusters_v4.yaml"),
+        help=(
+            "config carrying the raw positive_evidence paths; v11 shares the "
+            "v4 split/cluster/proteome lineage, so v4 is the canonical source"
+        ),
+    )
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--device", type=str, default=None)
     parser.add_argument("--batch-size", type=int, default=16384)
@@ -125,7 +134,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
 
 
 def _build_test_rows(
-    cfg: dict[str, object],
+    evidence: dict[str, object],
     frozen,
     clusters,
     proteomes: dict[str, dict[str, str]],
@@ -149,7 +158,6 @@ def _build_test_rows(
     n_test_proteins = sum(len(value) for value in test_allowed.values())
     print(f"test proteins: {n_test_proteins}")
 
-    evidence = cfg["positive_evidence"]
     evidence_paths = {
         key: Path(value) for key, value in evidence.items() if key != "registry"
     }
@@ -253,7 +261,12 @@ def main(argv: list[str] | None = None) -> None:
     n_dev_pos = sum(1 for row in dev_rows if row.label == "positive")
     print(f"development panel: {len(dev_rows)} rows, {n_dev_pos} positives (1:20 PU)")
 
-    test_rows = _build_test_rows(cfg, frozen, clusters, proteomes)
+    evidence_cfg = yaml.safe_load(args.evidence_config.read_text(encoding="utf-8"))
+    if not isinstance(evidence_cfg, dict) or "positive_evidence" not in evidence_cfg:
+        raise RuntimeError("evidence config must carry positive_evidence paths")
+    test_rows = _build_test_rows(
+        evidence_cfg["positive_evidence"], frozen, clusters, proteomes
+    )
     for species in (*PRIMARY_SPECIES, *PRESSURE_SPECIES):
         n_pos = sum(
             1
@@ -479,6 +492,7 @@ def main(argv: list[str] | None = None) -> None:
 
     input_paths = _strict_runtime_input_paths(cfg)
     input_paths["test_unlock"] = args.test_unlock
+    input_paths["evidence_config"] = args.evidence_config
     input_paths["literature_summary"] = summary_path
     dirty_paths = _dirty_paths()
     fingerprint = build_task_fingerprint(
