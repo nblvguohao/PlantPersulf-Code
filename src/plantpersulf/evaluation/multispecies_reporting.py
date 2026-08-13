@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 
+from plantpersulf.evaluation.bootstrap import BootstrapResult, ClusteredScored
 from plantpersulf.evaluation.metrics import (
     average_precision,
     mean_reciprocal_rank,
@@ -13,6 +14,12 @@ from plantpersulf.evaluation.metrics import (
 
 RECALL_AT_50 = 50
 RECALL_AT_200 = 200
+
+# Task 9.6 frozen strict-track statistical policy: the same seed already used
+# to freeze the strict 20% split, so the whole strict-track story reproduces
+# from one documented constant. Never overridden per call site.
+STRICT_BOOTSTRAP_N_BOOT = 10_000
+STRICT_BOOTSTRAP_SEED = 20260811
 
 
 @dataclass(frozen=True)
@@ -68,6 +75,41 @@ def pooled_average_precision(
     if value is None:
         raise RuntimeError("pooled scored rows contain no positives")
     return value
+
+
+def literature_track_leads(
+    candidate_macro_aps: list[float], baseline_macro_aps: list[float]
+) -> bool:
+    """Did the candidate beat the best baseline's mean macro AP, seed for
+    seed, over the literature-comparable random-protein track?"""
+    if not candidate_macro_aps or len(candidate_macro_aps) != len(
+        baseline_macro_aps
+    ):
+        raise ValueError(
+            "candidate and baseline macro AP lists must be equal length and "
+            "non-empty"
+        )
+    candidate_mean = sum(candidate_macro_aps) / len(candidate_macro_aps)
+    baseline_mean = sum(baseline_macro_aps) / len(baseline_macro_aps)
+    return candidate_mean > baseline_mean
+
+
+def strict_track_bootstrap_delta(
+    model_scored: ClusteredScored, baseline_scored: ClusteredScored
+) -> BootstrapResult:
+    """Frozen Task 9.6 statistical policy: 10,000-replicate protein-cluster
+    bootstrap of the model-vs-baseline AP delta, seed 20260811."""
+    from plantpersulf.evaluation.effect_size import (
+        paired_cluster_bootstrap_delta_ci,
+    )
+
+    return paired_cluster_bootstrap_delta_ci(
+        model_scored,
+        baseline_scored,
+        n_boot=STRICT_BOOTSTRAP_N_BOOT,
+        alpha=0.05,
+        seed=STRICT_BOOTSTRAP_SEED,
+    )
 
 
 def _metric_dict(metric: SpeciesMetric) -> dict[str, float | str]:

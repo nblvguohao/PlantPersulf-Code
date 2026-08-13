@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+import pytest
+
 from plantpersulf.evaluation.multispecies_reporting import (
+    STRICT_BOOTSTRAP_N_BOOT,
+    STRICT_BOOTSTRAP_SEED,
     SpeciesMetric,
     claim_class_for_multispecies_result,
     compute_species_metric,
+    literature_track_leads,
     pooled_average_precision,
+    strict_track_bootstrap_delta,
     summarize_species_metrics,
 )
 
@@ -72,3 +78,25 @@ def test_pooled_average_precision_differs_from_macro_average() -> None:
     pooled = pooled_average_precision(scored_by_species, ("arabidopsis", "rice"))
 
     assert 0.0 < pooled < 1.0
+
+
+def test_literature_track_leads_compares_paired_seed_means() -> None:
+    """The literature-track lead check is a plain paired mean over the same
+    seeds, not a CI — the spec only mandates a CI for the strict track."""
+    assert literature_track_leads([0.5, 0.6], [0.4, 0.4]) is True
+    assert literature_track_leads([0.3, 0.3], [0.5, 0.5]) is False
+    with pytest.raises(ValueError, match="equal length"):
+        literature_track_leads([0.5], [0.4, 0.4])
+
+
+def test_strict_track_bootstrap_delta_uses_frozen_policy() -> None:
+    """The strict-track claim depends on exactly this bootstrap policy; a
+    silently different n_boot/seed would make the CI non-reproducible."""
+    model = [(0.9, "positive", "C1"), (0.2, "unlabeled", "C2")]
+    baseline = [(0.6, "positive", "C1"), (0.5, "unlabeled", "C2")]
+
+    result = strict_track_bootstrap_delta(model, baseline)
+
+    assert STRICT_BOOTSTRAP_N_BOOT == 10_000
+    assert STRICT_BOOTSTRAP_SEED == 20260811
+    assert result.n_boot == STRICT_BOOTSTRAP_N_BOOT
