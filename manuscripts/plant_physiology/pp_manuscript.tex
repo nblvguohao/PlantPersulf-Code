@@ -23,6 +23,23 @@
 \graphicspath{{figures/}}
 \newcommand{\societylogo}{}
 
+% float-page glue: top-align floats so slack collects at the page bottom
+% (both single- and double-column registers; table*/figure* use the dbl set)
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{14pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\setlength{\@dblfptop}{0pt}
+\setlength{\@dblfpsep}{10pt}
+\setlength{\@dblfpbot}{0pt plus 1fil}
+\makeatother
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.95}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.60}
+\setlength{\abovecaptionskip}{8pt}
+\setlength{\belowcaptionskip}{4pt}
+
 % line numbers for review
 %\usepackage[mathlines,switch]{lineno}
 
@@ -335,7 +352,7 @@ Zhang W, Zhang J, Bo S, Zhan L, Xue Q, Fan L, Pei Y, Jin Z.
 
 \section*{Tables}
 
-\begin{table}[!htbp]
+\begin{table*}[!t]
 \caption{Proteome-wide candidate scans with the frozen model.}
 \label{tab:scans}
 \begin{tabular}{@{}llrrrr@{}}
@@ -347,9 +364,9 @@ Arabidopsis & diagnostic & 111,496 & 284,387 & 3,050 (1.07\%) & 0.3615 \\
 Rice (\textit{O. sativa}) & diagnostic & 185,379 & 469,748 & 3,539 (0.75\%) & 0.3614 \\
 \botrule
 \end{tabular}
-\end{table}
+\end{table*}
 
-\begin{table}[!htbp]
+\begin{table*}[!t]
 \caption{Within-dataset literature-comparable benchmark (macro average precision over the three crop species, 10 seeds). Claim class for this table (verbatim, binding): ``Literature-comparable within-dataset performance improvement.'' These numbers are within-dataset evidence only.}
 \label{tab:benchmark}
 \begin{tabular}{@{}lrrrr@{}}
@@ -364,9 +381,9 @@ Random forest & 0.030 & 0.004 & 0.026 & 0.038 \\
 Sul-BertGRU (retrained) & 0.021 & 0.002 & 0.018 & 0.024 \\
 \botrule
 \end{tabular}
-\end{table}
+\end{table*}
 
-\begin{table}[!htbp]
+\begin{table*}[!t]
 \caption{Frozen artifact registry (release \texttt{multispecies-v2-candidate-release-v1}, 2026-08-13).}
 \label{tab:registry}
 \begin{tabular}{@{}ll@{}}
@@ -384,9 +401,9 @@ Training seed & \texttt{20260813} \\
 Code revision & \texttt{d0c740cc24a0ce81157d23921f7875ea5f862606} \\
 \botrule
 \end{tabular}
-\end{table}
+\end{table*}
 
-\begin{table}[!htbp]
+\begin{table*}[!t]
 \caption{Preregistered design options and power (2\% background confirmation rate; one-sided Fisher exact test, $\alpha = 0.05$; 10,000 simulations per cell, seed 20260813). The full 144-cell grid is reported unfiltered in \texttt{power\_table.json} per the analysis plan.}
 \label{tab:power}
 \begin{tabular}{@{}lrrrrrr@{}}
@@ -398,9 +415,9 @@ Escalation (if throughput allows) & 300 & 2 & 900 & --- & 0.850 & --- \\
 Minimum viable & 200 & 1 & 400 & --- & 0.524 & --- \\
 \botrule
 \end{tabular}
-\end{table}
+\end{table*}
 
-\begin{table}[!htbp]
+\begin{table*}[!t]
 \caption{\textbf{[GATE 3 PLACEHOLDER]} Primary $2\times2$ table: candidates vs matched controls $\times$ confirmed/not-confirmed, with Fisher exact $p$ and odds ratio (exact 95\% CI).}
 \label{tab:primary}
 \begin{tabular}{@{}lrr@{}}
@@ -411,7 +428,7 @@ Candidates ($n = 200$) & [Gate 3] & [Gate 3] \\
 Matched controls ($n = 393$) & [Gate 3] & [Gate 3] \\
 \botrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \clearpage
 
@@ -428,41 +445,41 @@ Matched controls ($n = 393$) & [Gate 3] & [Gate 3] \\
 
 \clearpage
 
-\begin{figure}[!htbp]
+\begin{figure*}[!t]
 \center{\includegraphics[width=\textwidth]{fig1_design_pipeline.pdf}}
 \caption{Study design and gate pipeline.}
 \label{fig:pipeline}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!htbp]
+\begin{figure*}[!t]
 \center{\includegraphics[width=\textwidth]{fig2_benchmark.pdf}}
 \caption{Within-dataset literature-comparable benchmark.}
 \label{fig:benchmark}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!htbp]
-\center{\includegraphics[width=\textwidth]{fig3_frozen_release.pdf}}
+\begin{figure*}[!t]
+\center{\includegraphics[width=0.94\textwidth]{fig3_frozen_release.pdf}}
 \caption{Frozen tomato candidate release.}
 \label{fig:release}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!htbp]
-\center{\includegraphics[width=\textwidth]{fig4_preblind_calibration.pdf}}
+\begin{figure*}[!t]
+\center{\includegraphics[width=0.94\textwidth]{fig4_preblind_calibration.pdf}}
 \caption{Pre-blind calibration against published sites.}
 \label{fig:calibration}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!htbp]
-\center{\includegraphics[width=\textwidth]{fig5_power_landscape.pdf}}
+\begin{figure*}[!t]
+\center{\includegraphics[width=0.94\textwidth]{fig5_power_landscape.pdf}}
 \caption{Preregistered power landscape.}
 \label{fig:power}
-\end{figure}
+\end{figure*}
 
 % [GATE 3 PLACEHOLDER] Figure 6 (blind-cohort result) is added after unblinding.
-%\begin{figure}[!htbp]
+%\begin{figure*}[!t]
 %\center{\includegraphics[width=\textwidth]{fig6_blind_cohort.pdf}}
 %\caption{Blind-cohort result.}
 %\label{fig:blind}
-%\end{figure}
+%\end{figure*}
 
 \end{document}
