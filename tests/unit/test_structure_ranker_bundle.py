@@ -183,3 +183,27 @@ def test_load_rejects_corrupt_bundle_file(tmp_path) -> None:
 
     with pytest.raises(RuntimeError, match="corrupt"):
         StructureRankerBundle.load(path)
+
+
+def test_bundle_scoring_on_cuda_matches_cpu() -> None:
+    """Regression: the network must be moved to the scoring device after
+    load_state_dict (parameters are created on CPU; loading copies in place)."""
+    import torch
+
+    if not torch.cuda.is_available():
+        pytest.skip("CUDA not available")
+    train = _toy_branches(20)
+    train_y = _toy_labels(20)
+    predict = _toy_branches(7)
+
+    bundle = fit_structure_ranker(train, train_y, seed=3)
+    cpu = score_structure_ranker_bundle(bundle, predict, device_name="cpu")
+    cuda = score_structure_ranker_bundle(bundle, predict, device_name="cuda:0")
+
+    # Point scores (dropout off) are bit-identical across devices; MC-dropout
+    # uncertainty uses device RNG streams (MT19937 on CPU, Philox on CUDA),
+    # so the std estimates agree to sampling noise, not bit-for-bit.
+    assert cuda.scores == pytest.approx(cpu.scores, abs=0.0)
+    assert len(cuda.uncertainty) == len(cpu.uncertainty) == 7
+    assert all(u >= 0.0 for u in cuda.uncertainty)
+    assert all(u >= 0.0 for u in cpu.uncertainty)

@@ -755,9 +755,8 @@ def score_structure_ranker_bundle(
             hp["hidden"],
             hp["dropout"],
         )
-        net.load_state_dict(
-            {k: v.to(device) for k, v in bundle.net_state_dict.items()}
-        )
+        net.load_state_dict(bundle.net_state_dict)
+        net = net.to(device)
 
         predict_s = bundle.scalers.apply(predict)
         predict_t = _to_tensors(predict_s, bundle.vocab, bundle.ablation)
