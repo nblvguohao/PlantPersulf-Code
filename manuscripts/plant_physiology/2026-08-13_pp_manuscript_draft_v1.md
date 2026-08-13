@@ -9,17 +9,17 @@ carries the Nature Communications path if Gates 3-4 pass; the Plant
 Physiology version stands on Gates 0-2 + Gate 3 regardless of direction.
 
 PENDING before submission (in roadmap order):
-  1. Co-signature of sap_protocol.json / analysis_plan.json (Zhang Hua lab)
-     -> preregistration submission -> DOI [insert in R5 and Data Availability]
+  1. ~~Co-signature of sap_protocol.json / analysis_plan.json~~ DONE 2026-08-13
+     (both parties confirmed; audit --expect-signed PASS; git tag
+     gate0-release-v1-20260813). Remaining: preregistration submission -> DOI
+     [insert in R5 and Data Availability]
   2. Gate 1: strict-track frozen test (one-shot) -> insert numbers in R2
-  3. Gate 0 freeze tag: audit_candidate_release.py --expect-signed; git tag
-     gate0-release-v1-20260813
-  4. Gate 3 blind cohort -> complete R6/R7, Table 5, Figure 6, Abstract
+  3. Gate 3 blind cohort -> complete R6/R7, Table 5, Figure 6, Abstract
      outcome sentence (two pre-written variants kept below)
-  5. Gate 6: public DOI for results/data_archive/nc_entry_gates/
-  6. Author list, affiliations, ORCIDs, funding, acknowledgements
-  7. All [VERIFY ...] reference entries
-  8. Figures 1-5 rendered from the scripts listed in each legend
+  4. Gate 6: public DOI for results/data_archive/nc_entry_gates/
+  5. Author list, affiliations, ORCIDs, funding, acknowledgements
+  6. All [VERIFY ...] reference entries
+  7. Figures 1-5 rendered from the scripts listed in each legend
 
 WORDING GATE (binding): every outward text must pass
 verify_predictive_claims -> [] against the STOP decision
@@ -66,7 +66,7 @@ We take the position that the correct response to this situation is not a larger
 
 Accordingly, everything in the present paper is organized around a candidate-organisation tool whose value is decided by a preregistered blind experiment, not by retrospective metrics.
 
-Here we report: (i) a provenance-tracked, four-species site-level dataset and a literature-comparable within-dataset benchmark in which a gated-fusion PU ranker leads six models; (ii) a fully frozen, hash-registered candidate release for the tomato proteome — model weights, feature schema, inference script, ranked candidate table, and matched controls; (iii) a pre-blind calibration against published tomato and Arabidopsis sites that sets honest expectations for the blind test; (iv) the preregistered blind-cohort design, power analysis, and statistical analysis plan, co-signed by the modeling and wet-laboratory partners **[co-signature pending — see Draft Status]**; and (v) **[Gate 3: the blind-cohort result, reported regardless of outcome]**. All negative results, exclusions, and intermediate artifacts are preserved in a public data archive.
+Here we report: (i) a provenance-tracked, four-species site-level dataset and a literature-comparable within-dataset benchmark in which a gated-fusion PU ranker leads six models; (ii) a fully frozen, hash-registered candidate release for the tomato proteome — model weights, feature schema, inference script, ranked candidate table, and matched controls; (iii) a pre-blind calibration against published tomato and Arabidopsis sites that sets honest expectations for the blind test; (iv) the preregistered blind-cohort design, power analysis, and statistical analysis plan, co-signed by the modeling and wet-laboratory partners on 2026-08-13; preregistration DOI **[TBD at submission]**; and (v) **[Gate 3: the blind-cohort result, reported regardless of outcome]**. All negative results, exclusions, and intermediate artifacts are preserved in a public data archive.
 
 ---
 
