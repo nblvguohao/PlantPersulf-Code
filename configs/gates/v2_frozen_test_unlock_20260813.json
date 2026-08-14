@@ -1,0 +1,12 @@
+{
+  "config_sha256": "ed8b76bef0b201bb669322ff5610e84c42ba422aa8cf5b9eb274427325f7dbaf",
+  "code_revision": "476faa9d443cd17a336f4ce68987f948174faf7b",
+  "split_sha256": "55345080aeb9f6d56ae5c60a8e2a4c0b7f638f20c1994a29b1ce5ccf76862b37",
+  "authorization": {
+    "purpose": "Gate 1 one-shot strict-track frozen test scoring (NC entry-gate roadmap Task 2)",
+    "authorized_by": "Lu Guohao (modeling-side PI)",
+    "authorized_on": "2026-08-13",
+    "one_shot": true,
+    "note": "Unlocks scoring of the frozen 20% homology-cluster test partition exactly once; the scored output is audited and never used to adjust the frozen candidate release. Re-issue history: cbc3824 (evidence-config fix) -> d181f3d (run-manifest audit covers the frozen-test track) -> 0cace6b (docs-only OSF preregistration guide) -> 476faa9 (docs-only manuscript LaTeX). Scoring code, model, features, and data unchanged in every re-issue. Prior runs reproduced the scores byte-identically (run-2 SHA256 recorded in the output directory); the d181f3d and 0cace6b runs completed scoring and were stopped only at administrative artifact writes, whose anti-overwrite guards correctly refused to replace non-identical manifests/checkpoints (run-2 files preserved under versioned names)."
+  }
+}

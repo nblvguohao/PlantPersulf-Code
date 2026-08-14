@@ -15,9 +15,15 @@ from pathlib import Path
 import pytest
 
 from plantpersulf.evaluation.cross_species_structural_context import (
+    StructuralContextRow,
+    StructuralContextRowSasa,
     build_structural_context_rows,
     build_structural_context_rows_sasa,
+    filter_rows_by_plddt,
+    filter_sasa_rows_by_plddt,
     mean_difference_metric,
+    plddt_by_key,
+    plddt_context_test,
     sasa_structural_context_test,
     structural_context_test,
 )
@@ -369,3 +375,117 @@ def test_real_alphafold_registry_has_bulk_download_scale() -> None:
     # species; this is a loose scale sanity check, not an exact count (the
     # download may still be in progress or include not_found/isoform gaps).
     assert len(rows) > 100
+
+
+# ---------------------------------------------------------------------------
+# Model-confidence control (2026-08-14)
+#
+# The accessibility comparison is only meaningful where AlphaFold is
+# confident: a very-low-pLDDT region is predicted as an extended chain, which
+# reads as "exposed" no matter what the real structure does. Mass spectrometry
+# also favours flexible, protease-accessible regions, so "positives sit in
+# low-confidence regions" is a live alternative explanation for any exposure
+# result and has to be measured, not assumed away.
+# ---------------------------------------------------------------------------
+
+
+def _plddt_row(accession: str, position: int, label: str, contact: float, plddt: float):
+    return StructuralContextRow(
+        protein_accession=accession,
+        cys_position=position,
+        label=label,
+        feature=CysStructureFeature(
+            protein_accession=accession,
+            cys_position=position,
+            has_structure=True,
+            plddt=plddt,
+            low_plddt=plddt < 70.0,
+            contact_number_proxy=contact,
+        ),
+    )
+
+
+def test_plddt_context_test_detects_lower_confidence_at_positives() -> None:
+    rows = [_plddt_row("P1", i, "positive", 10.0, 30.0) for i in range(1, 11)]
+    rows += [_plddt_row("P1", i, "unlabeled", 10.0, 90.0) for i in range(11, 31)]
+    result = plddt_context_test("Species", rows, n_perm=200, seed=1)
+    assert result.n_positive_cys == 10
+    assert result.n_unlabeled_cys == 20
+    assert result.mean_plddt_positive == pytest.approx(30.0)
+    assert result.mean_plddt_unlabeled == pytest.approx(90.0)
+    assert result.mean_diff == pytest.approx(-60.0)
+    assert result.permutation.p_value < 0.05
+
+
+def test_plddt_context_test_is_null_when_confidence_matches() -> None:
+    rows = [_plddt_row("P1", i, "positive", 10.0, 80.0) for i in range(1, 11)]
+    rows += [_plddt_row("P1", i, "unlabeled", 10.0, 80.0) for i in range(11, 31)]
+    result = plddt_context_test("Species", rows, n_perm=200, seed=1)
+    assert result.mean_diff == pytest.approx(0.0)
+    assert result.permutation.p_value == pytest.approx(1.0)
+
+
+def test_filter_rows_by_plddt_keeps_only_confident_residues() -> None:
+    rows = [
+        _plddt_row("P1", 1, "positive", 10.0, 95.0),
+        _plddt_row("P1", 2, "unlabeled", 12.0, 69.9),
+        _plddt_row("P1", 3, "unlabeled", 14.0, 70.0),
+    ]
+    kept = filter_rows_by_plddt(rows, min_plddt=70.0)
+    assert [r.cys_position for r in kept] == [1, 3]
+
+
+def test_filter_rows_by_plddt_drops_rows_without_a_confidence_value() -> None:
+    missing = StructuralContextRow(
+        protein_accession="P1",
+        cys_position=9,
+        label="positive",
+        feature=CysStructureFeature(
+            protein_accession="P1",
+            cys_position=9,
+            has_structure=True,
+            plddt=None,
+            low_plddt=None,
+            contact_number_proxy=10.0,
+        ),
+    )
+    assert filter_rows_by_plddt([missing], min_plddt=70.0) == []
+
+
+def test_plddt_by_key_maps_every_scored_cysteine() -> None:
+    rows = [
+        _plddt_row("P1", 1, "positive", 10.0, 95.0),
+        _plddt_row("P2", 4, "unlabeled", 8.0, 40.0),
+    ]
+    mapping = plddt_by_key(rows)
+    assert mapping == {("P1", 1): 95.0, ("P2", 4): 40.0}
+
+
+def test_filter_sasa_rows_by_plddt_uses_the_shared_key_map() -> None:
+    sasa_rows = [
+        StructuralContextRowSasa(
+            protein_accession="P1",
+            cys_position=1,
+            label="positive",
+            residue_sasa=40.0,
+            sg_sasa=20.0,
+        ),
+        StructuralContextRowSasa(
+            protein_accession="P2",
+            cys_position=4,
+            label="unlabeled",
+            residue_sasa=10.0,
+            sg_sasa=5.0,
+        ),
+        # No pLDDT entry at all -> dropped, never assumed confident.
+        StructuralContextRowSasa(
+            protein_accession="P3",
+            cys_position=7,
+            label="unlabeled",
+            residue_sasa=1.0,
+            sg_sasa=0.5,
+        ),
+    ]
+    mapping = {("P1", 1): 95.0, ("P2", 4): 40.0}
+    kept = filter_sasa_rows_by_plddt(sasa_rows, mapping, min_plddt=70.0)
+    assert [(r.protein_accession, r.cys_position) for r in kept] == [("P1", 1)]

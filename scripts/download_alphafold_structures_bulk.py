@@ -29,10 +29,36 @@ REGISTRY = Path("data/registry/alphafold_structures.tsv")
 DEST_DIR = Path("data/raw/alphafold")
 
 
+def select_accessions_to_fetch(
+    accessions: list[str],
+    already: set[str],
+    force: bool,
+) -> list[str]:
+    """De-duplicate the batch, preserving order, and drop already-registered
+    accessions unless ``force`` is set.
+
+    ``force`` exists for registry refreshes: ``register_alphafold_structure``
+    replaces the row for an accession, so refetching an accession that is
+    already registered upgrades it in place (used to lift structures pinned
+    at a superseded AlphaFold model version onto the current one).
+    """
+    seen: set[str] = set()
+    todo: list[str] = []
+    for accession in accessions:
+        if accession in seen:
+            continue
+        seen.add(accession)
+        if not force and accession in already:
+            continue
+        todo.append(accession)
+    return todo
+
+
 def run_bulk_download(
     accessions_path: Path,
     sleep_seconds: float = 0.1,
     limit: int | None = None,
+    force: bool = False,
 ) -> dict[str, int]:
     from plantpersulf.download.alphafold import (
         audit_alphafold_structures,
@@ -53,7 +79,7 @@ def run_bulk_download(
         if REGISTRY.is_file()
         else set()
     )
-    todo = [a for a in accessions if a not in already]
+    todo = select_accessions_to_fetch(accessions, already, force)
     already_in_batch = len(accessions) - len(todo)
     print(
         f"{len(accessions)} total accessions in this batch, "
@@ -95,6 +121,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--accessions", type=Path, required=True)
     p.add_argument("--sleep-seconds", type=float, default=0.1)
     p.add_argument("--limit", type=int, default=None)
+    p.add_argument(
+        "--force",
+        action="store_true",
+        help="refetch accessions already in the registry (in-place upgrade)",
+    )
     return p
 
 
@@ -104,4 +135,5 @@ if __name__ == "__main__":
         accessions_path=args.accessions,
         sleep_seconds=args.sleep_seconds,
         limit=args.limit,
+        force=args.force,
     )

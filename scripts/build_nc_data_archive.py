@@ -215,6 +215,37 @@ _EXCLUSIONS = [
         "reason": "WRKY71 and ERF.D3 registered as position_shift; not scored against the model (coordinate offset vs published report)",
         "source": "src/plantpersulf/evaluation/known_controls.py",
     },
+    {
+        "id": "EX-009",
+        "scope": "tomato AlphaFold structures (working registry)",
+        "count": 76,
+        "reason": (
+            "76 tomato AlphaFold structures exist in the working registry "
+            "(data/registry/alphafold_structures.tsv) but were deliberately "
+            "excluded from the frozen candidate-release structure registry "
+            "(release v2), and therefore never reach the tomato scoring "
+            "path. These 76 structures were fetched to run the "
+            "cross-species structural-context analysis and are drawn "
+            "entirely from the 88 kiae271 published-positive proteins (76/88 "
+            "resolved on AlphaFold DB) — not a proteome-wide or random "
+            "sample. Quantified leakage risk if included: of the 179,736 "
+            "tomato candidate sites, 580 (0.32%) sit on a protein with one "
+            "of these 76 structures, and every one of those 73 proteins is "
+            "a kiae271-positive protein; 'has AlphaFold structure' would "
+            "therefore have been a near-deterministic proxy for 'protein "
+            "carries a published site' among tomato candidates, leaking "
+            "protein-level label information through a feature intended to "
+            "be biologically orthogonal. Excluding the tomato branch from "
+            "the frozen registry avoids this; recomputed 2026-08-14 as the "
+            "quantitative justification for the choice already recorded in "
+            "EX-003."
+        ),
+        "source": (
+            "docs/cross_species_v2_findings_2026-08-14.md; "
+            "data/registry/alphafold_structures.tsv; "
+            "results/candidates/multispecies_v2_candidate_release_v1/top_k_candidates.tsv"
+        ),
+    },
 ]
 
 
@@ -264,6 +295,48 @@ _NEGATIVE_RESULTS = [
         "numbers": "v11 literature track mean macro AP: sul_bertgru 0.0213 vs structure_ranker 0.3863",
         "source": "results/experiments/multispecies_v2_global_clusters_v11/task9_6_claim_gate_report.md",
         "status": "internal same-benchmark comparison; never enters Gate 2 evidence",
+    },
+    {
+        "result": (
+            "the previously reported 'persulfidated cysteines are more "
+            "buried' structural finding is a model-confidence artefact, not "
+            "an independent structural signal"
+        ),
+        "numbers": (
+            "pLDDT at persulfidated vs other cysteines in the same protein: "
+            "Arabidopsis +1.8 (p=0.10), rice +3.5 (p=0.001), tomato -7.5 "
+            "(p=0.005), Magnaporthe +3.5 (p=0.001); restricting the SASA "
+            "comparison to pLDDT>=70 residues drops every species' "
+            "significant SASA difference to non-significant (e.g. rice "
+            "residue SASA diff -5.22 A2, p=0.001, unfiltered -> -0.57 A2, "
+            "p=0.49, confident-only)"
+        ),
+        "source": "docs/cross_species_v2_findings_2026-08-14.md #3; results/cross_species_conservation/structural_context_v2.json (model_confidence_control)",
+        "status": (
+            "supersedes the structural-context finding in "
+            "docs/phase_z_evidence_audit.md #5.5.2; that section carries an "
+            "inline correction pointer and is retained for the record, not "
+            "cited as a conclusion"
+        ),
+    },
+    {
+        "result": (
+            "cross-kingdom conservation at the all-4-species level has zero "
+            "statistical power given tomato's shallow ortholog coverage"
+        ),
+        "numbers": (
+            ">=3-species cell: observed 8 vs expected 0.93 under "
+            "independence (8.6x), permutation p=1.0e-04 (10,000 "
+            "permutations); >=4-species cell: observed 0 vs expected 0.003, "
+            "p=1.00 -- no attainable observation could have been "
+            "significant, since tomato persulfidates only 8 of the 2,012 "
+            "shared subfamilies"
+        ),
+        "source": "results/cross_species_conservation/conservation_v2.json (conservation_spectrum)",
+        "status": (
+            "accepted power limitation, not a biological null result; the "
+            "3-species cell is reported as the informative one"
+        ),
     },
 ]
 

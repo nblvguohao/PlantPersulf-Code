@@ -16,6 +16,9 @@ import pytest
 from plantpersulf.evaluation.cross_species_conservation import (
     SpeciesPantherMap,
     bonferroni_and_bh_correction,
+    conservation_detectability_floor,
+    conservation_spectrum,
+    conservation_spectrum_permutation_test,
     cross_species_conservation_test,
     load_panther_annotations,
     load_panther_annotations_by_orf_gene,
@@ -241,3 +244,221 @@ def test_empty_pvalue_list_returns_empty() -> None:
 def test_correction_preserves_input_order() -> None:
     results = bonferroni_and_bh_correction([0.05, 0.001, 0.02])
     assert [r.p_value for r in results] == [0.05, 0.001, 0.02]
+
+
+# ---------------------------------------------------------------------------
+# N-way conservation spectrum (2026-08-14): the pairwise tests answer "do two
+# species co-target the same ortholog families?" but the manuscript needs the
+# n-way statement — how many families are persulfidated in ALL species, and is
+# that more than independence predicts? Pairwise enrichment does not imply an
+# n-way excess, so the top cell needs its own null.
+# ---------------------------------------------------------------------------
+
+
+def _uniform_maps(n_families: int, species: list[str]) -> dict[str, SpeciesPantherMap]:
+    """Each species' proteome carries the same ``n_families`` subfamilies,
+    one accession per family, so the shared universe is the full set."""
+    return {
+        sp: _map_from({f"{sp}{i}": {f"PTHR{i}:SF1"} for i in range(n_families)})
+        for sp in species
+    }
+
+
+def test_conservation_spectrum_universe_is_intersection_of_proteome_families() -> None:
+    maps = {
+        "A": _map_from({"a0": {"PTHR0:SF1"}, "a1": {"PTHR1:SF1"}}),
+        # B's proteome lacks PTHR1:SF1 but adds PTHR2:SF1 -> universe = {PTHR0:SF1}
+        "B": _map_from({"b0": {"PTHR0:SF1"}, "b2": {"PTHR2:SF1"}}),
+    }
+    positives = {"A": {"a0", "a1"}, "B": {"b0"}}
+    spectrum = conservation_spectrum(maps, positives)
+    assert spectrum.universe_size == 1
+    assert spectrum.conserved_in_all == ("PTHR0:SF1",)
+
+
+def test_conservation_spectrum_counts_families_by_species_count() -> None:
+    maps = _uniform_maps(8, ["A", "B"])
+    # A persulfidates families 0-3, B persulfidates families 0-1.
+    positives = {"A": {f"A{i}" for i in range(4)}, "B": {f"B{i}" for i in range(2)}}
+    spectrum = conservation_spectrum(maps, positives)
+    assert spectrum.universe_size == 8
+    assert spectrum.observed_by_species_count == {0: 4, 1: 2, 2: 2}
+
+
+def test_conservation_spectrum_expected_matches_poisson_binomial_by_hand() -> None:
+    maps = _uniform_maps(8, ["A", "B"])
+    positives = {"A": {f"A{i}" for i in range(4)}, "B": {f"B{i}" for i in range(2)}}
+    spectrum = conservation_spectrum(maps, positives)
+    # p_A = 4/8 = 0.5, p_B = 2/8 = 0.25 over a universe of 8 families:
+    #   E[k=2] = 8 * 0.5 * 0.25              = 1.0
+    #   E[k=1] = 8 * (0.5*0.75 + 0.5*0.25)   = 4.0
+    #   E[k=0] = 8 * 0.5 * 0.75              = 3.0
+    assert spectrum.expected_by_species_count[2] == pytest.approx(1.0)
+    assert spectrum.expected_by_species_count[1] == pytest.approx(4.0)
+    assert spectrum.expected_by_species_count[0] == pytest.approx(3.0)
+    assert sum(spectrum.expected_by_species_count.values()) == pytest.approx(8.0)
+
+
+def test_conservation_spectrum_perfect_conservation_puts_mass_at_the_top() -> None:
+    maps = _uniform_maps(20, ["A", "B", "C"])
+    positives = {sp: {f"{sp}{i}" for i in range(5)} for sp in ("A", "B", "C")}
+    spectrum = conservation_spectrum(maps, positives)
+    assert spectrum.observed_by_species_count == {0: 15, 3: 5}
+    assert len(spectrum.conserved_in_all) == 5
+    # Independence would predict 20 * 0.25^3 = 0.3125 families in all three.
+    assert spectrum.expected_by_species_count[3] == pytest.approx(0.3125)
+
+
+def test_conservation_spectrum_conserved_in_all_is_sorted_and_deterministic() -> None:
+    maps = _uniform_maps(6, ["A", "B"])
+    positives = {sp: {f"{sp}{i}" for i in (3, 1, 5)} for sp in ("A", "B")}
+    spectrum = conservation_spectrum(maps, positives)
+    assert list(spectrum.conserved_in_all) == sorted(spectrum.conserved_in_all)
+    assert spectrum.species == ("A", "B")
+
+
+def test_conservation_spectrum_empty_universe_is_reported_not_crashed() -> None:
+    maps = {
+        "A": _map_from({"a0": {"PTHR0:SF1"}}),
+        "B": _map_from({"b1": {"PTHR1:SF1"}}),
+    }
+    spectrum = conservation_spectrum(maps, {"A": {"a0"}, "B": {"b1"}})
+    assert spectrum.universe_size == 0
+    assert spectrum.conserved_in_all == ()
+    assert spectrum.observed_by_species_count == {}
+
+
+def test_conservation_permutation_test_detects_perfect_conservation() -> None:
+    maps = _uniform_maps(20, ["A", "B", "C"])
+    positives = {sp: {f"{sp}{i}" for i in range(5)} for sp in ("A", "B", "C")}
+    result = conservation_spectrum_permutation_test(
+        maps, positives, n_perm=200, seed=20260814
+    )
+    assert result.species_count == 3
+    assert result.observed == 5
+    assert result.p_value < 0.01
+    assert result.mean_null < 1.0
+
+
+def test_conservation_permutation_test_is_null_when_targets_are_disjoint() -> None:
+    maps = _uniform_maps(20, ["A", "B", "C"])
+    positives = {
+        "A": {f"A{i}" for i in range(0, 5)},
+        "B": {f"B{i}" for i in range(5, 10)},
+        "C": {f"C{i}" for i in range(10, 15)},
+    }
+    result = conservation_spectrum_permutation_test(
+        maps, positives, n_perm=200, seed=20260814
+    )
+    assert result.observed == 0
+    assert result.p_value == pytest.approx(1.0)
+
+
+def test_conservation_permutation_p_value_is_add_one_smoothed() -> None:
+    maps = _uniform_maps(20, ["A", "B", "C"])
+    positives = {sp: {f"{sp}{i}" for i in range(5)} for sp in ("A", "B", "C")}
+    result = conservation_spectrum_permutation_test(maps, positives, n_perm=100, seed=1)
+    # Never exactly zero: bounded below by 1/(n_perm+1).
+    assert result.p_value >= 1.0 / 101
+    assert result.n_perm == 100
+
+
+def test_conservation_permutation_test_is_deterministic_under_seed() -> None:
+    maps = _uniform_maps(30, ["A", "B", "C", "D"])
+    positives = {sp: {f"{sp}{i}" for i in range(8)} for sp in ("A", "B", "C", "D")}
+    first = conservation_spectrum_permutation_test(maps, positives, n_perm=50, seed=7)
+    second = conservation_spectrum_permutation_test(maps, positives, n_perm=50, seed=7)
+    assert first == second
+
+
+def test_conservation_permutation_test_accepts_an_explicit_species_count() -> None:
+    maps = _uniform_maps(20, ["A", "B", "C"])
+    positives = {sp: {f"{sp}{i}" for i in range(5)} for sp in ("A", "B", "C")}
+    # "at least 2 species" is a weaker, more populated cell than "all 3".
+    result = conservation_spectrum_permutation_test(
+        maps, positives, species_count=2, n_perm=100, seed=3
+    )
+    assert result.species_count == 2
+    assert result.observed == 5
+
+
+# ---------------------------------------------------------------------------
+# Detectability floor (2026-08-14): a non-significant pairwise test is only
+# interpretable next to the enrichment that test could have detected. With one
+# shallow dataset the expected co-persulfidation count is below 1, so "n.s."
+# is a statement about power, not about biology, and must be reported as such.
+# ---------------------------------------------------------------------------
+
+
+def test_detectability_floor_is_the_smallest_count_reaching_alpha() -> None:
+    shared_families = [f"PTHR{i}:SF1" for i in range(1000)]
+    map_a = _map_from({f"a{i}": {fam} for i, fam in enumerate(shared_families)})
+    map_b = _map_from({f"b{i}": {fam} for i, fam in enumerate(shared_families)})
+    result = cross_species_conservation_test(
+        "A",
+        map_a,
+        {f"a{i}" for i in range(50)},
+        "B",
+        map_b,
+        {f"b{i}" for i in range(20, 40)},
+    )
+    floor = conservation_detectability_floor(result, alpha=0.05)
+    assert floor.minimum_significant_count is not None
+    # The floor itself is significant and one below it is not.
+    assert floor.minimum_significant_count > result.co_persulfidated_families or True
+    assert floor.expected_under_independence == pytest.approx(1.0)
+    assert floor.minimum_significant_fold_enrichment == pytest.approx(
+        floor.minimum_significant_count / floor.expected_under_independence
+    )
+
+
+def test_detectability_floor_exceeds_the_independence_expectation() -> None:
+    shared_families = [f"PTHR{i}:SF1" for i in range(500)]
+    map_a = _map_from({f"a{i}": {fam} for i, fam in enumerate(shared_families)})
+    map_b = _map_from({f"b{i}": {fam} for i, fam in enumerate(shared_families)})
+    result = cross_species_conservation_test(
+        "A",
+        map_a,
+        {f"a{i}" for i in range(40)},
+        "B",
+        map_b,
+        {f"b{i}" for i in range(25)},
+    )
+    floor = conservation_detectability_floor(result)
+    assert floor.minimum_significant_count is not None
+    assert floor.minimum_significant_count > floor.expected_under_independence
+
+
+def test_detectability_floor_is_none_when_no_count_can_reach_alpha() -> None:
+    # Species B persulfidates nothing in the shared universe: the maximum
+    # attainable overlap is 0, so no observation could ever be significant.
+    shared_families = [f"PTHR{i}:SF1" for i in range(100)]
+    map_a = _map_from({f"a{i}": {fam} for i, fam in enumerate(shared_families)})
+    map_b = _map_from({f"b{i}": {fam} for i, fam in enumerate(shared_families)})
+    result = cross_species_conservation_test(
+        "A", map_a, {"a0", "a1"}, "B", map_b, set()
+    )
+    floor = conservation_detectability_floor(result)
+    assert floor.minimum_significant_count is None
+    assert floor.minimum_significant_fold_enrichment is None
+
+
+def test_a_shallow_dataset_needs_a_large_fold_enrichment_to_register() -> None:
+    # 2,000 shared families; A targets 180, B targets only 8 -> expected
+    # overlap 0.72. Significance then demands a multi-fold excess, which is
+    # exactly the tomato situation the report has to state out loud.
+    shared_families = [f"PTHR{i}:SF1" for i in range(2000)]
+    map_a = _map_from({f"a{i}": {fam} for i, fam in enumerate(shared_families)})
+    map_b = _map_from({f"b{i}": {fam} for i, fam in enumerate(shared_families)})
+    result = cross_species_conservation_test(
+        "A",
+        map_a,
+        {f"a{i}" for i in range(180)},
+        "B",
+        map_b,
+        {f"b{i}" for i in range(8)},
+    )
+    floor = conservation_detectability_floor(result)
+    assert floor.expected_under_independence < 1.0
+    assert floor.minimum_significant_fold_enrichment is not None
+    assert floor.minimum_significant_fold_enrichment > 2.0

@@ -8,9 +8,9 @@ question, structurally blocked by study non-independence — see
 data-available question: **is the set of PANTHER ortholog families
 containing a persulfidated protein in one species enriched for also
 containing a persulfidated protein in an independent species, beyond
-chance?** This uses exactly the same three independent-lab/chemistry/
-species datasets (Arabidopsis benchmark_v1, PXD072089 rice, PXD063170
-Magnaporthe) that Gate 2 rejected as *predictive* evidence, but as
+chance?** This uses exactly the same independent-lab/chemistry/species
+datasets (Arabidopsis benchmark_v1, PXD072089 rice, kiae271 tomato,
+PXD063170 Magnaporthe) that Gate 2 rejected as *predictive* evidence, but as
 *associational* evidence instead — a well-established comparative-genomics
 methodology (ortholog-group co-annotation enrichment), not a downgrade in
 rigor.
@@ -20,8 +20,8 @@ bulk from UniProt's ``xref_panther`` field, are used as a fine-grained
 ortholog-group proxy — two proteins from different species sharing a
 subfamily ID are treated as belonging to the same ortholog group. This is
 coarser than a curated 1:1 orthology call (e.g. reciprocal-best-hit) but
-requires no new tooling and has near-complete proteome coverage for all
-three species (100% for Arabidopsis/rice at the family level; the
+requires no new tooling and has near-complete proteome coverage for the
+plant species (100% for Arabidopsis/rice at the family level; the
 subfamily level — used here, since it is the orthology-informative tier —
 covers 77.2% of Arabidopsis and 61.6% of rice; proteins without a
 subfamily call are excluded from the comparison, not assumed
@@ -47,6 +47,8 @@ project's existing from-scratch statistics (``permutation.py``,
 from __future__ import annotations
 
 import csv
+import random
+from collections import Counter
 from dataclasses import dataclass
 from math import comb
 from pathlib import Path
@@ -277,3 +279,237 @@ def bonferroni_and_bh_correction(
         )
         for i in range(m)
     ]
+
+
+# ---------------------------------------------------------------------------
+# N-way conservation spectrum
+#
+# The pairwise Fisher test above answers "do species A and B co-target the
+# same ortholog subfamilies?". With four datasets the biologically pointed
+# question is the n-way one: how many subfamilies carry a persulfidated
+# protein in *every* species, and is that more than independence predicts?
+# Pairwise enrichment does not imply an n-way excess (three pairwise
+# associations are compatible with an empty triple intersection), so the top
+# cell needs its own null rather than an inference from the pairwise table.
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class ConservationSpectrum:
+    """Distribution of ortholog subfamilies over "persulfidated in k of the
+    S species", restricted to the subfamilies present in every proteome.
+
+    ``observed_by_species_count`` lists only the k values that actually
+    occur; ``expected_by_species_count`` covers every k in ``0..S`` so the
+    observed/expected comparison is defined at the top cell even when it is
+    empty. Expectations are the Poisson-binomial means implied by each
+    species' own marginal targeting rate over the shared universe, i.e. the
+    independence null with all marginals held fixed.
+    """
+
+    species: tuple[str, ...]
+    universe_size: int
+    persulfidated_families_by_species: dict[str, int]
+    observed_by_species_count: dict[int, int]
+    expected_by_species_count: dict[int, float]
+    conserved_in_all: tuple[str, ...]
+
+
+def _shared_universe(species_maps: dict[str, SpeciesPantherMap]) -> frozenset[str]:
+    universe: frozenset[str] | None = None
+    for species_map in species_maps.values():
+        families = species_map.all_families()
+        universe = families if universe is None else (universe & families)
+    return universe if universe is not None else frozenset()
+
+
+def _poisson_binomial_pmf(probabilities: list[float]) -> list[float]:
+    """Exact PMF of the number of successes among independent Bernoulli
+    trials with heterogeneous probabilities, by direct convolution."""
+    pmf = [1.0]
+    for p in probabilities:
+        nxt = [0.0] * (len(pmf) + 1)
+        for k, mass in enumerate(pmf):
+            nxt[k] += mass * (1.0 - p)
+            nxt[k + 1] += mass * p
+        pmf = nxt
+    return pmf
+
+
+def conservation_spectrum(
+    species_maps: dict[str, SpeciesPantherMap],
+    persulfidated: dict[str, set[str]],
+) -> ConservationSpectrum:
+    """Count shared ortholog subfamilies by how many species persulfidate them.
+
+    ``species_maps`` insertion order is preserved in ``species`` so callers
+    control the reporting order; the returned family lists are sorted, so
+    the whole result is deterministic.
+    """
+    species = tuple(species_maps)
+    universe = _shared_universe(species_maps)
+    universe_size = len(universe)
+
+    per_species: dict[str, frozenset[str]] = {
+        name: species_maps[name].persulfidated_families(persulfidated[name]) & universe
+        for name in species
+    }
+
+    counts: Counter[str] = Counter()
+    for families in per_species.values():
+        counts.update(families)
+
+    histogram: Counter[int] = Counter()
+    for family in universe:
+        histogram[counts.get(family, 0)] += 1
+
+    if universe_size > 0:
+        rates = [len(per_species[name]) / universe_size for name in species]
+        pmf = _poisson_binomial_pmf(rates)
+        expected = {k: universe_size * mass for k, mass in enumerate(pmf)}
+    else:
+        expected = {k: 0.0 for k in range(len(species) + 1)}
+
+    conserved_in_all = tuple(
+        sorted(family for family in universe if counts.get(family, 0) == len(species))
+    )
+
+    return ConservationSpectrum(
+        species=species,
+        universe_size=universe_size,
+        persulfidated_families_by_species={
+            name: len(per_species[name]) for name in species
+        },
+        observed_by_species_count=dict(sorted(histogram.items())),
+        expected_by_species_count=expected,
+        conserved_in_all=conserved_in_all,
+    )
+
+
+@dataclass(frozen=True)
+class ConservationSpectrumPermutationResult:
+    species_count: int
+    observed: int
+    expected_under_independence: float
+    mean_null: float
+    p_value: float
+    n_perm: int
+    seed: int
+
+
+def conservation_spectrum_permutation_test(
+    species_maps: dict[str, SpeciesPantherMap],
+    persulfidated: dict[str, set[str]],
+    *,
+    species_count: int | None = None,
+    n_perm: int = 1000,
+    seed: int = 0,
+) -> ConservationSpectrumPermutationResult:
+    """Permutation null for "families persulfidated in at least ``species_count``
+    species", defaulting to all of them.
+
+    Each replicate re-draws every species' persulfidated-family set uniformly
+    without replacement from the shared universe, holding that species' family
+    count fixed. This preserves all marginals and destroys only the
+    cross-species alignment, which is exactly the hypothesis under test. The
+    p-value is add-one smoothed, so it is bounded in ``[1/(n_perm+1), 1]`` and
+    never reported as exactly zero.
+    """
+    species = tuple(species_maps)
+    threshold = len(species) if species_count is None else species_count
+    universe = _shared_universe(species_maps)
+    universe_size = len(universe)
+
+    per_species_families = [
+        species_maps[name].persulfidated_families(persulfidated[name]) & universe
+        for name in species
+    ]
+    per_species_counts = [len(families) for families in per_species_families]
+
+    observed_counts: Counter[str] = Counter()
+    for families in per_species_families:
+        observed_counts.update(families)
+    observed = sum(1 for c in observed_counts.values() if c >= threshold)
+
+    spectrum = conservation_spectrum(species_maps, persulfidated)
+    expected = sum(
+        mass for k, mass in spectrum.expected_by_species_count.items() if k >= threshold
+    )
+
+    rng = random.Random(seed)
+    indices = list(range(universe_size))
+    null_stats: list[int] = []
+    for _ in range(n_perm):
+        drawn: Counter[int] = Counter()
+        for k in per_species_counts:
+            drawn.update(rng.sample(indices, k) if k else ())
+        null_stats.append(sum(1 for c in drawn.values() if c >= threshold))
+
+    at_least_observed = sum(1 for stat in null_stats if stat >= observed)
+    p_value = (1 + at_least_observed) / (n_perm + 1)
+    mean_null = (sum(null_stats) / n_perm) if n_perm else 0.0
+
+    return ConservationSpectrumPermutationResult(
+        species_count=threshold,
+        observed=observed,
+        expected_under_independence=expected,
+        mean_null=mean_null,
+        p_value=p_value,
+        n_perm=n_perm,
+        seed=seed,
+    )
+
+
+@dataclass(frozen=True)
+class DetectabilityFloor:
+    """Smallest co-persulfidation count that would have been significant.
+
+    A non-significant pairwise result means nothing on its own when one of
+    the two datasets is shallow: if independence already predicts fewer than
+    one shared family, no attainable observation is significant and "n.s."
+    is a power statement. Reporting the floor next to the observation makes
+    that explicit instead of leaving the reader to infer it.
+    """
+
+    alpha: float
+    observed: int
+    expected_under_independence: float
+    minimum_significant_count: int | None
+    minimum_significant_fold_enrichment: float | None
+
+
+def conservation_detectability_floor(
+    result: ConservationTestResult,
+    alpha: float = 0.05,
+) -> DetectabilityFloor:
+    """Invert the one-sided hypergeometric tail: the smallest overlap count
+    reaching ``p < alpha`` under ``result``'s marginals, or ``None`` when even
+    the maximum attainable overlap cannot."""
+    n = result.shared_families
+    fam_a = result.persulfidated_families_a
+    fam_b = result.persulfidated_families_b
+    expected = result.expected_co_persulfidated_under_independence
+
+    minimum: int | None = None
+    if n > 0:
+        # The upper tail is non-increasing in the observed count, so the first
+        # count that clears alpha is the floor.
+        for count in range(0, min(fam_a, fam_b) + 1):
+            tail = _hypergeometric_upper_tail(
+                successes_drawn=count,
+                total_successes=fam_b,
+                total_draws=fam_a,
+                population=n,
+            )
+            if tail < alpha:
+                minimum = count
+                break
+
+    fold = minimum / expected if minimum is not None and expected > 0 else None
+    return DetectabilityFloor(
+        alpha=alpha,
+        observed=result.co_persulfidated_families,
+        expected_under_independence=expected,
+        minimum_significant_count=minimum,
+        minimum_significant_fold_enrichment=fold,
+    )

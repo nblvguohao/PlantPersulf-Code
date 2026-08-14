@@ -326,3 +326,107 @@ def sasa_structural_context_test(
         mean_diff=mean_pos - mean_unl,
         permutation=perm,
     )
+
+
+# ---------------------------------------------------------------------------
+# Model-confidence control (2026-08-14)
+#
+# An accessibility difference is only interpretable where AlphaFold is
+# confident about the fold. Very-low-pLDDT regions are predicted as extended
+# chain and therefore read as "exposed" regardless of the real structure, and
+# mass spectrometry independently favours flexible, protease-accessible
+# regions — so "the positives sit in low-confidence regions" is a live
+# alternative explanation for any exposure result. These helpers measure it
+# directly and let the accessibility tests be repeated on confident residues
+# only, rather than arguing the confound away.
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class PlddtContextResult:
+    species: str
+    n_proteins: int
+    n_positive_cys: int
+    n_unlabeled_cys: int
+    mean_plddt_positive: float
+    mean_plddt_unlabeled: float
+    mean_diff: float
+    permutation: PermutationResult
+
+
+def plddt_context_test(
+    species: str,
+    rows: list[StructuralContextRow],
+    n_perm: int = 1000,
+    seed: int = 0,
+) -> PlddtContextResult:
+    """Permutation test on model confidence itself: do persulfidated
+    cysteines sit at systematically different pLDDT than the other
+    cysteines of the same proteins? A strongly negative ``mean_diff`` means
+    the accessibility comparison is partly a confidence comparison."""
+    scored: Scored = [
+        (row.feature.plddt, row.label) for row in rows if row.feature.plddt is not None
+    ]
+    positive_vals = [s for s, y in scored if y == "positive"]
+    unlabeled_vals = [s for s, y in scored if y == "unlabeled"]
+    mean_pos = sum(positive_vals) / len(positive_vals) if positive_vals else 0.0
+    mean_unl = sum(unlabeled_vals) / len(unlabeled_vals) if unlabeled_vals else 0.0
+
+    perm = permutation_test(
+        scored, _absolute_mean_difference_metric, n_perm=n_perm, seed=seed
+    )
+
+    return PlddtContextResult(
+        species=species,
+        n_proteins=len({row.protein_accession for row in rows}),
+        n_positive_cys=len(positive_vals),
+        n_unlabeled_cys=len(unlabeled_vals),
+        mean_plddt_positive=mean_pos,
+        mean_plddt_unlabeled=mean_unl,
+        mean_diff=mean_pos - mean_unl,
+        permutation=perm,
+    )
+
+
+def filter_rows_by_plddt(
+    rows: list[StructuralContextRow],
+    min_plddt: float,
+) -> list[StructuralContextRow]:
+    """Keep contact-proxy rows at or above ``min_plddt``. Rows without a
+    confidence value are dropped, never assumed confident."""
+    return [
+        row
+        for row in rows
+        if row.feature.plddt is not None and row.feature.plddt >= min_plddt
+    ]
+
+
+def plddt_by_key(
+    rows: list[StructuralContextRow],
+) -> dict[tuple[str, int], float]:
+    """``(accession, position) -> pLDDT`` for every row carrying a value.
+
+    The SASA pathway parses full heavy-atom geometry and does not read the
+    B-factor column, so it borrows confidence from the contact-proxy rows
+    for the same cysteines rather than re-deriving it a second way.
+    """
+    return {
+        (row.protein_accession, row.cys_position): row.feature.plddt
+        for row in rows
+        if row.feature.plddt is not None
+    }
+
+
+def filter_sasa_rows_by_plddt(
+    rows: list[StructuralContextRowSasa],
+    plddt_by_cys: dict[tuple[str, int], float],
+    min_plddt: float,
+) -> list[StructuralContextRowSasa]:
+    """Keep SASA rows whose cysteine has a known pLDDT at or above
+    ``min_plddt``. Cysteines absent from the map are dropped."""
+    kept: list[StructuralContextRowSasa] = []
+    for row in rows:
+        plddt = plddt_by_cys.get((row.protein_accession, row.cys_position))
+        if plddt is not None and plddt >= min_plddt:
+            kept.append(row)
+    return kept
