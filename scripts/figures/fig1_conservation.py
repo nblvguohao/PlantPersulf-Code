@@ -82,7 +82,7 @@ def main() -> None:
         if bonf_sig:
             color, filled = PALETTE["blue_main"], True
         elif bh_sig:
-            color, filled = PALETTE["teal"], True
+            color, filled = PALETTE["orange"], True
         else:
             color, filled = PALETTE["neutral_mid"], False
         ax_a.scatter(
@@ -109,8 +109,9 @@ def main() -> None:
         plt.Line2D([0], [0], marker="o", linestyle="",
                    markerfacecolor=PALETTE["blue_main"],
                    markeredgecolor=PALETTE["blue_main"], label="Bonferroni sig. (m=6)"),
-        plt.Line2D([0], [0], marker="o", linestyle="", markerfacecolor=PALETTE["teal"],
-                   markeredgecolor=PALETTE["teal"], label="BH sig. only"),
+        plt.Line2D([0], [0], marker="o", linestyle="",
+                   markerfacecolor=PALETTE["orange"],
+                   markeredgecolor=PALETTE["orange"], label="BH sig. only"),
         plt.Line2D([0], [0], marker="o", linestyle="", markerfacecolor="white",
                    markeredgecolor=PALETTE["neutral_mid"], label="not significant"),
     ]

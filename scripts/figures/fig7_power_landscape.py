@@ -53,11 +53,13 @@ def main() -> None:
         if ratio == 2:
             ax.add_patch(
                 plt.Rectangle((ORS.index(3) - 0.5, KS.index(200) - 0.5), 1, 1,
-                              fill=False, edgecolor="#22D7E6", linewidth=1.6)
+                              fill=False, edgecolor="white", linewidth=1.6)
             )
             ax.annotate("recommended", xy=(ORS.index(3), KS.index(200) - 0.5),
-                        xytext=(0.1, -0.55), fontsize=6.2, color="#22D7E6",
-                        arrowprops=dict(arrowstyle="-", color="#22D7E6", lw=0.8))
+                        xytext=(0.1, -0.55), fontsize=6.2,
+                        color=PALETTE["neutral_black"],
+                        arrowprops=dict(arrowstyle="-",
+                                        color=PALETTE["neutral_black"], lw=0.8))
         ax.set_xticks(range(len(ORS)))
         ax.set_xticklabels([str(o) for o in ORS])
         ax.set_yticks(range(len(KS)))

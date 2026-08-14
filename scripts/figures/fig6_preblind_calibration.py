@@ -75,8 +75,8 @@ def main() -> None:
     # (b) Arabidopsis independent-laboratory controls
     order = np.argsort(arab_pct)
     ys = np.arange(len(arab_pct))
-    ax2.hlines(ys, 0, arab_pct[order], color=PALETTE["teal"], linewidth=0.9, alpha=0.85)
-    ax2.scatter(arab_pct[order], ys, s=16, color=PALETTE["teal"], linewidths=0, zorder=3)
+    ax2.hlines(ys, 0, arab_pct[order], color=PALETTE["green_3"], linewidth=0.9, alpha=0.85)
+    ax2.scatter(arab_pct[order], ys, s=16, color=PALETTE["green_3"], linewidths=0, zorder=3)
     ax2.axvline(50, color=PALETTE["red_strong"], linestyle="--", linewidth=1.0)
     ax2.set_yticks(ys)
     ax2.set_yticklabels([arab_genes[i] for i in order], fontsize=6)

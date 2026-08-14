@@ -19,16 +19,17 @@ SINGLE_COL = 85 * MM
 DOUBLE_COL = 174 * MM
 
 PALETTE = {
-    "blue_main": "#0F4D92",
-    "blue_secondary": "#3775BA",
-    "green_3": "#8BCF8B",
-    "red_strong": "#B64342",
+    "blue_main": "#0072B2",
+    "blue_secondary": "#56B4E9",
+    "green_3": "#009E73",
+    "red_strong": "#D55E00",
     "teal": "#42949E",
-    "violet": "#9A4D8E",
-    "neutral_light": "#CFCECE",
-    "neutral_mid": "#767676",
+    "violet": "#CC79A7",
+    "orange": "#E69F00",
+    "neutral_light": "#D9D9D9",
+    "neutral_mid": "#999999",
     "neutral_dark": "#4D4D4D",
-    "neutral_black": "#272727",
+    "neutral_black": "#1A1A1A",
 }
 
 REPO = Path(__file__).resolve().parents[2]
@@ -45,10 +46,17 @@ def apply_style() -> None:
             "font.size": 7,
             "axes.spines.right": False,
             "axes.spines.top": False,
-            "axes.linewidth": 0.8,
+            "axes.linewidth": 0.6,
+            "axes.edgecolor": "#999999",
             "legend.frameon": False,
             "xtick.labelsize": 6.5,
             "ytick.labelsize": 6.5,
+            "xtick.color": "#4D4D4D",
+            "ytick.color": "#4D4D4D",
+            "xtick.direction": "out",
+            "ytick.direction": "out",
+            "xtick.major.size": 2.5,
+            "ytick.major.size": 2.5,
             "axes.labelsize": 7,
         }
     )

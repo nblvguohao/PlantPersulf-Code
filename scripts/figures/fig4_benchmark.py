@@ -88,7 +88,7 @@ def main() -> None:
     for i, sp in enumerate(SPECIES):
         ap = np.asarray(vals[sp])
         x = i + rng.uniform(-0.14, 0.14, size=len(ap))
-        ax2.scatter(x, ap, s=9, color=PALETTE["teal"], alpha=0.75, linewidths=0, zorder=3)
+        ax2.scatter(x, ap, s=9, color=PALETTE["blue_main"], alpha=0.75, linewidths=0, zorder=3)
         ax2.plot([i - 0.25, i + 0.25], [ap.mean(), ap.mean()],
                  color=PALETTE["neutral_black"], lw=1.6, zorder=4)
         ax2.hlines(
