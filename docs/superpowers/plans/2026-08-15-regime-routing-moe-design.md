@@ -144,3 +144,21 @@ arabidopsis/rice per-species AP 改善且 tomato 不灾难性恶化（配对方�
 - 2026-08-15：**诊断 C（体制分布审计）**。已知对照 n=12 体制分布：
   folded 9 / disordered 3 / linker 0（本诊断确认 gate 输入在对照集上无
   linker 饿死风险；全蛋白组分布审计待候选表快照延伸）。
+- 2026-08-15：**诊断 B 完成（分物种结构标定，W1 机制线索 #1 阳性）**。§4B 预注册
+  "体制感知结构标定"按 W1 机制的操作化方向（tomato 是**物种**、scaler 被物种行
+  主导）实现为**分物种**结构标定（每物种在 train present 行 fit scaler）——
+  与 §4B 的 per-species 成功标准一致，也解释了为何此轴比 pLDDT 体制分桶更直接。
+  新增 `evaluation/species_structure_scaling.py`（+5 单元测试）+ `scripts/accuracy_campaign/
+  eval_per_species_structure_scaling.py`（+4 helper 测试）→ `results/experiments/
+  accuracy_campaign/w4_per_species_scaling/comparison.json`（claim_class
+  `diagnostic_only`）。文献轨 v11 冻结超参 + 同一 v3 注册表 + 10 seeds 面板
+  （panel_sha256 gate 10/10）；global 臂逐物种 test AP 与 W1 v3 逐 seed 一致
+  （reproduction gate 10/10）→ 3-crop macro 0.2117 精确复现。per_species 臂
+  3-crop macro **0.3799**（v2 基线 0.3863 的 98%），配对 Wilcoxon **p=0.0098**
+  （9/10 seeds；4-species p=0.0195）。逐物种：arab +0.265（9/10）、rice +0.242
+  （8/10）、tomato 近地板持平（0.0204→0.0175）、magnaporthe −0.034（0 结构行，
+  训练端 spillover，非显著）。**结论：分物种/分体制标定方向实证成立（W1 机制线索
+  确认）；分物种结构标定列新发布候选变更（特征投影，非新架构），正式预注册待 Gate 3
+  后起草。**诊断 A（路由阴性）与 B（标定阳性）正交：路由无物可路由，但标定口径
+  修复"被番茄主导的 scaler"是真实增益源。方法学与 W1 同型（冻结超参重训 +
+  feature projection），未触冻结包/候选表/盲法队列。

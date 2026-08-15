@@ -156,12 +156,38 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
 - 注：v11 冻结模型的结构分支本就只对 ~3% arabidopsis/rice 行激活——"结构贡献显著"
   的既有印象需按此修正；L1 证据现为阴性。
 
+### W4 分物种结构标定（诊断 B，MoE 设计轨）——W1 机制线索 #1 阳性，新代候选
+
+- 复测 W1 机制线索①（"全局结构 scaler 被番茄行主导"）：文献轨 v11 冻结超参、
+  同一 v3 番茄结构注册表、同一 10 seeds 面板（panel_sha256 gate 10/10），仅把
+  结构特征从"全局标定"改为"分物种 z 标定"（scaler 只在 train present 行按物种
+  拟合；未知/无结构物种恒等 fallback；后续全局二次 fit 因每物种 mean0/var1 近似
+  恒等，不重新引入跨物种拉偏）。
+- global 臂逐物种 test AP 与 W1 v3 逐 seed 一致（reproduction gate 10/10，
+  容差 1e-6）：3-crop macro **0.2117（=W1 v3 精确复现）**；per_species 臂
+  3-crop macro **0.3799**——恢复到 v2 基线 0.3863 的 98%。4-species macro
+  0.2722→0.3899。
+- 配对 Wilcoxon（10 seeds）：3-crop macro **p=0.0098**（9/10 seeds 正向，mean
+  delta +0.1682）；4-species p=0.0195（8/10，+0.1177）。逐物种 test AP（10 seeds
+  均值）：arab 0.2302→0.4957（9/10 up）、rice 0.3844→0.6265（8/10 up）、
+  tomato 0.0204→0.0175（近地板，无灾难性恶化）、magnaporthe 0.4536→0.4200
+  （0 结构行，训练端 spillover，非显著）。
+- 结论：**W1 机制线索①实证成立**——全局结构 scaler 确被番茄主导；分物种标定把
+  arabi/rice 恢复到 v2 水平且 tomato 不塌。命中 MoE 设计文档 §4B/§5 成功定义。
+  **分物种结构标定列为新发布候选变更**（结构输入缩放=特征投影，非新架构）——
+  实施仍需新发布号 + 新预注册 + 联合签署，本阶段不落地。
+- 产物：`results/experiments/accuracy_campaign/w4_per_species_scaling/`
+  （comparison.json + 每 seed 每臂 test/validation TSV）；claim_class
+  `diagnostic_only`。
+
 ### 战役结论一览（2026-08-15）
 
 - 已评估：L1（阴）、L2（阴）、L8-σ 门控（阴）、L8-分物种校准（**阳**）、
   W2 Sul-BertGRU 堆叠（阴）。
-- 唯一正向杠杆：**分物种 isotonic 校准**（纯后处理，Top-K 池化规则），列为新发布
+- 战役唯一正向杠杆：**分物种 isotonic 校准**（纯后处理，Top-K 池化规则），列为新发布
   候选变更；其余杠杆不立项。
+- 战役后（MoE 设计轨）**W4 诊断 B 阳性**：分物种结构标定恢复 arabi/rice 到 v2 水平
+  （3-crop p=0.0098），W1 机制线索 #1 实证成立，同样列为新发布候选变更（详见上文 W4 节）。
 - 全部证据与报告：`results/experiments/accuracy_campaign/`（含 `DECISION_SUMMARY.md`）。
 
 
@@ -341,3 +367,23 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
   disordered 专家无物可路由；MoE 架构在 labeled n=12 + 7 特征下不立项。**
   分物种/分体制结构标定（W1 scaler 线索）与路由正交，列新代候选（Gate 3 后
   再评估）。
+- 2026-08-15：**诊断 B（分物种结构标定）——W1 机制线索 #1 阳性，新代候选**——
+  `evaluation/species_structure_scaling.py`（纯函数：fit_species_struct_scalers/
+  transform_species_struct，每物种在 train present 行 fit TrainOnlyScaler、masked
+  与无 scaler 物种恒等 fallback；+5 单元测试）+ `scripts/accuracy_campaign/
+  eval_per_species_structure_scaling.py`（复用 W1 runner 面板构建与逐位点路径，
+  两臂仅结构输入投影不同：global=冻结全局标定 / per_species=分物种 z 标定；
+  +4 脚本 helper 单元测试）→ `results/experiments/accuracy_campaign/
+  w4_per_species_scaling/comparison.json`（claim_class `diagnostic_only`）。
+  **口径**：文献轨 v11 冻结超参、同一 v3 番茄结构注册表、同一 10 seeds 面板
+  （panel_sha256 gate 10/10），test 分区 AP@200。global 臂逐物种 test AP 与 W1 v3
+  逐 seed 一致（reproduction gate 10/10，容差 1e-6）→ 3-crop macro 0.2117 精确复现
+  W1 v3。per_species 臂 3-crop macro **0.3799**（v2 基线 0.3863 的 98%）。
+  **结果**：配对 Wilcoxon 3-crop macro **p=0.0098**（9/10 seeds 正向，mean delta
+  +0.1682）；4-species p=0.0195（8/10）。逐物种 test AP（10 seeds 均值）：
+  arab 0.2302→0.4957（+0.265，9/10 up）、rice 0.3844→0.6265（+0.242，8/10 up）、
+  tomato 0.0204→0.0175（近地板，无灾难性恶化）、magnaporthe 0.4536→0.4200
+  （0 结构行，训练端 spillover，非显著）。**结论：W1 机制线索①"全局结构 scaler 被
+  番茄行主导"实证成立**；分物种标定把 arabi/rice 恢复到 v2 水平且 tomato 不塌，
+  命中 MoE 设计文档 §4B/§5 成功定义。**分物种结构标定列为新发布候选变更**（特征
+  投影，非新架构）——实施须新发布号 + 新预注册 + 联合签署，本阶段不落地。
