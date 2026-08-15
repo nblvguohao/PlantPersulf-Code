@@ -250,3 +250,30 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
   级标签（L0）。产物：`results/diagnostics/p2_structure_separation_v1.json`。
   **gate 结论**：序列模型无法分离的共肽位点，结构特征在体制内可以
   （C206 rank 1 vs C209 rank 9）；P2 判定通过，结构承载方向获得首个正证据。
+- 2026-08-15：**已知对照蛋白结构体制内检验（方法设计 §8 P2 的系统化扩展，
+  n=12）**——新增 `evaluation/structure_regime.py`（pLDDT 体制分桶、蛋白内 z、
+  按特征聚合排序/负担、体制局部带符号合成）+ `scripts/evaluate_structure_regime
+  _separation.py` + 10 个单元测试。**新下载并注册 7 个拟南芥对照的 AFDB v6
+  结构**（Q9FJI5/Q9LW27/F4K5T2/Q9FIJ0/Q940H6/A0MES8/Q8S929；PDB/蛋白组逐
+  残基一致、SHA256 审计通过），使 12/12 mapped controls 全部有结构覆盖。
+  产物：`results/diagnostics/structure_regime_separation_v1.json`。
+  **关键结果（诊断级证据，n=12）**：① **aggregate 方向翻转 naive 暴露假说**
+  ——折叠体制真位点系统性**更埋藏**：`contact_number_10a` 蛋白内 z +0.72
+  （hit@2 6/9），全 n=12 上 mean_z +0.41、8/12 高于蛋白中位、负担 36 vs 随机
+  58.5（38% 削减）；而 `rsa_relative` 负担 69 > 随机 58.5（暴露方向更差）。
+  ② **方向随体制翻转**：disordered 体制（WRKY6/SlERF.D2/ABI4，n=3）真位点
+  RSA 与最近 Sγ 距离 hit@2 全 3/3（暴露/孤立），folded 体制真位点是接触数
+  高（埋藏/堆积）→ **单一全局符号复合无法同时服务两种体制**，命题三"路由
+  而非平均"在 n=12 上的结构性实证。③ **体制局部排序无符号即全特征有效**：
+  regime-local 排序（仅在真位点自身 pLDDT 桶内）对所有 7 特征负担都下降
+  （最近 Sγ 59→45、RSA 69→53、接触 36→30）。④ 带符号复合上限：全局符号
+  蛋白内负担 37、体制局部 32（随机 58.5/47.5），体制局部 top1 5/12、
+  rank≤2 9/12。⑤ **BRG3 RING 连续性**：P2 level-5 方法（RING 局部 z + 暴露
+  符号）复现 C206 rank 1、C209 rank 9、负担 1 vs 3.33；**显式记录张力**——
+  同一 RING 在全局埋藏符号下 C209 升到 rank 7，说明 P2 的"游离暴露 Cys"
+  解读是体制内的，不推广为一般金属簇规则（cluster-like 真位点 RNF144b C122
+  完全埋藏、RSA 0.000、接触 z +1.60）。局限：contact_number 为主导是 7 特征
+  集内的探索性选择（非预注册端点）；监督树仍不可估（labeled 12 个）。
+  **v2 设计输入**：结构分支必须体制路由——folded 体制用埋藏/堆积（接触数），
+  disordered 体制用暴露/孤立（RSA、最近 Sγ 距离）；RING/金属簇内另需簇内
+  暴露 gate。
