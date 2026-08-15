@@ -302,3 +302,12 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
   p=0.018 是"相对同蛋白其他 Cys"，簇内分辨是另一层面）；P2"游离暴露 Cys"
   是簇内 case-level 读数、不推广。**v2 输入**：结构分支声称范围限定在蛋白内
   排序，不扩展到共肽内正/负分辨；共肽池保持为有效性约束与标定资源。
+- 2026-08-15：**PXD072089 水稻共肽阴性扩产（增量建议 §1 下一步，第 4 物种）**
+  ——`evidence/pnas_site_negatives.py`（纯逻辑 + TypedDict，坐标偏移安全的
+  秩映射）+ `scripts/scan_copeptide_negatives_pxd072089.py`（pandas I/O +
+  水稻蛋白组唯一重定位 + registry 写入）+ 19 unit + 2 scientific 测试。
+  5 个部分修饰肽段 → 8 蛋白-肽段组 → **19 行**（10 阳性 + 9 阴性），
+  `copeptide_negatives_v1.tsv` 21 → 40 行。PNAS 2025 独立实验室（Gate 2
+  条件 1 实验室独立性在阴性维度的补充）；坐标安全映射处理 Q5ZCB1 的 +1 偏移。
+  这批行此前由一次性脚本生成、未提交；本次可复现代码**精确复现**（幂等
+  `rows_added=0`）。逐残基核验水稻参考蛋白组 v1。

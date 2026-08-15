@@ -156,6 +156,32 @@ PXD024061（Aroca et al. 2021, Antioxidants 10:508，已注册 supplementary sou
 - 未触碰冻结产物；全部新行逐残基核验拟南芥参考蛋白组 v2（残基=C、肽段唯一、
   坐标一致、三态互斥）。
 
+### 6.5 追加：PXD072089 水稻共肽阴性扩产（21 → 40 行，2026-08-15 同日完成）
+
+第四物种（Oryza sativa）共肽阴性——PNAS 2025（`10.1073/pnas.2608150123`）
+独立实验室，正是 Gate 2 条件 1 实验室独立性在阴性维度需要的补充。
+
+- **数据源**：PNAS 补充 Dataset S4（论文确认的 -SSH 位点，每行一个修饰 Cys）
+  与 Dataset S1（MaxQuant 肽段库存——每个被检持硫化肽段的全部 Cys 位点）。
+  两表联合：检测肽段中论文确认修饰的 Cys 少于肽段总 Cys 时，其余 Cys 为
+  共肽阴性候选。
+- **坐标安全映射**（`evidence/pnas_site_negatives.py`）：S4/S1 的蛋白坐标在论文
+  搜索空间——4/5 部分修饰肽段与注册水稻蛋白组一致，但 Q5ZCB1 差 1 个残基。
+  通过肽段自身 Cys **秩**映射（修饰位点在库存中的排名 → 肽段内位置，坐标偏移
+  不变），再在注册水稻蛋白组 v1 中唯一重定位取规范坐标。
+- **注册结果**：5 个部分修饰肽段 → 8 个蛋白-肽段组 → **19 行**
+  （10 阳性 + 9 阴性，`site_determining_ion_coverage=True` 论文报告型、同
+  kiad070 番茄基础；raw spectra 不可得记为 limitation）。IIPTPNCALSSLGLPLRPGEPICTFYSR
+  在同肽段内 4 个蛋白同源位点出现（A0A0P0Y2A9/A0A0P0Y253/U5KNJ1/Q2R4J4），
+  Q5ZCB1 5-Cys 肽段（SLPPICHCADEVASCAAACKECDMVNSSSEPPR）3 修饰 / 2 阴性。
+- **可复现代码**：这批行此前由一次性脚本生成、代码丢失且未提交；本次新增
+  `evidence/pnas_site_negatives.py`（纯逻辑 + TypedDict，19 unit 测试）+
+
+  `scripts/scan_copeptide_negatives_pxd072089.py`（pandas I/O + 重定位 +
+  registry 写入，幂等）**精确复现**既有 19 行（`rows_added=0`），并新增
+  scientific 测试（rice 专属 + Q5ZCB1 坐标偏移回归）。
+- **验收**：unit 19 + scientific 10 全过；ruff/mypy 干净；逐残基核验水稻蛋白组 v1。
+
 ## 7. P2 早期判定点（方法设计 §8）：结构特征分离共肽位点 —— 首个阳性判定
 
 ### 7.1 问题与工具

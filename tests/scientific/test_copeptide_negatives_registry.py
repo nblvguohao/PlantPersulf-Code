@@ -22,6 +22,14 @@ PROTEOMES = {
     "arabidopsis": (
         _REPO_ROOT / "data" / "raw" / "references" / "arabidopsis_ref_proteome_v2.fasta"
     ),
+    "rice": (
+        _REPO_ROOT
+        / "data"
+        / "raw"
+        / "references"
+        / "rice_proteome_v1"
+        / "uniprot_rice_v1.fasta"
+    ),
 }
 
 
@@ -86,6 +94,43 @@ def test_arabidopsis_entries_are_from_pxd024061_and_consistent() -> None:
     for peptide in peptides:
         peptide_rows = [r for r in arabidopsis if r["peptide_sequence"] == peptide]
         assert any(r["state"] == "negative" for r in peptide_rows), peptide
+
+
+def test_rice_entries_are_from_pxd072089_and_consistent() -> None:
+    rows = _registered_rows()
+    rice = [r for r in rows if r["species"] == "rice"]
+    assert len(rice) >= 10
+    for record in rice:
+        assert record["source_doi"] == "10.1073/pnas.2608150123"
+        assert record["site_id"].startswith("PXD072089_")
+        assert record["site_determining_ion_coverage"] == "True"
+        assert record["localization_confirmed"] == "True"
+    # every rice peptide contributes at least one negative
+    peptides = {r["peptide_sequence"] for r in rice}
+    assert len(peptides) >= 4
+    for peptide in peptides:
+        peptide_rows = [r for r in rice if r["peptide_sequence"] == peptide]
+        assert any(r["state"] == "negative" for r in peptide_rows), peptide
+
+
+def test_q5zcb1_five_cys_peptide_pattern_matches_labels() -> None:
+    """The coordinate-shift case: SLPPICHCADEVASCAAACKECDMVNSSSEPPR in the
+    rice proteome has 5 Cys, 3 paper-confirmed modified, 2 negative."""
+    rows = _registered_rows()
+    q5 = [
+        r
+        for r in rows
+        if r["protein_accession"] == "Q5ZCB1"
+        and r["peptide_sequence"] == "SLPPICHCADEVASCAAACKECDMVNSSSEPPR"
+    ]
+    assert len(q5) == 5
+    by_state = {
+        state: {r["cys_position"] for r in q5 if r["state"] == state}
+        for state in {"positive", "negative", "undetermined"}
+    }
+    assert by_state["positive"] == {"145", "152", "156"}
+    assert by_state["negative"] == {"143", "159"}
+    assert by_state["undetermined"] == set()
 
 
 def test_brg3_peptide_modification_pattern_matches_labels() -> None:
