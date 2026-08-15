@@ -90,6 +90,81 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
   新一代模型可纳入为训练阳性，但代价是失去这批"干净校准位点"。
 - **L2/L5/L6 不变**：诊断未提供针对 ESM/序列特征/架构的额外证据。
 
+## 2.2 评估战役 2026-08-15（进行中）——结构与结论更新
+
+用户（建模方 PI）于 2026-08-15 提出"针对数据结构、模型、已有类似位点预测工具提升
+准确度"，确认三线并进（W1+W2+W3）。计划文档：
+`docs/superpowers/plans/2026-08-15-model-accuracy-campaign.md`。
+全部评估在冻结内部轨上运行，产物在 `results/experiments/accuracy_campaign/`，
+**不触碰冻结包/候选表/盲法队列，不再解锁 frozen test**。
+
+### 基础设施：文献轨逐位点重跑管线（已建成并验证）
+
+- `scripts/accuracy_campaign/run_literature_ranker_scores.py`：逐 seed 重建 v11 面板
+  （同生产函数），`panel_sha256` 与冻结 summary **10/10 一致**；structure_ranker
+  test 逐物种 AP 与 v11 **逐位一致**（reproduction_mismatches 0/10）→ 管线位级等价，
+  此后任何臂（use_esm、新结构注册表）的分数均可与 v11 同口径直接对比，且顺带补上
+  生产轨丢弃的**逐位点分数 + MC-dropout uncertainty**（此前只有聚合指标落盘）。
+
+### W2 已有工具集成：Sul-BertGRU 堆叠 —— 阴性，不立项
+
+- 等权秩聚合（sr × sul）：macro AP 0.3863 → **0.1181**（被弱模型拖累）。
+- 验证集网格最优凸组合：10/10 seeds 最优 alpha ≈ 0.05（=忽略 sul），组合分数与
+  sr_only 排序一致。
+- 根因：sul 分数在该面板近乎退化——发布头部 sigmoid→softmax
+  （`competitors/sul_bertgru.py:91`）使多数行输出同一常数值（0.26894…=σ(−1)），
+  排名信息极弱。standalone AP 0.0213 即此症状。
+- 结论：**Sul-BertGRU（当前移植形态）对 structure_ranker 无增量价值**；登记不实施。
+  与 L6 既有判断一致（架构复杂度与收益无正相关证据）。
+
+### W3-L8 校准/选择策略 —— 一阴一阳
+
+- **阴性：MC-dropout σ 门控不成立**。真阳性系统性集中在**高不确定度区**：仅丢弃
+  top-10% 高 σ 行即丢掉约 60% 真阳性（133/223），hits@50 从 24.7 掉到 11.3。
+  即"顶部假阳性并非高不确定度位点"——与 kiae271 诊断的直观假说相反。
+  σ 门控方向不立项。
+- **阳性：分物种 isotonic 校准（验证集拟合、单调后处理）改善跨物种池化 Top-K**：
+  hits@50 24.7→29.8（+21%），recall_full@200 0.497→0.581（+17%），不丢行。
+  增益集中在 raw 最弱 seeds（0–5→9–19），强 seeds 持平，无一 seed 灾难性恶化。
+- 含义：候选表为跨物种池化 Top-K；"分物种 isotonic 校准"列为**新发布候选变更**
+  （仍须新发布号+新预注册，Top-K 变更纪律不变）。局限：文献轨 PU 面板（1:20）的
+  池化数字不可直接外推全蛋白组候选表。
+
+### W3-L2 ESM 分支（use_esm=1）——阴性，不立项
+
+- 同口径重跑（仅 use_esm 0→1，其余 v11 超参冻结）：macro AP **0.1988±0.2006** vs
+  v11 冻结 0.3863±0.1727；tomato 0.0129 vs 0.0185。10/10 seeds 劣于或接近 v11，
+  且呈双峰（部分 seed 0.42–0.52、部分 0.03–0.05）——ESM 分支增加不稳定。
+- 判定：**L2 不立项**。印证 v11 消融选择 use_esm=0；与登记册 L2 既有判断一致。
+  与 L1/L4/L8 无关：L1（番茄结构）与 L8（分物种校准）的正面/待评估证据不受影响。
+
+### W1 番茄 AlphaFold 结构覆盖（L1）——阴性（按现有管线形态），不立项
+
+- 数据：29,767 番茄 accession → 27,542 下载 / 1,105 not_found / 0 错误；
+  release v3 快照 30,681 行全量审计通过（SHA256 `60aa3af0…`），已注册
+  `model_inputs.tsv`。番茄结构覆盖 0 → 90%（严格面板 7,803/8,676 行解掩蔽）。
+- 文献轨（v11 冻结超参，仅换注册表）：macro **0.3863→0.2117**；arabidopsis
+  0.4934→0.2302、rice 0.6470→0.3844、tomato 0.0185→0.0204（名义 +0.002，方差
+  加倍，无增益证据）。
+- 严格轨 5-fold：macro **0.5383→0.3257**；tomato **0.0413→0.0215（−48%）**。
+- 机制线索（登记不实施）：① 结构 scaler 被番茄行主导（v3 后番茄占有结构行 ~78%），
+  arabidopsis/rice 结构输入被重缩放——与两作物大幅退化一致；② 79 番茄阳性 × 7,803
+  新激活结构行在 hidden-16 门控融合中弱监督过拟合。附带：magnaporthe（0 结构行）
+  在 v3 臂反而上升，证实共享隐层被番茄结构行间接改变。
+- 可检验下一步（新代设计候选）：分物种结构 scaler；番茄"仅覆盖率"臂；
+  结构分支预训练/冻结。
+- 注：v11 冻结模型的结构分支本就只对 ~3% arabidopsis/rice 行激活——"结构贡献显著"
+  的既有印象需按此修正；L1 证据现为阴性。
+
+### 战役结论一览（2026-08-15）
+
+- 已评估：L1（阴）、L2（阴）、L8-σ 门控（阴）、L8-分物种校准（**阳**）、
+  W2 Sul-BertGRU 堆叠（阴）。
+- 唯一正向杠杆：**分物种 isotonic 校准**（纯后处理，Top-K 池化规则），列为新发布
+  候选变更；其余杠杆不立项。
+- 全部证据与报告：`results/experiments/accuracy_campaign/`（含 `DECISION_SUMMARY.md`）。
+
+
 ## 3. 评估纪律
 
 - 任何杠杆评估必须：先在**冻结内部轨**（文献轨同口径）上跑通并记录数字，再决定是否立项；
@@ -105,3 +180,73 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
 - 2026-08-13：kiae271 模拟盲测（`evaluate_kiae271_with_release_bundle.py`）后更新
   第 2.1 节：0/99 位点进入 Top-2000 + 20 个干净位点 65% 中位数以上 → 新增 L8
   （分数校准/选择策略），L1（番茄结构覆盖）升为最高优先级；仍登记不实施。
+- 2026-08-15：**共肽阴性注册 + 冻结 bundle 诊断**（增量建议 §1，最高价值项）——
+  新增 `data/registry/copeptide_negatives_v1.tsv`（5 行，2 蛋白：BRG3 C206/C209/C212、
+  RNF144b C122/C127），为项目注册**首个显式阴性证据**（AGENTS.md 允许注册的类别）：
+  源自 kiad070 Fig.9B 肽段 SSCMICLPCR 与 Table S3 肽段 FYCPYKDCSAMLVNDSDEIVR，
+  逐残基核对注册番茄参考蛋白组（唯一命中）。新增 `evidence/copeptide_negatives.py`
+  三态分类（positive/negative/undetermined，"未定位≠未修饰"纪律：无
+  site-determining-ion 覆盖时未修饰 Cys 标 undetermined 而非 negative）。
+  **诊断结果（冻结 bundle 蛋白内排名，结构分支掩蔽）**：BRG3 阳性 C206(rank 8)/
+  C212(rank 6) **未排到**阴性 C209(rank 5) 之上；RNF144b C122(rank 17) 未排到
+  C127(rank 5) 之上。**阴性结论但信息量高**：±10 窗口序列特征在原理上无法分辨
+  相距 3 残基的共肽 Cys，实证证实——支持"区分必须由结构承载"的 v2 方向；
+  同时共肽阴性是唯一不受 Gate 2 条件 1（实验室独立性）限制的负样本轴。
+  产物：`results/diagnostics/copeptide_negatives_v1.json`。
+- 2026-08-15：**蛋白内排序诊断**（增量建议 §2）——训练用了 within-protein
+  pairwise 损失但从未报告。12 个 mapped controls 全 Cys 冻结 bundle 打分：
+  **SlWRKY6 C396 rank 1/7**（突变负担 1 vs 随机 4.0）、**PAD3 C440 rank 1/8**
+  （1 vs 4.5）、5/12 进入 top-2；总负担 54 vs 随机 58.5。旗舰控制 SlWRKY6 在
+  蛋白内排第 1 的同时不在全局 Top-2000 —— 任务口径匹配：模型训练目标就是蛋白内
+  排序，不是蛋白组盲扫。**叙事修正**：工具适用于"已知蛋白的位点定位"；蛋白组盲扫
+  结论需按此降级表述。WRKY71/ERF.D3 因 position_shift 状态未纳入（release 惯例）。
+  产物：`results/known_controls/within_protein_ranking_v1.json`。
+- 2026-08-15：**cys_density 体制假说诊断**（增量建议 §4）——关键模型事实：冻结
+  模型唯一密度特征是**蛋白级** cys_density（蛋白内常数），无法驱动蛋白内排序；
+  假设中的"同一特征需符号相反权重"在现有模型上不可实现（新特征需新发布）。
+  诊断局部密度（±10 窗口 C 计数，不进模型）：SlWRKY6 真位点 0.048 < 干扰项 0.095
+  （IDR 体制，方向符合假说）；BRG3 真位点 0.238 ≥ 蛋白均值 0.158（金属簇体制，
+  方向符合假说）。两典型体制数据方向均与假说一致 → **体制路由（MoE）列入 v2
+  架构候选证据 +1**；局部窗口密度作为新特征候选（新发布预注册）。
+  产物：`results/diagnostics/regime_hypothesis_v1.json`。
+- 2026-08-15：**共肽阴性系统化扩产（PXD024061，增量建议 §1 下一步）**——
+  新增 `evidence/maxquant_sites_negatives.py`（MaxQuant sites 表解析：从
+  `Sulfide(C) Probabilities` 列解析肽段序列+候选定位概率，按 mod-peptide ID
+  分组合并；保守规则：候选概率 ≥0.75 → positive、<0.75 弱候选 → undetermined
+  （"未定位≠未修饰"）、非候选 Cys 仅当修饰总数确定时 → negative；肽段在注册
+  蛋白组唯一命中重新定位——MaxQuant 搜索坐标空间与注册蛋白组不一致）。
+  `classify_peptide_cys` 增加 weak-candidate 维度（无行为回归）。扫描脚本
+  `scripts/scan_copeptide_negatives_pxd024061.py`（幂等，site_id 去重）：
+  PXD024061（Aroca et al. 2021, Antiox 10:508）Sulfide(C)Sites.txt（82 行）+
+  CianoBiotin(C)Sites.txt（6 行）→ 74+6 肽段中 **7 个肽段注册、16 行新增**
+  （5→21 行，6 蛋白 7 肽段，拟南芥；如 Q9FYD1 三 C 肽段 KPCFICGSLEHGAKQCSK
+  = C191 修饰 + C194/C204 未修饰）。全部行通过拟南芥参考蛋白组 v2 逐残基
+  核验（残基=C、肽段唯一命中、in-peptide 坐标一致）。**扩展诊断（9 肽段，
+  冻结 bundle 蛋白内排名）**：8/9 未分离；唯一分离者 Q944L8 C204(rank 2) >
+  C209(rank 3) 为噪声水平单例（9 肽段中 1 例在随机排序下非罕见），不改变
+  "序列模型无共肽分离能力"结论；顺带 BRG3/RNF144b 原结论复现。
+  产物：`results/diagnostics/copeptide_negatives_v1.json`（重跑覆盖）。
+  证据轴价值：共肽阴性从 2 蛋白 2 肽段扩至 8 蛋白 9 肽段（跨番茄/拟南芥），
+  v2 显式阴性池雏形。
+- 2026-08-15：**P2 早期判定点：结构特征分离共肽位点（方法设计 §8 P2，首个
+  阳性判定）**——新增 `evaluation/structure_features.py`（纯 numpy：PDB 解析、
+  Shrake-Rupley SASA、Sγ 几何（8Å Cys 数/最近 Sγ 距离，AFDB 无金属故为配位
+  代理）、6Å 正电残基计数、Sγ 库仑静电势近似、接触数；无 DSSP/APBS 依赖）。
+  `scripts/evaluate_p2_structure_separation.py`：SlBRG3 + SlWRKY6 用注册 AFDB
+  v6 结构（PDB/蛋白组逐残基一致校验）；PyMYB10 无 AFDB 文件（API 条目存在但
+  模型文件全 404，折叠另行决策，如实记录未虚构）。
+  **结果（决定性）**：① 逐特征方向——BRG3 上 3/7 特征在真位点 {206,212} vs
+  金标准阴性 {209} 有干净方向（RSA 真位点更暴露、接触数更低、静电势更低）；
+  WRKY6 上 RSA 与 Sγ 最近距离把 IDR 真位点 C396 排蛋白内第 2（负担 2 vs
+  随机 4）。② 体制内判定——**RING 域（C197-C231）内带符号合成：C206 排
+  rank 1/9、C209 排 rank 9/9（最后），负担 1 vs 随机 3.33**；全蛋白同符号
+  合成反而 rank 9/10（N 端无序区 C24/C184/C185 暴露度更高，抢走方向）——
+  **特征方向是体制内的，跨体制等权合成必失败**：命题三"路由而非平均"的首个
+  结构侧实证。③ C209 是簇内埋藏最深（rsa 0.007、接触 26）、静电势最高
+  （0.352）的 Cys = 最像配位 Cys；C206 是簇内最暴露（rsa 0.238）、静电势
+  最低（0.159）的 Cys —— 结构侧支持设计文档 §1.3 RING 假设（9 Cys 必有
+  游离 Cys，游离 Cys 才是 HS⁻ 靶点）。④ 监督树模型不可估（labeled 仅 4 个，
+  21 Cys）——诚实记录；结构证据需体制内手工作合/域内 gate，树模型待 MIL
+  级标签（L0）。产物：`results/diagnostics/p2_structure_separation_v1.json`。
+  **gate 结论**：序列模型无法分离的共肽位点，结构特征在体制内可以
+  （C206 rank 1 vs C209 rank 9）；P2 判定通过，结构承载方向获得首个正证据。
