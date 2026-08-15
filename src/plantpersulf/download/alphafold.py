@@ -98,8 +98,15 @@ def query_alphafold_api(
     """
     url = ALPHAFOLD_API_URL.format(accession=accession)
     req = Request(url, headers={"Accept": "application/json"})
-    with urlopen(req, timeout=timeout_seconds) as response:
-        data = _json.load(response)
+    try:
+        with urlopen(req, timeout=timeout_seconds) as response:
+            data = _json.load(response)
+    except HTTPError as exc:
+        # The prediction API answers unknown accessions with HTTP 404 —
+        # the same genuine "no prediction" fact as a 404 on the PDB file.
+        if exc.code == 404:
+            return None
+        raise
     if not data or not isinstance(data, list):
         return None
     entry = data[0]

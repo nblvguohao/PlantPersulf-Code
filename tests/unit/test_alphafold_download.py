@@ -26,6 +26,7 @@ from plantpersulf.download.alphafold import (  # RED: module missing
     fetch_alphafold_structure,
     is_isoform_accession,
     load_approved_accessions,
+    query_alphafold_api,
     register_alphafold_structure,
 )
 
@@ -89,6 +90,24 @@ def test_isoform_syntax_is_detected_but_not_hard_rejected() -> None:
     # accession has a model (e.g. P27140-2 does).
     assert is_isoform_accession("P27140-2") is True
     assert is_isoform_accession("O03042") is False
+
+
+def test_api_404_is_explicit_missing_prediction(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # The AlphaFold prediction API answers unknown accessions with HTTP 404
+    # (not 200 + empty body). A 404 on the *API* query is the same genuine
+    # absence as a 404 on the PDB download and must surface as None, not as
+    # a transport error.
+    server = _run_server(_NotFoundHandler)
+    try:
+        monkeypatch.setattr(
+            "plantpersulf.download.alphafold.ALPHAFOLD_API_URL",
+            f"http://127.0.0.1:{server.server_port}/{{accession}}",
+        )
+        assert query_alphafold_api("O03042") is None
+    finally:
+        _stop_server(server)
 
 
 def test_404_response_is_explicit_missing_result(tmp_path: Path) -> None:
