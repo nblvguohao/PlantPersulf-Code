@@ -1051,7 +1051,10 @@ def _audit_configured_task_roster(
             raise RuntimeError("runtime literature task configuration is invalid")
         configured_models = list(models)
         sul_manifest_value = comparison_inputs.get("sul_environment_manifest")
-        external_environments = manifest.get("external_environments") or {}
+        external_manifest = manifest.get("external_environments")
+        external_environments = (
+            external_manifest if isinstance(external_manifest, dict) else {}
+        )
         if sul_manifest_value and (
             "sul_bertgru" in external_environments
             or _is_registered_comparison_input(Path(str(sul_manifest_value)))
