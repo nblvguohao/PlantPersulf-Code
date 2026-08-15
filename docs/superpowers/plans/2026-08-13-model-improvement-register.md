@@ -328,3 +328,16 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
   共肽"结构与序列共同不可分辨区"的零结果从 2 物种 9 肽段稳健扩展到 **3 物种
   14 肽段**（独立实验室/独立富集方案）；v2 声称范围（结构分支限蛋白内排序、
   不扩共肽内分辨）跨物种证据更足。
+- 2026-08-15：**体制路由 MoE 诊断（L6 架构候选评估，诊断 A 阴性）**——
+  `evaluation/regime_moe.py`（专家方向写死为结构先验、非 labeled 学习，无 LOO
+  学习偏差；+6 单元测试）+ `scripts/evaluate_regime_moe.py` →
+  `results/diagnostics/regime_moe_v1.json`（n=12 已知对照，B=999 置换）。
+  设计文档 `2026-08-15-regime-routing-moe-design.md`（命题三 → 预注册草案 +
+  三轨诊断）。**结果：MoE 路由不优于 contact 单特征**——routed regime 31 vs
+  contact regime 30（p 0.044→0.057，不再显著）；routed protein 38 vs 36。
+  folded 专家 contact 方向承载全部信号（9 folded 对照 6 个 rank≤2）；
+  disordered 专家 RSA/Sγ 方向无增益且稀释（A0MES8 rank 3/3，n=3）——与 §9.4
+  "RSA 排列下不显著"一致。**结论：命题三方向正确，但当前特征分辨率下
+  disordered 专家无物可路由；MoE 架构在 labeled n=12 + 7 特征下不立项。**
+  分物种/分体制结构标定（W1 scaler 线索）与路由正交，列新代候选（Gate 3 后
+  再评估）。
