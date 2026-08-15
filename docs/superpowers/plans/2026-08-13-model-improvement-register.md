@@ -277,3 +277,15 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
   **v2 设计输入**：结构分支必须体制路由——folded 体制用埋藏/堆积（接触数），
   disordered 体制用暴露/孤立（RSA、最近 Sγ 距离）；RING/金属簇内另需簇内
   暴露 gate。
+- 2026-08-15：**LOO + 排列置换检验（对 C 复合 ceiling 的诚实修正）**——新增
+  `structure_regime.py` 的 `signs_from_aggregate`/`loo_composite_burden`/
+  `permutation_null`（+5 单元测试，共 15）+ `scripts/evaluate_structure_regime
+  _loo.py` → `results/diagnostics/structure_regime_loo_v1.json`（B=999、
+  固定种子、确定性）。**修正结论**：① **contact_number_10a 是唯一显著特征**
+  ——蛋白内负担 36 vs 排列零分布中位 59，**p=0.018**（regime-local 30，
+  p=0.032）；埋藏/堆积是真信号。② 其余 6 特征全不显著（RSA p=0.84/0.85，
+  暴露假说在已知对照上**无超出随机信号**）。③ 7 特征等权带符号复合**不能留一
+  泛化**（LOO 负担 39/38 vs 随机 58.5，p≈0.3）——§9.2 的复合 ceiling 与
+  "方向随体制翻转"需降级；disordered 侧暴露信号（n=3）排列下不显著。
+  **v2 设计输入修正**：结构分支以 contact_number 为首要特征，其余特征待 MIL
+  级标签（L0）学权重/特征选择；体制路由方向保留但暴露分支降为假设。

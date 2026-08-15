@@ -9,6 +9,7 @@ helper level here; the end-to-end 12-protein aggregation lives in
 
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
 from plantpersulf.evaluation.structure_regime import (
@@ -16,8 +17,11 @@ from plantpersulf.evaluation.structure_regime import (
     PLDDT_IDR,
     aggregate_site_z,
     composite_scores,
+    loo_composite_burden,
+    permutation_null,
     ranking_stats,
     regime_bucket,
+    signs_from_aggregate,
     site_plddt_regime,
     subset_positions,
     within_protein_z,
@@ -159,3 +163,76 @@ def test_composite_scores_restricted_scope() -> None:
     std3 = (2.0 / 3.0) ** 0.5  # population std of {1,2,3}
     assert scores[1] == pytest.approx(-1.0 / std3)
     assert scores[3] == pytest.approx(1.0 / std3)
+
+
+# --- LOO composite + permutation null ---------------------------------------
+
+
+def test_signs_from_aggregate_follows_direction() -> None:
+    records = [
+        (_rows((1, 1.0), (2, 2.0), (3, 3.0)), 3),  # true = max
+        (_rows((1, 1.0), (2, 2.0), (3, 3.0)), 3),  # true = max
+    ]
+    signs = signs_from_aggregate(records, ["feature"])
+    assert signs["feature"] == 1.0
+    inverted = [
+        (_rows((1, 1.0), (2, 2.0), (3, 3.0)), 1),  # true = min
+    ]
+    assert signs_from_aggregate(inverted, ["feature"])["feature"] == -1.0
+
+
+def test_loo_composite_burden_global_signs() -> None:
+    # protein A true=max, protein B true=min: LOO sign for A comes from B
+    # (-1), so A's true (max) is ranked LAST; for B the sign from A (+1)
+    # makes B's true (min) ranked LAST too — the honest cross-validation cost
+    # of sign learning on n=2.
+    records = [
+        (_rows((1, 1.0), (2, 2.0), (3, 3.0)), 3),
+        (_rows((1, 1.0), (2, 2.0), (3, 3.0)), 1),
+    ]
+    res = loo_composite_burden(records, ["feature"], scope_mode="protein")
+    assert res["n"] == 2
+    assert res["per_protein"][0]["rank"] == 3
+    assert res["per_protein"][1]["rank"] == 3
+    assert res["total_first_hit_burden"] == 6
+    assert res["total_random_burden"] == pytest.approx(2 * 2.0)
+
+
+def test_loo_composite_burden_regime_grouped_signs() -> None:
+    # two groups, 2 proteins each: held-out protein trains only on its group
+    records = [
+        (_rows((1, 1.0), (2, 2.0), (3, 3.0)), 3),  # g0: true=max
+        (_rows((1, 1.0), (2, 2.0), (3, 3.0)), 3),  # g0
+        (_rows((1, 1.0), (2, 2.0), (3, 3.0)), 1),  # g1: true=min
+        (_rows((1, 1.0), (2, 2.0), (3, 3.0)), 1),  # g1
+    ]
+    res = loo_composite_burden(
+        records, ["feature"], scope_mode="protein", group_key=lambda i: i // 2
+    )
+    assert res["per_protein"][0]["rank"] == 1  # trains on g0 -> sign +1 -> max=1
+    assert res["per_protein"][2]["rank"] == 1  # trains on g1 -> sign -1 -> min=1
+    assert res["total_first_hit_burden"] == 4
+
+
+def test_loo_composite_burden_scope_mode_validation() -> None:
+    with pytest.raises(ValueError):
+        loo_composite_burden(
+            [(_rows((1, 1.0)), 1)], ["feature"], scope_mode="bogus"
+        )
+
+
+def test_permutation_null_deterministic_and_sorted() -> None:
+    records = [
+        (_rows((1, 1.0), (2, 2.0), (3, 3.0)), 3),
+        (_rows((1, 1.0), (2, 2.0), (3, 3.0)), 3),
+    ]
+    null1 = permutation_null(
+        records, ["feature"], "protein", 20, np.random.RandomState(7)
+    )
+    null2 = permutation_null(
+        records, ["feature"], "protein", 20, np.random.RandomState(7)
+    )
+    assert null1 == null2
+    assert null1 == sorted(null1)
+    assert len(null1) == 20
+    assert all(2 <= value <= 6 for value in null1)

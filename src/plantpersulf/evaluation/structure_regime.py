@@ -34,6 +34,8 @@ from typing import Any
 
 import numpy as np
 
+from plantpersulf.evaluation.within_protein_ranking import rank_sites_desc
+
 PLDDT_FOLDED = 70.0
 PLDDT_IDR = 50.0
 
@@ -57,6 +59,21 @@ def site_plddt_regime(
 ) -> str:
     """Regime of one Cys position from its ``plddt`` structure feature."""
     return regime_bucket(float(feature_rows[position]["plddt"]))
+
+
+def _in_regime_bucket(
+    bucket: str,
+) -> Callable[[int, Mapping[str, float]], bool]:
+    """Predicate factory for Cys whose pLDDT falls in ``bucket``.
+
+    A module-level factory (rather than a closure in a loop) so mypy can
+    infer the predicate type for ``subset_positions``.
+    """
+
+    def _predicate(position: int, row: Mapping[str, float]) -> bool:
+        return regime_bucket(float(row["plddt"])) == bucket
+
+    return _predicate
 
 
 def within_protein_z(values: Mapping[int, float], position: int) -> float:
@@ -178,3 +195,109 @@ def composite_scores(
         position: float(np.mean([z_by_feature[feature][position] for feature in signs]))
         for position in scope
     }
+
+
+# --- leave-one-out composite + permutation null -----------------------------
+
+
+def signs_from_aggregate(
+    records: Sequence[tuple[Mapping[int, Mapping[str, float]], int]],
+    features: Sequence[str],
+) -> dict[str, float]:
+    """Per-feature signs from the aggregate direction over training records.
+
+    Sign = +1 when the mean within-protein z of the true site is >= 0 (the
+    feature favours high values at true sites), else -1. Deterministic; used
+    for LOO sign learning so the signs never see the held-out protein.
+    """
+    return {
+        feature: (1.0 if aggregate_site_z(records, feature)["mean_z"] >= 0 else -1.0)
+        for feature in features
+    }
+
+
+def loo_composite_burden(
+    records: Sequence[tuple[Mapping[int, Mapping[str, float]], int]],
+    features: Sequence[str],
+    scope_mode: str,
+    group_key: Callable[[int], object] | None = None,
+) -> dict[str, Any]:
+    """Leave-one-protein-out signed-composite ranking (unbiased estimate).
+
+    For each held-out protein, signs are learned from the aggregate
+    directions of the OTHER proteins only — optionally restricted to the
+    held-out protein's ``group_key`` group (regime-grouped routing). The
+    composite then ranks the held-out true site within its scope:
+
+    - ``scope_mode="protein"``: rank among ALL Cys of the protein;
+    - ``scope_mode="regime"``: rank among Cys in the true site's own pLDDT
+      bucket (regime-local routing).
+
+    This is the honest analogue of the in-sample signed-composite ceiling:
+    signs never see the held-out protein, so the burden is a (nearly)
+    unbiased estimate rather than an upper bound.
+    """
+    if scope_mode not in ("protein", "regime"):
+        raise ValueError(f"unknown scope_mode: {scope_mode!r}")
+    per_protein: dict[int, dict[str, object]] = {}
+    total = 0
+    top1 = 0
+    for index, (rows, true_position) in enumerate(records):
+        if group_key is None:
+            training = [record for j, record in enumerate(records) if j != index]
+        else:
+            group = group_key(index)
+            training = [
+                record
+                for j, record in enumerate(records)
+                if j != index and group_key(j) == group
+            ]
+            if not training:  # single-member group: fall back to all others
+                training = [record for j, record in enumerate(records) if j != index]
+        signs = signs_from_aggregate(training, features)
+        if scope_mode == "protein":
+            scope: Sequence[int] | None = None
+        else:
+            bucket = site_plddt_regime(rows, true_position)
+            scope = subset_positions(rows, _in_regime_bucket(bucket))
+        scores = composite_scores(rows, signs, positions=scope)
+        ranking = rank_sites_desc(scores)
+        rank = ranking.index(true_position) + 1
+        total += rank
+        top1 += rank == 1
+        per_protein[index] = {"rank": rank, "n_in_scope": len(scores)}
+    return {
+        "n": len(records),
+        "top1": top1,
+        "total_first_hit_burden": total,
+        "total_random_burden": round(
+            sum((len(record[0]) + 1) / 2.0 for record in records), 3
+        ),
+        "per_protein": per_protein,
+    }
+
+
+def permutation_null(
+    records: Sequence[tuple[Mapping[int, Mapping[str, float]], int]],
+    features: Sequence[str],
+    scope_mode: str,
+    n_perm: int,
+    rng: np.random.RandomState,
+) -> list[int]:
+    """Permutation null for the LOO composite burden.
+
+    Each permutation reassigns the true site to a uniform-random Cys of each
+    protein (exchangeability null), re-learns LOO signs, and records the
+    total first-hit burden. Returns the sorted null distribution; the
+    observed burden's left-tail position is its permutation p-value.
+    """
+    null: list[int] = []
+    for _ in range(n_perm):
+        perm_records = [
+            (rows, int(rng.choice(list(rows)))) for rows, _true in records
+        ]
+        burden = loo_composite_burden(perm_records, features, scope_mode)[
+            "total_first_hit_burden"
+        ]
+        null.append(int(burden))
+    return sorted(null)
