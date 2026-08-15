@@ -289,3 +289,16 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
   "方向随体制翻转"需降级；disordered 侧暴露信号（n=3）排列下不显著。
   **v2 设计输入修正**：结构分支以 contact_number 为首要特征，其余特征待 MIL
   级标签（L0）学权重/特征选择；体制路由方向保留但暴露分支降为假设。
+- 2026-08-15：**共肽结构分离检验（把 C 的已验证特征显式应用到共肽阴性池）**
+  ——新增 `copeptide_structure.py`（肽段内正/负对比 + 保组成排列零分布，
+  +12 单元测试）+ `scripts/evaluate_copeptide_structure_separation.py` →
+  `results/diagnostics/copeptide_structure_separation_v1.json`。9 共肽组
+  （2 番茄金标准 + 7 拟南芥，全部 AFDB v6 结构，PDB/蛋白组一致审计通过）。
+  **零结果**：7 特征无一在任一方向分离共肽正/负（contact_number p=0.759/
+  0.234，其余全 p>0.3）；方向混杂——BRG3 负 C209 最埋藏（26 vs 22/16），
+  RNF144B 反而正 C122 更埋藏（24 vs 14）。**解读**：共肽阴性是结构与序列共同
+  的"不可分辨区"（序列 8/9 败、结构 0/9 显著），验证了共肽阴性设计价值
+  （检测匹配时连结构也不能假称分离）；不推翻跨蛋白埋藏信号（contact
+  p=0.018 是"相对同蛋白其他 Cys"，簇内分辨是另一层面）；P2"游离暴露 Cys"
+  是簇内 case-level 读数、不推广。**v2 输入**：结构分支声称范围限定在蛋白内
+  排序，不扩展到共肽内正/负分辨；共肽池保持为有效性约束与标定资源。
