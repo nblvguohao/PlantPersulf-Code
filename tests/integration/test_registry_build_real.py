@@ -17,7 +17,7 @@ def test_registry_builder_registers_all_official_metadata(tmp_path: Path) -> Non
         registry_dir=tmp_path,
     )
 
-    assert summary.dataset_count == 12
+    assert summary.dataset_count == 13
     assert summary.sample_count > 0
     for file_name in (
         "datasets.tsv",
@@ -38,6 +38,7 @@ def test_registry_builder_registers_all_official_metadata(tmp_path: Path) -> Non
         "PXD063170",
         "PXD038309",
         "PXD072089",
+        "PXD072300",
         "GSE163745",
         "GSE142713",
         "GSE142712",
@@ -50,7 +51,7 @@ def test_registry_builder_registers_all_official_metadata(tmp_path: Path) -> Non
     with (tmp_path / "files.tsv").open(encoding="utf-8", newline="") as handle:
         files = list(csv.DictReader(handle, delimiter="\t"))
     cache_rows = [row for row in files if row["record_type"] == "metadata_cache"]
-    assert len(cache_rows) == 12
+    assert len(cache_rows) == 13
     sra_cache_rows = [
         row for row in files if row["record_type"] == "sra_metadata_cache"
     ]
