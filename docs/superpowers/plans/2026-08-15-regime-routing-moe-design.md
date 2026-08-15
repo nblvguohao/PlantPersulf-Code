@@ -162,3 +162,10 @@ arabidopsis/rice per-species AP 改善且 tomato 不灾难性恶化（配对方�
   后起草。**诊断 A（路由阴性）与 B（标定阳性）正交：路由无物可路由，但标定口径
   修复"被番茄主导的 scaler"是真实增益源。方法学与 W1 同型（冻结超参重训 +
   feature projection），未触冻结包/候选表/盲法队列。
+- 2026-08-15：**分物种结构标定正式预注册草案**（用户确认"起草正式预注册"）——
+  独立文档 `2026-08-15-per-species-structure-scaling-preregistration.md`（发布号占位
+  `multispecies-v2-candidate-release-v2`，状态 DRAFT 待联合签署）。与 §5（MoE 路由
+  预注册端点）同纪律：统计口径写死（文献轨 10-seed 配对 Wilcoxon + 严格轨 5-fold +
+  已知对照 hit@2，K=50/200 claim gate 口径）、成功/失败定义、Gate 3 后执行、先预注册
+  再训练。诊断 B 的 §4B 成功标准在此定稿为正式协议；本设计文档的 MoE 路由候选（§3
+  架构）与分物种标定候选**分别预注册**。

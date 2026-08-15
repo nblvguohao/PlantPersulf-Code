@@ -387,3 +387,12 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
   番茄行主导"实证成立**；分物种标定把 arabi/rice 恢复到 v2 水平且 tomato 不塌，
   命中 MoE 设计文档 §4B/§5 成功定义。**分物种结构标定列为新发布候选变更**（特征
   投影，非新架构）——实施须新发布号 + 新预注册 + 联合签署，本阶段不落地。
+- 2026-08-15：**正式预注册草案（分物种结构标定，新发布候选）**——按 register §3
+  纪律（新发布号 + 新 fit_manifest + 新 SAP/分析计划 + 双方重新签署）起草
+  `docs/superpowers/plans/2026-08-15-per-species-structure-scaling-preregistration.md`。
+  统计口径写死：文献轨 10-seed 配对 Wilcoxon（per-species AP@K/recall@K，K=50/200，
+  claim gate 口径）+ 严格轨 5-fold 折叠配对 + 已知对照 hit@2；成功=文献轨配对显著为
+  正且 arab/rice 至少其一显著改善、tomato 不灾难性恶化、严格轨不恶化、hit@2 不降；
+  失败=任一不满足则阴性登记。变更类别=结构分支输入投影（非新架构），与 L8 分物种
+  isotonic 校准正交可组合。**执行门槛：Gate 3 盲法验证完成后**（register §1 唯一
+  路径）；本文件仅锁定协议，不触发训练/候选表改动。状态 DRAFT 待联合签署。
