@@ -26,8 +26,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
+
+import numpy as np
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT) not in sys.path:
@@ -53,9 +56,23 @@ BUNDLE_PATH = (
     / "structure_ranker_bundle.pt"
 )
 PROTEOMES = {
-    "tomato": _REPO_ROOT / "data" / "raw" / "references" / "tomato_ref_proteome_v1.fasta",
+    "tomato": (
+        _REPO_ROOT
+        / "data"
+        / "raw"
+        / "references"
+        / "tomato_ref_proteome_v1.fasta"
+    ),
     "arabidopsis": (
         _REPO_ROOT / "data" / "raw" / "references" / "arabidopsis_ref_proteome_v2.fasta"
+    ),
+    "rice": (
+        _REPO_ROOT
+        / "data"
+        / "raw"
+        / "references"
+        / "rice_proteome_v1"
+        / "uniprot_rice_v1.fasta"
     ),
 }
 REGISTRY = _REPO_ROOT / "data" / "registry" / "copeptide_negatives_v1.tsv"
@@ -157,6 +174,44 @@ def main(argv: list[str] | None = None) -> None:
         )
 
     n_separated = sum(1 for c in conclusions if c["all_positives_above_all_negatives"])
+
+    # --- permutation null ---------------------------------------------------
+    # Within each peptide, shuffle the POS/NEG labels among the co-peptide Cys
+    # (preserving each peptide's k_pos / k_neg, exchange only among that
+    # peptide's own Cys) and recount "separated". The frozen sequence model
+    # sees near-identical +/-10 windows for co-peptide Cys, so their scores
+    # are exchangeable and this is the correct null.
+    n_perm = 999
+    rng = np.random.RandomState(20260815)
+    null_counts: list[int] = []
+    for _ in range(n_perm):
+        count = 0
+        for (species, accession, _peptide, _start, _end), members in (
+            by_peptide.items()
+        ):
+            scores = per_protein[(species, accession)]
+            positions = [
+                int(r["cys_position"]) for r in members
+            ]
+            k_pos = sum(1 for r in members if r["state"] == "positive")
+            rng.shuffle(positions)
+            pos_set = set(positions[:k_pos])
+            positive = {p for p in positions if p in pos_set}
+            negative = {p for p in positions if p not in pos_set}
+            if positive and negative:
+                separated = (
+                    min(scores[p] for p in positive) > max(scores[n] for n in negative)
+                )
+                count += separated
+        null_counts.append(count)
+    null_counts.sort()
+    p_value = (sum(1 for value in null_counts if value >= n_separated) + 1) / (
+        n_perm + 1
+    )
+    p_left = (sum(1 for value in null_counts if value <= n_separated) + 1) / (
+        n_perm + 1
+    )
+
     summary = {
         "track": "copeptide_negatives_v1",
         "claim_class": "diagnostic_only",
@@ -164,7 +219,9 @@ def main(argv: list[str] | None = None) -> None:
             "Frozen-bundle within-protein ranking of the registered co-peptide "
             "evidence. Explicit negatives from AGENTS.md-registered evidence; "
             "structure branch masked (release tomato semantics). Does not "
-            "modify the model, features, Top-K, thresholds or SAP."
+            "modify the model, features, Top-K, thresholds or SAP. Permutation "
+            "null (B=999, composition-preserving within-peptide label shuffle) "
+            "counts how many peptides separate beyond chance."
         ),
         "bundle": {"path": str(BUNDLE_PATH), "seed": bundle.seed},
         "registry": {
@@ -172,9 +229,32 @@ def main(argv: list[str] | None = None) -> None:
             "n_rows": len(rows),
         },
         "peptides": conclusions,
+        "permutation": {
+            "n_perm": n_perm,
+            "seed": 20260815,
+            "observed_separated": n_separated,
+            "null_median": int(np.median(null_counts)),
+            "null_p5": null_counts[len(null_counts) // 20],
+            "null_p95": null_counts[
+                min(len(null_counts) - 1, 19 * len(null_counts) // 20)
+            ],
+            "p_separate_beyond_chance": round(p_value, 4),
+            "p_at_or_below_chance": round(p_left, 4),
+        },
         "summary": {
             "n_peptides": len(conclusions),
             "n_with_all_positives_above_all_negatives": n_separated,
+            "random_expectation": round(
+                sum(
+                    1
+                    / math.comb(
+                        len(c["positive_sites"]) + len(c["negative_sites"]),
+                        len(c["positive_sites"]),
+                    )
+                    for c in conclusions
+                ),
+                3,
+            ),
         },
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
