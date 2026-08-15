@@ -64,6 +64,14 @@ TOMOTO_PROTEOME = (
 ARABIDOPSIS_PROTEOME = (
     _REPO_ROOT / "data" / "raw" / "references" / "arabidopsis_ref_proteome_v2.fasta"
 )
+RICE_PROTEOME = (
+    _REPO_ROOT
+    / "data"
+    / "raw"
+    / "references"
+    / "rice_proteome_v1"
+    / "uniprot_rice_v1.fasta"
+)
 CO_PEPTIDE_REGISTRY = _REPO_ROOT / "data" / "registry" / "copeptide_negatives_v1.tsv"
 OUTPUT = (
     _REPO_ROOT
@@ -77,6 +85,7 @@ SEED = 20260815
 PROTEOMES = {
     "tomato": TOMOTO_PROTEOME,
     "arabidopsis": ARABIDOPSIS_PROTEOME,
+    "rice": RICE_PROTEOME,
 }
 
 
@@ -112,20 +121,35 @@ def _load_copeptide_groups() -> list[dict]:
             else group["negative_positions"]
         )
         target.append(int(row["cys_position"]))
-    groups = list(groups_by_key.values())
+    # Dedup by peptide sequence, keeping the first protein instance: the rice
+    # IIPTPNC peptide is represented by 4 paralogous proteins (4x weighting on
+    # one peptide); counting each distinct peptide once avoids that bias. The
+    # peptide is the unit of the diagnostic (positive vs negative Cys that share
+    # one spectrum), not the protein.
+    groups_by_peptide: dict[str, dict] = {}
+    for group in groups_by_key.values():
+        groups_by_peptide.setdefault(group["peptide"], group)
+    groups = list(groups_by_peptide.values())
     for group in groups:
         group["positive_positions"].sort()
         group["negative_positions"].sort()
     return groups
 
 
-def _load_feature_rows(groups: list[dict]) -> dict[str, dict[int, dict[str, float]]]:
-    """Compute structure features for every Cys of each group's protein."""
+def _load_feature_rows(
+    groups: list[dict],
+) -> tuple[dict[str, dict[int, dict[str, float]]], list[str]]:
+    """Compute structure features for every Cys of each group's protein.
+
+    Accessions whose AFDB PDB is missing are skipped and their reasons returned
+    (never silently dropped: the caller records them in the report).
+    """
     proteomes: dict[str, dict[str, str]] = {}
     for species, path in PROTEOMES.items():
         proteomes[species] = _load_proteome(path)
 
     result: dict[str, dict[int, dict[str, float]]] = {}
+    skipped: list[str] = []
     seen: set[str] = set()
     for group in groups:
         accession = group["accession"]
@@ -135,24 +159,27 @@ def _load_feature_rows(groups: list[dict]) -> dict[str, dict[int, dict[str, floa
         sequence = proteomes[group["species"]][accession]
         pdb_path = ALPHAFOLD_DIR / f"AF-{accession}-F1-model.pdb"
         if not pdb_path.exists():
-            raise RuntimeError(f"no AFDB structure for {accession}: {pdb_path}")
+            skipped.append(f"{accession}: no AFDB structure {pdb_path.name}")
+            continue
         residues = parse_pdb(pdb_path.read_text(encoding="utf-8"))
         if len(residues) != len(sequence):
-            raise RuntimeError(
+            skipped.append(
                 f"{accession}: PDB {len(residues)} != proteome {len(sequence)}"
             )
+            continue
         mismatches = [
             position
             for position in range(1, len(sequence) + 1)
             if residues[position - 1].type != sequence[position - 1]
         ]
         if mismatches:
-            raise RuntimeError(
+            skipped.append(
                 f"{accession}: PDB/proteome mismatch at {mismatches[:10]}"
             )
+            continue
         positions = [i + 1 for i, residue in enumerate(sequence) if residue == "C"]
         result[accession] = cys_structure_features(residues, positions)
-    return result
+    return result, skipped
 
 
 def _pvalue(null: list[int], observed: int) -> float:
@@ -162,11 +189,21 @@ def _pvalue(null: list[int], observed: int) -> float:
 
 def main() -> None:
     groups = _load_copeptide_groups()
-    feature_rows = _load_feature_rows(groups)
+    feature_rows, skipped = _load_feature_rows(groups)
 
-    for group in groups:
+    evaluated = [g for g in groups if g["accession"] in feature_rows]
+    for group in evaluated:
         group["features"] = feature_rows[group["accession"]]
+    dropped = [g for g in groups if g["accession"] not in feature_rows]
+    for reason in skipped:
+        print(f"  skipped: {reason}")
+    if dropped:
+        print(
+            f"  dropped {len(dropped)} group(s) with no structure: "
+            + ", ".join(f"{g['peptide']} ({g['accession']})" for g in dropped)
+        )
 
+    groups = evaluated
     aggregate = aggregate_contrast(groups)
     n_groups = len(groups)
 
@@ -226,18 +263,23 @@ def main() -> None:
         "claim_class": "diagnostic_only",
         "note": (
             "Within-peptide structural contrast on the explicit co-peptide "
-            "negative pool: for each of the 9 peptides (2 tomato "
-            "gold-standard, 7 Arabidopsis PXD024061), is the modified set "
-            "cleanly above (pos_higher), cleanly below (pos_lower), or "
-            "overlapping (mixed) the unmodified set on each structure "
-            "feature? Direction is left free — the known-control burial "
-            "signal (contact_number) was established ACROSS proteins and may "
-            "run the other way WITHIN a peptide (BRG3 RING: modified C206 is "
-            "the cluster's exposed Cys). Permutation null preserves each "
-            "peptide's composition (k_pos/k_neg, exchange only among that "
-            "peptide's own Cys)."
+            "negative pool (tomato gold-standard + Arabidopsis PXD024061 + "
+            "rice PXD072089; one protein instance per distinct peptide, so the "
+            "4 paralogous rice carriers of the IIPTPNC peptide count once): "
+            "is the modified set cleanly above (pos_higher), cleanly below "
+            "(pos_lower), or overlapping (mixed) the unmodified set on each "
+            "structure feature? Direction is left free — the known-control "
+            "burial signal (contact_number) was established ACROSS proteins "
+            "and may run the other way WITHIN a peptide (BRG3 RING: modified "
+            "C206 is the cluster's exposed Cys). Permutation null preserves "
+            "each peptide's composition (k_pos/k_neg, exchange only among "
+            "that peptide's own Cys)."
         ),
         "n_peptides": n_groups,
+        "n_dropped_no_structure": len(dropped),
+        "dropped_groups": [
+            {"peptide": g["peptide"], "accession": g["accession"]} for g in dropped
+        ],
         "n_perm": N_PERM,
         "seed": SEED,
         "per_peptide": per_peptide,
