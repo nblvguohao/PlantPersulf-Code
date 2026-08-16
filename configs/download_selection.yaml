@@ -22,3 +22,8 @@ approved:
   PXD039999:
     checksums:
       - checksum.txt
+  PXD055278:
+    results:
+      - ZJR_WDF_GSNO_1_20181120.xlsx
+    checksums:
+      - checksum.txt

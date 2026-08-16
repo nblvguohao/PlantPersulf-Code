@@ -16,7 +16,7 @@ def test_reproduction_manifest_exactly_covers_registered_inputs() -> None:
     methods = _read_tsv(METHOD_REGISTRY)
     manifest = _read_tsv(REPRODUCTION_MANIFEST)
 
-    assert len(manifest) == len(downloads) + len(methods) == 10
+    assert len(manifest) == len(downloads) + len(methods) == 12
 
     by_key = {(row["study_accession"], row["file_name"]): row for row in manifest}
     for source in downloads:

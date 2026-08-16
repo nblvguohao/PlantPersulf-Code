@@ -1,0 +1,261 @@
+{
+  "accession": "PXD055278",
+  "files": [
+    {
+      "accession": "295fe1695ee4afc4ea32150d574dba95603512f70aa978d4860c3fadfb3d77bf",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000410",
+        "cvLabel": "PRIDE",
+        "name": "Other type file URI",
+        "value": "OTHER"
+      },
+      "fileName": "checksum.txt",
+      "fileSizeBytes": 225,
+      "projectAccessions": [
+        "PXD055278"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2025/02/PXD055278/checksum.txt"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2025/02/PXD055278/checksum.txt"
+        }
+      ],
+      "publicationDate": "2025-02-21T01:44:45.969+00:00",
+      "submissionDate": "2024-08-28T08:45:45.194+00:00",
+      "totalDownloads": 1,
+      "updatedDate": "2024-08-28T08:45:45.194+00:00"
+    },
+    {
+      "accession": "1eecd5d355f05484d1450333c0a07f74bf997bf30b759b63e817e5c19994b16c",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "ZJR_WDF_GSNO_1_20181120.xlsx",
+      "fileSizeBytes": 10764,
+      "projectAccessions": [
+        "PXD055278"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2025/02/PXD055278/ZJR_WDF_GSNO_1_20181120.xlsx"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2025/02/PXD055278/ZJR_WDF_GSNO_1_20181120.xlsx"
+        }
+      ],
+      "publicationDate": "2025-02-21T01:44:45.969+00:00",
+      "submissionDate": "2024-08-28T08:45:45.194+00:00",
+      "totalDownloads": 2,
+      "updatedDate": "2024-08-28T08:45:45.194+00:00"
+    },
+    {
+      "accession": "7b9f331650cbb502a0b38e0ff2ffa597f1fb6057b18c17625700a741157302b9",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "ZJR_WDF_GSNO_1_20181120.raw",
+      "fileSizeBytes": 463701221,
+      "projectAccessions": [
+        "PXD055278"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2025/02/PXD055278/ZJR_WDF_GSNO_1_20181120.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2025/02/PXD055278/ZJR_WDF_GSNO_1_20181120.raw"
+        }
+      ],
+      "publicationDate": "2025-02-21T01:44:45.969+00:00",
+      "submissionDate": "2024-08-28T08:45:45.194+00:00",
+      "totalDownloads": 2,
+      "updatedDate": "2024-08-28T08:45:45.194+00:00"
+    }
+  ],
+  "files_response_sha256": "53f2088ee9583015df1fce76f595ade82a62e4bcedcedbee6eed9c09610f3edc",
+  "files_url": "https://www.ebi.ac.uk/pride/ws/archive/v3/projects/PXD055278/files",
+  "project": {
+    "accession": "PXD055278",
+    "additionalAttributes": [],
+    "botCount": 120,
+    "countries": [
+      "China"
+    ],
+    "dataProcessingProtocol": "The data was analyzed using a pre-release version of Thermo Scientific Proteome DiscovererTM software version 1.4. The proteome sequences for Arabidopsis Thaliana from TAIR were used for the database searching and the mass tolerance was set to 0.05 Da. The protease used for protein digestion was trypsin. The maximum number of missed cleavages was set at two, the minimum peptide length was set at six amino acids and the maximum peptide length was set at 144 amino acids. The false discovery rate was set at 0.01 for peptide and protein identifications. Cysteine carbamidomethylation，cysteine Biotin-M modification (451.200 Da) and methionine oxidation were included in the search as the variable modification.",
+    "diseases": [],
+    "doi": "",
+    "experimentTypes": [
+      {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000627",
+        "cvLabel": "PRIDE",
+        "name": "Data-dependent acquisition"
+      }
+    ],
+    "hubCount": 56,
+    "identifiedPTMStrings": [
+      {
+        "@type": "CvParam",
+        "accession": "MOD:01885",
+        "cvLabel": "MOD",
+        "name": "biotinylated residue"
+      }
+    ],
+    "instruments": [
+      {
+        "@type": "CvParam",
+        "accession": "MS:1001910",
+        "cvLabel": "MS",
+        "name": "LTQ Orbitrap Elite"
+      }
+    ],
+    "keywords": [
+      "Stomata; nitric oxide; s-nitrosylation; mapk; mpk6; spch; stress responses; aba"
+    ],
+    "labPIs": [
+      {
+        "affiliation": "Institute of Genetics and Developmental Biology, Chinese Academy of Science",
+        "country": "",
+        "email": "jrzuo@genetics.ac.cn",
+        "firstName": "Jianru",
+        "id": "2993172",
+        "identifier": "2993172",
+        "lastName": "Zuo",
+        "name": "Jianru Zuo",
+        "orcid": "",
+        "title": "Dr"
+      }
+    ],
+    "license": "Creative Commons Public Domain (CC0)",
+    "organicCount": 1,
+    "organismParts": [
+      {
+        "@type": "CvParam",
+        "accession": "BTO:0000214",
+        "cvLabel": "BTO",
+        "name": "Cell culture"
+      }
+    ],
+    "organisms": [
+      {
+        "@type": "CvParam",
+        "accession": "NEWT:3702",
+        "cvLabel": "NEWT",
+        "name": "Arabidopsis thaliana (mouse-ear cress)"
+      }
+    ],
+    "projectDescription": "In plants, stomata on the aerial epidermis play critical roles in various biological processes, including gas exchange, photosynthesis, transpiration, and immunity. Stomatal development is negatively and positively regulated by the mitogen-activated protein kinase (MAPK) cascade and nitric oxide (NO), respectively. However, the regulatory scheme of stomatal development by these signaling pathways remains elusive. Here, we show that NO-modulated stomatal development is genetically dependent on MPK3 and MPK6. Moreover, NO-mediated S-nitrosylation of MPK6 at Cys-201 inhibits its phosphorylation, resulting in the stabilization of SPCH, a master regulator of stomatal lineage initiation, thereby promoting stomatal development. Remarkably, a MPK6C201S mutation confers NO insensitivity during stomatal development and stress responses. We propose that NO positively regulates stomatal development and stress responses by the S-nitrosylation-mediated inhibition of the MPK6 activity, thus identifying a mechanism linking the coupled NO-MAPK signaling to specific biological outputs.",
+    "projectTags": [],
+    "publicationDate": "2025-02-21",
+    "quantificationMethods": [],
+    "references": [],
+    "sampleAttributes": [
+      {
+        "@type": "Tuple",
+        "key": {
+          "accession": "EFO:0000635",
+          "cvLabel": "EFO",
+          "name": "organism part"
+        },
+        "value": [
+          {
+            "accession": "BTO:0000214",
+            "cvLabel": "BTO",
+            "name": "cell culture"
+          }
+        ]
+      },
+      {
+        "@type": "Tuple",
+        "key": {
+          "accession": "OBI:0100026",
+          "cvLabel": "EFO",
+          "name": "organism"
+        },
+        "value": [
+          {
+            "accession": "NEWT:3702",
+            "cvLabel": "NEWT",
+            "name": "Arabidopsis thaliana (Mouse-ear cress)"
+          }
+        ]
+      }
+    ],
+    "sampleProcessingProtocol": "MPK6-His recombinant protein labeled with biotin-maleimide (Sigma, Cat # B1267) was separated by SDS-PAGE and digested in-gel by trypsin (Promega, Cat # V5280). The sample was then analyzed by liquid chromatography-tandem mass spectrometry (LC-MS/MS) using a Thermo Fisher Scientific LTQ Orbitrap Elite mass spectrometer.",
+    "softwares": [
+      {
+        "@type": "CvParam",
+        "accession": "MS:1000650",
+        "cvLabel": "MS",
+        "name": "Proteome Discoverer"
+      }
+    ],
+    "submissionDate": "2024-08-28",
+    "submissionType": "PARTIAL",
+    "submitters": [
+      {
+        "affiliation": "Institute of Genetics and Developmental Biology, Chinese Academy of Sciences",
+        "country": "China",
+        "email": "hyguo@genetics.ac.cn",
+        "firstName": "Hongyan",
+        "id": "3425986",
+        "identifier": "3425986",
+        "lastName": "Guo",
+        "name": "Hongyan Guo",
+        "orcid": "https://orcid.org/0000-0002-9284-0626",
+        "title": "Dr"
+      }
+    ],
+    "title": "Nitric Oxide Regulates Stomatal Development and Stress Responses by S-Nitrosylation-Mediated Inhibiting Phosphorylation of MPK6",
+    "totalFileDownloads": 177
+  },
+  "project_response_sha256": "27a0e345779eea8e105736b7ae5ddfa13701faa38038962a96565336dba9b2ab",
+  "project_url": "https://www.ebi.ac.uk/pride/ws/archive/v3/projects/PXD055278",
+  "repository": "PRIDE",
+  "retrieved_at": "2026-08-16T07:09:21.805715+00:00",
+  "schema_version": 1
+}

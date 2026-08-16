@@ -17,6 +17,8 @@ pride:
     role: cross_species_persulfidation_external
   - accession: PXD072300
     role: recombinant_protein_control_evidence
+  - accession: PXD055278
+    role: external_snitrosylation
 
 iprox:
   - accession: PXD051570
