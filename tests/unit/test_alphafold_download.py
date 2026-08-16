@@ -172,6 +172,39 @@ def test_successful_download_registers_full_provenance(tmp_path: Path) -> None:
     assert tuple(header) == STRUCTURE_FIELDS
 
 
+def test_loopback_download_bypasses_ambient_proxy(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """A machine-wide proxy (env or registry) must not intercept loopback.
+
+    ``urllib`` on Windows inherits proxy settings from the registry, so a
+    machine-wide HTTP/SOCKS proxy would otherwise intercept even localhost
+    test servers. The downloader must connect directly to ``127.0.0.1``
+    regardless of the ambient proxy.
+    """
+    server = _run_server(_PdbPayloadHandler)
+    try:
+        # A deliberately unreachable proxy: loopback must still succeed
+        # because open_http bypasses proxies for loopback hosts.
+        monkeypatch.setenv("HTTP_PROXY", "http://127.0.0.1:1")
+        monkeypatch.setenv("HTTPS_PROXY", "http://127.0.0.1:1")
+        monkeypatch.setenv("ALL_PROXY", "http://127.0.0.1:1")
+        monkeypatch.delenv("NO_PROXY", raising=False)
+        monkeypatch.delenv("no_proxy", raising=False)
+        destination = tmp_path / "raw" / "proxy_probe.pdb"
+        result = fetch_alphafold_structure(
+            "O03042",
+            destination,
+            source_url=f"http://127.0.0.1:{server.server_port}/AF-O03042.pdb",
+        )
+    finally:
+        _stop_server(server)
+
+    assert result.status == "downloaded"
+    assert destination.is_file()
+
+
 def test_only_a_downloaded_result_can_be_registered(tmp_path: Path) -> None:
     server = _run_server(_NotFoundHandler)
     try:

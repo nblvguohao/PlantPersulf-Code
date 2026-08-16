@@ -5,8 +5,10 @@ from __future__ import annotations
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
+from typing import IO, cast
 from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from urllib.parse import urlparse
+from urllib.request import ProxyHandler, Request, build_opener, urlopen
 
 from plantpersulf.provenance.hashing import hash_file
 
@@ -36,6 +38,31 @@ def canonical_download_url(source_url: str) -> str:
     return source_url
 
 
+_LOOPBACK_HOSTS = {"localhost", "127.0.0.1", "::1"}
+
+
+def _is_loopback_host(host: str) -> bool:
+    return host in _LOOPBACK_HOSTS or host.startswith("127.")
+
+
+def open_http(request: Request, timeout: float) -> IO[bytes]:
+    """Open ``request``, bypassing any ambient proxy for loopback hosts.
+
+    ``urllib`` on Windows inherits proxy settings from the registry, so a
+    machine-wide HTTP/SOCKS proxy would otherwise intercept even localhost
+    traffic (unit-test servers, local mirrors). The downloader connects
+    directly to ``localhost`` / ``127.*`` / ``::1`` regardless of the
+    ambient proxy; all other hosts keep the default proxy behaviour.
+    """
+    host = urlparse(request.full_url).hostname or ""
+    if _is_loopback_host(host):
+        return cast(
+            IO[bytes],
+            build_opener(ProxyHandler({})).open(request, timeout=timeout),
+        )
+    return cast(IO[bytes], urlopen(request, timeout=timeout))
+
+
 def download_verified_file(request: DownloadRequest) -> DownloadResult:
     """Stream a URL to a temporary sibling and publish it atomically."""
     request.destination.parent.mkdir(parents=True, exist_ok=True)
@@ -45,7 +72,7 @@ def download_verified_file(request: DownloadRequest) -> DownloadResult:
             canonical_download_url(request.source_url),
             headers={"User-Agent": "PlantPersulf-Code/0.0.0"},
         )
-        with urlopen(source_request, timeout=request.timeout_seconds) as response:
+        with open_http(source_request, request.timeout_seconds) as response:
             with tempfile.NamedTemporaryFile(
                 mode="wb",
                 dir=request.destination.parent,

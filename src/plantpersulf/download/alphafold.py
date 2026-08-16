@@ -22,11 +22,15 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.error import HTTPError
-from urllib.request import Request, urlopen
+from urllib.request import Request
 
 import yaml
 
-from plantpersulf.download.base import DownloadRequest, download_verified_file
+from plantpersulf.download.base import (
+    DownloadRequest,
+    download_verified_file,
+    open_http,
+)
 from plantpersulf.provenance.hashing import hash_file
 
 ALPHAFOLD_API_URL = "https://alphafold.ebi.ac.uk/api/prediction/{accession}"
@@ -99,7 +103,7 @@ def query_alphafold_api(
     url = ALPHAFOLD_API_URL.format(accession=accession)
     req = Request(url, headers={"Accept": "application/json"})
     try:
-        with urlopen(req, timeout=timeout_seconds) as response:
+        with open_http(req, timeout_seconds) as response:
             data = _json.load(response)
     except HTTPError as exc:
         # The prediction API answers unknown accessions with HTTP 404 —
