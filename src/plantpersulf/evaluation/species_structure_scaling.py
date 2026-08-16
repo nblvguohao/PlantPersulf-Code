@@ -29,9 +29,41 @@ frozen bundle path (``_BranchScalers`` is untouched).
 
 from __future__ import annotations
 
+import json
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 
 from plantpersulf.models.traditional import TrainOnlyScaler
+
+
+def save_species_struct_scalers(
+    scalers: Mapping[str, TrainOnlyScaler], path: Path
+) -> None:
+    """Persist per-species structure scalers as a JSON release artifact.
+
+    ``TrainOnlyScaler`` is just mean/std tuples, so the artifact is a plain
+    ``{species: {"mean": [...], "std": [...]}}`` object — content-addressed
+    by the release's SHA256SUMS like every other artifact.
+    """
+    payload = {
+        species: {"mean": list(scaler.mean), "std": list(scaler.std)}
+        for species, scaler in scalers.items()
+    }
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+
+
+def load_species_struct_scalers(path: Path) -> dict[str, TrainOnlyScaler]:
+    """Load the artifact written by ``save_species_struct_scalers``."""
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    return {
+        species: TrainOnlyScaler(
+            mean=tuple(float(v) for v in entry["mean"]),
+            std=tuple(float(v) for v in entry["std"]),
+        )
+        for species, entry in payload.items()
+    }
 
 
 def fit_species_struct_scalers(

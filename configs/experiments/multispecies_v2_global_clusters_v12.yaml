@@ -17,10 +17,11 @@ compute: {device: cuda:0, score_batch_size: 16384, max_parallel_tasks: 1, gpu_ma
 models: [pu_logistic, random_forest, xgboost, esm_linear_head, structure_ranker]
 comparison_inputs:
   esm_features: data/processed/features/multispecies_v2_esm2_t33_windows_v1/manifest.json
-  structure_features: data/registry/releases/alphafold_structures_release_v2.tsv
+  structure_features: data/registry/releases/alphafold_structures_release_v3.tsv
   sul_environment_manifest: configs/environments/sul_bertgru_adapter_v3.json
   pcysmod_scores: null
 comparison_feature_build: {esm_checkpoint: data/raw/models/esm2_t33_650M_UR50D.pt, esm_output_directory: data/processed/features/multispecies_v2_esm2_t33_windows_v1, esm_batch_size: 128, structure_registry_base: data/registry}
+structure_scaling: {mode: per_species}
 comparator_policy: {pcysmod: quantitative_only_with_complete_frozen_scores, tree_graft: architecture_reference_only, gate2_eligible: false}
 literature_baseline_parameters:
   pu_logistic: {holdout_fraction: 0.2}

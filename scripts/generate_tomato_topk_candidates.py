@@ -60,10 +60,14 @@ import yaml
 from plantpersulf.benchmark.literature_random_track import (
     build_literature_random_track,
 )
-from plantpersulf.evaluation.comparable_track import (
+from plantpersulf.evaluation.comparable_track import (  # noqa: E402
     build_registered_structure_features,
 )
-from plantpersulf.features.sequence import _load_proteome
+from plantpersulf.evaluation.species_structure_scaling import (  # noqa: E402
+    load_species_struct_scalers,
+    transform_species_struct,
+)
+from plantpersulf.features.sequence import _load_proteome  # noqa: E402
 from plantpersulf.models.structure_ranker import (
     BranchFeatures,
     StructureRankerBundle,
@@ -128,6 +132,21 @@ def build_argument_parser() -> argparse.ArgumentParser:
         "--device", type=str, default=None, help="default CPU; PLANTPERSULF_DEVICE honored"
     )
     parser.add_argument("--batch-size", type=int, default=16384)
+    parser.add_argument(
+        "--species-scalers",
+        type=Path,
+        default=None,
+        help="release artifact model_weights/species_struct_scalers.json; when "
+        "given, scan rows' structure features are transformed with the scan "
+        "species' training scaler before scoring (v2 per-species scaling).",
+    )
+    parser.add_argument(
+        "--mask-structure",
+        action="store_true",
+        help="force structure_mask=False for every scan row at inference "
+        "(structure branch inert, v1 semantics) while still using the "
+        "given bundle/scalers — the arm-3 diagnostic candidate table.",
+    )
     return parser
 
 
@@ -248,11 +267,40 @@ def main(argv: list[str] | None = None) -> None:
     )
 
     ordered_keys = sorted(sequence_features)
+    raw_struct = [
+        [float(values) for values in structure_features[key][0]]
+        for key in ordered_keys
+    ]
+    struct_mask = [structure_features[key][1] for key in ordered_keys]
+    scaling_applied = False
+    scalers_sha256 = None
+    if args.species_scalers is not None:
+        species_scalers = load_species_struct_scalers(args.species_scalers)
+        scaled_struct = transform_species_struct(
+            raw_struct,
+            struct_mask,
+            [args.species for _ in ordered_keys],
+            species_scalers,
+        )
+        scaling_applied = True
+        scalers_sha256 = _sha256_bytes(args.species_scalers)
+        print(
+            f"per-species scaling applied ({args.species} scaler present: "
+            f"{args.species in species_scalers})"
+        )
+    else:
+        scaled_struct = raw_struct
+    if args.mask_structure:
+        struct_mask = [False for _ in ordered_keys]
+        print(
+            "structure branch MASKED at inference (arm-3 semantics): "
+            "structure values ignored for every scan row"
+        )
     train = BranchFeatures(
         sequence=[list(sequence_features[key]) for key in ordered_keys],
         esm=[[0.0] for _ in ordered_keys],
-        structure=[list(structure_features[key][0]) for key in ordered_keys],
-        structure_mask=[structure_features[key][1] for key in ordered_keys],
+        structure=scaled_struct,
+        structure_mask=struct_mask,
         study_ids=None,
     )
 
@@ -398,6 +446,15 @@ def main(argv: list[str] | None = None) -> None:
         "bundle": {
             "path": "model_weights/structure_ranker_bundle.pt",
             "sha256": actual_bundle_sha,
+        },
+        "structure_scaling": {
+            "applied": scaling_applied,
+            "species_scalers_artifact": (
+                "model_weights/species_struct_scalers.json"
+                if scaling_applied else None
+            ),
+            "species_scalers_sha256": scalers_sha256,
+            "structure_masked_at_inference": bool(args.mask_structure),
         },
         "model": {
             "seed": bundle.seed,
