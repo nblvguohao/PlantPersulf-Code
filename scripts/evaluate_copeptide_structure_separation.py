@@ -9,10 +9,10 @@ spectrum, one digestion, one enrichment, do the MS-confirmed modified Cys
 separate from their unmodified siblings on any structure feature?
 
 Design:
-- **units** = the 9 co-peptide groups from ``copeptide_negatives_v1.tsv``
-  (2 tomato gold-standard: BRG3 SSCMICLPCR, RNF144B FYCPYKDCSAMLVNDSDEIVR;
-  7 Arabidopsis from PXD024061, peptide-localised with site-determining ion
-  coverage).
+- **units** = the distinct-peptide co-peptide groups from
+  ``copeptide_negatives_v1.tsv`` (40 rows; deduped by peptide across the 4
+  paralogous rice carriers of the IIPTPNC peptide, 14 groups: 2 tomato
+  gold-standard + 7 Arabidopsis PXD024061 + 5 rice PXD072089).
 - **per-peptide contrast** = for each feature, is the modified set CLEANLY
   above (``pos_higher``), CLEANLY below (``pos_lower``), or overlapping
   (``mixed``) the unmodified set in that same peptide?
@@ -29,6 +29,13 @@ the LESS buried of the cluster. The within-peptide contrast is the direct
 probe of which direction holds when detection is matched; either clean
 separation beyond permutation chance is a positive for the structure
 hypothesis.
+
+This track (``copeptide_structure_separation_sg6a_v1``) is the S-gamma-layer
+recompute: the contact feature is ``contact_number_sg_6a`` (heavy atoms of
+other residues within 6 A of the Cys S-gamma) replacing the C-alpha 10 A
+packing count. If swapping the atom basis and radius breaks the co-peptide
+null, the earlier "robust null" was a property of the C-alpha contact count;
+if it does not, this is a null about structure itself.
 
 Claim class ``diagnostic_only``; touches no frozen artifact.
 """
@@ -77,10 +84,19 @@ OUTPUT = (
     _REPO_ROOT
     / "results"
     / "diagnostics"
-    / "copeptide_structure_separation_v1.json"
+    / "copeptide_structure_separation_sg6a_v1.json"
 )
 N_PERM = 999
 SEED = 20260815
+
+# The S-gamma-layer contact number (heavy atoms within 6 A of the Cys
+# S-gamma) replaces the C-alpha 10 A packing count as the contact feature —
+# the recompute this track exists to test.
+CONTACT_FEATURE = "contact_number_sg_6a"
+DIAGNOSTIC_FEATURE_NAMES = tuple(
+    CONTACT_FEATURE if feature == "contact_number_10a" else feature
+    for feature in FEATURE_NAMES
+)
 
 PROTEOMES = {
     "tomato": TOMOTO_PROTEOME,
@@ -204,12 +220,12 @@ def main() -> None:
         )
 
     groups = evaluated
-    aggregate = aggregate_contrast(groups)
+    aggregate = aggregate_contrast(groups, DIAGNOSTIC_FEATURE_NAMES)
     n_groups = len(groups)
 
     # --- permutation nulls (B=999 per feature, composition-preserving) ------
     per_feature: dict[str, dict] = {}
-    for feature in FEATURE_NAMES:
+    for feature in DIAGNOSTIC_FEATURE_NAMES:
         observed = aggregate[feature]
         null = contrast_permutation_null(
             groups, feature, N_PERM, np.random.RandomState(SEED)
@@ -235,9 +251,10 @@ def main() -> None:
             group["features"],
             group["positive_positions"],
             group["negative_positions"],
+            DIAGNOSTIC_FEATURE_NAMES,
         )
         contact = {
-            p: round(float(group["features"][p]["contact_number_10a"]), 3)
+            p: round(float(group["features"][p][CONTACT_FEATURE]), 3)
             for p in group["positive_positions"] + group["negative_positions"]
         }
         per_peptide.append(
@@ -248,7 +265,7 @@ def main() -> None:
                 "positive_positions": group["positive_positions"],
                 "negative_positions": group["negative_positions"],
                 "contrast": contrast,
-                "contact_number_10a": contact,
+                CONTACT_FEATURE: contact,
             }
         )
 
@@ -259,21 +276,21 @@ def main() -> None:
     }
 
     document = {
-        "track": "copeptide_structure_separation_v1",
+        "track": "copeptide_structure_separation_sg6a_v1",
         "claim_class": "diagnostic_only",
         "note": (
-            "Within-peptide structural contrast on the explicit co-peptide "
-            "negative pool (tomato gold-standard + Arabidopsis PXD024061 + "
-            "rice PXD072089; one protein instance per distinct peptide, so the "
-            "4 paralogous rice carriers of the IIPTPNC peptide count once): "
-            "is the modified set cleanly above (pos_higher), cleanly below "
+            "S-gamma-layer recompute of the co-peptide structural contrast: "
+            "the contact feature is contact_number_sg_6a (heavy atoms of "
+            "other residues within 6 A of the Cys S-gamma), replacing the "
+            "C-alpha 10 A packing count (contact_number_10a). Same 14-group / "
+            "3-species pool and same B=999 composition-preserving permutation "
+            "null as the C-alpha track (copeptide_structure_separation_v1). "
+            "Is the modified set cleanly above (pos_higher), cleanly below "
             "(pos_lower), or overlapping (mixed) the unmodified set on each "
             "structure feature? Direction is left free — the known-control "
-            "burial signal (contact_number) was established ACROSS proteins "
-            "and may run the other way WITHIN a peptide (BRG3 RING: modified "
-            "C206 is the cluster's exposed Cys). Permutation null preserves "
-            "each peptide's composition (k_pos/k_neg, exchange only among "
-            "that peptide's own Cys)."
+            "burial signal was established ACROSS proteins and may run the "
+            "other way WITHIN a peptide (BRG3 RING: modified C206 is the "
+            "cluster's exposed Cys)."
         ),
         "n_peptides": n_groups,
         "n_dropped_no_structure": len(dropped),
@@ -296,7 +313,7 @@ def main() -> None:
                 )
                 for f in significant
             },
-            "contact_number_10a": per_feature["contact_number_10a"],
+            CONTACT_FEATURE: per_feature[CONTACT_FEATURE],
         },
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
@@ -311,7 +328,7 @@ def main() -> None:
         f"{'feature':<22}{'posHi':>6}{'posLo':>6}{'mix':>5}"
         f"{'nullMedHi':>10}{'pHi':>7}{'pLo':>7}"
     )
-    for feature in FEATURE_NAMES:
+    for feature in DIAGNOSTIC_FEATURE_NAMES:
         pf = per_feature[feature]
         marker = "  **" if min(pf["p_pos_higher"], pf["p_pos_lower"]) <= 0.05 else ""
         print(
@@ -322,10 +339,10 @@ def main() -> None:
         )
     print("\nper-peptide contrast + contact (all 7 features):")
     for pp in per_peptide:
-        direction = pp["contrast"]["contact_number_10a"]
+        direction = pp["contrast"][CONTACT_FEATURE]
         print(
             f"  {pp['accession']:<12} POS={pp['positive_positions']} "
-            f"NEG={pp['negative_positions']} contact={pp['contact_number_10a']} "
+            f"NEG={pp['negative_positions']} contact={pp[CONTACT_FEATURE]} "
             f"=> contact {direction}"
         )
     print(f"\nwrote {OUTPUT}")

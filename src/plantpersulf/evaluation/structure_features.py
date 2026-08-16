@@ -20,7 +20,14 @@ FreeSASA / APBS dependency — at the precision needed for a gate test:
   charged side-chain partial charges (dielectric folded into a constant;
   APBS Poisson-Boltzmann is the eventual rigorous feature);
 - ``contact_number_10a`` — C-alpha neighbours within 10 A (packing
-  density).
+  density);
+- ``contact_number_sg_6a`` — heavy atoms (non-hydrogen) of other residues
+  within 6 A of the Cys S-gamma (atom-level local packing around the
+  sulphur; the S-gamma-layer replacement for the C-alpha contact count);
+- ``metal_coordination_sg_3a`` — N/O/S atoms of His/Cys/Asp/Glu residues
+  within 3 A of the Cys S-gamma (metal-coordination proxy: AFDB models carry
+  no metal ions, so Zn coordination is represented by ligand-atom density
+  around the sulphur).
 
 Diagnostic-only: no fitting, no mutation of frozen artifacts.
 """
@@ -83,6 +90,10 @@ _PARTIAL_CHARGES = {
 
 POSITIVE_RESIDUES = ("R", "K", "H")
 
+S_GAMMA_HEAVY_ATOM_RADIUS_ANGSTROM = 6.0
+METAL_COORDINATION_RADIUS_ANGSTROM = 3.0
+METAL_LIGAND_RESIDUES = ("H", "C", "D", "E")
+
 STRUCTURE_FEATURE_NAMES = (
     "plddt",
     "rsa_relative",
@@ -91,6 +102,8 @@ STRUCTURE_FEATURE_NAMES = (
     "positive_residue_count_6a",
     "coulomb_potential_sg",
     "contact_number_10a",
+    "contact_number_sg_6a",
+    "metal_coordination_sg_3a",
 )
 
 
@@ -268,6 +281,55 @@ def _side_chain_atoms(residue: Residue) -> list[Atom]:
     ]
 
 
+def _heavy_atom_contacts_within(
+    residues: list[Residue],
+    probe_xyz: np.ndarray[Any, Any],
+    self_resseq: int,
+    radius_angstrom: float,
+) -> int:
+    """Count heavy atoms (non-hydrogen) of OTHER residues within a radius of
+    a probe point (the Cys S-gamma). The same residue's own atoms are excluded
+    so the count measures local packing *around* the sulphur rather than the
+    residue's constant internal geometry (its own C-beta is ~1.8 A away)."""
+    count = 0
+    for residue in residues:
+        if residue.resseq == self_resseq:
+            continue
+        for atom in residue.atoms:
+            if atom.element == "H":
+                continue
+            delta = atom.xyz - probe_xyz
+            if float(np.sqrt(np.dot(delta, delta))) <= radius_angstrom:
+                count += 1
+    return count
+
+
+def _metal_coordination_count(
+    residues: list[Residue],
+    probe_xyz: np.ndarray[Any, Any],
+    self_resseq: int,
+    radius_angstrom: float = METAL_COORDINATION_RADIUS_ANGSTROM,
+) -> int:
+    """Count N/O/S atoms of His/Cys/Asp/Glu residues within a radius of the
+    Cys S-gamma (metal-coordination proxy). AFDB models carry no metal ions,
+    so a Zn-coordinating Cys is recognised by the density of nearby ligand
+    atoms (His ND1/NE2, Cys SG, Asp OD1/OD2, Glu OE1/OE2) around its sulphur.
+    The same residue's own atoms are excluded."""
+    count = 0
+    for residue in residues:
+        if residue.type not in METAL_LIGAND_RESIDUES:
+            continue
+        if residue.resseq == self_resseq:
+            continue
+        for atom in residue.atoms:
+            if atom.element not in ("N", "O", "S"):
+                continue
+            delta = atom.xyz - probe_xyz
+            if float(np.sqrt(np.dot(delta, delta))) <= radius_angstrom:
+                count += 1
+    return count
+
+
 def cys_structure_features(
     residues: list[Residue], positions: Iterable[int]
 ) -> dict[int, dict[str, float]]:
@@ -373,6 +435,17 @@ def cys_structure_features(
         ) if ca is not None else 0
 
         reference = RSA_REFERENCE.get(residue.type, 100.0)
+        contact_number_sg_6a = float(
+            _heavy_atom_contacts_within(
+                residues,
+                sg.xyz,
+                position,
+                S_GAMMA_HEAVY_ATOM_RADIUS_ANGSTROM,
+            )
+        )
+        metal_coordination_sg_3a = float(
+            _metal_coordination_count(residues, sg.xyz, position)
+        )
         features[position] = {
             "plddt": float(plddt),
             "rsa_relative": float(side_sasa[position]) / reference,
@@ -381,6 +454,8 @@ def cys_structure_features(
             "positive_residue_count_6a": float(positive_count),
             "coulomb_potential_sg": float(coulomb),
             "contact_number_10a": float(contact_number),
+            "contact_number_sg_6a": contact_number_sg_6a,
+            "metal_coordination_sg_3a": metal_coordination_sg_3a,
         }
     return features
 

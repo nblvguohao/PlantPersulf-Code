@@ -109,8 +109,55 @@ def test_extract_cys_features_shape_and_keys() -> None:
         "positive_residue_count_6a",
         "coulomb_potential_sg",
         "contact_number_10a",
+        "contact_number_sg_6a",
+        "metal_coordination_sg_3a",
     }
     assert required <= set(features[2])
     assert 0.0 <= features[2]["rsa_relative"] <= 2.0
     # per-residue pLDDT is read from the CA atom
     assert features[2]["plddt"] == pytest.approx(69.5)
+
+
+# A Cys with its S-gamma at the origin and other residues' heavy atoms at
+# unambiguous distances (C-beta only), for a deterministic heavy-atom count.
+PDB_SG_CONTACT_SNIPPET = (
+    """ATOM      1  N   CYS A   1       0.000   0.000   0.000  1.00 70.00           N
+ATOM      2  CA  CYS A   1       0.000   0.000   0.000  1.00 70.00           C
+ATOM      3  CB  CYS A   1       0.000   0.000   0.000  1.00 70.00           C
+ATOM      4  SG  CYS A   1       0.000   0.000   0.000  1.00 70.00           S
+ATOM      5  CB  ALA A   2       1.500   0.000   0.000  1.00 70.00           C
+ATOM      6  CB  ALA A   3       6.500   0.000   0.000  1.00 70.00           C
+ATOM      7  CB  ALA A   4       5.900   0.000   0.000  1.00 70.00           C
+"""
+)
+
+
+def test_contact_number_sg_6a_counts_other_residue_heavy_atoms() -> None:
+    residues = parse_pdb(PDB_SG_CONTACT_SNIPPET)
+    features = cys_structure_features(residues, positions=(1,))
+    # S-gamma at the origin; heavy atoms of OTHER residues within 6 A:
+    # ALA2 CB (1.5) and ALA4 CB (5.9) count; ALA3 CB (6.5) does not. The
+    # Cys's own atoms are excluded (its CB sits ~1.8 A from its SG).
+    assert features[1]["contact_number_sg_6a"] == 2.0
+
+
+# A Cys with its S-gamma at the origin and metal-ligand atoms (N/O/S of
+# His/Cys/Asp/Glu) at unambiguous distances.
+PDB_METAL_SNIPPET = (
+    """ATOM      1  CA  CYS A   1       0.000   0.000   0.000  1.00 70.00           C
+ATOM      2  SG  CYS A   1       0.000   0.000   0.000  1.00 70.00           S
+ATOM      3  ND1 HIS A   2       2.500   0.000   0.000  1.00 70.00           N
+ATOM      4  OD1 ASP A   3       2.800   0.000   0.000  1.00 70.00           O
+ATOM      5  SG  CYS A   4       4.000   0.000   0.000  1.00 70.00           S
+ATOM      6  CB  ALA A   5       2.000   0.000   0.000  1.00 70.00           C
+"""
+)
+
+
+def test_metal_coordination_sg_3a_counts_ligand_atoms_within_3a() -> None:
+    residues = parse_pdb(PDB_METAL_SNIPPET)
+    features = cys_structure_features(residues, positions=(1,))
+    # S-gamma at the origin: His ND1 (2.5) and Asp OD1 (2.8) are N/O atoms of
+    # His/Cys/Asp/Glu within 3 A and count; Cys4 SG (4.0) is out of range; ALA
+    # CB is a heavy atom but not a metal-ligand residue.
+    assert features[1]["metal_coordination_sg_3a"] == 2.0
