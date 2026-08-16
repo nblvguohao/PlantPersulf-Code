@@ -7,13 +7,20 @@
 > 全局约束 1（禁止反向开发）与约束 3（不得追加无边界模型开发"抢救"）。
 > 本登记册的目的正是把"以后可能的改进"与"现在必须冻结的模型"在纸面上分开。
 
-## 1. 为什么现在不做（不可违反）
+## 1. 为什么现在不做（不可违反）—— 2026-08-16 建模方 PI 决策修订
 
 - 内部基准（文献轨 macro AP 0.386）**不是目标**；盲法番茄队列富集才是。针对内部基准继续调模型，
   本质是对基准的过拟合，且不会转化为盲法证据。
 - 任何改进 = 特征/模型/超参变化 → 必须新建发布号 + 新预注册 + 重新联合签署（见
   `results/candidates/multispecies_v2_candidate_release_v1/` 冻结纪律）。
 - 解锁条件（唯一路径）：**Gate 3 盲法验证完成之后**，作为"新一代模型"立项，配完整的新预注册流程。
+- **2026-08-16 修订（建模方 PI 决定，本条覆盖上述解锁条件）**：**推迟 Gate 3 盲测 MS 队列**；
+  改为按战役证据（W4 分物种结构标定阳性）修改模型 → 新发布号 **v2**（`multispecies-v2-
+  candidate-release-v2`）→ 重出番茄候选表 → 候选 + 匹配对照清单**直接发张华实验室做
+  Cys→Ala 突变功能验证（不打质谱）**。理由（PI）：验证目的就是功能验证而非 MS 检测；盲测
+  设计退出。纪律仍保留：改动集**限定**在已证阳性的两项（分物种结构标定 + v3 结构注册表）；
+  新候选表 + 对照在结果返回前锁定；证据口径改写为"预测位点 → 突变功能富集"，稿件叙事相应
+  修订。L9 两步架构 / L10 区室 / L12 擦除率继续登记不实施。
 
 ## 2. 改进杠杆清单
 
@@ -190,6 +197,57 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
   （3-crop p=0.0098），W1 机制线索 #1 实证成立，同样列为新发布候选变更（详见上文 W4 节）。
 - 全部证据与报告：`results/experiments/accuracy_campaign/`（含 `DECISION_SUMMARY.md`）。
 
+### 2.3 两步持硫化机制重释 + 下一代候选（2026-08-16，文献驱动，登记不实施）
+
+**机制约束（来源：Corpas et al. 审稿中 COPLBI-D-26-00068 综述，Fig.1C 图注，逐字）：**
+
+> “The cysteine thiol group (–SH) must first be activated via oxidation to a higher oxidation
+> state, such as sulfenic acid (–SOH), a disulfide (–S–S), or an S-nitrosated form (–SNO),
+> before it can react with H₂S.”
+
+即 **P(持硫化) = P(可氧化 | 结构) × P(持硫化 | 已氧化)**。该约束直接改写对共肽零结果的解读：
+
+1. **共肽阴性的负类是 gate-1 失败（未氧化）与 gate-2 失败（氧化但未被 H₂S 攻击）的潜伏混合。**
+   单阶段二分类把两个物理过程压成一个标签；gate-2 失败的阴性从 gate-1 视角与阳性结构上
+   不可区分 → **任何单门特征对共肽分离存在原理性上限**。§9.5–9.9 的共肽零结果从"结构/序列
+   共同不可分辨"升级为"任务误设的必然推论"。**诚实边界**：当前共肽轴观测不到氧化态，此框架
+   在该轴**不可证伪**——定位为机制重释（narrative），不是已验证机制，不得写成结论。
+2. **§9.9 prior-flip（occupancy 最后一枪被救回）**：该检验用"配位=阻断修饰"先验（预言
+   修饰=非配体），被 C212（Zn 位点 B 配体且修饰）打空；两步+低 pKa 硫醇盐逻辑给出相反先验
+   （配位→硫醇盐→亲核→**促进**修饰），C212 与 A0A0P0Y2A9 的修饰 C80（配体 3.59 Å）转为
+   支持证据。池级方向仍不系统（pos_closer 3 / pos_farther 1 / mixed 3）→ **只挽救解读，
+   不产生新显著性**。
+3. **唯一显著结构信号（contact_number p=0.018，功能位点更埋藏）在两步+激活逻辑下机制自洽**：
+   埋藏→配位→硫醇盐→反应；此前的"反应性 Cys 必须暴露"假设反而制造悖论。这是本机制对稿件
+   Discussion 的最大单点贡献。
+4. **BRG3 三连体在两步框架下完整自洽**：C206（暴露游离→可氧化）、C212（配位硫醇盐→激活）、
+   C209（埋藏游离→既不暴露也不激活→不可氧化）。两条阳性路线是 **OR** 关系——这正是
+   单特征、单方向共肽对比必然失效的结构原因（§9.8/§9.9 用了同一个量测对了、预言方向错了）。
+
+**下一代候选（全部登记不实施；Gate 3 盲测完成后立项，均需新发布号 + 新预注册 + 联合签署）：**
+
+- **L9 两步架构**：stage-1 借跨物种 sulfenylation/二硫键数据（氧化化学跨物种，人源可），
+  stage-2 用稀缺植物持硫化标签。架构变化 → 新预注册。
+- **L10 区室条件化特征**：TargetP/DeepLoc 预测定位 → 区室 pH/redox（胞质 ~7.2、光下叶绿体
+  基质 ~8.0；0.8 单位 ≈ 硫醇盐占比差近一个数量级）→ 条件化打分。零成本、强可解释性图。
+  属特征变化 → 新预注册。
+- **L11 oxiPTM 判别基准（Table 1 持硫化 vs S-亚硝基化两列）**——任务本身有价值
+  （"反应性 Cys 归哪个 oxiPTM"，阴性=另一类阳性，绕开不可靠阴性）。**2026-08-16 逐条
+  primary-source 解析完成**：首轮 9/10 SNO "失败"的根因是**物种误归**（综述 Table 1 跨物种，
+  6 个实为番茄位点）。解析后 **SNO 6/10 核验通过**（MPK6 C201=Q39026、RAB7/RABG3E
+  C171=Q9XI98、SlMEK1 C172=O48616、SlP5CR C5=A0A3Q7FME1、**ACOh4 C172=A0A3Q7FZA2
+  =NCBI LOC101265426**、**HA2 C206=Q9SPD5=NCBI LHA2**），持硫化 **11/13 通过**
+  （**bZIP68 C171=A2YXP7**——开放获取全文核验 C171+C245 双修饰位点，参考中唯一具此
+  双 Cys 模式的 BZIP）；4 个为注册蛋白组**覆盖缺口**（GSNOR1 仅 195aa 片段、番茄 GSNOR、
+  番茄 LCD、PRMT5/SKB1 不在蛋白组）；APX1/POD5 番茄不可解（已知）。
+  **判别测试（n=8 vs n=6 蛋白，置换 B=999）**：持硫化蛋白内排名均值 **3.82** vs SNO **2.0**，
+  观测差 **+1.82**，单侧 p(持硫化更优)=**0.976**——**冻结模型系统性不把持硫化位点排到 SNO
+  位点之上，方向明确相反**（ACOh4/HA2/MEK1 三例 SNO 均蛋白内 rank 1）。与两步框架"模型
+  主要捕获 gate-1 通用可氧化信号"一致，为共肽零结果的平行证据。小样本描述性，非注册端点。
+  逐条解析：`docs/zhanghua/COPLBI_table1_resolution_2026-08-16.md`；审计：
+  `scripts/evaluate_oxiptm_sites.py` → `results/diagnostics/oxiptm_sites_v1.json`。
+- **L12 动态/擦除率**（TRXo1/NTRB 去持硫化；观测=写入/擦除）——需 TRX 底物特异性数据，
+  远期方向，登记一行。
 
 ## 3. 评估纪律
 
@@ -396,3 +454,110 @@ kiae271 模拟盲测（`scripts/evaluate_kiae271_with_release_bundle.py`，
   失败=任一不满足则阴性登记。变更类别=结构分支输入投影（非新架构），与 L8 分物种
   isotonic 校准正交可组合。**执行门槛：Gate 3 盲法验证完成后**（register §1 唯一
   路径）；本文件仅锁定协议，不触发训练/候选表改动。状态 DRAFT 待联合签署。
+- 2026-08-16：**闸门补绿：下载器测试在 Windows 注册表 SOCKS 代理下的持久修复**——
+  `download/base.py` 新增 `open_http`（对 loopback 主机 localhost/127.*/::1 显式绕过
+  环境/注册表代理，`ProxyHandler({})`；其余主机维持默认代理行为），`download/
+  alphafold.py` 的 API 查询同步接入。背景：全量 pytest 15 失败全在 AlphaFold 下载器
+  单测（test_alphafold_download / test_download_failure_is_fatal /
+  test_registered_download_selection），根因是 Windows 注册表 SOCKS 代理把本地 mock
+  服务器（127.0.0.1）请求也拦走（此前只能靠 `NO_PROXY='*'` 规避）。修复后下载器
+  测试无需环境变量 18/18 绿（新增 loopback 抗死代理测试 1）。属传输层修复，不触碰
+  冻结产物、候选表与模型。
+- 2026-08-16：**Sγ 层接触数重算（共肽结构零结果的原子基/半径稳健性检验）**——
+  `evaluation/structure_features.py` 新增 `contact_number_sg_6a`（Cys Sγ 6 Å 内其他
+  残基重原子数，排除同残基；替换 Cα 10 Å 计数）+ 单元测试 1；`scripts/evaluate_
+  copeptide_structure_separation.py` 输出新 track `copeptide_structure_separation_
+  sg6a_v1.json`（Cα 版 v1 JSON 原样保留）。**结果：换原子基/半径后 7 特征仍无一
+  分离共肽正/负（contact p=0.505/0.738 vs Cα 版 0.502/0.538）；14 组中 6 组逐肽
+  方向翻转（BRG3 C206 的 Sγ 接触 31 为簇内最低、C212 46、C209 42），聚合零分布
+  不动。** **口径更正（2026-08-16 同日晚）**：contact_number_sg_6a 与
+  contact_number_10a 是**同一堆积密度量的两个几何版本**（p 几乎重合、零分布位置
+  重合），同时为零是**一次观测不是两次**，不能报"两个分辨率独立验证"；零结果只
+  覆盖几何/堆积密度这一类，化学占据类未覆盖（见下条）。
+- 2026-08-16：**BRG3 RING 金属配位代理（Sγ 层最后一枪）——3 Å 特征退化，扫描亦
+  非判别子**——`evaluation/structure_features.py` 新增 `metal_coordination_sg_3a`
+  （Cys Sγ 3 Å 内 His/Cys/Asp/Glu 的 N/O/S 原子数，Zn 配位代理；AFDB 无金属故以
+  配体原子密度代替）+ 单元测试 1；`scripts/evaluate_brg3_metal_coordination.py` →
+  `brg3_metal_coordination_v1.json`。**结果（3 Å）：特征完全退化——14 组全 mixed
+  （p=1.000）、BRG3 全部 14 Cys 全 0**（apo 模型最接近配体原子 >3 Å）。**探索性
+  半径扫描（4/5/6 Å）：模式与"修饰=非配体=低"预言相反**——C206(POS) 0/2/3 最低、
+  C212(POS) 5/5/11 最高、C209(NEG) 0/4/5 介于其间，任何半径下共肽三连体均 mixed，
+  C209 从未整体高于修饰集。**判定：3 Å 金属配位代理不是二值判别子**（局限：apo
+  读数）。随后按正确口径重打：占据类是类别量，须**方差筛选 + 逐组 + BRG3 单案例**，
+  不用聚合置换。
+- 2026-08-16：**化学占据类最后一枪（几何聚类读出 BRG3 Zn 位点）——打空，收工**——
+  `scripts/evaluate_sg_chemical_occupancy.py` → `sg_chemical_occupancy_v1.json`：
+  BRG3 RING 区 9 Cys Sγ 按四面体互距聚类（cutoff 4.5 Å，RING pLDDT 89–95）读出
+  两个 Zn 位点 **A={197,200,218,221}（4 Cys）、B={212,228,231}（3 Cys）**，游离
+  非配体 = **C206 与 C209**。**共肽三连体打空**：C206(POS) 游离 6.18 Å、C209(NEG)
+  游离 4.68 Å、**C212(POS) 在 Zn 位点 B 是配体（3.50 Å）**——两个修饰 Cys 被劈开，
+  未修饰 C209 与 C206 同侧游离，"修饰=非配体"/"未修饰=配体"两逻辑都冲突。池内逐组
+  （方差筛选 7/14，逐组不合并）：pos_closer 3 / pos_farther 1 / mixed 3 方向不一致
+  （注：A0A0P0Y2A9 中修饰 C80 是配体 3.59 Å、未修饰 C64 游离 9.31 Å——支持低 pKa
+  硫醇盐靶点逻辑，但池内不系统）。**停止规则"打空"分支命中：零结果同时覆盖几何/
+  堆积密度与化学占据两类，特征搜索到此为止，全力转 Gate 3 盲测。**
+- 2026-08-16：**两步持硫化机制重释（Corpas 综述 Fig.1C）+ Table 1 oxiPTM 位点核验审计**——
+  ① 机制：P(持硫化)=P(可氧化|结构)×P(持硫化|已氧化)，把 §9.5–9.9 共肽零结果从"特征失败"
+  重释为"任务误设的必然"（共肽阴性=gate-1/gate-2 失败潜伏混合）；§9.9 先验翻转（配位=
+  激活而非阻断）；contact p=0.018 埋藏信号获得机制自洽。② **Table 1 两列逐条 primary-source
+  解析定案**——首轮全拟南芥假设错误：SNO 列 6 个实为番茄位点。最终 **SNO 6/10、持硫化
+  11/13 核验通过**：新增 ACOh4 C172=A0A3Q7FZA2（=NCBI "ACO homolog 4" LOC101265426，
+  精确一致）、HA2 C206=Q9SPD5（=NCBI LHA2，100% 一致）、bZIP68 C171=A2YXP7（IJMS 开放
+  全文核验 C171+C245 双修饰位点，参考中唯一具此双 Cys 模式的 BZIP，indica 注释为唯一代表）；
+  4 个覆盖缺口（GSNOR1 仅 195aa 片段 Q0WM36、番茄 GSNOR、番茄 LCD、PRMT5/SKB1 均不在
+  蛋白组）；APX1/POD5 番茄不可解（已知）。**判别测试（n=8 vs n=6 蛋白，B=999）**：
+  持硫化蛋白内排名均值 **3.82** vs SNO **2.0**，观测差 **+1.82**，单侧 p(持硫化更优)
+  **=0.976**——**冻结模型系统性不把持硫化位点排到 SNO 位点之上，方向明确相反**
+  （ACOh4/HA2/MEK1 均蛋白内 rank 1），与"模型捕获 gate-1 通用可氧化信号"一致，为共肽
+  零结果的平行证据。③ 候选登记：L9 两步架构 / L10 区室条件化 /
+  L11 oxiPTM 判别 / L12 擦除率，全部登记不实施（Gate 3 后立项）。产物：
+  `scripts/evaluate_oxiptm_sites.py` → `results/diagnostics/oxiptm_sites_v1.json`；
+  区室表 `scripts/diagnose_compartment_conditioning.py` →
+  `results/diagnostics/compartment_conditioning_v1.json`；
+  叙事草稿 `manuscripts/plant_physiology/2026-08-16_twostep_mechanism_discussion_draft.md`。
+- 2026-08-16：**新发布 v2 立项（PI 决策：推迟盲测，改突变功能验证）**——建模方 PI
+  决定**推迟 Gate 3 盲测 MS 队列**，按战役已证阳性修改模型（W4 分物种结构标定，3-crop
+  macro AP 0.2117→0.3799, p=0.0098；v3 结构注册表番茄覆盖 0→90%），新发布号
+  multispecies-v2-candidate-release-v2（config v12，），
+  重出番茄候选表 + 匹配对照，清单发张华实验室做 **Cys→Ala 突变功能验证（不打质谱）**。
+  证据口径与稿件叙事同步改写（见 register §1 修订与
+  ）。
+  **isotonic 校准说明**：对单物种候选表 rank 不变（单调变换），不应用于 v2 候选表；
+  保留为多物种池化选择规则的登记变更。SNO 6 位点作新模型哨兵集（见
+  `results/diagnostics/oxiptm_sites_v1.json`）。L9/L10/L12 仍登记不实施。
+- 2026-08-16：**v2 构建完成 —— 番茄侧 out-of-sample 阴性，不发货；arm-3 掩蔽试验等价 v2**——
+  v2（per_species 标定 + v3 结构注册表）训练完成（bundle sha256 dc98a5d1…，面板与 v1
+  逐字节一致）。**kiae271 干净子集（20 未训练已发表番茄位点）回收下降**：平均百分位
+  v1 60.5 → **v2 38.1**（低于随机 50），中位数以上 13/20 → 9/20；Top-2000 仍 0/20；
+  匹配对照从 966 对塌到 **6 对**（头部蛋白过度集中）。**arm-3（推理时掩蔽番茄结构分支）
+  与 v2 在 top-200 完全等价（200/200 相同，分数差异 ~1e-8）**——证明 v2 的排名变化并非
+  结构分支激活所致，而是训练侧（68k 结构行改写共享层/gate 权重）所致；掩蔽救不了。
+  哨兵（gate-2）v2 上 diff +1.82→+0.44（p=0.667）仍无分离。**判定：v2 系列不发货，
+  张华突变验证清单用 v1 候选表**（唯一番茄 out-of-sample 正向证据：13/20、60.5、966 对照）。
+  v2 记录为阴性迭代（战役证据外推到番茄候选表的教训：W4 增益来自 arab/rice，番茄近地板
+  从未被战役支持）。产物：`results/candidates/multispecies_v2_candidate_release_v2/`、
+  `results/diagnostics/candidates_tomato_v2_masked/`、`oxiptm_sentinel_v2.json`。
+- 2026-08-16（修订）：**任务重定义 = 蛋白内定位排序，v2 结论反转**——PI 纠正任务框架：
+  本工具的任务是**已知蛋白的位点定位**（蛋白内排序），不是蛋白组盲扫。据此重测 v1 vs v2 的
+  **蛋白内**指标：金标准注册对照 Hit@2 v1 4/12 → **v2 6/12**；kiae271 干净未训练位点
+  Hit@2 3/17 → **4/17**；干净+金标准合计 7/29 → **10/29**。v1 的优势集中在训练面板内位点
+  （79/99 训练阳性，记忆效应）。**v2 在蛋白内定位上是更好的 bundle**；此前"v2 不发货"结论
+  基于全局百分位度量，对蛋白内任务无关，已作废。蛋白内排名差距扁平（median gap ~0.0002），
+  验证设计应按蛋白内 top-K 排名 + 蛋白内对照，而非只看 rank-1。产物：
+  `results/diagnostics/within_protein_v1_v2.json`、
+  `results/candidates/multispecies_v2_candidate_release_v2/zhang_within_protein_list_v2.tsv`。
+- 2026-08-17：**两步模型 v1 实现 + 测试——阴性；番茄 SNO 稀缺确认；转向特征导向**——
+  stage-1 氧化分类器（逻辑回归，3 序列 + 2 结构特征）在 **2941 个核验 gate-1 SNO 位点**
+  vs 背景上训练（train AUC 0.72，内部信号真实）。蛋白内 Hit@2（29 诚实位点）：
+  persulf_v2（基线）**10**、oxid_only **7**、combined（persulf×oxid）**7**——stage-1
+  对持硫化位点蛋白内排序无增量，乘积组合把基线拖低（10→7；金标准对照 6→3）。
+  **解读**：跨物种迁移失败（LOSO 预言的直接验证——拟南芥 SNO 训练的 stage-1 对番茄
+  蛋白内排序不迁移）；且 SNO ≠ 持硫化的蛋白内 gate-1（两 oxiPTM 蛋白内竞争，与判别
+  诊断平行）。**番茄 SNO 全文献挖净约 15–30 位点**（6 已收录 + 原始论文各 1–3 个），
+  同物种体积不存在。**结构性结论**：stage-1 需要跨物种体积（有：2941 拟南芥），但跨
+  物种不迁移（无）；同物种需要体积（番茄无）——两头堵。**下一步（特征导向）**：
+  stage-1 用真正跨物种保守的 **pKa/结构反应性特征**（硫醇 pKa 代理、静电势、金属配位、
+  暴露度——P2 诊断的 7 特征 + 局部正电荷密度），看跨物种迁移是否成立。产物：
+  `scripts/evaluate_twostep_v1.py` → `results/diagnostics/twostep_v1.json`、
+  `data/registry/gate1_oxidation_sites_v1.tsv`（2941 核验）、
+  `data/raw/supplements/PXD_tomato_SNO/`（两个 SNO 论文补充包）。
