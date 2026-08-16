@@ -58,9 +58,7 @@ def main(argv: list[str] | None = None) -> int:
         if not arguments.accession or not arguments.file_class:
             parser.error("download mode requires --accession and --file-class")
         file_classes = tuple(
-            value.strip()
-            for value in arguments.file_class.split(",")
-            if value.strip()
+            value.strip() for value in arguments.file_class.split(",") if value.strip()
         )
         download_summary = download_registered_files(
             accession=arguments.accession,

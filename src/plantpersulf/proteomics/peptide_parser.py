@@ -250,8 +250,7 @@ def _summary(
         excluded_count=len(excluded),
         missing_metadata_count=len(missing),
         missing_sequence_count=sum(
-            issue.reason
-            in {"sequence_unavailable", "isoform_sequence_unavailable"}
+            issue.reason in {"sequence_unavailable", "isoform_sequence_unavailable"}
             for issue in conflicts
         ),
     )
@@ -380,9 +379,7 @@ def publish_parsed_proteomics(
             indent=2,
             sort_keys=True,
         )
-        (temporary_path / "manifest.json").write_bytes(
-            f"{serialized}\n".encode()
-        )
+        (temporary_path / "manifest.json").write_bytes(f"{serialized}\n".encode())
         if output_directory.exists():
             if _tree_hashes(output_directory) != _tree_hashes(temporary_path):
                 raise RuntimeError(
@@ -422,8 +419,10 @@ def _resolve_sources(
     if not isinstance(accession_config, dict):
         raise RuntimeError(f"proteomics accession is not approved: {accession}")
     names = accession_config.get("results")
-    if not isinstance(names, list) or not names or any(
-        not isinstance(name, str) or not name for name in names
+    if (
+        not isinstance(names, list)
+        or not names
+        or any(not isinstance(name, str) or not name for name in names)
     ):
         raise RuntimeError(f"proteomics results are not approved: {accession}")
 
@@ -435,8 +434,7 @@ def _resolve_sources(
         matches = [
             row
             for row in rows
-            if row["dataset_accession"] == accession
-            and row["file_name"] == name
+            if row["dataset_accession"] == accession and row["file_name"] == name
         ]
         if len(matches) != 1:
             raise RuntimeError(f"proteomics source does not resolve once: {name}")
@@ -482,9 +480,7 @@ def _resolve_references(
     if not matches:
         raise RuntimeError(f"reference sequences are not registered: {accession}")
     matches.sort(key=lambda row: row["protein_accession"])
-    return registry_path, tuple(
-        registry_path.parent / row["path"] for row in matches
-    )
+    return registry_path, tuple(registry_path.parent / row["path"] for row in matches)
 
 
 def parse_proteomics_accession(

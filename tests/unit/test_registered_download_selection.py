@@ -114,20 +114,15 @@ def test_registered_download_writes_complete_provenance_manifest(
         encoding="utf-8",
     )
     manifest_path = registry_dir / "downloads.tsv"
-    try:
-        summary = download_registered_files(
-            accession="POLICYTEST",
-            file_classes=("metadata", "results"),
-            selection_path=selection_path,
-            files_registry_path=files_path,
-            datasets_registry_path=datasets_path,
-            downloads_registry_path=manifest_path,
-            raw_dir=tmp_path / "data/raw",
-        )
-    finally:
-        server.shutdown()
-        server.server_close()
-        thread.join()
+    summary = download_registered_files(
+        accession="POLICYTEST",
+        file_classes=("metadata", "results"),
+        selection_path=selection_path,
+        files_registry_path=files_path,
+        datasets_registry_path=datasets_path,
+        downloads_registry_path=manifest_path,
+        raw_dir=tmp_path / "data/raw",
+    )
 
     assert summary.selected_count == 2
     assert summary.downloaded_count == 1
@@ -140,9 +135,7 @@ def test_registered_download_writes_complete_provenance_manifest(
     assert row["source_url"] == source_url
     assert row["download_url"] == source_url
     assert row["remote_checksum_algorithm"] == "SHA1"
-    assert row["registry_size_bytes"] == str(
-        len(_RegisteredPayloadHandler.payload) + 1
-    )
+    assert row["registry_size_bytes"] == str(len(_RegisteredPayloadHandler.payload) + 1)
     assert row["size_bytes"] == str(len(_RegisteredPayloadHandler.payload))
     assert len(row["sha256"]) == 64
     assert row["license_or_usage"] == "Software policy test only"
@@ -182,6 +175,30 @@ def test_registered_download_writes_complete_provenance_manifest(
             datasets_registry_path=datasets_path,
             downloads_registry_path=manifest_path,
         )
+    recovered_summary = download_registered_files(
+        accession="POLICYTEST",
+        file_classes=("metadata", "results"),
+        selection_path=selection_path,
+        files_registry_path=files_path,
+        datasets_registry_path=datasets_path,
+        downloads_registry_path=manifest_path,
+        raw_dir=tmp_path / "data/raw",
+    )
+    server.shutdown()
+    server.server_close()
+    thread.join()
+
+    assert recovered_summary.selected_count == 2
+    assert recovered_summary.downloaded_count == 1
+    assert recovered_summary.cached_count == 1
+    repaired_summary = audit_downloaded_files(
+        accession="POLICYTEST",
+        selection_path=selection_path,
+        files_registry_path=files_path,
+        datasets_registry_path=datasets_path,
+        downloads_registry_path=manifest_path,
+    )
+    assert repaired_summary.downloaded_count == 1
 
 
 def test_each_successful_file_is_registered_before_a_later_failure(

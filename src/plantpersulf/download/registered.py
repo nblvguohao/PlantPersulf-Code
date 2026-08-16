@@ -60,6 +60,16 @@ class DownloadSummary:
     cached_count: int
 
 
+@dataclass(frozen=True)
+class DownloadAuditSummary:
+    """Aggregate of fail-closed audits for every approved accession."""
+
+    accession_count: int
+    selected_count: int
+    downloaded_count: int
+    cached_count: int
+
+
 def _load_approved(path: Path) -> dict[str, dict[str, list[str]]]:
     try:
         loaded: object = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -190,9 +200,7 @@ def download_registered_files(
             cached_count += 1
             continue
         if item.record_type != "source_file":
-            raise RuntimeError(
-                f"selected record is not downloadable: {item.file_name}"
-            )
+            raise RuntimeError(f"selected record is not downloadable: {item.file_name}")
         existing_matches = [
             row
             for row in rows
@@ -217,31 +225,34 @@ def download_registered_files(
                 "downloader_version": "plantpersulf/0.0.0",
             }
             if any(
-                existing[field] != value
-                for field, value in expected_identity.items()
+                existing[field] != value for field, value in expected_identity.items()
             ):
-                raise RuntimeError(
-                    f"download provenance mismatch: {item.file_name}"
-                )
+                raise RuntimeError(f"download provenance mismatch: {item.file_name}")
             existing_path = downloads_registry_path.parent / existing["path"]
-            if (
-                not existing_path.is_file()
-                or existing_path.stat().st_size != int(existing["size_bytes"])
-                or hash_file(existing_path, "sha256") != existing["sha256"]
-                or (
-                    bool(item.remote_checksum)
-                    and hash_file(
+            local_copy_is_valid = (
+                existing_path.is_file()
+                and existing_path.stat().st_size == int(existing["size_bytes"])
+                and hash_file(existing_path, "sha256") == existing["sha256"]
+                and (
+                    not item.remote_checksum
+                    or hash_file(
                         existing_path,
                         item.remote_checksum_algorithm,
                     )
-                    != item.remote_checksum
+                    == item.remote_checksum
                 )
-            ):
-                raise RuntimeError(
-                    f"existing download failed audit: {item.file_name}"
+            )
+            if local_copy_is_valid:
+                cached_count += 1
+                continue
+            rows = [
+                row
+                for row in rows
+                if not (
+                    row["dataset_accession"] == item.dataset_accession
+                    and row["file_name"] == item.file_name
                 )
-            cached_count += 1
-            continue
+            ]
         destination = raw_dir / item.dataset_accession / item.file_name
         result = download_verified_file(
             DownloadRequest(
@@ -371,18 +382,45 @@ def audit_downloaded_files(
         if any(row[field] != value for field, value in expected_identity.items()):
             raise RuntimeError(f"download provenance mismatch: {item.file_name}")
         local_path = downloads_registry_path.parent / row["path"]
-        if (
-            not local_path.is_file()
-            or local_path.stat().st_size != int(row["size_bytes"])
+        if not local_path.is_file() or local_path.stat().st_size != int(
+            row["size_bytes"]
         ):
             raise RuntimeError(f"downloaded file size mismatch: {item.file_name}")
         if hash_file(local_path, "sha256") != row["sha256"]:
             raise RuntimeError(f"downloaded file SHA256 mismatch: {item.file_name}")
-        if item.remote_checksum and hash_file(
-            local_path, item.remote_checksum_algorithm
-        ) != item.remote_checksum:
+        if (
+            item.remote_checksum
+            and hash_file(local_path, item.remote_checksum_algorithm)
+            != item.remote_checksum
+        ):
             raise RuntimeError(
                 f"downloaded file remote checksum mismatch: {item.file_name}"
             )
         downloaded_count += 1
     return DownloadSummary(len(selected), downloaded_count, cached_count)
+
+
+def audit_all_downloaded_files(
+    selection_path: Path,
+    files_registry_path: Path,
+    datasets_registry_path: Path,
+    downloads_registry_path: Path,
+) -> DownloadAuditSummary:
+    """Audit every explicit selection entry; do not silently skip an accession."""
+    approved = _load_approved(selection_path)
+    summaries = tuple(
+        audit_downloaded_files(
+            accession=accession,
+            selection_path=selection_path,
+            files_registry_path=files_registry_path,
+            datasets_registry_path=datasets_registry_path,
+            downloads_registry_path=downloads_registry_path,
+        )
+        for accession in sorted(approved)
+    )
+    return DownloadAuditSummary(
+        accession_count=len(summaries),
+        selected_count=sum(summary.selected_count for summary in summaries),
+        downloaded_count=sum(summary.downloaded_count for summary in summaries),
+        cached_count=sum(summary.cached_count for summary in summaries),
+    )

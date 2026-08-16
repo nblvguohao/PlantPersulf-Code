@@ -1,9 +1,7 @@
 from pathlib import Path
 
 MZID_PATH = Path("data/raw/PXD035795/peptides_1_1_0.mzid.gz")
-MZID_SHA256 = (
-    "62105dfde42d9675bc5dc7c83969d971eec57c9e02983659cd2df96ec4d1b5fe"
-)
+MZID_SHA256 = "62105dfde42d9675bc5dc7c83969d971eec57c9e02983659cd2df96ec4d1b5fe"
 
 
 def _audit():  # type: ignore[no-untyped-def]
@@ -32,9 +30,7 @@ def test_real_mzid_emits_only_unresolved_identified_modifications() -> None:
 
     assert len(audit.candidates) == 25
     assert {row.evidence_class for row in audit.candidates} == {"unresolved"}
-    assert {row.method_mapping_status for row in audit.candidates} == {
-        "absent_v1"
-    }
+    assert {row.method_mapping_status for row in audit.candidates} == {"absent_v1"}
     assert {row.cv_accession for row in audit.candidates} == {"MS:1001460"}
     assert {row.cv_name for row in audit.candidates} == {"unknown modification"}
     assert {row.cv_value for row in audit.candidates} == {"DCP", "NBF_C", "NBF_N"}
@@ -62,8 +58,5 @@ def test_real_mzid_resolves_exact_references_and_preserves_locators() -> None:
         and row.spectrum_identification_item_id in row.source_locator
         for row in audit.candidates
     )
-    assert all(
-        row.conflict_status in {"clear", "conflict"}
-        for row in audit.candidates
-    )
+    assert all(row.conflict_status in {"clear", "conflict"} for row in audit.candidates)
     assert all(conflict.source_sha256 == MZID_SHA256 for conflict in audit.conflicts)

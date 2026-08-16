@@ -1,0 +1,67 @@
+# Frozen experiment config — Split A (cluster split) ranker, ESM-free variant.
+#
+# Same purpose as pu_ranker_cluster_v1.yaml (literature-comparable,
+# within-dataset benchmark; NOT admissible as Gate 2 evidence) but restricted
+# to ablations that do not require the frozen ESM-2 branch, for environments
+# without fair-esm / cached ESM-2 weights.
+
+version: 1
+
+experiment:
+  name: pu_ranker_cluster_seqstruct_v1
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  mode: cluster
+  cluster_file: data/processed/clusters/protein_clusters_v1.tsv
+  split_config: configs/splits/split_config_v1.yaml
+
+features:
+  - name: sequence
+    module: plantpersulf.features.sequence
+  - name: structure
+    module: plantpersulf.features.structure
+
+models:
+  - structure_ranker
+
+ablations:
+  - name: sequence_only
+    use_esm: false
+    use_structure: false
+    use_study_context: false
+  - name: seq_structure
+    use_esm: false
+    use_study_context: false
+  - name: seq_structure_study
+    use_esm: false
+  - name: no_plddt
+    use_esm: false
+    use_plddt: false
+  - name: no_accessibility
+    use_esm: false
+    use_accessibility: false
+
+ranker:
+  hidden: 16
+  dropout: 0.2
+  epochs: 200
+  lr: 0.05
+  n_mc_dropout: 16
+
+evaluation:
+  seeds: [0, 1, 2, 3, 4]
+
+subsample:
+  unlabeled_per_positive: 20
+  seed: 12345
+
+output:
+  directory: results/experiments/pu_ranker_cluster_seqstruct_v1
+
+limitation: |
+  SPLIT A (within-dataset protein-cluster split) — NOT cross-study
+  validation; ESM-free variant additionally omits the frozen-ESM branch.
+  Reported only for comparability with within-dataset PTM-predictor
+  literature; never admissible as Gate 2 evidence.

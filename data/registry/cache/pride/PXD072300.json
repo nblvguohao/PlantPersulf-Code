@@ -1,0 +1,928 @@
+{
+  "accession": "PXD072300",
+  "files": [
+    {
+      "accession": "9a5c4ce4a72b6b399fc5cf7789a131c6218cfda6a6a5e46cbedea75df3785a7a",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidation_MDHAR5.raw",
+      "fileSizeBytes": 1236804494,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR5.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR5.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "cc41a03c91cbb1044123fbbf9246e275070dc025faadccfb036b366d8bd4549c",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "Persulfidation_MDHAR5.csv",
+      "fileSizeBytes": 162112,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR5.csv"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR5.csv"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "30f091742bcb9fdc742229554f56b0d6857223b2c49a5f54457eca20ca802216",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidation_MDHAR4.raw",
+      "fileSizeBytes": 1307766068,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR4.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR4.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "7db53fffb452f1ed5e73b1e736299688e6fb5d1145527b3ca94d83d2219c4a73",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "Persulfidation_ALDP.csv",
+      "fileSizeBytes": 128282,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_ALDP.csv"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_ALDP.csv"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "c9bddde5d119aea540dab27fd60fa145819b8a855e1242c351329a6d8c31f44a",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidation_TAL.raw",
+      "fileSizeBytes": 1132128372,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_TAL.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_TAL.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "f2d8c24a250ceda93ac9427445c5c0c7668024ce515ffc83142319636af2d274",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000410",
+        "cvLabel": "PRIDE",
+        "name": "Other type file URI",
+        "value": "OTHER"
+      },
+      "fileName": "checksum.txt",
+      "fileSizeBytes": 1979,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/checksum.txt"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/checksum.txt"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "78cf610fcc6772b5ae87675974c93e61ba18b88fffa62bcb3b12b2e774c38a56",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "Persulfidation_PFP.csv",
+      "fileSizeBytes": 346853,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_PFP.csv"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_PFP.csv"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "67fa47a4befd30ec077ded3064bf1491f4c3818d2a732748e2d05962c4a919c5",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidation_ALDP.raw",
+      "fileSizeBytes": 1241428664,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_ALDP.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_ALDP.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "a2da0f1ca8fd9056403323ff3fcae0b92715f5ba8a4d469a53e4a696b0cd1bb5",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidation_RPI.raw",
+      "fileSizeBytes": 1384611528,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_RPI.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_RPI.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "1307508663dabca72e70205ade80d687c0c5f4c72f61a53741c44ae2a588aef5",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "Persulfidation_FBA1.csv",
+      "fileSizeBytes": 120644,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_FBA1.csv"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_FBA1.csv"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "0f24fb1c584d770a15d2096f36ef6628fa667e7c34e31d28d81ace30ae475700",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "Persulfidation_MDHAR4.csv",
+      "fileSizeBytes": 107158,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR4.csv"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR4.csv"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "e5888b0c0f7c9bd663e2e3bcf75276aa27b836ee94b817a746d7ffa2a157267c",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "Persulfidation_TKT.csv",
+      "fileSizeBytes": 297607,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_TKT.csv"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_TKT.csv"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "eb9da36a3426b6626bf6ae15c82e7b75a5b9f54f88aa6a808d3dbc342652d849",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidation_FBA3.raw",
+      "fileSizeBytes": 1269134468,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_FBA3.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_FBA3.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "b19657a053c9109cdb942d3302257e9cb60bc4694117e824dfa3a981673d724c",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "Persulfidation_RPI.csv",
+      "fileSizeBytes": 151059,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_RPI.csv"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_RPI.csv"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "c39e0dd150b04bbbe31f483616f7f415306bc0996b798db83ba7619b737e4239",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidation_PFP.raw",
+      "fileSizeBytes": 919724364,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_PFP.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_PFP.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "330e115b90ebd5aeedbae7053a0d7ee67a6c9cb46bf8b1da3a6046af0d0e7c1c",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidation_TKT.raw",
+      "fileSizeBytes": 979186444,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_TKT.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_TKT.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "8d7cbdf77406fc85e1ff5000e7d480e6997490fd067b4d84ad6622a424ec8410",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "Persulfidation_MDHAR3.csv",
+      "fileSizeBytes": 91648,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR3.csv"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR3.csv"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "4597e06ecb9f0dc752d003d2408325ac009e8aeff74ae5f5c6483f61689a1880",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidation_FBA1.raw",
+      "fileSizeBytes": 1301335140,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_FBA1.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_FBA1.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "6e7b1820b46c2cee9b74ed7bf064c9d1f129cf106528bb9b4d4ae39390a25321",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "Persulfidation_FBA3.csv",
+      "fileSizeBytes": 117083,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_FBA3.csv"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_FBA3.csv"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "a3c731be7dff1caf269a0cf35245910a7afe5cd8dc703bc43bd61758514e41b2",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidation_MDHAR3.raw",
+      "fileSizeBytes": 1265728712,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR3.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_MDHAR3.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    },
+    {
+      "accession": "3eaecbd13471cc46f4160d5f11b6d16dc98598f5d26d690a6d47ffb5168d8087",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "Persulfidation_TAL.csv",
+      "fileSizeBytes": 147365,
+      "projectAccessions": [
+        "PXD072300"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072300/Persulfidation_TAL.csv"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072300/Persulfidation_TAL.csv"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:32:04.218+00:00",
+      "submissionDate": "2025-12-22T15:21:38.232+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-22T15:21:38.232+00:00"
+    }
+  ],
+  "files_response_sha256": "8aed0324078a2b78052527ff92585b68dd3cbfcba28958220f1bc894807aba80",
+  "files_url": "https://www.ebi.ac.uk/pride/ws/archive/v3/projects/PXD072300/files",
+  "project": {
+    "accession": "PXD072300",
+    "additionalAttributes": [],
+    "countries": [
+      "Belgium"
+    ],
+    "dataProcessingProtocol": "LC-MS/MS analyses were performed on a Q Exactive HF-X (Thermo Fisher Scientific) equipped with an UltiMate 3000 RSLC nano system (Thermo Fisher Scientific). The samples were reconstituted in 0.1% formic acid, followed by centrifugation (16,000g for 10 min). The supernatants were pressure-loaded onto a 2 cm microcapillary precolumn packed with C18 (3 μm, 120 Å, SunChrom, Friedrichsdorf, Germany). The precolumn was connected to a 12 cm 150-μm-inner diameter microcapillary analytical column packed with C18 (1.9 μm, 120 Å, Dr. Maisch) and equipped with a homemade electrospray emitter tip. The spray voltage was set to 2.2 kV and the heated capillary temperature to 270 °C. The LC gradient consisted of 0 min, 7% B; 14 min, 10% B; 51 min, 20% B; 68 min, 30% B; 69-75 min, 95% B (A = water, 0.1% [v/v] formic acid; B = ACN, 0.1% [v/v] formic acid) at a flow rate of 600 nL/min. Higher-energy collisional dissociation HCD MS/MS spectra were recorded in the data-dependent mode using a Top 20 method. MS1 spectra were measured with a resolution of 70,000, an AGC target of 3e6, a maximum injection time of 20 ms, and a mass range from m/z 300 to 1400 and HCD MS/MS spectra with a resolution of 17,500, an AGC target of 1e6, a maximum injection time of 60 ms, a 1.6 m/z isolation window and a normalized collision energy of 30. The precursor-ion mass and fragmentation tolerance were 10 µL/L and 20 µL/L, respectively. Peptide m/z that triggered MS/MS scans were dynamically excluded from further MS/MS scans for 18 s. A specific tryptic was searched with a maximum of three missed cleavages allowed. Mass shifts of +15.9949 Da (methionine oxidation, M), +57.0214 Da (C2H3NO, carbamidomethylation, C), and +88.9935 Da (C2H3NOS, IAM-derivatized persulfide, C) were identified as persulfidation.",
+    "diseases": [],
+    "doi": "",
+    "experimentTypes": [
+      {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000305",
+        "cvLabel": "PRIDE",
+        "name": "Gel-based experiment"
+      },
+      {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000428",
+        "cvLabel": "PRIDE",
+        "name": "Bottom-up proteomics"
+      }
+    ],
+    "identifiedPTMStrings": [
+      {
+        "@type": "CvParam",
+        "accession": "MOD:00274",
+        "cvLabel": "MOD",
+        "name": "L-cysteine persulfide"
+      }
+    ],
+    "instruments": [
+      {
+        "@type": "CvParam",
+        "accession": "MS:1002523",
+        "cvLabel": "MS",
+        "name": "Q Exactive HF"
+      }
+    ],
+    "keywords": [
+      ""
+    ],
+    "labPIs": [
+      {
+        "affiliation": "State Key Laboratory for Development and Utilization of Forest Food Resources, Co-Innovation Center for Sustainable Forestry in Southern China, State Key Laboratory of Tree Genetics and Breeding, Key Laboratory of State Forestry and Grassland Administration on Subtropical Forest Biodiversity Conservation, College of Life Sciences, Nanjing Forestry University, Nanjing, Jiangsu, 210037, China",
+        "country": "",
+        "email": "yjxie@njfu.edu.cn",
+        "firstName": "Yanjie",
+        "id": "3345161",
+        "identifier": "3345161",
+        "lastName": "Xie",
+        "name": "Yanjie Xie",
+        "orcid": "",
+        "title": "Professor"
+      }
+    ],
+    "license": "Creative Commons Public Domain (CC0)",
+    "organismParts": [],
+    "organisms": [
+      {
+        "@type": "CvParam",
+        "accession": "NEWT:562",
+        "cvLabel": "NEWT",
+        "name": "Escherichia coli"
+      }
+    ],
+    "otherOmicsLinks": [
+      "pride.project:PXD072035",
+      "pride.project:PXD072089"
+    ],
+    "projectDescription": "Direct mass spectrometric analysis of persulfidation in recombinant protein that related to the PPP pathway and NADPH metabolism by treatment with 100 μM sodium hydrosulfide (NaHS).",
+    "projectTags": [],
+    "publicationDate": "2026-07-05",
+    "quantificationMethods": [],
+    "references": [
+      {
+        "doi": "10.1073/PNAS.2608150123",
+        "pubmedID": 0
+      }
+    ],
+    "sampleAttributes": [
+      {
+        "@type": "Tuple",
+        "key": {
+          "accession": "OBI:0100026",
+          "cvLabel": "EFO",
+          "name": "organism"
+        },
+        "value": [
+          {
+            "accession": "NEWT:562",
+            "cvLabel": "NEWT",
+            "name": "Escherichia coli"
+          }
+        ]
+      }
+    ],
+    "sampleProcessingProtocol": "Purified recombinant proteins (20μg) were incubated with 100 μM of NaHS at room temperature for 1 h. Then, the protein samples were alkylated with 55 mM of iodoacetamide (IAM) in the dark at room temperature for 30 min. Next, alkylated proteins were resolved by sodium dodecyl sulfate-polyacrylamide gel electrophoresis (SDS-PAGE) gel and stained with Coomassie Brilliant Blue. The gel bands corresponding to the recombinant proteins were sliced, destained with 50 mM of NH4HCO3 in 50% (v/v) acetonitrile (ACN), and subjected to in-gel digestion. The resulting peptides were extracted, desalted, and evaporated to dryness prior to liquid chromatography-tandem mass spectrometry (LC-MS/MS) analysis.",
+    "softwares": [],
+    "submissionDate": "2025-12-22",
+    "submissionType": "PARTIAL",
+    "submitters": [
+      {
+        "affiliation": "Ghent University",
+        "country": "Belgium",
+        "email": "mingjian.zhou@ugent.be",
+        "firstName": "Mingjian",
+        "id": "1000000513",
+        "identifier": "1000000513",
+        "lastName": "Zhou",
+        "name": "Mingjian Zhou",
+        "orcid": "0000-0002-0899-0120",
+        "title": "Mr"
+      }
+    ],
+    "title": "H2S‑mediated protein persulfidation regulates redox metabolic flux underlying salt stress resilience in rice",
+    "totalFileDownloads": 0
+  },
+  "project_response_sha256": "25602f37140556f64db8ad6251264937486eef789618c7714fa9d91ae756ac1e",
+  "project_url": "https://www.ebi.ac.uk/pride/ws/archive/v3/projects/PXD072300",
+  "repository": "PRIDE",
+  "retrieved_at": "2026-08-10T18:26:53.943989+00:00",
+  "schema_version": 1
+}

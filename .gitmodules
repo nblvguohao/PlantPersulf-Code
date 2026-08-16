@@ -1,0 +1,3 @@
+[submodule "external/Sul-BertGRU"]
+	path = external/Sul-BertGRU
+	url = https://github.com/Severus0902/Sul-BertGRU.git

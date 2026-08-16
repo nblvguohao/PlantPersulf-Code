@@ -1,0 +1,36 @@
+{
+  "accession": "PXD006140",
+  "publication_doi": "10.1093/jxb/erx294",
+  "source_bundle": "Europe PMC PMC5853657 supplementaryFiles",
+  "source_file": "erx294_suppl_supplementary_data_set_s3.xlsx",
+  "source_sheet": "ident_peptides",
+  "source_sha256": "b4831646643204fca48dc6b13e76e68f5a8fe88fa999fc00884e5c0d4e1ded87",
+  "extraction_command": "openpyxl read of sheet 'ident_peptides'; 7 rows copied verbatim covering: persulfidation sites (MOD:99998/99997/99996 on C, single- and isoform-multi-mapped), a multi-Cys peptide with the persulfidation mod on one Cys only, and negatives to exclude (MSBT MOD:99999, artifact MOD:00110, decoy is_decoy=1).",
+  "row_selector": "scan_id in {50818,45033,54168,37878,57616,57141,59367}@20150821_01_AAroca_TMT6plex.cmpd.mgf",
+  "columns_kept": [
+    "scan_id",
+    "peptide",
+    "mods",
+    "is_decoy",
+    "inferredIDs",
+    "inferredCoords",
+    "FDR_peptide"
+  ],
+  "fixture_sha256": "8f14d826fc53c579010a322530aa83369cc96c3bacf00bd3ff789738b57cef07",
+  "reference_fastas": [
+    {
+      "accession": "O03042",
+      "file": "O03042.fasta",
+      "repository": "UniProt",
+      "sha256": "9d5a51bb305a3f7c45625a69524dfd0622f8baf1c8738af3b69cd4c217902bf4"
+    },
+    {
+      "accession": "Q9SLA0",
+      "file": "Q9SLA0.fasta",
+      "repository": "UniProt",
+      "sha256": "2a70311f2c2c23537b87c698eece306d8f1ccb8d2190efc3495c85455b732df7"
+    }
+  ],
+  "scientific_use": "tests_only",
+  "biological_values_modified": false
+}

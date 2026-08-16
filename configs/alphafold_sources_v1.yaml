@@ -1,0 +1,31 @@
+version: 1
+
+# Candidate real UniProt accessions for the AlphaFold DB pilot batch (Task 7).
+# Six accessions were successfully downloaded (model v6, per-API discovery)
+# and registered in data/registry/alphafold_structures.tsv. One accession
+# (A0A1P8B1I9) has no AlphaFold DB model and is listed here to document the
+# absence; its structure features must use the explicit missing-structure mask.
+# P27140-2 was confirmed to exist (AF-P27140-2-F1, v6) despite containing a
+# UniProt isoform dash — the API, not syntactic heuristics, decides presence.
+#
+# 2026-07-23 bulk expansion (§5.5 cross-species structural conservation
+# analysis, docs/phase_z_evidence_audit.md): this 7-accession pilot list is
+# NOT extended here. scripts/download_alphafold_structures_bulk.py sources
+# its ~2048-accession target list from the union of every persulfidated
+# protein across the three independent species tracks (benchmark_v1,
+# PXD072089, PXD063170 — themselves already registered/hash-verified
+# inputs), deterministically regenerable by
+# scripts/analyze_cross_species_conservation.py's accession-gathering
+# logic. Every one of the ~2006 structures actually fetched is individually
+# provenance-tracked (source URL, retrieved_at, size, SHA256) in
+# data/registry/alphafold_structures.tsv regardless of which accession list
+# it came from — that TSV, not this YAML, is the authoritative record for
+# the bulk batch.
+accessions:
+  - O03042
+  - Q9SLA0
+  - A0A1P8B1I9
+  - A0A1P8APX1
+  - Q8VZF1
+  - Q944G9
+  - P27140-2

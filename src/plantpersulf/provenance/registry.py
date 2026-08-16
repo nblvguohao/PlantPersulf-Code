@@ -225,9 +225,7 @@ def _append_pride_rows(
                 "source_url": _preferred_url(project_file.public_urls),
                 "size_bytes": str(project_file.size_bytes),
                 "remote_checksum": project_file.checksum,
-                "remote_checksum_algorithm": _checksum_algorithm(
-                    project_file.checksum
-                ),
+                "remote_checksum_algorithm": _checksum_algorithm(project_file.checksum),
                 "path": "",
                 "sha256": "",
                 "status": "remote_only",
@@ -259,9 +257,7 @@ def _append_geo_rows(
     publications: list[Row],
 ) -> None:
     if series.bioproject_accession != sra_study.bioproject_accession:
-        raise RuntimeError(
-            f"GEO/SRA BioProject mismatch for {series.accession}"
-        )
+        raise RuntimeError(f"GEO/SRA BioProject mismatch for {series.accession}")
     if (
         series.sra_study_accession
         and series.sra_study_accession != sra_study.sra_study_accession
@@ -490,9 +486,7 @@ def fetch_registered_metadata(
             )
         else:
             series = geo_client.get_series(source.accession)
-            sra_query = (
-                series.sra_study_accession or series.bioproject_accession
-            )
+            sra_query = series.sra_study_accession or series.bioproject_accession
             _append_geo_rows(
                 source,
                 series,
@@ -565,12 +559,8 @@ def audit_registry(
         registry_dir / "publications.tsv",
         PUBLICATION_FIELDS,
     )
-    expected_identities = {
-        (source.repository, source.accession) for source in sources
-    }
-    observed_identities = {
-        (row["repository"], row["accession"]) for row in datasets
-    }
+    expected_identities = {(source.repository, source.accession) for source in sources}
+    observed_identities = {(row["repository"], row["accession"]) for row in datasets}
     if observed_identities != expected_identities or len(datasets) != len(sources):
         raise RuntimeError("dataset registry does not exactly match data source config")
 
@@ -592,9 +582,7 @@ def audit_registry(
             "license_or_usage",
         ):
             if not row[required_field].strip():
-                raise RuntimeError(
-                    f"dataset {row['accession']} lacks {required_field}"
-                )
+                raise RuntimeError(f"dataset {row['accession']} lacks {required_field}")
         if row["repository"] == "GEO" and (
             not row["bioproject_accession"].startswith("PRJNA")
             or not row["sra_study_accession"].startswith("SRP")

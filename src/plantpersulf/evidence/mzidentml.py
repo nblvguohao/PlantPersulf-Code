@@ -158,9 +158,7 @@ def _peptide_from_element(element: ET.Element, qualified: str) -> _Peptide:
             raise RuntimeError("mzIdentML Modification lacks cvParam")
         modifications.append(
             _Modification(
-                location=_required_attribute(
-                    modification, "location", "Modification"
-                ),
+                location=_required_attribute(modification, "location", "Modification"),
                 residue=modification.get("residues", ""),
                 monoisotopic_mass_delta=_required_attribute(
                     modification,
@@ -284,9 +282,7 @@ def _process_result(
                 protein_sequence = ""
             else:
                 protein_accession, protein_sequence = db_sequence
-                problems.extend(
-                    _validate_mapping(peptide, evidence, protein_sequence)
-                )
+                problems.extend(_validate_mapping(peptide, evidence, protein_sequence))
             for problem in problems:
                 _append_conflict(
                     conflicts,
@@ -315,15 +311,11 @@ def _process_result(
                         db_sequence_id,
                         source_sha256,
                     )
-                location = _integer(
-                    modification.location, "Modification location"
-                )
+                location = _integer(modification.location, "Modification location")
                 protein_position = ""
                 if 1 <= location <= len(peptide.sequence):
                     protein_position = str(
-                        _integer(evidence.start, "PeptideEvidence start")
-                        + location
-                        - 1
+                        _integer(evidence.start, "PeptideEvidence start") + location - 1
                     )
                 locator = (
                     "peptides_1_1_0.mzid.gz:"
@@ -352,18 +344,14 @@ def _process_result(
                         location=modification.location,
                         residue=modification.residue,
                         protein_position=protein_position,
-                        monoisotopic_mass_delta=(
-                            modification.monoisotopic_mass_delta
-                        ),
+                        monoisotopic_mass_delta=(modification.monoisotopic_mass_delta),
                         cv_accession=modification.cv_accession,
                         cv_name=modification.cv_name,
                         cv_value=modification.cv_value,
                         evidence_class="unresolved",
                         method_mapping_status="absent_v1",
                         conflict_status=(
-                            "conflict"
-                            if problems or modification_problems
-                            else "clear"
+                            "conflict" if problems or modification_problems else "clear"
                         ),
                         source_sha256=source_sha256,
                         source_locator=locator,
@@ -428,9 +416,7 @@ def parse_mzidentml(path: Path, source_sha256: str) -> MzidAudit:
                     ),
                     start=_required_attribute(element, "start", "PeptideEvidence"),
                     end=_required_attribute(element, "end", "PeptideEvidence"),
-                    is_decoy=_required_attribute(
-                        element, "isDecoy", "PeptideEvidence"
-                    ),
+                    is_decoy=_required_attribute(element, "isDecoy", "PeptideEvidence"),
                 )
                 element.clear()
             elif local_name == "SpectrumIdentificationResult":

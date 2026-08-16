@@ -1,0 +1,97 @@
+# Frozen experiment config — repeated K-fold CV over homology clusters
+# (development-stability track), NOT Gate 2 evidence.
+#
+# WHY THIS CONFIG EXISTS (do not delete, do not feed into Gate 2):
+# User decision 2026-08-11: the Arabidopsis benchmark's development-stability
+# yardstick is a REPEATED homology-cluster K-fold CV (a MMseqs2 cluster never
+# crosses train/val/test), used for model selection and ablation stability.
+# The single-split `pu_ranker_cluster_v1` track remains as-is; this config
+# adds the repeated K-fold version (5 repetitions x 5 folds = 25 fold-runs).
+#
+# The NC main evidence is NOT this track — it is the future tomato lockbox
+# cohort. This track is development stability only.
+#
+# MANDATORY LIMITATION (record with every reported number from this config):
+# within-dataset repeated cluster K-fold CV — train/val/test are drawn from
+# the SAME pool of studies (PXD006140 + PXD024061), just non-overlapping
+# homology clusters. It does not cross a study, a laboratory, a chemistry, or
+# a species boundary, so it cannot support any cross-study generalisation
+# claim and must never be substituted into the Gate 2 conclusion-gate
+# evidence (see scripts/validate_external.py, which only parses
+# `leave_<study>_out|...`-tagged model names).
+
+version: 1
+
+experiment:
+  name: pu_ranker_cluster_cv_v1
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  mode: cluster_cv
+  cluster_file: data/processed/clusters/protein_clusters_v2.tsv
+  n_folds: 5
+  n_repetitions: 5
+
+features:
+  - name: sequence
+    module: plantpersulf.features.sequence
+  - name: esm2
+    module: plantpersulf.features.esm2
+  - name: structure
+    module: plantpersulf.features.structure
+
+models:
+  - structure_ranker
+
+# Same Codex Task 9 ablation matrix as pu_ranker_v1.yaml and
+# pu_ranker_cluster_v1.yaml — full-model-minus-one-feature semantics
+# (unspecified flags default to enabled, see _ablation_from_spec), so the
+# cluster-CV track is ablation-for-ablation comparable with both.
+ablations:
+  - name: sequence_only
+    use_esm: false
+    use_structure: false
+    use_study_context: false
+  - name: seq_esm
+    use_structure: false
+    use_study_context: false
+  - name: seq_structure
+    use_esm: false
+    use_study_context: false
+  - name: full
+  - name: no_plddt
+    use_plddt: false
+  - name: no_accessibility
+    use_accessibility: false
+  - name: no_study_context
+    use_study_context: false
+
+ranker:
+  hidden: 16
+  dropout: 0.2
+  epochs: 200
+  lr: 0.05
+  n_mc_dropout: 16
+
+# One seed per fold-run: 5 repetitions x 5 folds x 1 seed = 25 runs.
+evaluation:
+  seeds: [0]
+
+subsample:
+  unlabeled_per_positive: 20
+  seed: 12345
+
+output:
+  directory: results/experiments/pu_ranker_cluster_cv_v1
+
+limitation: |
+  WITHIN-DATASET REPEATED CLUSTER K-FOLD CV (homology-controlled) — NOT
+  cross-study validation, NOT the NC main evidence. 5 repetitions x 5 folds
+  over real MMseqs2 clusters (protein_clusters_v2.tsv); a cluster never
+  crosses train/val/test. Train/val/test are drawn from the SAME pool of
+  studies (PXD006140 + PXD024061). Reported as the development-stability
+  yardstick for model selection and ablation comparison; it must never be
+  used to support a cross-study, cross-laboratory, or cross-species
+  predictive claim, and must never be substituted into the Gate 2
+  conclusion-gate evidence.

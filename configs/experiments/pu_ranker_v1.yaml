@@ -1,0 +1,86 @@
+# Frozen experiment config — structure-aware PU ranker (Codex Task 9).
+#
+# Runs the gated-fusion PU ranker under the strictest anti-leakage
+# evaluation (leave-study-out) across the full Codex "must ablate" matrix.
+# The ranker fuses four branches — sequence, frozen ESM-2 (1280-dim),
+# AlphaFold structure (+missingness mask), and study context — with per-branch
+# sigmoid gating, and is trained with the Elkan-Noto two-step PU scheme.
+#
+# REQUIRES the optional `models` extras (fair-esm + torch) and cached ESM-2
+# weights for every ablation whose `use_esm` is true. On an environment
+# without fair-esm, use pu_ranker_seqstruct_v1.yaml (sequence + structure only).
+#
+# MANDATORY LIMITATION (carried into every downstream claim): both studies are
+# from the same laboratory (Romero/Gotor, U. Sevilla), the same tag-switch
+# persulfidation chemistry, and the same species (Arabidopsis thaliana).
+# Leave-study-out here is method-level, NOT chemically / lab / species
+# independent validation.
+
+version: 1
+
+experiment:
+  name: pu_ranker_v1
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  mode: leave_study_out
+  studies:
+    - PXD006140
+    - PXD024061
+
+features:
+  - name: sequence
+    module: plantpersulf.features.sequence
+  - name: esm2
+    module: plantpersulf.features.esm2
+  - name: structure
+    module: plantpersulf.features.structure
+
+models:
+  - structure_ranker
+
+# Codex Task 9 "必须消融" — the full required ablation matrix.
+ablations:
+  - name: sequence_only
+    use_esm: false
+    use_structure: false
+    use_study_context: false
+  - name: seq_esm
+    use_structure: false
+    use_study_context: false
+  - name: seq_structure
+    use_esm: false
+    use_study_context: false
+  - name: full
+  - name: no_plddt
+    use_plddt: false
+  - name: no_accessibility
+    use_accessibility: false
+  - name: no_study_context
+    use_study_context: false
+
+ranker:
+  hidden: 16
+  dropout: 0.2
+  epochs: 200
+  lr: 0.05
+  n_mc_dropout: 16
+
+evaluation:
+  seeds: [0, 1, 2, 3, 4]
+
+subsample:
+  unlabeled_per_positive: 20
+  seed: 12345
+
+output:
+  directory: results/experiments/pu_ranker_v1
+
+limitation: |
+  Both training studies are from the same laboratory (Romero/Gotor,
+  Universidad de Sevilla), use the same tag-switch persulfidation
+  chemistry, and are in the same species (Arabidopsis thaliana).
+  Leave-study-out results validate method-level generalisation within
+  this specific experimental framework; they do NOT demonstrate
+  chemically, laboratory-, or species-independent predictive value.

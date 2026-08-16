@@ -1,0 +1,32 @@
+experiment:
+  name: cross_crop_target_label_free_v1
+claim_class: target_label_free_transfer_not_gate2
+target_species: Solanum lycopersicum
+source_species: [Arabidopsis thaliana, Oryza sativa, Magnaporthe oryzae]
+minimum_source_species: 3
+minimum_total_source_studies: 4
+minimum_source_studies_per_species: 1
+ideal_source_studies_per_species: 2
+forbidden_target_label_sources: [KIAE271_SUPPL, tomato_local_v1, tomato_ranker_v2]
+within_source_validation:
+  split: repeated_grouped_protein_or_homology_cluster_cv
+  folds: 10
+  repetitions: 5
+  grouping_preference: homology_cluster_then_protein
+  preprocessing_fit_scope: training_fold_only
+  missing_value_policy: training_fold_median
+  leave_batch_condition_out_when_available: true
+evaluation:
+  source_selection: leave_one_source_domain_out
+  source_domain_unit: species_study
+  target_labels_visible_during_fit: false
+  target_labels_visible_during_tuning: false
+claims:
+  pure_species_effect_supported: false
+  universal_cross_crop_generalization_supported: false
+  final_generalization_requires_tomato_blind_validation: true
+applicability:
+  min_target_in_domain_fraction: 0.80
+wetlab:
+  enabled: false
+  max_noncontrol_fraction: 0.25

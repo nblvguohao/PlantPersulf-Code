@@ -1,0 +1,16 @@
+吕国豪1,2：lvguohao@stu.ahau.edu.cn
+夏迎春1,2：xiayingchun@ahau.edu.cn
+柳慧超1,2：liuhc@stu.ahau.edu.cn
+祝小雷1,2：xlzhu@ahau.edu.cn
+杨帅1,2：yangs@ahau.edu.cn
+Zhou Ailian3,4（通讯）：zhouailian@caas.cn
+辜丽川1,2（通讯）：glc@ahau.edu.cn
+
+
+
+1.School of Artificial Intelligence, Anhui Agricultural University, Hefei 230036, China
+2.Anhui Province Key Laboratory of Intelligent Agricultural Technology and Equipment,Anhui Agricultural University, Hefei 230036, China
+3.Agricultural Information Institute, Chinese Academy of Agricultural Sciences, Beijing 100081, China; 
+4.Key Laboratory of Agricultural Blockchain Application, Ministry of Agriculture and Rural Affairs, Beijing 100081, China
+
+This work was supported by grants from the National Natural Science Foundation of China(32472007, 62301006, 62301008), the Nat ural Science Foundation of Anhui Province (2308085MF217.2308085QF202), and the Anhui Province Key Laboratory of Intelligent Agricultural Technologyand Equipment.

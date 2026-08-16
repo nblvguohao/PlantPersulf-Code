@@ -95,9 +95,7 @@ def _load_specs(path: Path) -> tuple[MethodSpec, ...]:
                 identifier_type=_required_string(source, "identifier_type"),
                 identifier=_required_string(source, "identifier"),
                 repository=_required_string(source, "repository"),
-                repository_record_id=_required_string(
-                    source, "repository_record_id"
-                ),
+                repository_record_id=_required_string(source, "repository_record_id"),
                 official_url=_required_string(source, "official_url"),
                 destination=Path(_required_string(source, "destination")),
                 expected_size_bytes=size,
@@ -226,9 +224,7 @@ def acquire_method_source(
     """Download one exact allow-listed method source and register its SHA256."""
     normalized = accession.strip().upper()
     matches = [
-        spec
-        for spec in _load_specs(config_path)
-        if spec.study_accession == normalized
+        spec for spec in _load_specs(config_path) if spec.study_accession == normalized
     ]
     if len(matches) != 1:
         raise RuntimeError(f"evidence method accession is not approved: {normalized}")

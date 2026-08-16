@@ -1,0 +1,799 @@
+{
+  "accession": "PXD072089",
+  "files": [
+    {
+      "accession": "c91dda91e5d40323ef043c7d71677aa76972391e8d18e59ef213b51979604cac",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_3h_R2.raw",
+      "fileSizeBytes": 1647176708,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_3h_R2.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_3h_R2.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "fd2eaf462ee53994d9c0dff4cefe32d9e02d3fbb3095926d0968608bc14fbc1e",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_0h_R3.raw",
+      "fileSizeBytes": 1530741311,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_0h_R3.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_0h_R3.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "ef617da914b7d22f2748861c88bd85d161b3a35b2e8375f43447e5d35aea84c0",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_12h_R1.raw",
+      "fileSizeBytes": 1484466366,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_12h_R1.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_12h_R1.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "40f4b9e7ff4684030e447cf9e2aa96a7de7f9de66d77156c33e9d51222e7792f",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_3h_R1.raw",
+      "fileSizeBytes": 1605818892,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_3h_R1.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_3h_R1.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "b8395d93b4ed3fa8053e9cde71964d9b6c1fd79fdf0c171baef7fa9372287049",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_12h_R3.raw",
+      "fileSizeBytes": 1386631725,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_12h_R3.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_12h_R3.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "666cd386fa6a54e7dc34f109703867b169babce2eb537e1d94c1035ed1942e7e",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_1h_R2.raw",
+      "fileSizeBytes": 1629169902,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_1h_R2.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_1h_R2.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "96ec71b3cbaab6537e91bc5df9ed40e3fbbea6533cad083e2a55f0ebe30e9c39",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_0h_R1.raw",
+      "fileSizeBytes": 1618317435,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_0h_R1.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_0h_R1.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "8950d0940fb4d9c0ed19880052cb6841afe48a82912b307eb1933f01a64f3748",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_3h_R3.raw",
+      "fileSizeBytes": 1562716644,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_3h_R3.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_3h_R3.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "88bc25269cd08fd693c96539bdb7eabac98cf098e271d8204c044a0492ea1613",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000410",
+        "cvLabel": "PRIDE",
+        "name": "Other type file URI",
+        "value": "OTHER"
+      },
+      "fileName": "checksum.txt",
+      "fileSizeBytes": 1583,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/checksum.txt"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/checksum.txt"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "faa087ee854f08da25bf6c8ef76415e32fdb663cb5ed0bdb6a060738e5d7cb33",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_6h_R3.raw",
+      "fileSizeBytes": 1614773669,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_6h_R3.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_6h_R3.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "a8ad04128683d1b568b25b2bc14556b036d156cf55fd4960eddfd7aa0e8b1d21",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_1h_R3.raw",
+      "fileSizeBytes": 1579632928,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_1h_R3.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_1h_R3.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "3d13dfaf547f724538078765b8ebfcb7867d36903015515c287e5febc21c98fc",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_6h_R1.raw",
+      "fileSizeBytes": 1588490981,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_6h_R1.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_6h_R1.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "de27554a1d79fe7005f100a21e6658daa10119f398cd784987d11c43cf0d8bb5",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_1h_R1.raw",
+      "fileSizeBytes": 1697440096,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_1h_R1.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_1h_R1.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "713311db3b4589aa9469318affee2591a00214b4c052b55ab97b1708fe9ccfac",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_6h_R2.raw",
+      "fileSizeBytes": 1451685306,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_6h_R2.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_6h_R2.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "bc7f79c6df98b8d5d3d9d083a4eef33db8e0c1fb360139fc6f3c01c2d4a375a6",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000408",
+        "cvLabel": "PRIDE",
+        "name": "Search engine output file URI",
+        "value": "SEARCH"
+      },
+      "fileName": "SS-all-peptides.tsv",
+      "fileSizeBytes": 2625176,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/SS-all-peptides.tsv"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/SS-all-peptides.tsv"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "1e6a7660a53ea701dbab0201df8f2ac59809b8d92fffde09db8b49d6c9e2644a",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_0h_R2.raw",
+      "fileSizeBytes": 1669016131,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_0h_R2.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_0h_R2.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    },
+    {
+      "accession": "26391482f3ab95e39dffe60e9f85323b95ba4a00ddef67523a3af7718c532a5a",
+      "additionalAttributes": [],
+      "checksum": "",
+      "compress": false,
+      "fileCategory": {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000404",
+        "cvLabel": "PRIDE",
+        "name": "Associated raw file URI",
+        "value": "RAW"
+      },
+      "fileName": "Persulfidome_NaCl_12h_R2.raw",
+      "fileSizeBytes": 1447501401,
+      "projectAccessions": [
+        "PXD072089"
+      ],
+      "publicFileLocations": [
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000468",
+          "cvLabel": "PRIDE",
+          "name": "Aspera Protocol",
+          "value": "prd_ascp@fasp.ebi.ac.uk:pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_12h_R2.raw"
+        },
+        {
+          "@type": "CvParam",
+          "accession": "PRIDE:0000469",
+          "cvLabel": "PRIDE",
+          "name": "FTP Protocol",
+          "value": "ftp://ftp.pride.ebi.ac.uk/pride/data/archive/2026/07/PXD072089/Persulfidome_NaCl_12h_R2.raw"
+        }
+      ],
+      "publicationDate": "2026-07-05T09:41:07.196+00:00",
+      "submissionDate": "2025-12-17T11:09:16.482+00:00",
+      "totalDownloads": 0,
+      "updatedDate": "2025-12-17T11:09:16.482+00:00"
+    }
+  ],
+  "files_response_sha256": "d19591f173ea1d8fc03eec184492d652c20025b9e6797c32a863427171ae0cf4",
+  "files_url": "https://www.ebi.ac.uk/pride/ws/archive/v3/projects/PXD072089/files",
+  "project": {
+    "accession": "PXD072089",
+    "additionalAttributes": [],
+    "countries": [
+      "Belgium"
+    ],
+    "dataProcessingProtocol": "MS data were processed using MaxQuant v1.6 with the MaxLFQ algorithm. The acquired spectra were searched against a rice protein database (149,216 entries), with precursor and fragment mass tolerances set at 20 ppm. The main search peptide tolerance was set at 4.5 ppm based on instrument characteristics. Oxidation of methionine (+15.995 Da) and N-terminal acetylation were set as variable modifications, whereas trypsin was specified as the cleavage enzyme with a maximum of two missed cleavages. An FDR of 1% was applied at the peptide level, and label-free quantification (LFQ) was done with the “match between runs” feature enabled.",
+    "diseases": [],
+    "doi": "",
+    "experimentTypes": [
+      {
+        "@type": "CvParam",
+        "accession": "PRIDE:0000433",
+        "cvLabel": "PRIDE",
+        "name": "Affinity purification coupled with mass spectrometry proteomics"
+      }
+    ],
+    "identifiedPTMStrings": [
+      {
+        "@type": "CvParam",
+        "accession": "MOD:01885",
+        "cvLabel": "MOD",
+        "name": "biotinylated residue"
+      }
+    ],
+    "instruments": [
+      {
+        "@type": "CvParam",
+        "accession": "MS:1001911",
+        "cvLabel": "MS",
+        "name": "Q Exactive"
+      }
+    ],
+    "keywords": [
+      ""
+    ],
+    "labPIs": [
+      {
+        "affiliation": "State Key Laboratory for Development and Utilization of Forest Food Resources, Co-Innovation Center for Sustainable Forestry in Southern China, State Key Laboratory of Tree Genetics and Breeding, Key Laboratory of State Forestry and Grassland Administration on Subtropical Forest Biodiversity Conservation, College of Life Sciences, Nanjing Forestry University, Nanjing, Jiangsu, 210037, China",
+        "country": "",
+        "email": "yjxie@njfu.edu.cn",
+        "firstName": "Yanjie",
+        "id": "3343159",
+        "identifier": "3343159",
+        "lastName": "Xie",
+        "name": "Yanjie Xie",
+        "orcid": "",
+        "title": "Professor"
+      }
+    ],
+    "license": "Creative Commons Public Domain (CC0)",
+    "organismParts": [
+      {
+        "@type": "CvParam",
+        "accession": "BTO:0000713",
+        "cvLabel": "BTO",
+        "name": "Leaf"
+      }
+    ],
+    "organisms": [
+      {
+        "@type": "CvParam",
+        "accession": "NEWT:4530",
+        "cvLabel": "NEWT",
+        "name": "Oryza sativa (rice)"
+      }
+    ],
+    "otherOmicsLinks": [
+      "pride.project:PXD072035",
+      "pride.project:PXD072300"
+    ],
+    "projectDescription": "This project investigates protein Cysteine(Cys) sites undergo persulfidation in rice (Oryza sativa) leaves under salt stress using NM-biotin-based proteomic approach.",
+    "projectTags": [],
+    "publicationDate": "2026-07-05",
+    "quantificationMethods": [],
+    "references": [
+      {
+        "doi": "10.1073/PNAS.2608150123",
+        "pubmedID": 0
+      }
+    ],
+    "sampleAttributes": [
+      {
+        "@type": "Tuple",
+        "key": {
+          "accession": "EFO:0000635",
+          "cvLabel": "EFO",
+          "name": "organism part"
+        },
+        "value": [
+          {
+            "accession": "BTO:0000713",
+            "cvLabel": "BTO",
+            "name": "leaf"
+          }
+        ]
+      },
+      {
+        "@type": "Tuple",
+        "key": {
+          "accession": "OBI:0100026",
+          "cvLabel": "EFO",
+          "name": "organism"
+        },
+        "value": [
+          {
+            "accession": "NEWT:4530",
+            "cvLabel": "NEWT",
+            "name": "Oryza sativa (Rice)"
+          }
+        ]
+      }
+    ],
+    "sampleProcessingProtocol": "Two-week-old hydroponically grown rice plants were treated with 150 mM NaCl applied to the roots via the cultivation solution. Leaf samples were collected at 0 h (control), and after 1 h, 3 h, 6 h, and 12 h of NaCl treatment. Each time point included three biological replicates. Rice leaves samples were immediately frozen in liquid nitrogen, and ground into a fine powder. The powdered tissue was transferred to 10 mL centrifuge tubes for protein extraction. Proteins were extracted by adding four volumes of lysis buffer containing 8 M urea, 2 mM EDTA, 0.5% Triton X-100, 1% protease inhibitor cocktail, 200 U/mL catalase, and 100 mM Tris-HCl (pH 7.2). The lysates were incubated on ice for 20 min, followed by an additional 20 min incubation at room temperature with continuous vortex mixing at 400 rpm. Insoluble debris was removed by centrifugation at 12,000 rpm for 10 min at 4 ℃, and the supernatants were collected. Protein concentrations were determined using a bicinchoninic acid (BCA) protein assay kit (Vazyme, Nanjing, China). Protein extracts were incubated with 33 µM NM-biotin (Pierce) in the dark at room temperature for 1 h to alkylate both the cysteine thiols and persulfides. The alkylated proteome were precipitated with ice-cold acetone, and washed 3 times with ice-cold acetone to remove excess NM-biotin. The resulting protein pellets were dissolved in denaturation buffer (8 M urea, 50 mM Tris-HCl, pH 8). Protein concentration was determined using bicinchoninic acid assay (Vazyme, Nanjing, China). Proteins were digested with trypsin (Promega) at an enzyme-to-substrate ratio of 1:50 (w/w) for 18 h at 37°C with digestion buffer (1 mM CaCl2, 50 mM Tris-HCl, pH 7.6).  The resulting peptides were incubated overnight at 4 °C with streptavidin Sepharose 6FF beads (Smart-Lifesciences) under continuous rotation to enrich the NM-biotin-labeled peptides. Beads were subsequently washed three times with 100 mM phosphate buffer (pH 7.2) to remobe non-specifically bound peptides. Persulfides peptides were selectively eluted withby treatment with 10 mM dithiothreitol (DTT), while the NM-biotin-labelled thiol-containing peptides are retained in the beads. The eluted peptides were subsequently desalted, lyophilized, and subjected to LC-MS/MS analysis. Peptides were loaded onto a single reverse-phase column (75 µm ID × 360 µm OD) with a laser-pulled tip, home-packed with 30 cm C18 resin (ReproSil-Pur C18-AQ 1.9 µm resin; Dr. Maisch GmbH). The column was integrated into an Easy-nLC 1200 nano-HPLC system (Thermo Scientific) and subjected to a 120-minute gradient using the same buffer system as above. MS data were acquired using a Q-Exactive mass spectrometer (Thermo Scientific) operating in a data-dependent top-20 mode with a maximum injection time of 50 ms, a scan range of 300-1800 m/z, and an AGC target of 1e6. MS/MS was carried out via higher-energy collisional dissociation with a target value of 1e5 and a maximum injection time of 100 ms. Full MS and MS/MS scans were acquired at resolutions of 70,000 and 17,500, respectively, with a dynamic exclusion time of 15 sec.",
+    "softwares": [
+      {
+        "@type": "CvParam",
+        "accession": "MS:1001583",
+        "cvLabel": "MS",
+        "name": "MaxQuant"
+      }
+    ],
+    "submissionDate": "2025-12-17",
+    "submissionType": "PARTIAL",
+    "submitters": [
+      {
+        "affiliation": "Ghent University",
+        "country": "Belgium",
+        "email": "mingjian.zhou@ugent.be",
+        "firstName": "Mingjian",
+        "id": "1000000513",
+        "identifier": "1000000513",
+        "lastName": "Zhou",
+        "name": "Mingjian Zhou",
+        "orcid": "0000-0002-0899-0120",
+        "title": "Mr"
+      }
+    ],
+    "title": "H2S‑mediated protein persulfidation regulates redox metabolic flux underlying salt stress resilience in rice",
+    "totalFileDownloads": 0
+  },
+  "project_response_sha256": "dc544b846e119952857584e1645dcaa10361508ebf6d33e408ae4ed39c9a1683",
+  "project_url": "https://www.ebi.ac.uk/pride/ws/archive/v3/projects/PXD072089",
+  "repository": "PRIDE",
+  "retrieved_at": "2026-08-10T18:26:49.316618+00:00",
+  "schema_version": 1
+}

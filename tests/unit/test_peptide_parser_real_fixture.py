@@ -58,9 +58,7 @@ def _fixture_source(tmp_path: Path):  # type: ignore[no-untyped-def]
 
 def _tree_hashes(root: Path) -> dict[str, str]:
     return {
-        path.relative_to(root).as_posix(): hashlib.sha256(
-            path.read_bytes()
-        ).hexdigest()
+        path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(root.rglob("*"))
         if path.is_file()
     }
@@ -97,9 +95,7 @@ def test_real_decoy_and_missing_sample_are_audited(tmp_path: Path) -> None:
     )
     assert all(record.spectrum_id != "32" for record in parsed.psms)
     assert all(record.sample_id == "" for record in parsed.psms)
-    assert [issue.reason for issue in parsed.missing] == [
-        "missing_sample_metadata"
-    ]
+    assert [issue.reason for issue in parsed.missing] == ["missing_sample_metadata"]
 
 
 def test_real_multi_protein_peptide_mappings_are_preserved() -> None:
@@ -107,8 +103,7 @@ def test_real_multi_protein_peptide_mappings_are_preserved() -> None:
     from plantpersulf.proteomics.peptide_parser import parse_omssa
 
     source_path = Path(
-        "data/raw/PXD006140/"
-        "omssa.ne.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt"
+        "data/raw/PXD006140/omssa.ne.20150821_01_AAroca_TMT6plex.cmpd.mgf.txt"
     )
     parsed = parse_omssa(
         ProteomicsSource(
@@ -157,9 +152,7 @@ def test_cli_exposes_task4_commands() -> None:
     parse_args = build_parser().parse_args(
         ["parse-proteomics", "--accession", "PXD006140"]
     )
-    audit_args = build_parser().parse_args(
-        ["audit-sites", "--accession", "PXD006140"]
-    )
+    audit_args = build_parser().parse_args(["audit-sites", "--accession", "PXD006140"])
 
     assert parse_args.command == "parse-proteomics"
     assert audit_args.command == "audit-sites"

@@ -27,14 +27,17 @@ def assert_registered_input(input_path: Path, registry_path: Path) -> None:
 
     with registry_path.open("r", encoding="utf-8", newline="") as handle:
         reader = csv.DictReader(handle, delimiter="\t")
-        if reader.fieldnames is None or not {"path", "sha256"}.issubset(
-            reader.fieldnames
-        ):
+        if reader.fieldnames is None or "sha256" not in reader.fieldnames:
             raise RuntimeError(
-                "input is not registered: registry requires path and sha256"
+                "input is not registered: registry requires path/local_path and sha256"
+            )
+        path_field = "path" if "path" in reader.fieldnames else "local_path"
+        if path_field not in reader.fieldnames:
+            raise RuntimeError(
+                "input is not registered: registry requires path/local_path and sha256"
             )
         for row in reader:
-            registered_path = Path(row["path"])
+            registered_path = Path(row[path_field])
             if not registered_path.is_absolute():
                 registered_path = registry_path.parent / registered_path
             if registered_path.resolve() != input_path:

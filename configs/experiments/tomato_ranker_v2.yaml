@@ -1,0 +1,38 @@
+experiment:
+  name: tomato_ranker_v2
+claim_class: development_candidate_ranking_not_gate2
+data:
+  kiae271_xlsx: data/raw/supplements/KIAE271_SUPPL/kiae271_DSs.xlsx
+  reference_proteome: data/raw/references/tomato_ref_proteome_v1.fasta
+  cluster_file: data/processed/clusters/tomato_proteome_clusters_v1.tsv
+  supplementary_registry: data/registry/supplementary_sources.tsv
+  model_input_registry: data/registry/model_inputs.tsv
+  arena_ratio: 20
+  subsample_seed: 12345
+features:
+  core: [hydrophobicity, protein_cys_density, local_positive_charge_density, local_negative_charge_density, local_cys_density, local_sequence_entropy]
+evaluation:
+  primary_arena: panel
+  audit_arena: proteome
+  split: repeated_homology_cluster_cv
+  folds: 5
+  repetitions: 5
+  model_seeds: [0, 1, 2, 3, 4]
+  development_k: 50
+pu:
+  prior_multipliers: [1.0, 1.5, 2.0]
+  prior_cap: 0.5
+models:
+  candidate: additive_pu
+  baseline: pu_logistic
+  fallback_on_admission_failure: true
+structure:
+  delta_default: 0
+observation_propensity:
+  enabled: false
+compute:
+  device: cpu
+  score_batch_size: 16384
+output:
+  include_per_site_oof_scores: true
+  include_input_sha256: true

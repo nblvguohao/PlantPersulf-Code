@@ -16,21 +16,35 @@ dev = [
   "ruff>=0.12,<1",
   "types-PyYAML>=6,<7",
 ]
+models = [
+  "scikit-learn>=1.5,<2",
+  "xgboost>=2,<4",
+  "torch>=2,<3",
+  "fair-esm>=2,<3",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 markers = ["network: tests that access official external repositories"]
 
 [tool.ruff]
 target-version = "py310"
 line-length = 88
+exclude = ["external"]
 
 [tool.ruff.lint]
 select = ["B", "E", "F", "I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/evaluate_kiae271_controls.py" = ["E501"]
+"scripts/kiae271_full_report.py" = ["E501"]
+"scripts/remote/lab_a100_hop.py" = ["E501"]
+"scripts/run_tomato_local_v1.py" = ["E501"]
+"scripts/score_structure_coverage.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.10"

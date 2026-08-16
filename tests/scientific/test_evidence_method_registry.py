@@ -11,16 +11,12 @@ def test_pxd035795_method_source_must_be_registered_and_hashed() -> None:
     from plantpersulf.evidence.methods import audit_method_sources
 
     sources = audit_method_sources(SOURCE_CONFIG, METHOD_REGISTRY)
-    source = next(
-        row for row in sources if row.study_accession == "PXD035795"
-    )
+    source = next(row for row in sources if row.study_accession == "PXD035795")
 
     assert source.identifier_type == "DOI"
     assert source.identifier == "10.1111/nph.18838"
     assert source.repository == "University of Seville IDUS"
-    assert source.repository_record_id == (
-        "ce5a8e5e-6bf0-4564-a0d5-c6dcb4eeaa6f"
-    )
+    assert source.repository_record_id == ("ce5a8e5e-6bf0-4564-a0d5-c6dcb4eeaa6f")
     assert source.size_bytes == 11_657_462
     assert len(source.sha256) == 64
     assert source.local_path.is_file()

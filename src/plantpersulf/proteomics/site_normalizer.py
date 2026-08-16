@@ -25,9 +25,7 @@ from plantpersulf.proteomics.metadata import (
 from plantpersulf.provenance.audit import assert_registered_input
 from plantpersulf.provenance.hashing import hash_file
 
-_FASTA_HEADER = re.compile(
-    r"^>(?:sp|tr)\|([^|]+)\|.*(?:^|\s)SV=([0-9]+)(?:\s|$)"
-)
+_FASTA_HEADER = re.compile(r"^>(?:sp|tr)\|([^|]+)\|.*(?:^|\s)SV=([0-9]+)(?:\s|$)")
 _SEQUENCE = re.compile(r"^[A-Z]+$")
 
 
@@ -152,10 +150,7 @@ def _read_tsv(path: Path, fields: tuple[str, ...]) -> list[dict[str, str]]:
         if tuple(reader.fieldnames or ()) != fields:
             raise RuntimeError(f"site output has invalid columns: {path}")
         rows = [dict(row) for row in reader]
-    if any(
-        None in row or any(value is None for value in row.values())
-        for row in rows
-    ):
+    if any(None in row or any(value is None for value in row.values()) for row in rows):
         raise RuntimeError(f"site output has malformed row: {path}")
     return cast(list[dict[str, str]], rows)
 
@@ -259,8 +254,7 @@ def audit_site_output(
         excluded_count=len(excluded),
         missing_metadata_count=len(missing),
         missing_sequence_count=sum(
-            row["reason"]
-            in {"sequence_unavailable", "isoform_sequence_unavailable"}
+            row["reason"] in {"sequence_unavailable", "isoform_sequence_unavailable"}
             for row in conflicts
         ),
     )
@@ -299,9 +293,6 @@ def audit_site_output(
         observed = site_reference.sequence[
             start_one_based - 1 : start_one_based - 1 + len(peptide)
         ]
-        if (
-            observed != peptide
-            or site_reference.sequence[protein_position - 1] != "C"
-        ):
+        if observed != peptide or site_reference.sequence[protein_position - 1] != "C":
             raise RuntimeError("site protein coordinate mismatch")
     return summary

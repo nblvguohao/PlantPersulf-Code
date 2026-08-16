@@ -108,10 +108,7 @@ def _read_tsv(path: Path, expected_fields: tuple[str, ...] | None = None) -> lis
         ):
             raise RuntimeError(f"preflight input has invalid columns: {path}")
         rows = [dict(row) for row in reader]
-    if any(
-        None in row or any(value is None for value in row.values())
-        for row in rows
-    ):
+    if any(None in row or any(value is None for value in row.values()) for row in rows):
         raise RuntimeError(f"preflight input has malformed row: {path}")
     return cast(list[Row], rows)
 
@@ -234,9 +231,7 @@ def _decision(
         reason = "official metadata cache is registered"
     elif selected_class and download_row is not None:
         decision = (
-            "downloaded_existing_scope"
-            if accession == "PXD006140"
-            else "downloaded"
+            "downloaded_existing_scope" if accession == "PXD006140" else "downloaded"
         )
         reason = "exact approved source is downloaded and checksummed"
     elif int(file_row["size_bytes"]) >= threshold:
@@ -253,9 +248,8 @@ def _decision(
         path = downloads_path.parent / download_row["path"]
         assert_registered_input(path, downloads_path)
         actual_sha256 = hash_file(path, "sha256")
-        if (
-            actual_sha256 != download_row["sha256"]
-            or path.stat().st_size != int(download_row["size_bytes"])
+        if actual_sha256 != download_row["sha256"] or path.stat().st_size != int(
+            download_row["size_bytes"]
         ):
             raise RuntimeError(f"preflight downloaded source mismatch: {path}")
         local_path = path.as_posix()
@@ -320,9 +314,7 @@ def build_metadata_preflight(
             downloads_registry_path=downloads_path,
         )
 
-    target_files = [
-        row for row in files if row["dataset_accession"] in study_order
-    ]
+    target_files = [row for row in files if row["dataset_accession"] in study_order]
     target_files.sort(
         key=lambda row: (study_order[row["dataset_accession"]], row["file_name"])
     )
@@ -484,9 +476,7 @@ def build_metadata_preflight(
             "biological_values_modified": False,
         }
         serialized = json.dumps(manifest, indent=2, sort_keys=True)
-        (temporary_path / "manifest.json").write_bytes(
-            f"{serialized}\n".encode()
-        )
+        (temporary_path / "manifest.json").write_bytes(f"{serialized}\n".encode())
         if output_directory.exists():
             if _tree_hashes(output_directory) != _tree_hashes(temporary_path):
                 raise RuntimeError(

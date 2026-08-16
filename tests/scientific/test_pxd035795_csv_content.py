@@ -2,12 +2,8 @@ from pathlib import Path
 
 PEPTIDE_PATH = Path("data/raw/PXD035795/peptide.csv")
 PROTEIN_PATH = Path("data/raw/PXD035795/proteins.csv")
-PEPTIDE_SHA256 = (
-    "63f2df50a2748d5614a8cfad16cf19c4d7dfac4825d67136382b1fc1fb62ab47"
-)
-PROTEIN_SHA256 = (
-    "cd816699fd3427634c347bb0eb52ee6392c47218bc2bcee5cd55ef367e2115ba"
-)
+PEPTIDE_SHA256 = "63f2df50a2748d5614a8cfad16cf19c4d7dfac4825d67136382b1fc1fb62ab47"
+PROTEIN_SHA256 = "cd816699fd3427634c347bb0eb52ee6392c47218bc2bcee5cd55ef367e2115ba"
 
 
 def test_real_peptide_csv_preserves_all_rows_and_has_no_inferred_site() -> None:
@@ -24,13 +20,9 @@ def test_real_peptide_csv_preserves_all_rows_and_has_no_inferred_site() -> None:
     assert audit.rows[0].raw_fields[17] == "O03042|RBL_ARATH"
     assert audit.rows[0].raw_fields[18] == ""
     assert all(
-        record.site_localization_status == "not_available"
-        for record in audit.rows
+        record.site_localization_status == "not_available" for record in audit.rows
     )
-    assert all(
-        record.evidence_class == "identification_only"
-        for record in audit.rows
-    )
+    assert all(record.evidence_class == "identification_only" for record in audit.rows)
 
 
 def test_real_protein_csv_is_never_promoted_to_site_level() -> None:
@@ -52,8 +44,7 @@ def test_real_protein_csv_is_never_promoted_to_site_level() -> None:
         "23 more",
     )
     assert all(
-        record.site_localization_status == "not_applicable"
-        for record in audit.rows
+        record.site_localization_status == "not_applicable" for record in audit.rows
     )
     assert not any(record.evidence_class == "site_ms" for record in audit.rows)
 

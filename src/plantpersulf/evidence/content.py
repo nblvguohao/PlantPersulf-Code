@@ -198,9 +198,7 @@ def _csv_evidence(
         rows.append(
             {
                 "dataset_accession": "PXD035795",
-                "record_id": (
-                    f"PXD035795:{source_file}:{record.row_number}"
-                ),
+                "record_id": (f"PXD035795:{source_file}:{record.row_number}"),
                 "record_type": audit.record_type,
                 "source_file": source_file,
                 "source_sha256": record.source_sha256,
@@ -356,9 +354,7 @@ def _schema_rows(
             "encoding": "utf-8-gzip",
             "delimiter_or_namespace": mzid.namespace,
             "header_json": "[]",
-            "record_count": str(
-                mzid.structural_counts["SpectrumIdentificationItem"]
-            ),
+            "record_count": str(mzid.structural_counts["SpectrumIdentificationItem"]),
             "structural_counts_json": _compact_json(mzid.structural_counts),
             "parser_version": PARSER_VERSION,
             "parse_status": "parsed",
@@ -510,9 +506,7 @@ def build_content_audit(
         registry_dir / "evidence_methods.tsv",
     )
     method_matches = [
-        source
-        for source in method_sources
-        if source.study_accession == "PXD035795"
+        source for source in method_sources if source.study_accession == "PXD035795"
     ]
     if len(method_matches) != 1:
         raise RuntimeError("PXD035795 method source is not registered exactly once")
@@ -534,9 +528,7 @@ def build_content_audit(
     protein = parse_protein_csv(
         _source_path(registry_dir, protein_row), protein_row["sha256"]
     )
-    mzid = parse_mzidentml(
-        _source_path(registry_dir, mzid_row), mzid_row["sha256"]
-    )
+    mzid = parse_mzidentml(_source_path(registry_dir, mzid_row), mzid_row["sha256"])
 
     evidence = _csv_evidence(
         peptide,
@@ -586,23 +578,13 @@ def build_content_audit(
             studies, evidence, candidates, mappings, conflicts, schemas, gaps
         )
         _write_tsv(staged / "study_inventory.tsv", STUDY_FIELDS, studies)
-        _write_tsv(
-            staged / "file_decisions.tsv", FILE_DECISION_FIELDS, decisions
-        )
-        _write_tsv(
-            staged / "evidence_records.tsv", CONTENT_EVIDENCE_FIELDS, evidence
-        )
+        _write_tsv(staged / "file_decisions.tsv", FILE_DECISION_FIELDS, decisions)
+        _write_tsv(staged / "evidence_records.tsv", CONTENT_EVIDENCE_FIELDS, evidence)
         _write_tsv(staged / "metadata_gaps.tsv", GAP_FIELDS, gaps)
         _write_tsv(staged / "large_file_queue.tsv", QUEUE_FIELDS, queue)
-        _write_tsv(
-            staged / "candidate_modifications.tsv", CANDIDATE_FIELDS, candidates
-        )
-        _write_tsv(
-            staged / "sample_file_mapping.tsv", SAMPLE_MAPPING_FIELDS, mappings
-        )
-        _write_tsv(
-            staged / "mapping_conflicts.tsv", MAPPING_CONFLICT_FIELDS, conflicts
-        )
+        _write_tsv(staged / "candidate_modifications.tsv", CANDIDATE_FIELDS, candidates)
+        _write_tsv(staged / "sample_file_mapping.tsv", SAMPLE_MAPPING_FIELDS, mappings)
+        _write_tsv(staged / "mapping_conflicts.tsv", MAPPING_CONFLICT_FIELDS, conflicts)
         _write_tsv(staged / "content_schema.tsv", CONTENT_SCHEMA_FIELDS, schemas)
 
         manifest_path = staged / "manifest.json"
@@ -719,9 +701,7 @@ def audit_content_output(
     conflicts = _read_tsv(
         output_directory / "mapping_conflicts.tsv", MAPPING_CONFLICT_FIELDS
     )
-    schemas = _read_tsv(
-        output_directory / "content_schema.tsv", CONTENT_SCHEMA_FIELDS
-    )
+    schemas = _read_tsv(output_directory / "content_schema.tsv", CONTENT_SCHEMA_FIELDS)
     summary = _summary(
         studies, evidence, candidates, mappings, conflicts, schemas, gaps
     )

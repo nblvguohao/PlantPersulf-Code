@@ -1,0 +1,42 @@
+# Frozen experiment config — structure-augmented PU baselines.
+#
+# Uses contact_number_proxy + pLDDT from real AlphaFold/SWISS-MODEL
+# structures (7 pilot accessions) as the sole feature set. This measures
+# whether structural context alone can recover persulfidation sites
+# better than the sequence-only baseline. For rows without a structure,
+# features are zero-filled (the downstream scaler handles this).
+#
+# This is a within-framework ablation: same 4 models, same 5 seeds,
+# different feature representation.
+
+version: 1
+
+experiment:
+  name: baseline_structure_v1
+  benchmark_labels: data/processed/benchmark_v1/sites.tsv
+  reference_proteome: data/raw/references/arabidopsis_ref_proteome_v1.fasta
+
+splits:
+  mode: cluster
+  cluster_file: data/processed/clusters/protein_clusters_v1.tsv
+  split_config: configs/splits/split_config_v1.yaml
+
+features:
+  - name: structure
+    module: plantpersulf.features.structure
+
+models:
+  - logistic
+  - pu_logistic
+  - random_forest
+  - xgboost
+
+evaluation:
+  seeds: [0, 1, 2, 3, 4]
+
+subsample:
+  unlabeled_per_positive: 50
+  seed: 12345
+
+output:
+  directory: results/experiments/baseline_structure_v1

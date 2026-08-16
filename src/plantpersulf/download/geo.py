@@ -81,9 +81,7 @@ def _parse_soft(content: str) -> tuple[_SoftEntity, ...]:
     def finish_entity() -> None:
         if not entity_type:
             return
-        frozen_attributes = {
-            key: tuple(values) for key, values in attributes.items()
-        }
+        frozen_attributes = {key: tuple(values) for key, values in attributes.items()}
         entities.append(_SoftEntity(entity_type, accession, frozen_attributes))
 
     for raw_line in content.splitlines():
@@ -177,9 +175,7 @@ class GeoClient:
                     ) from exc
             except TimeoutError as exc:
                 if attempt == self.retries - 1:
-                    raise RuntimeError(
-                        f"GEO request failed: {url}: timeout"
-                    ) from exc
+                    raise RuntimeError(f"GEO request failed: {url}: timeout") from exc
             except URLError as exc:
                 if attempt == self.retries - 1:
                     raise RuntimeError(
@@ -255,9 +251,7 @@ class GeoClient:
             ),
             samples=samples,
             pubmed_ids=series.attributes.get("Series_pubmed_id", ()),
-            supplementary_files=series.attributes.get(
-                "Series_supplementary_file", ()
-            ),
+            supplementary_files=series.attributes.get("Series_supplementary_file", ()),
             bioproject_accession=_relation_accession(relations, "BioProject"),
             sra_study_accession=_relation_accession(relations, "SRA"),
             source_url=str(cache.get("series_url", "")),

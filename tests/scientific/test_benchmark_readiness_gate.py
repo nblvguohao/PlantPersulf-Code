@@ -16,9 +16,7 @@ def _rows(path: Path) -> list[dict[str, str]]:
 
 def _tree_hashes(root: Path) -> dict[str, str]:
     return {
-        path.relative_to(root).as_posix(): hashlib.sha256(
-            path.read_bytes()
-        ).hexdigest()
+        path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(root.rglob("*"))
         if path.is_file()
     }
@@ -121,8 +119,7 @@ def test_readiness_preserves_study_specific_blockers(tmp_path: Path) -> None:
         "unsupported_stage_a_checksum_only",
     }
     assert any(
-        row["blocker_code"]
-        == "insufficient_distinct_site_evidence_studies"
+        row["blocker_code"] == "insufficient_distinct_site_evidence_studies"
         and row["observed_value"] == "0"
         and row["required_value"] == "2"
         for row in blockers
@@ -148,12 +145,8 @@ def test_readiness_audit_rejects_output_tampering(tmp_path: Path) -> None:
 def test_cli_exposes_benchmark_readiness_without_building_benchmark() -> None:
     from plantpersulf.cli import build_parser
 
-    build = build_parser().parse_args(
-        ["build-benchmark-readiness", "--version", "v1"]
-    )
-    audit = build_parser().parse_args(
-        ["audit-benchmark-readiness", "--version", "v1"]
-    )
+    build = build_parser().parse_args(["build-benchmark-readiness", "--version", "v1"])
+    audit = build_parser().parse_args(["audit-benchmark-readiness", "--version", "v1"])
 
     assert build.command == "build-benchmark-readiness"
     assert audit.command == "audit-benchmark-readiness"

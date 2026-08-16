@@ -1,0 +1,7 @@
+python==3.10
+torch==2.11.0+cu128
+transformers==5.14.1
+scikit-learn==1.7.2
+numpy==2.2.6
+source_repository_commit==52c030c3b23e20ff8170d73a417ce852bd46c627
+adapter_variant==public_architecture_port_with_google_bert_base_cased

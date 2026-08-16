@@ -7,11 +7,15 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 
+from plantpersulf.benchmark.multispecies_splits import audit_frozen_split_file
 from plantpersulf.benchmark.readiness import (
     audit_benchmark_readiness,
     build_benchmark_readiness,
 )
-from plantpersulf.download.registered import audit_downloaded_files
+from plantpersulf.download.registered import (
+    audit_all_downloaded_files,
+    audit_downloaded_files,
+)
 from plantpersulf.evidence.content import (
     audit_content_output,
     build_content_audit,
@@ -27,6 +31,7 @@ from plantpersulf.evidence.preflight import (
 from plantpersulf.proteomics.peptide_parser import parse_proteomics_accession
 from plantpersulf.proteomics.site_normalizer import audit_site_output
 from plantpersulf.provenance.registry import audit_registry
+from plantpersulf.workflows.multispecies_v2 import audit_v2_run_manifest
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -50,7 +55,7 @@ def build_parser() -> argparse.ArgumentParser:
         "audit-files",
         help="verify downloaded files against official and local checksums",
     )
-    audit_files.add_argument("--accession", required=True)
+    audit_files.add_argument("--accession")
     audit_files.add_argument(
         "--registry-dir",
         type=Path,
@@ -61,6 +66,21 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("configs/download_selection.yaml"),
     )
+    audit_leakage = subparsers.add_parser(
+        "audit-leakage",
+        help="verify that a frozen multispecies split has no homology leakage",
+    )
+    audit_leakage.add_argument("--split-version", required=True)
+    audit_leakage.add_argument(
+        "--split-root",
+        type=Path,
+        default=Path("data/processed/splits"),
+    )
+    audit_runtime_manifest = subparsers.add_parser(
+        "audit-runtime-manifest",
+        help="audit Task 9.5 runtime logs, checkpoints, and provenance",
+    )
+    audit_runtime_manifest.add_argument("--manifest", type=Path, required=True)
     parse_proteomics = subparsers.add_parser(
         "parse-proteomics",
         help="parse registered proteomics results without assigning labels",
@@ -233,14 +253,29 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(asdict(registry_summary), sort_keys=True))
         return 0
     if arguments.command == "audit-files":
-        file_summary = audit_downloaded_files(
-            accession=arguments.accession,
-            selection_path=arguments.selection_config,
-            files_registry_path=arguments.registry_dir / "files.tsv",
-            datasets_registry_path=arguments.registry_dir / "datasets.tsv",
-            downloads_registry_path=arguments.registry_dir / "downloads.tsv",
+        audit_kwargs = {
+            "selection_path": arguments.selection_config,
+            "files_registry_path": arguments.registry_dir / "files.tsv",
+            "datasets_registry_path": arguments.registry_dir / "datasets.tsv",
+            "downloads_registry_path": arguments.registry_dir / "downloads.tsv",
+        }
+        file_summary = (
+            audit_downloaded_files(accession=arguments.accession, **audit_kwargs)
+            if arguments.accession
+            else audit_all_downloaded_files(**audit_kwargs)
         )
         print(json.dumps(asdict(file_summary), sort_keys=True))
+        return 0
+    if arguments.command == "audit-leakage":
+        leakage_summary = audit_frozen_split_file(
+            arguments.split_root / f"{arguments.split_version}.tsv",
+            split_version=arguments.split_version,
+        )
+        print(json.dumps(asdict(leakage_summary), sort_keys=True))
+        return 0
+    if arguments.command == "audit-runtime-manifest":
+        manifest = audit_v2_run_manifest(arguments.manifest)
+        print(json.dumps(manifest, sort_keys=True))
         return 0
     if arguments.command == "parse-proteomics":
         parse_summary = parse_proteomics_accession(
@@ -264,9 +299,7 @@ def main(argv: list[str] | None = None) -> int:
             policy_path=arguments.policy,
             selection_path=arguments.selection_config,
             registry_dir=arguments.registry_dir,
-            output_directory=(
-                arguments.output_root / "evidence_preflight_v1"
-            ),
+            output_directory=(arguments.output_root / "evidence_preflight_v1"),
         )
         print(json.dumps(asdict(preflight_summary), sort_keys=True))
         return 0
@@ -336,9 +369,7 @@ def main(argv: list[str] | None = None) -> int:
             policy_path=arguments.policy,
             parser_output_root=arguments.output_root,
             content_output_directory=content_directory,
-            output_directory=(
-                arguments.output_root / "benchmark_readiness_v1"
-            ),
+            output_directory=(arguments.output_root / "benchmark_readiness_v1"),
             registry_dir=arguments.registry_dir,
         )
         print(json.dumps(asdict(readiness_summary), sort_keys=True))

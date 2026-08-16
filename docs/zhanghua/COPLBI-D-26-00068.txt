@@ -1,0 +1,3369 @@
+===== PAGE 1 =====
+Current Opinion in Plant Biology
+ 
+NO- and H2S-derived post-translational modifications and stress resilience​
+--Manuscript Draft--
+ 
+Manuscript Number:
+COPLBI-D-26-00068
+Full Title:
+NO- and H2S-derived post-translational modifications and stress resilience
+Article Type:
+VSI: Abiotic stress 2027
+Short Title:
+NO- and H2S-derived PTMs and stress resilience
+Keywords:
+Corresponding Author:
+Francisco Corpas, Ph.D.
+Spanish National Research Council
+SPAIN
+Corresponding Author's Institution:
+Spanish National Research Council
+Corresponding Author E-Mail:
+javier.corpas@eez.csic.es
+First Author:
+Francisco Corpas, Ph.D.
+Order of Authors:
+Francisco Corpas, Ph.D.
+Abstract:
+Nitric oxide (NO) and hydrogen sulfide (H2S) have emerged as key gaseous signaling
+molecules in plants, playing central roles in the regulation of responses to a myriad of
+(a)biotic stresses. A major mechanism through which these molecules exert their
+effects is via post-translational modifications (PTMs) of proteins, including tyrosine
+nitration, S-nitrosation, and persulfidation. The last two corresponds to redox-based
+modifications (oxiPTMs) that can rapidly and reversibly alter protein activity, stability,
+localization, and interactions, thereby enabling dynamic cellular reprogramming under
+stress conditions. Recent advances have highlighted the intricate crosstalk between
+NO- and H2S-mediated PTMs, revealing a complex regulatory network that fine-tunes
+stress signaling pathways and enhances plant resilience. Understanding how these
+modifications integrate environmental cues with cellular and subcellular responses
+provides new insights into the molecular basis of stress tolerance and offers potential
+strategies for improving crop performance under adverse conditions.
+Author Comments:
+Powered by Editorial Manager® and ProduXion Manager® from Aries Systems Corporation
+
+===== PAGE 2 =====
+SI of Current Opinion in Plant Biology 
+1 
+ 
+NO- and H2S-derived post-translational modifications and stress resilience 
+1 
+Francisco J Corpas*, Jorge Taboada, Miriam Molina-Escobar, José M Palma 
+2 
+Group of Antioxidants, Free Radicals and Nitric Oxide in Biotechnology, Food and 
+3 
+Agriculture, Department of Biochemistry, Cell and Molecular Biology of Plants, Estación 
+4 
+Experimental del Zaidín, Spanish National Research Council (CSIC), Granada, Spain. 
+5 
+*corresponding author: javier.corpas@eez.csic.e 
+6 
+ 
+7 
+Abstract 
+8 
+Nitric oxide (NO) and hydrogen sulfide (H2S) have emerged as key gaseous signaling 
+9 
+molecules in plants, playing central roles in the regulation of responses to a myriad of 
+10 
+(a)biotic stresses. A major mechanism through which these molecules exert their effects is via 
+11 
+post-translational modifications (PTMs) of proteins, including tyrosine nitration, S-
+12 
+nitrosation, and persulfidation. The last two corresponds to redox-based modifications 
+13 
+(oxiPTMs) that can rapidly and reversibly alter protein activity, stability, localization, and 
+14 
+interactions, thereby enabling dynamic cellular reprogramming under stress conditions. 
+15 
+Recent advances have highlighted the intricate crosstalk between NO- and H2S-mediated 
+16 
+PTMs, revealing a complex regulatory network that fine-tunes stress signaling pathways and 
+17 
+enhances plant resilience. Understanding how these modifications integrate environmental 
+18 
+cues with cellular and subcellular responses provides new insights into the molecular basis of 
+19 
+stress tolerance and offers potential strategies for improving crop performance under adverse 
+20 
+conditions. 
+21 
+ 
+22 
+Key words: Denitrosation, Depersulfidation, Nitration, oxi-PTMs, Persulfidation, S-
+23 
+nitrosation,  
+ 
+24 
+Manuscript
+Click here to view linked References
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 3 =====
+SI of Current Opinion in Plant Biology 
+2 
+ 
+Introduction 
+25 
+Throughout their developmental cycle, plants are exposed to a wide range of adverse abiotic 
+26 
+factors that can negatively affect their growth and productivity. To cope with these 
+27 
+challenges, they have developed complex regulatory networks involving diverse subcellular 
+28 
+and cellular components that orchestrate appropriate responses to minimize potential damage 
+29 
+[Kumar et al., 2025; Kaya and Corpas, 2026]. These responses include hormonal signaling, 
+30 
+fluctuations in calcium levels, activation of transcription factors, and the controlled 
+31 
+production of reactive oxygen species (ROS). Among the molecules mobilized during these 
+32 
+stress responses, two gaseous compounds, nitric oxide (NO) and hydrogen sulfide (H2S), have 
+33 
+emerged as key regulators over the past two decades, despite having been historically 
+34 
+regarded as toxic [Kimura, 2026]. Both are now recognized as gasotransmitters, a class of 
+35 
+small signaling molecules with important roles in plant physiology and in response to stresses 
+36 
+[Corpas et al., 2026; Mohanty et al., 2026; Zhou et al., 2026]. This review discusses how 
+37 
+NO and H2S, through their associated post-translational modifications (PTMs), influence 
+38 
+plant responses to abiotic stress. 
+39 
+Biochemical basis of PTMs mediated by NO and H2S 
+40 
+NO and H2S give rise to families of derived compounds known as reactive nitrogen species 
+41 
+(RNS) and reactive sulfur species (RSS), respectively. These molecules exhibit a far more 
+42 
+complex biochemistry than might be expected from their simple structures. One of their 
+43 
+principal regulatory mechanisms involves interaction with specific amino acid residues, 
+44 
+particularly tyrosine (Tyr), tryptophan (Trp), and cysteine (Cys), in target proteins, leading to 
+45 
+post-translational modifications (PTMs) that modulate protein function. Among these, the 
+46 
+most extensively studied in higher plants are protein Tyr-nitration and S-nitrosation, mediated 
+47 
+by NO, and persulfidation, mediated by H2S. A key aspect of the regulatory roles of NO and 
+48 
+H2S is their spatial specificity, as their production, metabolism, and signaling are tightly 
+49 
+controlled through subcellular compartmentalization, allowing precise modulation of target 
+50 
+proteins and subcellular/cellular processes. 
+51 
+Protein nitration 
+52 
+Protein nitration involves the addition of a nitro (−NO2) group to one of the ortho carbons of 
+53 
+the aromatic ring in tyrosine (Tyr) or tryptophan (Trp) residues. This modification typically 
+54 
+occurs through RNS such as peroxynitrite (ONOO⁻) and/or the nitrogen dioxide radical 
+55 
+(•NO2) [Bartesaghi S, Radi, 2018] (Figure 1A). In higher plants, tyrosine nitration has been 
+56 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 4 =====
+SI of Current Opinion in Plant Biology 
+3 
+ 
+the most extensively studied, particularly at the 3-ortho position relative to the hydroxyl group 
+57 
+at C4 of the phenolic ring. This modification can significantly alter protein function, as 
+58 
+incorporation of the −NO2 group lowers the pKa of the phenolic group from 10.1 in Tyr to 
+59 
+approximately 7.2 in nitrotyrosine [Sokolovsky et al., 1967; Abello et al., 2009]. Notably, 
+60 
+nitration is a selective process: only a subset of Tyr residues within a target protein is 
+61 
+typically modified. For example, in the pea cytosolic ascorbate peroxidase (APX), there are a 
+62 
+total of seven Tyr residues, but only Tyr5 and Tyr235 are exclusively nitrated. Notably, the 
+63 
+nitration of Tyr235, which is located 3.6 Å from the heme group, appears to play a more 
+64 
+critical role in inhibiting the enzyme's activity [Begara-Morales et al., 2014]. Similarly, in 
+65 
+pepper cytosolic L-cysteine desulfhydrase (LCD), only Tyr82 and Tyr254, out of a total of 
+66 
+eleven Tyr residues, are nitrated by ONOO⁻. These nitrated residues are situated near the 
+67 
+enzyme's active site, and their modification results in a loss of enzymatic activity [Muñoz-
+68 
+Vargas et al., 2023]. In the case of Trp, nitration generally occurs at the C4, C6, or C7 
+69 
+positions of the indole ring. Currently, increased protein nitration is widely regarded as a 
+70 
+marker of nitro-oxidative stress. While a specific nitrotyrosine “denitrase” activity has been 
+71 
+described in animal systems, there is still no experimental evidence for such an activity in 
+72 
+plants. Instead, protein nitration has been proposed to serve as a signal for protein degradation 
+73 
+[León et al., 2022].  
+74 
+Beyond proteins, other biomolecules are also susceptible to nitration. These include 
+75 
+fatty acids, such as nitro-oleic, nitro-linoleic, and nitro-linolenic acids, as well as nucleic acids 
+76 
+(DNA, RNA, and mRNA) or γ-tocopherol [Mata-Pérez et al., 2016; Sytykiewicz et al., 
+77 
+2024; Chmielowska-Bąk et al., 2025; Desel et al., 2007]. Some of these nitrated molecules 
+78 
+have been implicated in signaling processes and stress response, although their roles in higher 
+79 
+plants remain poorly understood and require further investigation. 
+80 
+Protein S-nitrosation 
+81 
+S-nitrosation, previously referred to as S-nitrosylation, involves the addition of NO to the thiol 
+82 
+group (-SH) of Cys residues [Gupta et al., 2020] (Figure 1B). Although proteins are the most 
+83 
+extensively studied targets of this modification in plant cells, other molecules, such as 
+84 
+peptides, including reduced glutathione (GSH) and free L-Cys, present at mM and µM 
+85 
+concentrations, respectively, can also undergo S-nitrosation, forming S-nitrosoglutathione 
+86 
+(GSNO) and nitrosocysteine (CysNO). These compounds play important roles in 
+87 
+transnitrosation processes and NO-mediated signaling. In this context, S-nitrosoglutathione 
+88 
+reductase (GSNOR), a glutathione-dependent formaldehyde dehydrogenase (FALDH), plays 
+89 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 5 =====
+SI of Current Opinion in Plant Biology 
+4 
+ 
+a central role in regulating S-nitrosothiol levels in plant cells under physiological and stress 
+90 
+conditions [Sakamoto et al., 2002; Lee et al., 2008; Wang et al., 2024]. Notably, GSNOR 
+91 
+itself is subject to S-nitrosation [Guerra et al. 2016], suggesting a feedback regulatory 
+92 
+mechanism that fine-tunes cellular NO homeostasis. Additionally, there is another mechanism 
+93 
+of regulation of the protein S-nitrosation, which is mediated by a cytosolic thioredoxin 
+94 
+(TRX)-mediated denitrosation and the newly identified aldo-keto reductases (AKR) [Zhang 
+95 
+et al., 2020; Treffon et al., 2021; Treffon and Vierling, 2022; Jedelská et al., 2026]. 
+96 
+Protein persulfidation 
+97 
+Persulfidation, previously named S-sulfhydration, is an H2S-derived PTM that involves the 
+98 
+conversion of a protein Cys thiol group (–SH) into its corresponding persulfide form (–SSH) 
+99 
+[Aroca et al., 2015; Moseler et al., 2024; Romero et al., 2025; Carrillo et al., 2026]. 
+100 
+Persulfidation occurs not only in proteins but also leads to the formation of other molecules 
+101 
+known as polysulfides. These include cysteine hydropersulfide (CysS-Sn-H), glutathione 
+102 
+hydropersulfide (GS-Sn-H), and glutathione trisulfide (GSSSG) [Ogata et al., 2023]. These 
+103 
+polysulfides are considered to be more redox-active than typical thiols and disulfides. 
+104 
+However, research on these molecules in plants is quite limited [Kasamatsu et al., 2023a, 
+105 
+2023b; Ida et al., 2026]. Persulfidation can occur through several mechanisms: (i) the 
+106 
+reaction between a protein thiol and H2S, particularly via its anionic hydrosulfide form (HS⁻), 
+107 
+which is a stronger nucleophile than the protonated species; and (ii) interactions between 
+108 
+inorganic polysulfides (–S–Sn–S–) and protein thiolates (Figure 1C). In addition, trans-
+109 
+persulfidation reactions may take place between low-molecular-weight persulfides, such as 
+110 
+glutathione persulfide (GSSH) and cysteine persulfide (Cys-SSH), and protein persulfides, 
+111 
+where GSH and L-Cys also contribute to this dynamic exchange network [Vignane and 
+112 
+Filipovic 2023; Nagy et al., 2026]. Importantly, persulfidation often arises from the 
+113 
+nucleophilic attack of a sulfide anion on oxidized forms of protein thiols, including disulfides, 
+114 
+mixed disulfides, cysteine sulfenic acids, or S-nitrosated cysteine residues. At the cellular 
+115 
+level, this modification is part of a broader regulatory framework in which oxiPTMs compete 
+116 
+for the same reactive Cys residues within proteins. Under conditions of oxidative stress, 
+117 
+modifications such as S-nitrosation and persulfidation can play a protective role by shielding 
+118 
+these thiol groups from irreversible overoxidation to sulfinic or sulfonic acids, which is 
+119 
+typically associated with loss of protein function [Corpas et al., 2022]. In this context, S-
+120 
+nitrosation and persulfidation act as a reversible redox switches, preserving protein activity 
+121 
+and contributing to the maintenance of cellular redox homeostasis. 
+122 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 6 =====
+SI of Current Opinion in Plant Biology 
+5 
+ 
+ 
+123 
+ 
+124 
+Figure 1. NO- and H2S-derived PTMs. A) Model of protein tyrosine and tryptophan nitration. 
+125 
+Two main nitrating reactions have been proposed to mediate this process: (a) by peroxynitrite 
+126 
+(ONOO⁻) which is formed by the quick reaction between nitric oxide (•NO) and superoxide (O2•⁻) 
+127 
+radicals; and (b) by nitric dioxide (•NO2) produced through the reaction of hydrogen peroxide (H2O2) 
+128 
+and nitrite (NO2⁻) in the presence of a hemoperoxidase (HPO). B) Model of protein S-nitrosation. 
+129 
+Thiol group (-SH) of susceptible Cys residues of proteins can undergo S-nitrosation by different 
+130 
+mechanisms involving different NO groups and different thiol substrates. (i) Thiol group can undergo 
+131 
+a metal-catalyzed oxidation to generate a thiyl radical (P-S•) with can react with •NO to generate 
+132 
+protein-SNO. (ii) the thiolate form of the cysteine (PS−) that can result from sulfur deprotonation even 
+133 
+at physiological pH. Either as RS−, or directly as P-SH, cysteine sulfhydryl can undergo S-nitrosation 
+134 
+by reacting with NO-derived dinitrogen trioxide (N2O3), or (iii) directly with nitrosonium ion (+NO), 
+135 
+generated upon metal-catalyzed oxidation of •NO, which acts as an electrophilic agent that triggers the 
+136 
+S-nitrosation; (iv) the net transfer of +NO from an P-SNO to an PS− (transnitrosation) also occurs 
+137 
+inside the cells and represents a further reaction to produce S-nitrosated adducts. (v) Finally, there is a 
+138 
+mechanism of denitrosation catalized by a NADPH thioredoxin. C) Model of protein persulfidation. 
+139 
+The cysteine thiol group (–SH) must first be activated via oxidation to a higher oxidation state, such as 
+140 
+sulfenic acid (–SOH), a disulfide (–S–S), or an S-nitrosated form (–SNO), before it can react with H₂S. 
+141 
+Additionally, trans-persulfidation reactions may occur with other persulfidated proteins or with low-
+142 
+molecular-weight persulfides, including glutathione persulfide (GSSH) and cysteine persulfide (Cys-
+143 
+SSH). Depersulfidation is mediated by reduced thioredoxin (red TRX), which becomes oxidized 
+144 
+(oxTRX) during the process and is subsequently regenerated to its active reduced form by NADPH-
+145 
+dependent thioredoxin reductase B (NTRB) (De Brasi-Velasco et al., 2025). 
+146 
+ 
+147 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 7 =====
+SI of Current Opinion in Plant Biology 
+6 
+ 
+NO- and H2S-derived PTMs in abiotic stress responses 
+148 
+The significance of NO- and H2S-derived PTMs lies in their ability to modulate multiple 
+149 
+levels of plant stress response mechanisms, including the regulation of antioxidant systems 
+150 
+[Zhao et al., 2023; Wang et al., 2024; Lv et al., 2026] and an NADPH-dependent redox 
+151 
+homeostasis [Lin et al., 2026], as well as the feedback control of NO and H2S metabolism 
+152 
+themselves [Guerra et al., 2016; Muñoz-Vargas et al., 2023; Corpas et al., 2026]. Beyond 
+153 
+these functions, they also participate in broader regulatory networks involving transcription 
+154 
+factors and phytohormone signaling pathways, such as those mediated by ethylene, abscisic 
+155 
+acid, and cytokinins, among others [Zhang et al., 2020; Chen et al., 2020; Wang et al., 
+156 
+2024; Wang et al., 2025; Hu et al., 2025; Sun et al., 2025; Zhang et al., 2026; Li et al., 
+157 
+2026]. Table 1 summarizes representative examples of the involvement of these PTMs in 
+158 
+plant responses to a wide range of abiotic stresses, including salinity, drought, hypoxia, 
+159 
+senescence, cadmium toxicity, freezing, alkaline conditions, and osmotic stress. Thus, the 
+160 
+available information support that nitration, S-nitrosation and persulfidation, play central roles 
+161 
+in plant adaptation to abiotic stresses. S-nitrosation regulates key processes involved in salt, 
+162 
+hypoxia, freezing, alkaline, drought, and cadmium stress responses by modulating proteins 
+163 
+associated with RNA processing, vesicle trafficking, hormone signaling, ion homeostasis, and 
+164 
+proline and ethylene biosynthesis. These modifications generally enhance stress tolerance by 
+165 
+promoting osmotic adjustment, maintaining ionic balance, and activating stress-responsive 
+166 
+gene expression, although excessive S-nitrosation under cadmium stress can aggravate 
+167 
+cellular damage. Likewise, persulfidation contributes significantly to drought and oxidative 
+168 
+stress tolerance by regulating ABA signaling, stomatal closure, autophagy, ROS homeostasis, 
+169 
+and antioxidant defenses. Key protein targets include DES1, RBOHD, SnRK2.6, ABI4, and 
+170 
+ATG4, whose persulfidation coordinates water conservation, redox balance, and stress 
+171 
+signaling. Overall, both S-nitrosation and persulfidation act as dynamic regulatory 
+172 
+mechanisms that integrate redox, hormonal, and metabolic pathways to enhance plant 
+173 
+resilience under abiotic conditions. 
+174 
+Table 1. Representative protein targets of NO- and H2S-mediated post-translational modifications 
+175 
+(nitration, S-nitrosation, and persulfidation) identified in diverse plant species under abiotic stress 
+176 
+conditions. Abbreviations: ABA, abscisic acid; APC, active photorespiratory conditions; APX, 
+177 
+ascorbate peroxidase; CAT, catalase; G6PDH, glucose-6-phosphate dehydrogenase; GSNO, S-
+178 
+nitrosoglutathione; GSNOR, S-nitrosoglutathione reductase; HRW, hydrogen-rich water; SNP, sodium 
+179 
+nitroprusside; LCD, L-cysteine desulfhydrase; MDAR, monodehydroascorbate reductase; MS, 
+180 
+Murashige & Skoog medium; NO, nitric oxide; NPC, non-photorespiratory conditions; OE, 
+181 
+overexpression line; ONOO⁻, peroxynitrite; PCD, programmed cell death; PTM, post-translational 
+182 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 8 =====
+SI of Current Opinion in Plant Biology 
+7 
+ 
+modification; RBOHD, respiratory burst oxidase homologue D; RNS, reactive nitrogen species; ROS, 
+183 
+reactive oxygen species; SNO, S-nitrosothiol; WT, wild type.  
+184 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 9 =====
+SI of Current Opinion in Plant Biology 
+8 
+ 
+Abiotic stress  
+Plant species and 
+organs 
+Protein target  
+(identified Cys) 
+Main effects 
+Ref. 
+NO-derived PT Ms: Nitration / S-nitrosation 
+Salt stress  
+(100, 150 or 200 mM NaCl applied on 
+half-strength MS medium) 
+5 to 11-day-old seedlings 
+of  Arabidopsis thaliana  
+wild type (WT) and 
+prmt5-1 and gsnor1-
+3 mutant lines. 
+Protein arginine 
+methyltransferase 5 (PRMT5)  
+(Cys125) 
+During salt stress, S-nitrosation induced by NO enhances the 
+activity of the PRMT5 methyltransferase. This process 
+generates symmetric dimethylation marks on L-Arg of 
+spliceosome proteins, ensuring proper splicing of transcripts 
+that respond to stress. 
+Hu 
+et 
+al., 
+2017 
+Salt stress  
+(100–150 mM NaCl applied on half-
+strength MS medium). For chemical 
+treatment, 50 μM GSNO, 0.1 μM 
+phenylarsine oxide (PAO), or 15 μM 
+phosphatidylinositol-4-phosphate 
+(PI4P) was sprayed onto the leaf 
+surfaces of 5-day-old seedlings. 
+5-day-old seedlings of A. 
+thaliana WT and 
+RABG3E knockdown 
+mutant lines rab7-1 
+and rab7-2. 
+Ras-related 
+small 
+GTPase 
+RABG3E also known as RAB7  
+(Cys171) 
+ 
+NO promotes the S-nitrosation of RAB7 at Cys171, which 
+helps maintain the ion balance in salt-stressed plants, 
+enhances the enzyme's GTPase activity, promoting vesicle 
+trafficking 
+and 
+increasing 
+its 
+interaction 
+with 
+phosphatidylinositol-4-phosphate 
+(PI4P). 
+Exogenously 
+applied PI4P increases vesicle trafficking and promotes salt 
+tolerance depending on the S-nitroslation of RAB7 at Cys171. 
+Lin et 
+al., 
+2023 
+ 
+Salt stress 
+(100 mM NaCl in Hoagland nutrient 
+solution).  In the first treatment, the 
+nutrient solutions were supplemented 
+with ± 10 μM ACC (ethylene donor), 
+5 μM aminovinylglycine (AVG, 
+ethylene inhibitor) or 5 μM 1-
+methylcyclopropene 1-MCP (ethylene 
+antagonist) ±  100 μM 
+SNP/GSNO/ diethylamine NONOate 
+DEA/NO (NO donors) or 100 μM 
+cPTIO (NO scavenger) ± 100 μM 
+sodium ferricyanide SF (SNP 
+byproduct) or 100 μM GSH/GSSG 
+(GSNO), were only added to the 
+nutrient solutions in the first treatment. 
+Four-leaf-stage (25–
+30 d) old hydroponic 
+seedlings of tomato ( 
+Solanum lycopersicum 
+L. cv. Ailsa Craig (WT) 
+and 
+GSNOR overexpression 
+(GSNOR-OE), RNAi 
+(GSNOR-RNAi) and 
+knockdown 
+ACOh4 mutants. 
+1-aminocyclopropane-1-
+carboxylate oxidase homolog 4  
+(ACOh4)  
+(Cys172) 
+ 
+Salt stress induces NO production, activating ACOh4 
+transcription and leading to the S-nitrosation of ACOh4 at 
+Cys172. This modification enhances ACOh4 enzymatic 
+activity, increases ethylene synthesis, regulates Na⁺ and H⁺ 
+efflux, and improves K⁺/Na⁺ homeostasis, ultimately boosting 
+salt tolerance. 
+Liu et 
+al., 
+2023  
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 10 =====
+SI of Current Opinion in Plant Biology 
+9 
+ 
+Salt stress 
+(150 mM NaCl in Hoagland solution ± 
+10 μM GSNO (NO donor) or 10 μM 
+cPTIO (NO scavenger) and ± 0.1 μM 
+brassinosteroid (BR) or 0.1 μM BR 
+biosynthesis inhibitor, brassinazole 
+(Brz) for 7 days. 
+30-day-old hydroponic 
+seedlings of tomato cv. 
+Micro-Tom (WT) and 
+CRISPR/Cas9 mutant 
+lines slserk3a and slserk
+3b 
+Somatic embryogenesis receptor 
+kinases SERK3A and SERK3B, 
+also known as BRI1-associated 
+kinase 1 (BAK1) 
+Saline stress activates NO, promoting the S-nitrosation of 
+SERK3A/3B. This enhances its interaction with the 
+brassinosteroid 
+receptor 
+BRI1, 
+thereby 
+activating 
+brassinosteroid signaling and improving salt tolerance. 
+Wei et 
+al., 
+2024  
+Salt stress: 150 mM NaCl in water or 
+HRW (75% v/v; H₂ donor) ± 10 μM 
+GSNO (NO donor) or 10 μM cPTIO 
+(NO scavenger) for 7 days. 
+Tomato cv. Micro-
+Tom seedlings at the 
+three-leaf and one-heart 
+stage (3-4 weeks after 
+germination). 
+MAPK kinase MEK1 (Cys172) 
+ H2 stimulates an increase in NO levels and S-nitrosothiol 
+(SNO) content under salt stress, which enhances the 
+accumulation of S-nitrosated proteins. Specifically, MEK1 is 
+induced and S-nitrosated at Cys172. This post-translational 
+modification improves MEK1 activity, MEK1–GSNOR 
+interaction, and enhances salinity tolerance. 
+Fang et 
+al., 
+2026 
+ 
+Hypoxia 
+Seeds sown 
+on 
+half-strength 
+MS 
+medium and cultured under 3% 
+O2 growth conditions. 
+ 
+7-day-old seedlings old 
+seedlings of A. thaliana 
+WT, and gsnor1-3, nox1, 
+atg2/5/7/10 mutant lines. 
+S-nitrosoglutathione reductase 
+(GSNOR1) (Cys10) 
+ 
+Hypoxia-induced S-nitroslation of GSNOR1 at Cys10 leads 
+to conformational changes that expose its autophagy-related 8 
+(ATG8)-interacting motif (AIM), making GSNOR1 a target 
+for selective autophagy. The loss of GSNOR results in the 
+accumulation of NO and increases the expression of hypoxia 
+response genes (ADH1, PDC), thereby enhancing seed 
+germination. 
+Zhan et 
+al., 
+2018 
+Dark-induced leaf senescence 
+(DILS): rosette leaf 7 covered with 
+aluminum foil; sampled at days 0, 3, 5 
+and 7 
+Rosette leaf 7 of 26-day-
+old plants (rosette stage) 
+A. thaliana  
+Tryptophan (Trp) nitrated proteins: 
+ 
+-D-xylosidase 1 (BXL1) 
+-Glyoxylate/succinic semialdehyde 
+reductase 1 (GLYR1) 
+-Dihydrolipoamide dehydrogenase 
+1 (LPD1) 
+-Voltage-gated K+ channel subunit 
+β (KAB1) 
+A transient burst of ONOO– observed on day 3 of DILS did 
+not lead to nitration of Trp proteins. However, the levels of 
+nitroTyr proteins increased on day 3 of DILS and decreased 
+on days 5 and 7. DILS entails a specific reprogramming of 
+RNS formation, characterized by a temporary availability and 
+bioactivity of ONOO– in nucleic acids and tyrosine-
+containing proteins. The simultaneous increase in RNA 
+enriched with 8-nitroguanine (8-NO2-G) and the significant 
+reduction in the pool of 6-nitroTrp-containing proteins 
+involved in protein biosynthesis suggest that these changes 
+contribute to the inhibition of protein biosynthesis during 
+organ senescence. 
+Arasim
+owicz-
+Jelonek 
+et 
+al., 
+2022  
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 11 =====
+SI of Current Opinion in Plant Biology 
+10 
+ 
+Freezing stress:  
+(Decreasing temperature from 0°C to –
+6°C at a rate of 1°C/hour and holding 
+at -6ºC for 2.5 h. 3 days of recovery 
+after stress. Pretreatment ± 100 μM 
+SNP (NO donor). 
+Two-week-old seedlings 
+of A. thaliana WT and 
+nox1, nia1 nia2, 
+MKK5DD , mpk3-2 and 
+mpk6-3 mutant lines. 
+Mitogen-activated protein kinase 
+6 (MPK6)  
+(Cys201) 
+SPEECHLESS SPCH is a transcription factor that controls 
+stomatal development and freezing tolerance. MPK6-
+catalyzed phosphorylation of SPCH causes its degradation. 
+NO-controlled S-nitrosation of MPK6 at Cys201 inhibits its 
+kinase activity and stabilizes SPCH, thereby positively 
+controlling stomatal development and freezing stress 
+responses.  
+Wang 
+et 
+al., 
+2025  
+Sodic alkaline stress  
+(75 mM NaHCO3 in Hoagland's 
+nutrient solution for 5 days) 
+Fifteen-day-old 
+hydroponic tomato 
+(Solanum lycopersicum 
+L.) seedlings plants of 
+self-pollinated 
+homozygous WT and 
+GSNOR-knockdown 
+(GSNOR-RNAi) lines. 
+110 up-regulated and 24 down-
+regulated S-nitrosated proteins 
+characteristic of sodic alkaline 
+stress conditions. Amongst them, 1-
+aminocyclopropane-1-
+carboxylate oxidase (ACO) 
+(Cys172) and  
+Pyrroline-5-carboxylate 
+reductase (PYCR) (Cys5) 
+were 
+identified. 
+Sodic alkaline stress triggers the production of GSNO, nitric 
+oxide (NO), and S-nitrosothiols (SNOs), leading to the 
+process of protein S-nitrosation. The enzyme GSNOR plays a 
+crucial role in regulating the levels of protein S-nitrosation by 
+scavenging these compounds, thereby modulating resistance 
+to various stressors. 
+In response to sodic alkaline stress, GSNOR down-regulates 
+the S-nitroslation of PYCR, while ACO is S-nitrosylated 
+under the same stress conditions. This regulation ensures that 
+both enzymes remain active: ACO facilitates the final step in 
+ethylene biosynthesis, which signals stress, and PYCR 
+synthesizes L-proline to help maintain osmotic balance. 
+Gong 
+& Shi 
+2019  
+ 
+Osmotic stress: 10% (w/v) PEG6000 
+in Hoagland nutrient solution (20-day-
+old hydroponic seedlings) 
+Salt stress: 100 mM NaCl in Hoagland 
+nutrient solution (20-day-old 
+hydroponic seedlings) or 80% - 100% 
+water retention soil with 0.1% NaCl 
+(w/w) (30-day-old planted seedlings) 
+Water deficit: 50% - 80% water 
+retention soil (30-day-old planted 
+seedlings) 
+20/30-day-old 
+hydroponic/planted 
+seedlings of tomato cv. 
+Ailsa Craig (WT) and 
+SlP5CR-OE, SlP5CRC5S-
+OE, and SlP5CRC5W-OE 
+(overexpression and site-
+directed) mutants. 
+Δ1-pyrroline-5-carboxylate 
+reductase (P5CR)  
+(Cys5) 
+ 
+Drought and salt stress trigger NO production, which induces 
+S-nitrosation 
+of 
+P5CR-Cys5. 
+This 
+process 
+improves 
+NAD(P)H affinity and enzyme activity, enhancing proline 
+synthesis and increasing drought and salt tolerance. 
+Liu et 
+al., 
+2024  
+Saline–alkali stress: 75 mM NaHCO₃ 
+in Hoagland nutrient solution 
+(hydroponic seedlings) or natural 
+saline-alkali soil (Na+ 1.38-2.3 g kg−1, 
+pH 7.6-8.16, EC 2.98- 4.71 mS cm−1) 
+(planted seedlings). 
+30-day-old hydroponic 
+or planted seedlings of 
+tomato cv. Ailsa Craig 
+(WT); COMT-, GSNOR-
+, or HA2-overexpression 
+rootstocks, and 
+Plasma-membrane H⁺-ATPase 2 
+(HA2)  
+(Cys206) 
+Under saline-alkali conditions, NO triggers S-nitrosation of 
+HA2 at cysteine 206 (Cys206), which impairs its interaction 
+with 14-3-3 protein 1 (TFT1). This impairment leads to a 
+reduction in HA activity, H+ efflux, and overall saline-alkali 
+tolerance. Additionally, NO enhances the transcription of 
+caffeic 
+acid 
+O-methyltransferase 
+(COMT), 
+promoting 
+Wei et 
+al., 
+2025 
+ 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 12 =====
+SI of Current Opinion in Plant Biology 
+11 
+ 
+nonnitrosylated  HA2C206
+S site directed mutants 
+melatonin biosynthesis. This process helps to scavenge excess 
+NO and alleviates the S-nitrosation of HA2, thereby restoring 
+its function and improving tomato tolerance to saline-alkali 
+conditions. 
+Cadmium stress 
+200 µM CdCl₂ in Hoagland nutrient 
+solution after a 7-day pretreatment 
+with NO and H2S donors (15 µM 
+GSNO and 15 µM NaHS) or 
+scavengers (100 µM cPTIO and 100 
+µM hypotaurine).  
+30-day-old hydroponic 
+seedlings of tomato cv. 
+Micro-Tom (WT) and 
+GSNOR/LCD knockout 
+(CRISPR/Cas9) 
+overexpression 
+(35S:HA-GSNOR and 
+35S:GFP-LCD), and 
+site-directed (Cys was 
+mutated to serine or 
+tryptophan) mutants. 
+S-nitrosoglutathione reductase  
+(GSNOR)  
+(Cys47) 
+ 
+L-cysteine desulfhydrase (LCD)  
+(Cys225) 
+ 
+ 
+Cadmium-triggered NO burst S-nitrosates GSNOR-Cys47 
+and LCD-Cys225, reducing enzymatic activity, altering 
+subcellular localization, and inhibiting the interaction 
+between GSNOR and LCD. This increases Cd²⁺ uptake and 
+worsens programmed cell death under CdCl₂ stress. 
+Huang 
+et al., 
+2026 
+ 
+Cadmium stress 
+1 µM CdCl₂ in distilled water for 5 
+days. To investigate Ca²⁺ effect 0-1000 
+µM CaCl₂ or 100 µM EGTA (Ca²⁺ 
+scavenger) was added. To investigate 
+NO effect 10 µM SNP (NO donor) or 
+200 µM cPTIO (NO scavenger) was 
+added. 
+5-day-old hydroponic 
+cucumber (Cucumis 
+sativus) seedlings with 
+primary roots removed. 
+117 S-nitrosated proteins identified, 
+including pyruvate kinase 1 (PK), 
+6-phosphofructokinase (PFK), 
+calcium-dependent protein kinase 
+(CDPK), glyceraldehyde 3-
+phosphate dehydrogenase 
+(GAPDH), calreticulin, fructose-
+bisphosphate aldolase or 
+glutathione transferase. 
+Under Cd stress, the application of exogenous Ca²⁺ increases 
+the endogenous production of NO and the total content of S-
+nitrosothiols (SNO). This enhancement leads to greater S-
+nitrosation of various enzymes involved in glycolysis, redox 
+processes, and calcium signaling, among others. As a result, it 
+promotes the formation of adventitious roots and mitigates the 
+inhibitory effects of Cd on root growth. 
+Niu et 
+al., 
+2026  
+ 
+ 
+Cadmium stress 
+1 mM CdCl₂ in 1/4-strength Hoagland 
+nutrient solution for 20 min after 
+pretreatment with 50, 100 or 250 µM 
+SNP. 
+Three-leaf-stage 
+seedlings of Chinese 
+cabbage (Brassica rapa) 
+var. glabra Regel cv. 
+‘14CR’. 
+952 differential S-nitrosated 
+proteins identified under Cd stress. 
+Among these, heavy metal ATPase 
+1 (HMA1), copper chaperone for 
+SOD (CCS) and protein arginine 
+methyltransferase 10 (PRMT) were 
+significantly up-regulated S-
+nitrosation-modified proteins. 
+During Cd stress, the application of the NO donor sodium 
+nitroprusside (SNP) enhances the activity of antioxidant 
+enzymes. 
+This 
+increase 
+helps 
+reduce 
+ROS 
+and 
+malondialdehyde (MDA) levels, thereby improving resistance 
+to Cd. Additionally, under these conditions, proteins such as 
+HMA1, CCS, and PRMT undergo significant S-nitrosation, 
+suggesting that they may respond to heavy metal stress 
+through post-translational modifications (PTMs). 
+Pan et 
+al., 
+2026  
+H2S-derived PTM: Persulfidation 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 13 =====
+SI of Current Opinion in Plant Biology 
+12 
+ 
+Drought stress 
+ABA treatment to simulate ABA 
+accumulation in drought stress. 
+Exposure to 10 μM ABA for 30 min ± 
+pretreatment of 10 μM 
+diphenyleneiodonium DPI (inhibitor 
+flavoenzymes) for 2 h. 
+ 
+ 
+ 
+Leaves and epidermal 
+strips of A. thaliana 
+ecotype Columbia (Col-
+0) (WT) and des1, 
+rbohD and 
+des1rbohD site-directed 
+mutant lines. 
+L-cysteine desulfhydrase (DES1)  
+(Cys44 and Cys205)  
+ 
+Respiratory burst oxidase 
+homologue (RBOHD)  
+(Cys825 and Cys890) 
+ 
+Under drought stress, ABA accumulates, leading to the 
+expression of DES1 in guard cells. DES1 can persulfide 
+several downstream signaling proteins, including itself at 
+Cys44 and Cys205, as well as NADPH oxidase RBOHD at 
+Cys825 and Cys890. This process triggers the production of 
+H₂O₂ in guard cells, resulting in stomatal closure and 
+increased drought tolerance. 
+However, when ROS accumulate to high levels, they can 
+cause the persulfide-oxidation of RBOHD and DES1 
+(−SSOnH), which leads to ABA desensitization. The oxidized 
+persulfide can be reduced to a thiol group (−SH) by 
+thioredoxin, creating a feedback mechanism that continuously 
+prevents ABA signaling from being active in guard cells. 
+Shen et 
+al., 
+2020  
+ 
+ 
+Drought 
+(Exposition to drought stress for 14 
+days and rewatering for 7 days after 
+stress) 
+ 
+ 
+ 
+2-week-old seedlings of 
+A. thaliana WT, des1, 
+ost1-3, the ABA receptor 
+quadruple 
+mutant pyr1;pyl1;pyl2;p
+yl4 transgenic strains and 
+nRK2.6C131SC137S(2CS), SnR
+K2.6S175A, SnRK2.6S267A, 
+SnRK2.6S175A2CS, 
+and SnRK2.6S267A2CS  site
+- directed mutant lines. 
+SNF1-related protein kinase 
+SnRK2.6 also known as open 
+stomata 1 (OST1)  
+(Cys131 and Cys137) 
+ 
+H2S-mediated persulfidation of SnRK2.6 alters its structure, 
+enhancing its kinase activity and promoting stomatal closure 
+in Arabidopsis leaves, which increases drought resistance. 
+The persulfidation of SnRK2.6 at Cys131 and Cys137 
+facilitates phosphorylation at Ser175, while phosphorylation 
+at Ser267 positively regulates persulfidation at Cys137. This 
+indicates a mutual influence between the persulfidation and 
+phosphorylation of SnRK2.6. Both PTMs are essential for the 
+activity of SnRK2.6 and its response to ABA, Ca2+ influx, and 
+drought stress. 
+Chen et 
+al., 
+2021  
+ 
+Drought for 10 days ± pretreatment 
+with 200 μM NaHS for 10 days before 
+drought episode 
+ 
+15-day-old plants of A. 
+thaliana WT and a line 
+expressing green 
+fluorescent protein 
+(GFP)–ATG8a under the 
+control of the 
+UBQ10 promoter  
+437 proteins were more 
+persulfidated under drought stress 
+and 450 proteins more 
+persulfidated in control. 
+Persulfidated proteins under 
+drought stress participate in the 
+response to oxidative stress 
+(ascorbate peroxidase 1/4/6 
+APX1/4/6 or thioredoxin 
+superfamily protein PRXQ e.g.) 
+and hydrogen peroxide catabolic 
+process (monodehydroascorbate 
+reductase 1 MDAR1 e.g.) 
+Plants respond to drought by increasing available sulfide to 
+combat drought-induced stress. H2S pretreatment before 
+drought induces persulfidation, which enhances plant 
+tolerance to drought by preventing H₂O₂ accumulation and 
+balancing redox homeostasis under stress. 
+Jurado-
+Flores 
+et 
+al., 
+2023 
+ 
+ 
+ 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 14 =====
+SI of Current Opinion in Plant Biology 
+13 
+ 
+ 
+Drought stress ± pretreatment with 50 
+μM NaHS  
+25-day-old rice (Oryza 
+sativa L. cv  Jsendra) 
+plants  
+Multiple 
+persulfidated 
+drought-
+responsive proteins identified in the 
+rice persulfidome 
+H₂S enhances drought tolerance in rice by reprogramming the 
+persulfidome of proteins involved in osmotic, antioxidant, 
+and metabolic adjustments. 
+Zhang 
+et al., 
+2024  
+Osmotic stress  
+Rice seedlings were transferred to 1/2 
+Hogland nutrient solution with or 
+without 20% PEG 6000 for 6 days. 
+14-day-old rice  
+Transcription factor bZIP68   
+(Cys171) 
+Persulfidation of Cys171 facilitates oligomerization of 
+bZIP68 allowing transcriptional reprogramming in response 
+to osmotic stress 
+Ma X 
+et al., 
+2026 
+Osmotic stress  
+Arabidopsis exposed to 100 mM NaCl 
+and  drought stress,. 
+A. thaliana roots were 
+analyzed in 10-day-old 
+seedling and leaves in   
+4-week-old.  
+PAD3 (PHYTOALEXIN 
+DEFICIENT 3) 
+(Cys440) 
+PAD3 persulfidation enhances its cyanide (HCN) synthase 
+activity, contributing to H2S–HCN homeostasis, respiratory 
+regulation, and improved plant tolerance to osmotic stresses 
+such as salinity and drought. 
+Zhang 
+W et al 
+2026 
+ABA treatment to simulate ABA 
+accumulation in abiotic stress and 
+cause ABA-induced autophagy: Spray 
+with 50 μM ABA for 3 and 6 h (30-
+day-old plants) or treatment with 50 
+μM ABA in MS medium for 3 and 6 h 
+± 200 μM NaHS for 1 h. 
+Nitrogen-starvation: growth for 4 days 
+in 
+nitrogen-deficient MS 
+medium 
+prepared by replacing nitrate salts with 
+chloride salts. 
+Osmotic stress: growth for 4 days in 
+MS medium with 300 mM mannitol.  
+One-week-old seedlings 
+or 30-day-old plants of 
+A. 
+thaliana 
+ecotype 
+Columbia (Col-0) (WT) 
+and 
+the atg4ab mutant 
+line. 
+Cys protease ATG4  
+(Cys170)  
+ 
+Under basal conditions, endogenous H2S negatively regulates 
+autophagy by maintaining ATG4 persulfidated at Cys170 and 
+inhibiting its proteolytic activity. An increase in ABA, which 
+occurs under stress, decreases persulfidation of ATG4, 
+activating its protease activity and causing the C-terminal 
+processing of ATG8, resulting in the de novo synthesis of 
+autophagosomes.  
+Laurea
+no-
+Marín 
+et 
+al., 
+2020  
+ 
+ 
+ABA treatment to simulate ABA 
+accumulation in abiotic stress: growth 
+in 
+half-strength 
+MS 
+medium 
+supplemented 
+with 
+20 μM ABA 
+(seedlings); incubation with 10 μM 
+ABA for 30 min (leaves and epidermal 
+strips) 
+NaHS treatment: growth in half-
+strength MS medium supplemented 
+One-month-old leaves 
+and epidermal strips and 
+five/seven-day-old 
+seedlings of A. thaliana 
+WT and des1, abi4, 
+des1abi4 and mapkkk18  
+ mutant lines. 
+Transcription factor ABSCISIC 
+ACID INSENSITIVE 4 (ABI4) 
+(Cys250)  
+ 
+Stress-induced ABA activates the expression of DES1, which 
+facilitates the persulfidation of ABI4 at Cys250. This PTM 
+enhances ABI4's ability to bind to its specific motif in the 
+promoter of Mitogen-Activated Protein Kinase Kinase Kinase 
+18 (MAPKKK18), leading to increased transcription of this 
+gene. Additionally, ABI4 can bind to the promoter of DES1, 
+creating a regulatory loop. This process amplifies the signals 
+derived from the MAPK cascade in response to ABA, thereby 
+enhancing the transduction of environmental signals related to 
+Zhou et 
+al., 
+2021  
+ 
+ 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 15 =====
+SI of Current Opinion in Plant Biology 
+14 
+ 
+ 
+185 
+ 
+186 
+with 
+200 μM NaHS 
+(seedlings); 
+incubation with 100 μM NaHS for 30 
+min (leaves and epidermal strips) 
+growth, development, and stress responses. 
+Oxidative stress induced by CuO 
+nanoparticles (NPs): 20 or 100 mg/L 
+CuO NPs in medium strength 
+Hoagland solution ± 200 μM NaHS for 
+6 or 18 days 
+Ten-day-old tomato  
+(S. lycopersicum) 
+seedlings (cv. Liger) 
+-Catalase (CAT1) (Cys234) 
+ 
+-Ascorbate peroxidase (APX1) 
+(Cys168)  
+ 
+-Peroxidase (POD5) (Cys61) 
+CuO nanoparticles (NPs) induce phytotoxicity by triggering a 
+buildup of H2O2. H2S-mediated persulfidation increases the 
+activities of APX1 and POD5, while decreasing the activity of 
+CAT1. This modulation fine-tunes the H₂O₂ detoxifying 
+network, enhancing resistance to CuO-NP-induced oxidative 
+stress. 
+Li 
+et 
+al., 
+2020  
+ 
+ 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 16 =====
+SI of Current Opinion in Plant Biology 
+15 
+ 
+Conclusion and future perspectives 
+187 
+The endogenously generated plant gas transmitters NO and H2S have been incorporated into 
+188 
+protein signaling and regulation mechanisms in both physiological processes and in response 
+189 
+to abiotic stresses. One of the mechanisms by which NO and H2S exert their effects is through 
+190 
+protein PTMs, especially nitration, S-nitrosation, and persufidation. These PTMs are specific 
+191 
+and can either positively, negatively, or have no effect on the target protein. A particularly 
+192 
+relevant aspect is that in many cases, a specific protein can be simultaneously and 
+193 
+competitively regulated by several of these PTMs, either synergistically or antagonistically. 
+194 
+The final effect on its function will influence the cellular redox state, which changes 
+195 
+depending on the physiological status. In stress situations, there is usually an increase in ROS 
+196 
+and RNS. Depending on the cell's capacity to respond to a specific abiotic stress, it may 
+197 
+survive or undergo irreversible damage, leading to cell death. However, it is important to 
+198 
+realize that plants are rarely exposed to a single abiotic stress in natural environments. 
+199 
+Instead, they are typically subjected to multiple stresses that may occur simultaneously or 
+200 
+sequentially over time [Jiang et al., 2025]. Consequently, plant stress responses are highly 
+201 
+complex and rely on the integration of diverse signaling networks involving phytohormones, 
+202 
+ROS, calcium, NO and H2S. The coordinated interplay among these signals enables plants to 
+203 
+fine-tune their physiological and molecular responses according to the nature, intensity, and 
+204 
+duration of the stress, as well as the developmental stage of the plant and the specific organ 
+205 
+affected. Figure 2 depicts a working model illustrating the signaling cascade triggered by 
+206 
+environmental cues, in which NO and H2S act as key signaling molecules coordinating plant 
+207 
+stress responses. 
+208 
+Future research should not only seek out new target proteins but also how these are 
+209 
+regulated in a cellular context in response to abiotic stresses. Thioredoxin (TRX)-mediated 
+210 
+denitrosation and depersulfidation are important processes that deserve further investigation. 
+211 
+Identifying the specific TRXs involved at subcellular compartments is essential, as these 
+212 
+small redox proteins constitute a diverse family that regulates distinct target proteins, often 
+213 
+through NAD(P)H-dependent mechanisms. Additionally, the application of advanced 
+214 
+techniques such as in situ imaging proteomics via expansion (iPEX), which combines 
+215 
+isotropic tissue expansion with matrix-assisted laser desorption/ionization (MALDI) mass 
+216 
+spectrometry imaging [Wang et al., 2026], holds great promise for advancing our 
+217 
+understanding of NO- and H2S-derived PTMs. This approach could provide valuable insights 
+218 
+into their spatial distribution and dynamics under both physiological and, particularly, stress 
+219 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 17 =====
+SI of Current Opinion in Plant Biology 
+16 
+ 
+conditions. Furthermore, recent experimental research has shown that melatonin plays a 
+220 
+significant role in plant signaling mechanisms involving NO and H2S under cold stress [Guo 
+221 
+et al., 2025]. This finding opens up new avenues for research, as it highlights that the 
+222 
+interactions among these molecules illustrate a coordinated signaling network that enhances 
+223 
+plant adaptation and stress tolerance [Corpas et al., 2025]. 
+224 
+ 
+225 
+ 
+226 
+Figure 2. Proposed model of NO- and H2S-mediated signaling during plant responses to abiotic stress. 
+227 
+Environmental cues such as salinity, drought, temperature extremes, hypoxia, heavy metals, and 
+228 
+osmotic stress activate NO- and H2S -generating systems. The resulting NO and H2S, together with 
+229 
+their derived reactive nitrogen and sulfur species (RNS and RSS), trigger post-translational 
+230 
+modifications (PTMs), primarily S-nitrosation, tyrosine nitration, and persulfidation. These PTMs 
+231 
+regulate antioxidant and redox-related enzymes as well as stress-responsive transcription factors, 
+232 
+leading to extensive transcriptional and metabolic reprogramming. The coordinated regulation of 
+233 
+antioxidant defenses, hormone signaling, ion transport, autophagy, and stress-responsive gene 
+234 
+expression ultimately promotes cellular homeostasis and enhances plant tolerance to adverse 
+235 
+environmental conditions. 
+236 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 18 =====
+SI of Current Opinion in Plant Biology 
+17 
+ 
+Declaration of competing interest 
+237 
+The authors declare that they have no known competing financial interests or personal 
+238 
+relationships that could have appeared to influence the work reported in this paper 
+239 
+Acknowledgements 
+240 
+J.T. and M.M.-E. express their gratitude for their respective predoctoral contracts 
+241 
+(PREP2023-001833 and E-18-2025-0303905, respectively). This work has been supported by 
+242 
+a European Regional Development Fund co-financed grant from the Ministry of Science and 
+243 
+Innovation (PID2023-146153NB-C21), Spain. 
+244 
+Data availability 
+245 
+No data was used for the research described in the article. 
+246 
+References 
+247 
+1. Arasimowicz-Jelonek M, Jagodzik P, Płóciennik A, Sobieszczuk-Nowicka E, Mattoo A, 
+248 
+Polcyn W, Floryszak-Wieczorek J. Dynamics of nitration during dark-induced leaf 
+249 
+senescence in Arabidopsis reveals proteins modified by tryptophan nitration. J Exp 
+250 
+Bot. 2022, 73:6853-6875.  
+251 
+2. Aroca Á, Serna A, Gotor C, Romero LC. S-sulfhydration: a cysteine posttranslational 
+252 
+modification in plant systems. Plant Physiol. 2015, 168(1):334-42. 
+253 
+3. Bartesaghi S, Radi R. Fundamentals on the biochemistry of peroxynitrite and protein 
+254 
+tyrosine nitration. Redox Biology 2018, 14: 618-625. 
+255 
+*Provide basic chemistry that mediates protein nitration. 
+256 
+4. Begara-Morales JC, Sánchez-Calvo B, Chaki M, Valderrama R, Mata-Pérez C, López-
+257 
+Jaramillo J, Padilla MN, Carreras A, Corpas FJ, Barroso JB. Dual regulation of cytosolic 
+258 
+ascorbate peroxidase (APX) by tyrosine nitration and S-nitrosylation. J Exp Bot. 
+259 
+2014, 65:527-38. 
+260 
+5. Carrillo R, Moreno I, Aroca A, Gotor C. Organelle-specific hydrogen sulfide 
+261 
+metabolism governs redox homeostasis to regulate plant autophagy and cadmium 
+262 
+stress resilience. Redox Biol. 2026, 93:104177. 
+263 
+6. Chen S, Jia H, Wang X, Shi C, Wang X, Ma P, Wang J, Ren M, Li J. Hydrogen Sulfide 
+264 
+Positively Regulates Abscisic Acid Signaling through Persulfidation of SnRK2.6 in 
+265 
+Guard Cells. Mol Plant. 2020, 13:732-744.  
+266 
+7. Chen S, Wang X, Jia H, Li F, Ma Y, Liesche J, Liu C, Duan M, Liu X, Liao W, Hu Y, Yu 
+267 
+J, Wang C. Persulfidation-induced structural change in SnRK2.6 establishes 
+268 
+intramolecular interaction between phosphorylation and persulfidation. Mol Plant. 
+269 
+2021, 14(11):1814-1830.  
+270 
+8. Chmielowska-Bąk J, Sobieszczuk-Nowicka E, Arasimowicz-Jelonek M. Nitro-oxidative 
+271 
+nucleotide modifications in plants and associated microorganisms: signalling sensors 
+272 
+or stress symptoms? J Exp Bot. 2025, 76:3793-3808. 
+273 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 19 =====
+SI of Current Opinion in Plant Biology 
+18 
+ 
+9. Corpas FJ, González-Gordo S, Rodríguez-Ruiz M, Muñoz-Vargas MA, Palma JM. Thiol-
+274 
+based oxidative posttranslational modifications (OxiPTMs) of plant proteins. Plant 
+275 
+Cell Physiol. 2022, 63:889-900. 
+276 
+10. Corpas FJ, Taboada J, Palma JM. Integration of NO and H2S signaling in higher plants. 
+277 
+Plant Commun. 2026, 7(3):101664.  
+278 
+11. Corpas FJ, Taboada J, Rivero RM, Reiter RJ, Palma JM. Functions of endogenously 
+279 
+produced and exogenously applied melatonin in higher plants. Antioxid Redox Signal. 
+280 
+2025, 43:151-188. 
+281 
+**This review highlights the dual "butterfly" signaling mechanism of NO and H2S, suggesting they 
+282 
+function as "twin molecules" in physiological processes and responses to environmental stress. 
+283 
+12. Corpas FJ, Taboada J, Sánchez-Romera B, Huang D, López-Jaramillo J, Palma JM. EPR-
+284 
+detected NO biosynthesis via nitrate reductase in non-climacteric pepper fruit: 
+285 
+downregulation by ripening, peroxynitrite and H2S. Plant Physiol Biochem. 2026, 
+286 
+230:110843. 
+287 
+13. De Brasi-Velasco S, Aroca A, Romero LC, Gotor C, Sevilla F, Jiménez A. New role for 
+288 
+thioredoxins in plants: Implication of TRXo1 in protein depersulfidation. Redox Biol. 
+289 
+2025, 82:103627. 
+290 
+** This study provides evidence of the implication of the NADPH/thioredoxin reductase (NTRB)/Trx 
+291 
+o1 in the regulation by depersulfidation of key antioxidant enzymes of the ascorbate glutathione cycle, 
+292 
+including ascorbate peroxidase, dehydroascorbate reductase, and monodehydroascorbate reductase. 
+293 
+14. Desel C, Hubbermann EM, Schwarz K, Krupinska K. Nitration of gamma-tocopherol in 
+294 
+plant tissues. Planta. 2007, 226, 1311-22. 
+295 
+15. Fang H, Wu X, Huang D, Chen X, Liu Z, Pan X, Chen H, Zheng D, Ma C, Hou X, Wang 
+296 
+S, Wang C, Liao W. Hydrogen gas enhances salinity tolerance in tomato seedlings by 
+297 
+regulating the S-nitrosylation of MEK1. Plant Biotechnol J. 2026, 24, 3656-3678.  doi: 
+298 
+10.1111/pbi.70585.  
+299 
+16. Gajewska J, Azzahra NA, Bingöl ÖA, Izbiańska-Jankowska K, Jelonek T, Deckert J, 
+300 
+Floryszak-Wieczorek J, Arasimowicz-Jelonek M. Cadmium Stress Reprograms 
+301 
+ROS/RNS Homeostasis in Phytophthora infestans (Mont.) de Bary. Int J Mol Sci. 2020, 
+302 
+21:8375.  
+303 
+17. Gong 
+B, 
+Shi 
+Q. 
+Identifying 
+S-nitrosylated 
+proteins 
+and 
+unraveling 
+S-
+304 
+nitrosoglutathione reductase-modulated sodic alkaline stress tolerance in Solanum 
+305 
+lycopersicum L. Plant Physiol Biochem. 2019, 142:84-93.  
+306 
+18. Guerra D, Ballard K, Truebridge I, Vierling E. S-Nitrosation of conserved cysteines 
+307 
+modulates activity and stability of S-nitrosoglutathione reductase (GSNOR). 
+308 
+Biochemistry. 2016, 55:2452-64. 
+309 
+19. Guo Y, Li J, Liu L, Liu J, Yang W, Chen Y, Li C, Yuan L, Wei C, Ma J, Zhang Y, Yang J, 
+310 
+Luan F, Zhang X, Li H. A self-amplifying NO-H2S loop mediates melatonin-induced 
+311 
+CBF-responsive pathway and cold tolerance in watermelon. Plant J. 2025, 
+312 
+121(4):e70025  
+313 
+* Provide experimental evidence that under cold stress, melatonin induces the production of both NO 
+314 
+and H2S, revealing an additional layer of regulation and crosstalk among these three signaling 
+315 
+molecules in higher plants. 
+316 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 20 =====
+SI of Current Opinion in Plant Biology 
+19 
+ 
+20. Gupta KJ, Hancock JT, Petrivalsky M, Kolbert Z, Lindermayr C, Durner J, Barroso JB, 
+317 
+Palma JM, Brouquisse R, Wendehenne D, Corpas FJ, Loake GJ. Recommendations on 
+318 
+terminology and experimental best practice associated with plant nitric oxide 
+319 
+research. New Phytol. 2020, 225(5):1828-1834. 
+320 
+21. Hu J, Yang H, Mu J, Lu T, Peng J, Deng X, Kong X, Tan L, Li J, Zuo J. Nitric Oxide 
+321 
+Regulates Protein Methylation during Stress Responses in Plants. Mol Cell. 2017, 
+322 
+67(4):702-710.e4. doi: 10.1016/j.molcel.2017.06.031 
+323 
+22. Hu K, Geng M, Ma L, Yao G, Zhang M, Zhang H. The H2S-responsive transcription 
+324 
+factor ERF.D3 regulates tomato abscisic acid metabolism, leaf senescence, and fruit 
+325 
+ripening. Plant Physiol. 2025, 197:kiae560. 
+326 
+23. Huang D, Chen X, Yun F, Fang H, Wu X, Wang C, Huo J, Liao W. S-nitrosylation of 
+327 
+GSNOR and LCD facilitates cadmium-induced programmed cell death in tomato 
+328 
+seedlings. New Phytol. 2026, 250:298-314.  
+329 
+24. Ida T, Kasamatsu S, Kuryu M, Nitta H, Nagamura W, Yoshida H, Kinno A, Morishita A, 
+330 
+Akaike T, Ihara H. Dynamic transformation of the sulfur metabolome during natto 
+331 
+fermentation: Supersulfide omics study. Nitric Oxide. 2026;160:14-23. 
+332 
+25. Jedelská T, Luhová L, Petřivalský M. Decoding nitric oxide signals: The S-
+333 
+denitrosation machinery in plants. Plant Sci. 2026, 362:112801.  
+334 
+26. Jiang Z, van Zanten M, Sasidharan R. Mechanisms of plant acclimation to multiple 
+335 
+abiotic stresses. Commun Biol. 2025, 8(1):655. 
+336 
+27. Jurado-Flores A, Aroca A, Romero LC, Gotor C. Sulfide promotes tolerance to drought 
+337 
+through protein persulfidation in Arabidopsis. J Exp Bot. 2023, 74(16):4654-4669.  
+338 
+28. Kasamatsu S, Kinno A, Hishiyama JI, Akaike T, Ihara H. Development of methods for 
+339 
+quantitative determination of the total and reactive polysulfides: Reactive polysulfide 
+340 
+profiling in vegetables. Food Chem. 2023a;413:135610. 
+341 
+*This landmark study used mass spectrometry-based analyses to quantify polysulfides in a range of 
+342 
+agriculturally and nutritionally relevant plant species, including onion, broccoli, garlic, pepper, and 
+343 
+tomato. 
+344 
+29. Kasamatsu S, Owaki T, Komae S, Kinno A, Ida T, Akaike T, Ihara H. Untargeted 
+345 
+polysulfide omics analysis of alternations in polysulfide production during the 
+346 
+germination of broccoli sprouts. Redox Biol. 2023b;67:102875. 
+347 
+30. Kaya C, Corpas FJ. Redox-calcium crosstalk in plants: proposed regulatory roles for 
+348 
+nitric oxide and hydrogen sulfide in CBL-CIPK-mediated stress responses. Trends 
+349 
+Plant Sci. 2026, 31:648-661. 
+350 
+31. Kimura H. Physiological roles of hydrogen sulfide/polysulfides and regulation of their 
+351 
+production. Handb Exp Pharmacol. 2026, doi: 10.1007/164_2025_754. 
+352 
+32. Kumar V, Knieper M, Vogelsang L, Denjali I, Seidel T, Dietz KJ. Principles of signal 
+353 
+integration in combinatorial stress acclimatization. Philos Trans R Soc Lond B Biol 
+354 
+Sci. 2025, 380:20240243.  
+355 
+*This review discusses how plants can adapt efficiently to changing environments, but combined 
+356 
+stresses can trigger complex and unpredictable responses. They rely on integrated signaling networks 
+357 
+to process multiple environmental cues and coordinate adaptation. 
+358 
+33. Laureano-Marín AM, Aroca Á, Pérez-Pérez ME, Yruela I, Jurado-Flores A, Moreno I, 
+359 
+Crespo JL, Romero LC, Gotor C. Abscisic Acid-Triggered Persulfidation of the Cys 
+360 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 21 =====
+SI of Current Opinion in Plant Biology 
+20 
+ 
+Protease ATG4 Mediates Regulation of Autophagy by Sulfide. Plant Cell. 2020, 
+361 
+32(12):3902-3920. doi: 10.1105/tpc.20.00766. 
+362 
+34. Lee U, Wie C, Fernandez BO, Feelisch M, Vierling E. Modulation of nitrosative stress 
+363 
+by S-nitrosoglutathione reductase is critical for thermotolerance and plant growth in 
+364 
+Arabidopsis. Plant Cell. 2008, 20:786-802. 
+365 
+35. León J. Protein tyrosine nitration in plant nitric oxide signaling. Front. Plant Sci. 2022, 
+366 
+13:859374  
+367 
+36. Li J, Shi C, Wang X, Liu C, Ding X, Ma P, Liao W. Hydrogen sulfide regulates the 
+368 
+activity of antioxidant enzymes through persulfidation and improves the resistance of 
+369 
+tomato seedling to Copper Oxide nanoparticles (CuO NPs)-induced oxidative stress. 
+370 
+Plant Physiol Biochem. 2020, 156:257-266. doi: 10.1016/j.plaphy.2020.09.020. 
+371 
+37. Li X, Zhang J, Lin W, Huang X, Wang Y, Shang JX, Liu X, Zhao L. S-nitrosylation of 
+372 
+PTP1 positively regulates MPK6 activity in response to salt or cold stress in 
+373 
+Arabidopsis thaliana. Plant J. 2026, 126(1):e70844. 
+374 
+38. Lin W, Shang J-X, Li X-Y, Zhou X-F, Zhao L-Q. Nitric oxide regulates multiple signal 
+375 
+pathways in plants via protein S-nitrosylation. Current Issues in Molecular Biology. 
+376 
+2025; 47(6):407.  
+377 
+39. Lin W, Wang Y, Li X, Huang X, Wang Y, Shang JX, Fan X, Kong J, Dong J, Zheng Y, Yu 
+378 
+J, Xu T, Yang H. S-nitrosylation of RABG3E positively regulates vesicle trafficking to 
+379 
+promote 
+salt 
+tolerance. 
+Plant 
+Cell 
+Environ. 
+2023, 
+46(12):3858-3870. 
+doi: 
+380 
+10.1111/pce.14714. 
+381 
+40. Lin Z, Yang J, Ma X, Zhang K, Li H, Zhou H, Xie Y. Hydrogen sulfide orchestrates 
+382 
+compartmentalized carbon flux reprogramming to sustain NADPH-dependent redox 
+383 
+homeostasis under salt stress in rice. Plant Physiol Biochem. 2026, 233:111245. 
+384 
+41. Liu M, Liu Z, An C, Li Q, Wang Q, Liu X, Geng X, Cao M, Liao W, Wang C. Role of 
+385 
+nitrate reductase, nitric oxide, and S-nitrosylation in salinity stress in plants: A 
+386 
+review. Int J Biol Macromol. 2026, 338(Pt 1):149738.  
+387 
+42. Liu M, Wei JW, Liu W, Gong B. S-nitrosylation of ACO homolog 4 improves ethylene 
+388 
+synthesis and salt tolerance in tomato. New Phytol. 2023, 239(1):159-173. doi: 
+389 
+10.1111/nph.18928.  
+390 
+43. Liu W, Wei JW, Shan Q, Liu M, Xu J, Gong B. Genetic engineering of drought- and 
+391 
+salt-tolerant tomato via Δ1-pyrroline-5-carboxylate reductase S-nitrosylation. Plant 
+392 
+Physiol. 2024, 195(2):1038-1052. doi: 10.1093/plphys/kiae156. 
+393 
+44. Liu Z, Rouhier N, Couturier J. Dual roles of reducing systems in protein persulfidation 
+394 
+and depersulfidation. Antioxidants (Basel). 2025, 14:101. 
+395 
+45. Luque C, García-Calderón M, Gotor C, Márquez AJ, Aroca A. Hydrogen sulfide 
+396 
+improves performance under suppressed photorespiration in Arabidopsis thaliana 
+397 
+and orchestrates molecular reprogramming to alleviate stress. Plant Stress, 2026, 
+398 
+19:101222. 
+399 
+46. Lv D, Huang T, Li Y, Zuo X, Wang J, Cai Z, Shen Y, Du H, Zhang W, Liu Z, Zhu L. 
+400 
+Regulation of ascorbic acid metabolism in postharvest navel orange fruit during 
+401 
+storage by exogenous hydrogen sulfide. Front Nutr. 2026;13:1760332. 
+402 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 22 =====
+SI of Current Opinion in Plant Biology 
+21 
+ 
+47. Ma Y, Peng F, Zhao R, Li Y, Qian J, Wang Y, Sun G, Meng J, Li J, Kang Z, Wang X. 
+403 
+Hydrogen sulfide promotes wheat immunity against stripe rust through TaATG6c 
+404 
+persulfidation. Stress Biol. 2026, 6:16. 
+405 
+48. Ma X, Zhai F, Geng L, Chen G, Li W, Rhaman MS, Zhang J, Xie Y, Zhou H. Hydrogen 
+406 
+Sulfide 
+Primes 
+bZIP68 
+via 
+Persulfidation 
+to 
+Enhance 
+Redox-Dependent 
+407 
+Transcription and Adaptation to Osmotic Stress in Rice. Int J Mol Sci. 2026, 
+408 
+27(9):3841. 
+409 
+49. Mata-Pérez C, Sánchez-Calvo B, Padilla MN, Begara-Morales JC, Luque F, Melguizo M, 
+410 
+Jiménez-Ruiz J, Fierro-Risco J, Peñas-Sanjuán A, Valderrama R, Corpas FJ, Barroso JB. 
+411 
+Nitro-Fatty Acids in Plant Signaling: Nitro-Linolenic Acid Induces the Molecular 
+412 
+Chaperone Network in Arabidopsis. Plant Physiol. 2016, 170:686-701.  
+413 
+*Provide the first evidence of the presence of nitro-fatty acids in higher plants and their signaling 
+414 
+properties under physiological and stress conditions. 
+415 
+50. Mohanty D, Peláez-Vico MÁ, Sinha R, Sánchez-Vicente MI, Lorenzo O, Mittler R. 
+416 
+Aboveground whole-plant live H2S imaging method sheds new light on the 
+417 
+relationships between H2S, NO, and H2O2. Redox Biol. 2026;94:104205. 
+418 
+51. Moseler A, Wagner S, Meyer AJ. Protein persulfidation in plants: mechanisms and 
+419 
+functions beyond a simple stress response. Biol Chem. 2024, 405:547-566 
+420 
+52. Muñoz-Vargas MA, López-Jaramillo J, González-Gordo S, Paradela A, Palma JM, Corpas 
+421 
+FJ. H2S-generating cytosolic L-cysteine desulfhydrase and mitochondrial D-cysteine 
+422 
+desulfhydrase from sweet pepper (Capsicum annuum L.) are regulated during fruit 
+423 
+ripening and by nitric oxide. Antioxid Redox Signal. 2023, 39:2-18. 
+424 
+53. Nagy P, Dóka É, Domán A, Paul BD, Balla J, Murphy MP, Winterbourn C, Radi R, 
+425 
+Snyder SH, Ignarro LJ, Sies H. Multifaceted roles for persulfide species in redox 
+426 
+chemical biology. Nat Chem Biol. 2026, 22(4):540-555.  
+427 
+54. Niu L, Zhao Y, Wang Q, Pu S, Yu J. Exogenous CaCl2 enhanced adventitious root 
+428 
+formation in Cucumis sativus L. under cadmium stress through protein S-
+429 
+nitrosylation. Plant Sci. 2026, 364:112905.  
+430 
+55. Pan L, Wu D, Cui X, Hui J, Huang J, Li R. Post-translational modification omics 
+431 
+reveals the early-stage response of Chinese cabbage to Cd stress. Environmental and 
+432 
+Experimental Botany 2026, 242:106319. 
+433 
+56. Ogata S, Matsunaga T, Jung M, Barayeu U, Morita M, Akaike T. Persulfide Biosynthesis 
+434 
+Conserved Evolutionarily in All Organisms. Antioxid Redox Signal. 2023;39(13-
+435 
+15):983-999. 
+436 
+57. Ramazi S, Zahiri J. Posttranslational modifications in proteins: resources, tools and 
+437 
+prediction methods. Database (Oxford). 2021, 2021:baab012. 
+438 
+58. Romero LC, Carrillo R, Montesinos-Pereira D, Luque C, Aroca A, Gotor C. Protein 
+439 
+persulfidation: A ubiquitous modification regulating a broad spectrum of biological 
+440 
+processes. J Exp Bot. 2025, doi: 10.1093/jxb/eraf464. 
+441 
+59. Sakamoto A, Ueda M, Morikawa H. Arabidopsis glutathione-dependent formaldehyde 
+442 
+dehydrogenase is an S-nitrosoglutathione reductase. FEBS Lett. 2002, 515:20-4. 
+443 
+60. Shen J, Zhang J, Zhou M, Zhou H, Cui B, Gotor C, Romero LC. Persulfidation-based 
+444 
+Modification of Cysteine Desulfhydrase and the NADPH Oxidase RBOHD Controls 
+445 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 23 =====
+SI of Current Opinion in Plant Biology 
+22 
+ 
+Guard Cell Abscisic Acid Signaling. Plant Cell. 2020, 32(4):1000-1017. doi: 
+446 
+10.1105/tpc.19.00826. 
+447 
+61. Sun Y, Zhang M, Geng M, Geng Z, Lu Z, Liu N, Liu Z, Zeng D, Yao G, Hu K, Zhang H. 
+448 
+Hydrogen sulfide interferes with ethylene biosynthesis and signaling pathway in 
+449 
+tomato by the mediation of SlERF.D2 persulfidation. Plant J. 2025;121(4):e70000.  
+450 
+62. Sytykiewicz H, Czerniewicz P, Ruszczyńska M, Kmieć K. The Interplay of nitric oxide 
+451 
+and nitrosative modifications in maize: implications for aphid herbivory and drought 
+452 
+stress. Int J Mol Sci. 2024, 25:11280. 
+453 
+63. Treffon P, Rossi J, Gabellini G, Trost P, Zaffagnini M, Vierling E. Quantitative proteome 
+454 
+profiling of a S-nitrosoglutathione reductase (GSNOR) null mutant reveals a new 
+455 
+class of enzymes involved in nitric oxide homeostasis in plants. Front Plant Sci. 2021, 
+456 
+12:787435. 
+457 
+64. Treffon P, Vierling E. Focus on nitric oxide homeostasis: direct and indirect enzymatic 
+458 
+regulation of protein denitrosation reactions in plants. Antioxidants (Basel). 2022, 
+459 
+11:1411. 
+460 
+65. Vignane T, Filipovic MR. Emerging Chemical Biology of Protein Persulfidation. 
+461 
+Antioxid Redox Signal. 2023, 39:19-39. doi: 10.1089/ars.2023.0352. Epub 2023 Jul 10. 
+462 
+Erratum in: Antioxid Redox Signal. 2023;39(7-9):620. 
+463 
+66. Wang D, Guo H, Gong X, Chen L, Lin H, Wang S, Feng J, Mu J, Liu L, Zhan N, Li Y, 
+464 
+Zuo J. Nitric oxide controls stomatal development and stress responses by inhibiting 
+465 
+MPK6 phosphorylation via S-nitrosylation in Arabidopsis. Dev Cell. 2025, 
+466 
+60(16):2163-2176.e4. doi: 10.1016/j.devcel.2025.04.001. 
+467 
+67. Wang D, Guo H, Gong X, Chen L, Lin H, Wang S, Feng T, Yi Y, Wang W, Yang S, Le J, 
+468 
+Zhang L, Zuo J. Nitric oxide controls stomatal development and stress responses by 
+469 
+inhibiting MPK6 phosphorylation via S-nitrosylation in Arabidopsis. Dev Cell. 2025, 
+470 
+60(16):2163-2176.e4. 
+471 
+68. Wang F, Sun C, Wu TW, Fu Y, Fan Y, Zhao S, Huang K, Pan Z, Lu Y, Han JR, Jia S, 
+472 
+Zeng L, Zhang S, Chen T, An S, Meng SS, Guo X, Li W, Lian H, Sun X, Hu J, Yang C, 
+473 
+Feng S, Li P, Du L, Liu X, Piatkevich KD, Zou Y. iPEX enables micrometre-resolution 
+474 
+deep spatial proteomics via tissue expansion. Nature. 2026, 649:505-514. 
+475 
+69. Wang J, Guo X, Chen Y, Liu T, Zhu J, Xu S, Vierling E. Maternal nitric oxide 
+476 
+homeostasis impacts female gametophyte development under optimal and stress 
+477 
+conditions. Plant Cell. 2024, 36:2201-2218. 
+478 
+70. Wang X, Liu C, Li T, Zhou F, Sun H, Li F, Ma Y, Jia H, Zhang X, Shi W, Gong C, Li J. 
+479 
+Hydrogen sulfide antagonizes cytokinin to change root system architecture through 
+480 
+persulfidation of CKX2 in Arabidopsis. New Phytol. 2024, 244:1377-1390. 
+481 
+71. Wang Z, Chen F, Xu Y, Zang Y, Chen W, Zang Y, Fang H. Functions and interactions 
+482 
+of important sulfur-containing metabolites in plant development and stress responses. 
+483 
+Plant Cell Physiol. 2026, doi: 10.1093/pcp/pcag045. 
+484 
+72. Wei JW, Liu M, Zhao D, Du P, Yan L, Liu D, Wang R, Gong B. Melatonin confers 
+485 
+saline-alkali tolerance in tomato by alleviating nitrosative damage and S-nitrosylation 
+486 
+of H+-ATPase 2. Plant Cell. 2025, 37(2):koaf035. doi: 10.1093/plcell/koaf035. 
+487 
+73. Wei L, Hou X, Feng L, Liu Y, Kong Y, Cui A, Zhang X, Cheng Z, Liu W, Luo Z, Liu X, 
+488 
+Zhang X, Guo S, Peng D, Wang Q, Hu X, Lu L, Li L. SERK3A and SERK3B could be 
+489 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 24 =====
+SI of Current Opinion in Plant Biology 
+23 
+ 
+S-nitrosylated and enhance the salt resistance in tomato seedlings. Int J Biol 
+490 
+Macromol. 2024, 273:133084. doi: 10.1016/j.ijbiomac.2024.133084. 
+491 
+74. Wulf T, Lutter F, Safavi-Rizi V. Modulation of GSNOR activity for improved NO 
+492 
+homeostasis and flood resilience in plants. Plant Signal Behav. 2026, 21:2616544. 
+493 
+75. Zhan N, Wang C, Chen L, Yang H, Feng J, Gong X, Ren B, Wu R, Mu J, Li Y, Liu J, Zuo 
+494 
+J. S-Nitrosylation Targets GSNO Reductase for Selective Autophagy during Hypoxia 
+495 
+Responses 
+in 
+Plants. 
+Mol 
+Cell. 
+2018, 
+71(1):142-154.e6. 
+doi: 
+496 
+10.1016/j.molcel.2018.05.024. 
+497 
+76. Zhang J, Aroca A, Hervás M, Navarro JA, Moreno I, Xie Y, Romero LC, Gotor C. 
+498 
+Analysis of sulfide signaling in rice highlights specific drought responses. J Exp Bot. 
+499 
+2024, 75(17):5130-5145. doi: 10.1093/jxb/erae249. 
+500 
+77. Zhang Q, Cai W, Ji TT, Ye L, Lu YT, Yuan TT. WRKY13 Enhances Cadmium 
+501 
+Tolerance by Promoting D-CYSTEINE DESULFHYDRASE and Hydrogen Sulfide 
+502 
+Production. Plant Physiol. 2020, 183:345-357. 
+503 
+78. Zhang T, Ma M, Chen T, Zhang L, Fan L, Zhang W, Wei B, Li S, Xuan W, Noctor G, Han 
+504 
+Y. Glutathione-dependent denitrosation of GSNOR1 promotes oxidative signalling 
+505 
+downstream of H2O2. Plant Cell Environ. 2020, 43:1175-1191. 
+506 
+79. Zhang W, Zhang J, Bo S, Zhan L, Xue Q, Fan L, Pei Y, Jin Z. H2S-Induced PAD3 
+507 
+Persulfidation Balances H2S-HCN Homoeostasis for Osmotic Stress Tolerance in 
+508 
+Arabidopsis. Plant Cell Environ. 2026, doi: 10.1111/pce.70593. 
+509 
+80. Zhao YQ, Hu KD, Yao GF, Wang SY, Peng XJ, Zhang H. A D-cysteine desulfhydrase, 
+510 
+SlDCD2, participates in tomato fruit ripening by modulating ROS homoeostasis and 
+511 
+ethylene biosynthesis. Hortic Res. 2023, 10(3):uhad014. 
+512 
+81. Zhou M, Liang X, Liu H, Liu T, Liu Y, Xue S. Hydrogen sulphide signalling in plants: 
+513 
+from persulfidation to metabolic regulation and stress response. Plant Cell Environ. 
+514 
+2026, doi: 10.1111/pce.70520. 
+515 
+82. Zhou M, Zhang J, Shen J, Zhou H, Zhao D, Gotor C, Romero LC, Fu L, Yang J, Zheng T, 
+516 
+Shen X, Wang Z, Xie Y. Hydrogen sulfide-linked persulfidation of ABI4 controls ABA 
+517 
+responses through the transactivation of MAPKKK18 in Arabidopsis. Mol Plant. 
+518 
+2021, 14(6):921-936. doi: 10.1016/j.molp.2021.03.007. 
+519 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+10 
+11 
+12 
+13 
+14 
+15 
+16 
+17 
+18 
+19 
+20 
+21 
+22 
+23 
+24 
+25 
+26 
+27 
+28 
+29 
+30 
+31 
+32 
+33 
+34 
+35 
+36 
+37 
+38 
+39 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+60 
+61 
+62 
+63 
+64 
+65 
+
+===== PAGE 25 =====
+Highlights  
+ 
+ 
+The gasotransmitters NO and H2S have signaling functions 
+ 
+Both molecules coordinate plant stress responses through dynamic redox-based 
+PTMs  
+ 
+S-nitrosation and persulfidation act in concert to fine-tune protein function and stress 
+signaling networks 
+ 
+Deciphering NO- and H2S- derived PTMs provides new opportunities to enhance 
+crop stress tolerance 
+Highlights

@@ -1,0 +1,608 @@
+%=====================================================================
+% SUBMISSION STATE — see submission/README.md (master checklist).
+% Pending items before submission live there: OSF preregistration DOI,
+% Zenodo archive DOI, ORCIDs, CRediT roles, Gate 3 validation results.
+%
+% AMENDMENT (2026-08-16): the Gate 3 validation design changed from a
+% preregistered blind MS cohort (200 candidates + 393 matched controls,
+% assayed by the Zhang Hua laboratory, SAP protocol co-signed 2026-08-13)
+% to a within-protein Cys-to-Ala mutation + functional-readout design
+% (25 assayable proteins; predicted rank-1 Cys vs within-protein rank-2..4
+% controls; protocol handed to the wet laboratory 2026-08-16, not yet
+% co-signed). Source: 2026-08-16_zhang_within_protein_validation_protocol.md.
+% This file has been realigned to describe the CURRENT design throughout;
+% the original blind-cohort design (Table power, Fig 7) is retained and
+% relabeled as superseded rather than deleted, per this project's own
+% no-backfitting / preserve-the-record discipline. Do not silently revert
+% this amendment note without re-checking which design is actually live.
+%
+% WORDING GATE (binding): this file must pass
+% verify_predictive_claims -> [] (hold decision) and
+% find_forbidden_external_claims -> [] after ANY edit. Negations of
+% forbidden phrases also trip the matchers; reword, never negate.
+%=====================================================================
+\documentclass[namedate,unnumsec,webpdf,contemporary,large]{oup-authoring-template}
+
+\graphicspath{{figures/}}
+\newcommand{\societylogo}{}
+
+% float-page glue: top-align floats so slack collects at the page bottom
+% (both single- and double-column registers; table*/figure* use the dbl set)
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{14pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\setlength{\@dblfptop}{0pt}
+\setlength{\@dblfpsep}{10pt}
+\setlength{\@dblfpbot}{0pt plus 1fil}
+\makeatother
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.95}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.60}
+\setlength{\abovecaptionskip}{8pt}
+\setlength{\belowcaptionskip}{4pt}
+
+% line numbers for review
+\usepackage[mathlines,switch]{lineno}
+
+\begin{document}
+
+\journaltitle{Plant Physiology}
+\DOI{DOI added during production}
+\copyrightyear{2026}
+\pubyear{2026}
+\vol{XX}
+\issue{x}
+\access{Advance access publication date added during production}
+\appnotes{Research Article}
+
+\firstpage{1}
+
+\title[Conservation and preregistered ranking of persulfidation sites]{Cross-kingdom conservation of persulfidation targeting and a frozen, preregistered framework for ranking candidate cysteine persulfidation sites in tomato (\textit{Solanum lycopersicum})}
+
+\author[1,2]{Guohao Lu}
+\author[1,2]{Yingchun Xia}
+\author[1,2]{Huichao Liu}
+\author[1,2]{Xiaolei Zhu}
+\author[1,2]{Shuai Yang}
+\author[3,4,$\ast$]{Ailian Zhou}
+\author[1,2,$\ast$]{Lichuan Gu}
+
+\address[1]{\orgdiv{School of Artificial Intelligence}, \orgname{Anhui Agricultural University}, \orgaddress{\street{Hefei}, \postcode{230036}, \country{China}}}
+\address[2]{\orgname{Anhui Province Key Laboratory of Intelligent Agricultural Technology and Equipment, Anhui Agricultural University}, \orgaddress{\street{Hefei}, \postcode{230036}, \country{China}}}
+\address[3]{\orgdiv{Agricultural Information Institute}, \orgname{Chinese Academy of Agricultural Sciences}, \orgaddress{\street{Beijing}, \postcode{100081}, \country{China}}}
+\address[4]{\orgname{Key Laboratory of Agricultural Blockchain Application, Ministry of Agriculture and Rural Affairs}, \orgaddress{\street{Beijing}, \postcode{100081}, \country{China}}}
+
+\corresp[$\ast$]{Corresponding authors. \href{mailto:zhouailian@caas.cn}{zhouailian@caas.cn}; \href{mailto:glc@ahau.edu.cn}{glc@ahau.edu.cn}}
+
+\received{Date}{0}{Year}
+\revised{Date}{0}{Year}
+\accepted{Date}{0}{Year}
+
+\abstract{Protein persulfidation, the hydrogen sulfide (H$_2$S)-driven conversion of cysteine thiols to persulfides, is an emerging redox mechanism whose cross-kingdom target conservation is untested and whose site-ranking tools rest on within-dataset performance claims alone. Integrating site-level evidence from four independent laboratory/chemistry/species datasets spanning two kingdoms (Arabidopsis, rice, tomato, and the fungus \textit{Magnaporthe oryzae}), we found co-persulfidation of orthologous PANTHER subfamilies enriched beyond chance in two of three deeply sampled pairwise comparisons after multiple-testing correction (2.2--3.0$\times$), and eight subfamilies, six of them redox or central-carbon-metabolism enzymes, targeted in Arabidopsis, rice, and \textit{Magnaporthe} alike (8.6$\times$ the independence expectation, permutation $p = 1.0\times10^{-4}$); tomato's comparisons were underpowered rather than negative. An apparent structural signature of persulfidated cysteines did not survive a model-confidence control: persulfidated and other cysteines differed systematically in AlphaFold predicted local distance difference test, and restricting to confident residues removed the signal in every species, a correction we report as a field caution. For candidate prioritization, a gated-fusion positive-unlabeled ranker led five alternatives under within-dataset splits (macro average precision 0.386 versus 0.047) and on a one-shot homology-cluster frozen test (+0.140 pooled average-precision difference over the strongest baseline, 95\% confidence interval 0.118--0.170). We froze the model, candidate table, and matched controls before any validation data existed and calibrated expectations against published sites; validation now compares the functional effect of mutating each protein's top-ranked cysteine against within-protein controls. All artifacts, negative results, and superseded designs are openly archived; the outcome will be reported regardless of direction.}
+% Abstract: ~250 words by an approximate script-based count after the
+% 2026-08-17 Gate-3 realignment edit (re-verify exactly against the PP
+% word processor at final submission; limit 250 per author instructions
+% checked 2026-08-14). Gate 3 outcome-sentence variants (A success /
+% B no-success) live in submission/README.md; insert before the final
+% abstract sentence once the within-protein validation result is in.
+% NOTE: submission/README.md's Gate 3 trigger sequence and OSF
+% preregistration content still describe the original blind-cohort
+% design as of 2026-08-17 and need the same realignment as this file
+% before submission (not yet done).
+
+\keywords{persulfidation, hydrogen sulfide, cysteine modification, cross-kingdom conservation, ortholog enrichment, preregistration, blind validation, candidate prioritization, tomato, positive-unlabeled learning}
+
+\keywords[Abbreviations]{AP, average precision; PU, positive-unlabeled; SAP, site-aware prioritization; SASA, solvent-accessible surface area; pLDDT, predicted local distance difference test}
+
+\maketitle
+
+\section{Introduction}
+
+Hydrogen sulfide (H$_2$S) has moved from toxic byproduct to recognized signaling molecule, where in plants it participates in stomatal movement, stress responses, autophagy, and fruit ripening \citep{aroca2015ssulfhydration,aroca2018h2s,zhang2021h2s,corpas2021modus}, and in fungi it modulates infectivity and autophagy in the rice blast pathogen \citep{hu2025magnaporthe}. Its best-characterized molecular mechanism is persulfidation (S-sulfhydration): the covalent conversion of reactive cysteine thiols to persulfides, which alters the activity, localization, or interactions of target proteins \citep{aroca2017persulfidation}. Site-resolved mapping of persulfidation relies on mass-spectrometric chemoproteomics, and each candidate site then requires individual experimental confirmation, a costly bottleneck that limits the field to a few large datasets in Arabidopsis \citep{aroca2017persulfidation,jurado2021nitrogen}, rice \citep{lin2026rice}, the fungal pathogen \textit{Magnaporthe oryzae} \citep{hu2025magnaporthe}, and, notably for this work, tomato, where a persulfidome linked to fruit ripening was reported by \citet{zhang2024kiae271} (hereafter ``kiae271'').
+
+Whether H$_2$S signaling recruits the same molecular targets across such divergent lineages, or whether persulfidation is instead an idiosyncratic overlay on each organism's own redox chemistry, has not been tested directly. Cross-study comparison of persulfidomes is complicated by the same non-independence that limits any single dataset: different laboratories use different tag-switch or biotin-based enrichment chemistries, different mass-spectrometry pipelines, and different depth of coverage, so a raw overlap of persulfidated proteins would conflate biological conservation with shared detection-method bias. A pairwise, ortholog-family-level enrichment test, asking whether the same protein families are independently rediscovered as persulfidation targets by unrelated laboratories, chemistries, and species rather than asking whether the same individual proteins or sites recur, is a standard comparative-genomics device for exactly this situation \citep{thomas2003panther,mi2021panther}, and gives an associational answer to the conservation question without requiring, or claiming, that a model trained on one species' sites predicts another's.
+
+Computational prioritization of candidate sites is an attractive complement to experimental mapping, but the available tooling is thin. Sul-BertGRU \citep{wei2025sulbertgru} is the only published persulfidation-specific deep-learning tool with retrievable training data, and our audit of that data found substantial label problems (1,003 of 2,705 entries have a non-cysteine center residue; 78\% human and 21\% Arabidopsis sequences; audit ledger in the project archive). The training data of pCysMod \citep{li2021pcysmod} could not be obtained, and iCysMod \citep{wang2021icysmod} is a database rather than a site-ranking tool. We found no other persulfidation-specific ranking tools in the literature as of our audit date (2026-08). More fundamentally, performance claims across the cysteine-PTM tool literature rest on within-dataset random splits, and blinded, preregistered experimental evaluation is essentially absent \citep{nosek2018preregistration,chambers2013registered}.
+
+We take the position that the correct response to this situation is not a larger claim but a stricter protocol. In an earlier phase of this project (fully archived in the project data archive), a sequence+structure positive-unlabeled (PU) ranker trained on Arabidopsis data carried a real but modest within-dataset signal (leave-study-out pooled AP 0.102, 2.1$\times$ base rate; both studies from one laboratory), and we froze a binding limitation statement that governs all outward text from this project:
+
+\begin{quote}
+Current public data are insufficient to demonstrate cross-study predictive ability; the model is used only for candidate organisation and hypothesis generation.
+\end{quote}
+
+This statement bounds what any model trained in this project may claim about cross-study prediction. It does not bear on, and is not relaxed by, the associational conservation evidence reported below, which asks a different question, carries its own explicitly stated power limits, and at no point uses a trained model to score one species from another. Accordingly, the present paper is organized around two complementary strands: an associational test of whether persulfidation targeting is itself a conserved biological signal, reported with equal weight given to where that test lacks power, and a candidate-organization tool whose value is decided by a preregistered validation experiment rather than by retrospective metrics.
+
+Here we report: (i) a family-level, associational test for conservation of persulfidation targeting across four independent lab/chemistry/species datasets spanning two kingdoms, together with an explicit accounting of where the test lacks power; (ii) a structural-context analysis of persulfidated cysteines that surfaces and then corrects a model-confidence confound in its own initial result, a methodological finding we report because it reverses part of our own earlier interpretation; (iii) a provenance-tracked, four-species site-level dataset and a literature-comparable within-dataset benchmark in which a gated-fusion PU ranker leads five alternatives; (iv) a fully frozen, hash-registered candidate release for the tomato proteome, comprising model weights, feature schema, inference script, ranked candidate table, and matched controls; (v) a one-shot strict-track frozen test, scored under audit, whose claim class is decided by a preregistered statistical gate; (vi) a pre-blind calibration against published tomato and Arabidopsis sites that sets realistic expectations for the validation test; and (vii) a preregistered within-protein site-localization validation design (predicted top-ranked cysteine versus within-protein control cysteines, assayed by Cys-to-Ala mutation and a functional readout), which amends an earlier preregistered blind MS-cohort design co-signed by the modeling and wet-laboratory partners on 2026-08-13; the amendment and its rationale are reported alongside the original design (Methods; project data archive). The validation result will be added to this manuscript and reported regardless of outcome. All negative results, exclusions, superseded designs, and intermediate artifacts are preserved in a public data archive.
+
+\section{Results}
+
+\subsection{Cross-kingdom conservation of persulfidation targeting among orthologous protein families}
+
+Persulfidation targeting could in principle be idiosyncratic to each species' own redox chemistry, or it could recur across independent lineages because H$_2$S signaling recruits conserved structural or functional features of its protein targets. We tested the second possibility directly, asking whether the same PANTHER ortholog subfamilies \citep{thomas2003panther,mi2021panther} are independently persulfidated in more than one of four site-level datasets spanning two kingdoms and four independent laboratory/chemistry/species combinations: Arabidopsis (350 persulfidated proteins, 390 sites, pooling PXD006140 and PXD024061) \citep{aroca2017persulfidation,jurado2021nitrogen}, rice (671 proteins, 929 sites, PXD072089) \citep{lin2026rice}, tomato (88 proteins, 99 sites, kiae271) \citep{zhang2024kiae271}, and \textit{Magnaporthe} (1,032 proteins, 1,482 sites, PXD063170) \citep{hu2025magnaporthe}. This test is associational: it asks whether persulfidation targeting recurs at the family level across independent studies, not whether a model trained on one species' sites predicts another's, and it does not bear on the predictive-value limitation described in the Introduction.
+
+For each of the six species pairs we restricted to PANTHER subfamilies present in both proteomes and tested, by one-sided Fisher's exact test, whether the number of subfamilies persulfidated in both species exceeded the count expected under independence given each species' own marginal rate (Table~\ref{tab:conservation}). Co-persulfidation was enriched in the Arabidopsis-rice pair (21 of 9,188 shared subfamilies persulfidated in both, 2.96$\times$ the expected 7.1, $p = 8.0\times10^{-6}$) and the rice-\textit{Magnaporthe} pair (67 of 2,320, 2.22$\times$ the expected 30.2, $p = 1.3\times10^{-12}$); both remained significant after Bonferroni correction for the six pairwise tests now run ($m=6$) and under the less conservative Benjamini-Hochberg procedure \citep{benjamini1995fdr}. The Arabidopsis-\textit{Magnaporthe} pair was enriched (1.58$\times$; $p = 0.017$) but reached significance only under Benjamini-Hochberg ($q = 0.035$), not Bonferroni ($p = 0.105$); both corrections are reported rather than the more favorable one alone. The three pairs involving tomato were not individually significant (Arabidopsis-tomato $p = 1.00$; rice-tomato $p = 0.46$; tomato-\textit{Magnaporthe} $p = 0.21$), but this reflects statistical power rather than an absence of signal: tomato persulfidates only 8 of the subfamilies it shares with any other species, so independence predicts fewer than one co-persulfidated family for every tomato pair (0.75, 1.53, and 1.62, respectively), and the smallest count that could have reached $p<0.05$ given tomato's own marginal rate was itself 3--5 families, a 3.1--4.0-fold enrichment over the independence expectation (Table~\ref{tab:conservation}). No tomato pair is interpretable as a negative result under this design.
+
+Beyond pairwise comparisons, we asked how many of the 2,012 subfamilies shared by all four proteomes are persulfidated in $k$ of the four species, against an independence null built from each species' own marginal rate (a Poisson-binomial mean per $k$), with a permutation test on each cumulative cell (10,000 replicates, seed 20260814; Fig.~\ref{fig:conservation}). Eight subfamilies were persulfidated in at least three of the four species, 8.6$\times$ the 0.93 expected under independence ($p = 1.0\times10^{-4}$); none was persulfidated in all four, consistent with the pairwise result that tomato's shallow ortholog coverage leaves the four-species cell without power (0.003 expected under independence; $p=1.00$). Six of these eight subfamilies are core redox, energy, or central-carbon-metabolism enzymes: fructose-1,6-bisphosphatase, glycine dehydrogenase and alanine-glyoxylate aminotransferase 1 (photorespiration), the 75-kDa subunit of mitochondrial complex I (NADH-ubiquinone oxidoreductase), sorbitol dehydrogenase, and L-threonate dehydrogenase; the two exceptions are a peptidyl-prolyl cis-trans isomerase D-related protein (a protein-folding catalyst) and RCC1 (regulator of chromosome condensation).
+
+\subsection{A model-confidence confound in the apparent structural context of persulfidation targeting}
+
+Within each persulfidated protein, we asked whether persulfidated cysteines occupy a different structural microenvironment than the protein's other cysteines, using two independent measurement pathways on AlphaFold models \citep{jumper2021alphafold}: a C$\alpha$ contact-number accessibility proxy, and whole-residue and thiol (S$\gamma$)-specific solvent-accessible surface area (SASA) computed by the Shrake-Rupley algorithm \citep{shrake1973sasa}. Both pathways initially agreed that persulfidated cysteines differ from other cysteines of the same protein in three of four species, but not in a single consistent direction: persulfidated cysteines were more buried in Arabidopsis (contact-proxy $p=0.10$; SASA not significant), rice (contact-proxy $p=0.011$; residue SASA $-5.22$ \AA$^2$, $p=0.001$), and \textit{Magnaporthe} (contact-proxy $p=0.001$; residue SASA $-4.34$ \AA$^2$, $p=0.001$), but more exposed in tomato (contact-proxy $p=0.001$; residue SASA $+11.31$ \AA$^2$, $p=0.013$; Fig.~\ref{fig:structural}). This direction reversal, present before any further test, was itself a reason for caution rather than a report of a directionally consistent structural signature.
+
+We therefore tested whether the apparent signal tracked AlphaFold model confidence rather than, or in addition to, solvent accessibility. Persulfidated cysteines differed systematically in per-residue pLDDT from the other cysteines of the same protein, and the direction of that difference matched the sign of the apparent SASA effect in every species: persulfidated cysteines sat in higher-confidence, more compactly predicted regions in rice ($+3.5$ pLDDT, $p=0.001$) and \textit{Magnaporthe} ($+3.5$, $p=0.001$), where they appeared more buried, and in lower-confidence, more extended regions in tomato ($-7.5$, $p=0.005$), where they appeared more exposed (Arabidopsis: $+1.8$, $p=0.10$). Restricting every comparison to residues with pLDDT $\geq 70$ removed the SASA signal in all four species (residue SASA difference: Arabidopsis $-0.30$ \AA$^2$, $p=0.86$; rice $-0.57$, $p=0.49$; tomato $+2.17$, $p=0.53$; \textit{Magnaporthe} $+0.12$, $p=0.85$; the S$\gamma$-specific metric showed the same pattern). The filter retains 81--97\% of persulfidated cysteines in Arabidopsis, rice, and \textit{Magnaporthe} (311 of 384, 875 of 922, and 1,350 of 1,387, respectively), so the collapse of the signal is not sample exhaustion; tomato retains 52 of 86 (61\%), and its confident-only null is correspondingly the weakest of the four. The contact-number proxy showed the same collapse in three species and one borderline exception (tomato, $p=0.035$, uncorrected for the twelve confidence-restricted comparisons now run), which was not corroborated by either SASA metric restricted to the identical residue set ($p=0.53$ and $p=0.72$). In tomato, a differential rather than steady-state dataset, essentially all of the naive effect traced to sites detected only in the wild type (the wt\_only class; pLDDT difference $-13.3$, $p=0.002$), and this stratum's own confidence-restricted SASA and contact-proxy effects were equally null (Methods).
+
+We conclude that the apparent burial/exposure signal was substantially, and in tomato's case primarily, a model-confidence artefact: mass spectrometry favors flexible, protease-accessible regions \citep{fontana2004proteolysis,mallick2007proteotypic}, and AlphaFold represents low-confidence regions as extended chain \citep{ruff2021alphafold}, so a species-specific bias in which regions are detected produces a species-specific bias in apparent accessibility with no shared underlying structural mechanism. We report this as a correction to our own earlier within-project interpretation (Methods) and as a general caution for structure-based analyses of proteomics-derived site sets: an accessibility comparison between detected and undetected residues is not informative unless restricted to, or explicitly conditioned on, model confidence.
+
+\subsection{A provenance-tracked, four-species site-level persulfidation dataset}
+
+The conservation and structural-context analyses above establish that persulfidation targeting is itself a partly conserved, mechanistically interpretable biological signal, and that testing it rigorously means auditing, not assuming, every structural feature used along the way -- a discipline we carry into the second strand of this paper: a model that ranks candidate persulfidation sites for experimental follow-up. We integrated site-level persulfidation evidence from four public studies into a single development panel in which each row is one cysteine site with full study provenance (accession, coordinate, label, source study): PXD006140 and PXD024061 (Arabidopsis; same laboratory and chemistry) \citep{aroca2017persulfidation,jurado2021nitrogen}, PXD072089 (rice; independent laboratory) \citep{lin2026rice}, PXD063170 (\textit{M. oryzae}) \citep{hu2025magnaporthe}, and the kiae271 tomato sites \citep{zhang2024kiae271}. The release training panel, defined as the union of the ten seed panels used for the literature-comparable benchmark (development split only; the strict-track frozen test partition was never touched), comprises 389,609 sites with 2,334 positives (SHA256 \texttt{30e432fb...}; Table~\ref{tab:scans} gives the per-species candidate-scan accounting; per-species positive counts in Supplemental Table S1). The panel is dominated by unlabeled sites (the PU learning setting \citep{elkan2008pu}): experimentally supported positives are certain, but the unlabeled pool mixes true negatives with sites never assayed.
+
+Two provenance facts shape everything downstream and are stated up front. First, the Arabidopsis positives come from one laboratory with one chemistry; no amount of modeling converts them into cross-study evidence. Second, all 79 tomato positives in the panel are the kiae271 published sites (verified by direct key overlap; see the calibration section below): the model has seen every published tomato site there is.
+
+\subsection{Within-dataset benchmark under literature-comparable splits}
+
+We benchmarked six models on the integrated dataset under the split protocol customary in the cysteine-PTM tool literature (random protein-level holdout, 10 seeds): the gated-fusion PU ranker (\texttt{structure\_ranker}), an ESM-2 linear head \citep{lin2023esm2}, XGBoost, a PU logistic baseline, random forest, and a retrained Sul-BertGRU \citep{wei2025sulbertgru}. The reported metric is macro average precision (AP) averaged over the three crop species (Arabidopsis, rice, tomato). This is a within-dataset evaluation; per the project's claim gate it supports exactly one claim class, quoted verbatim:
+
+\begin{quote}
+Literature-comparable within-dataset performance improvement.
+\end{quote}
+
+\texttt{structure\_ranker} achieved mean macro AP 0.386 $\pm$ 0.173 (10 seeds), 7.9$\times$ the mean of the best-per-seed baseline and leading on every seed (Table~\ref{tab:benchmark}; Fig.~\ref{fig:benchmark}). Per-species APs were 0.493 $\pm$ 0.267 (Arabidopsis), 0.647 $\pm$ 0.257 (rice), and 0.0185 $\pm$ 0.006 (tomato): tomato is by far the hardest species within the dataset, a point we return to below.
+
+A parallel homology-cluster-split track (5 folds; MMseqs2 clustering at 30\% identity \citep{steinegger2017mmseqs2,steinegger2018clustering}) holds a 20\% frozen test partition that was unlocked exactly once, under a hash-verified unlock procedure with a full run-manifest audit (269,801 sites, 566 positives). On this strict partition the frozen ranker scored per-species APs of 0.0996 (Arabidopsis; 125$\times$ base rate) and 0.1978 (rice; 133$\times$), against 0.0015 and 0.0023 for the strongest baseline; tomato scored 0.00032 (20 positives), below its own base rate (0.76$\times$) and below the baseline there, consistent with the tomato feature starvation quantified below. The preregistered cluster-bootstrap difference in pooled average precision against the strongest baseline was +0.140 (95\% CI 0.118--0.170; 10,000 replicates, seed 20260813). Because the per-species gate requires the difference to be positive in every crop species and the tomato difference was slightly negative ($-$0.0004), the preregistered statistical gate declines any stronger claim class; this result is reported as within-dataset, literature-comparable evidence only.
+
+None of these numbers enters any external-evidence claim. Their role in this paper is to justify the choice of the model that was frozen for validation.
+
+\subsection{A frozen, hash-registered candidate release for the tomato proteome}
+
+On 2026-08-13 we froze the complete candidate release \texttt{multispecies-\allowbreak v2-\allowbreak candidate-\allowbreak release-\allowbreak v1} (Table~\ref{tab:registry}): the trained model bundle (gated fusion of three sequence features, namely local hydrophobicity, cysteine density, and local positive charge density, plus an AlphaFold structure branch \citep{jumper2021alphafold} with explicit missingness masking; ESM and study-context branches disabled; hidden width 16, dropout 0.2, 200 epochs, learning rate 0.05, 16 MC-dropout passes; training seed fixed at the freeze date, not performance-selected), the feature schema, a self-contained inference script without training code, the ranked tomato candidate table, and matched controls.
+
+The candidate table scores 179,736 tomato cysteine sites: every cysteine of the SHA-pinned reference proteome except the 72,051 sites in the training panel. Scores span 0.0053--0.305 with an extremely flat top (the top 200 sites occupy 0.295--0.305), a direct consequence of positives being ${\sim}$0.6\% of training data (Fig.~\ref{fig:release}). A structural finding of the release: the frozen AlphaFold registry contains zero tomato accessions, so every tomato site is scored with the structure branch masked (coverage 0/179,736), even though 76 tomato AlphaFold structures exist in our working registry from the structural-context analysis above. This exclusion is deliberate, not an oversight, and is quantified rather than merely stated: those 76 structures resolve for kiae271 published-positive proteins only (76/88, 86\%), not a proteome-wide or random sample, and 73 of them still contain at least one non-panel candidate cysteine, together accounting for 580 of the 179,736 tomato candidate sites (0.32\%). Registering them would have made ``has an AlphaFold structure'' a near-deterministic proxy for ``sits on a protein with a published site'' among tomato candidates, leaking protein-level label information through a feature intended to be biologically orthogonal (full accounting in the exclusion ledger, entry EX-009). Diagnostic scans with the same frozen model quantify the contrast with the two species whose structure registries were built representatively rather than around known positives: Arabidopsis 284,387 candidates with 1.07\% structure coverage, rice 469,748 with 0.75\% (Table~\ref{tab:scans}). Tomato ranking in this release is therefore driven entirely by the three sequence features, a feature-starvation state that the pre-blind calibration below suggests is consequential, and that any future release may address only with a representatively sampled tomato structure registry, a new release number, and a new preregistration.
+
+For each of the top-200 candidates we pre-computed up to five matched controls (966 pairs total): non-panel tomato sites from the same structure-availability stratum, nearest by Euclidean distance in z-scored sequence-feature space, caliper 0.25 SD, no control reused (Fig.~\ref{fig:release}b). The original blind-cohort design used exactly the two nearest controls per candidate (rule locked at signing; the artifact itself is unchanged and remains archived). Four of the 200 candidates have fewer than two controls within the frozen caliper (three with zero, one with one); under that design these feature-extreme sites would have remained in the candidate arm, giving an assayed cohort of 200 candidates and 393 controls (593 sites), as recorded in the original co-signed analysis plan (Methods). The matched-control table itself is unaffected by the 2026-08-16 amendment to a within-protein validation design (Results) and remains part of the frozen release.
+
+\subsection{Pre-blind calibration: what published sites say to expect}
+
+Before any blind data existed, we scored the 99 coordinate-verified kiae271 sites with the frozen bundle and ranked them within the frozen candidate table, a mock-blind diagnostic registered in advance as expectation-setting only, with results reported regardless of direction. Three facts emerged (Fig.~\ref{fig:calibration}).
+
+First, a contamination fact: 79 of the 99 published sites are in the release training panel (100\% of the panel's tomato positives). They cannot inform expectations and are excluded from interpretation. Second, the clean subset: the 20 sites the model never saw rank moderately high, with 13/20 (65\%) above the candidate-table median (mean percentile 60.5; two-sided binomial against 50\% $p = 0.26$). Third, and most consequential for design: 0 of 99 published sites appear in the candidate table's top 2,000.
+
+The same pattern repeats on seven Arabidopsis control sites from laboratories independent of all training data (DES1, RBOHD, SnRK2.6/OST1, ABI4, ATG4a, AtG6PD6, and PAD3 \citep{zhang2026pad3}; all coordinate-verified against the v2 proteome): 5/7 above the median (mean percentile 56.7, range 4.9--85.8; two-sided $p = 0.45$).
+
+Our reading, stated before any validation data existed: the frozen model carries a genuine but mild mid-list ranking signal, and true sites do not concentrate at the list top. The enrichment we consider plausible a priori is modest (odds ratio on the order of 1.5--2.5), which directly motivated the original large-$K$ blind-cohort design and continues to set the expectation for the within-protein design that has since superseded it (below). This calibration is registered with full per-site data in the project archive; it changes nothing in the frozen artifacts, and it prevents the field (and us) from over-reading the validation outcome in either direction.
+
+\subsection{Amended validation design: within-protein site localization}
+
+An earlier preregistered design (blind MS assay of a 200-candidate, 393-control cohort; SAP protocol and analysis plan co-signed with the wet-laboratory partner on 2026-08-13) is superseded, effective 2026-08-16, by the within-protein design reported below; the original documents, hashes, and power analysis remain part of the archived record (Table~\ref{tab:power}, Fig.~\ref{fig:power}) rather than being deleted, and any future return to a blind-MS design would require its own new preregistration. The amendment reflects two considerations disclosed here rather than after the fact: the pre-blind calibration above showed the frozen tomato signal is mid-list and modest (Results, above), which favors a design that tests the model's strongest claim, localization within a known protein, over one that also requires proteome-wide blind discovery; and the wet-laboratory partner's available throughput was better matched to a mutation-based functional assay than to blinded MS confirmation at $K=200$.
+
+The amended design is fixed in a dated handoff protocol (\texttt{2026-08-16\_zhang\_within\_protein\_validation\_protocol.md} in the manuscript archive; not yet co-signed at the time of this draft). Core elements:
+
+\begin{itemize}
+\item \textbf{Task.} For a given protein, the frozen model ranks all of that protein's cysteines; the predicted site is the rank-1 cysteine. This directly tests within-protein site localization rather than proteome-wide discovery.
+\item \textbf{Cohort.} 25 assayable tomato proteins, selected fail-closed and before any functional result was seen: excluding uncharacterized, fragment, metallothionein, snakin-defensin, and cysteine-rich small-peptide entries, requiring $\geq3$ cysteines and $\geq150$ residues, then ranked by the model's rank-1 score and taking the top 25 (\texttt{zhang\_assayable\_proteins\_v2.tsv}, in the v2 candidate release). Each entry carries the predicted site, its $\pm10$-residue window, the rank-1/rank-2 score gap, and the full within-protein ranking. The wet laboratory selects, from this list, the subset with a tractable functional readout already available (e.g. ubiquitination or interaction assays for E3 ligases/RING domains, transcriptional activity for zinc fingers, inhibitory activity for protease inhibitors); the modeling side does not prescribe the readout.
+\item \textbf{Assay.} For each selected protein, the predicted rank-1 cysteine and 2--3 within-protein control cysteines (rank-2..4) are each mutated to alanine and compared to wild type on the same functional readout. Within-protein controls, rather than a separate unrelated-protein control, are used because Cys-to-Ala mutation can disrupt structure or function independently of any persulfidation role; only a predicted-site-specific effect against same-protein, same-fold-background controls supports site specificity over generic mutational damage.
+\item \textbf{Primary endpoint (preregistered).} Proportion of predicted-site mutants showing a functional phenotype (altered activity, interaction, or stability) versus the proportion for within-protein control mutants; one-sided Fisher exact test with odds ratio and 95\% CI. Success criteria, stated before any result is seen: $p < 0.05$, OR $> 1$, and at least 2 proteins showing a predicted-site phenotype.
+\item \textbf{Sensitivity analyses (preregistered).} (i) excluding proteins with fewer than 2 usable within-protein controls; (ii) relaxing the predicted site to rank-1 or rank-2 jointly, because the within-protein score gap is often small; (iii) excluding training-panel proteins.
+\item \textbf{Honest prior expectation.} The gold-standard within-protein controls give Hit@2 6/12 under the current release, and 4/17 on clean unseen kiae271 sites; the within-protein score gap is itself small (median on the order of $3\times10^{-5}$). A modest enrichment (OR on the order of 1.5--2.5, consistent with the pre-blind calibration above) is the design's own stated expectation, not a floor to be improved by post hoc filtering; protein selection makes proteins assayable, it does not make the model more accurate.
+\item \textbf{Claim scope.} A confirmed phenotype at the predicted site supports ``the site the model localizes within this protein is more likely to be functionally important,'' not ``this cysteine is persulfidated''; Cys-to-Ala phenotypes are not themselves persulfidation confirmation, and mass-spectrometric confirmation of the mutated sites is left to future work.
+\item \textbf{Reporting.} The primary analysis is reported regardless of outcome; all negative results, exclusions, and the superseded blind-cohort design are preserved with provenance; any deviation from the protocol requires a dated, recorded amendment, exactly as this one is.
+\end{itemize}
+
+%=====================================================================
+% GATE 3 PLACEHOLDER — DO NOT EDIT ANYTHING ABOVE THIS COMMENT AFTER
+% THE WET-LABORATORY RESULTS ARE RETURNED. The two sections below are
+% completed verbatim from the preregistered within-protein analysis
+% output (2026-08-16 protocol; see amendment note above).
+%=====================================================================
+\subsection{Within-protein validation primary endpoint}
+\textbf{[TO BE COMPLETED AT GATE 3]} Insert verbatim: the $2\times2$ table (predicted-site vs within-protein-control mutants $\times$ phenotype present/absent; Table~\ref{tab:primary}), Fisher exact $p$, odds ratio with 95\% CI, the number of proteins assayed and the number contributing a usable readout, and the per-protein predicted-site-vs-control outcome list. The abstract outcome sentence is pre-written in two variants (see source comments).
+
+\subsection{Sensitivity and secondary analyses}
+\textbf{[TO BE COMPLETED AT GATE 3]} Preregistered list (2026-08-16 protocol): (i) exclusion of proteins with fewer than 2 usable within-protein controls; (ii) relaxation of the predicted site to rank-1 or rank-2 jointly; (iii) exclusion of training-panel proteins.
+
+\subsection{Mechanism follow-up}
+\textbf{[OPTIONAL, Gate 4]} If at least one confirmed predicted-site phenotype is carried to a fuller mechanism chain (persulfidation confirmation by mass spectrometry, functional effect, plant phenotype, rescue), it will be reported here. Absence of this section does not affect the primary claim; its presence upgrades the journal path per the preregistered decision matrix.
+
+\section{Discussion}
+
+This paper reports two things about the underlying biology and three things about method. On biology: persulfidation targeting is conserved at the ortholog-family level more than chance predicts, and an apparent structural signature of that targeting does not survive a model-confidence control. On method, in the accompanying resource: everything is frozen before the experiment, expectations are calibrated before validation, and the validation outcome will be reported either way, including the recorded amendment from a blind MS cohort to a within-protein mutation design (Results). The two halves share one discipline: state the test before seeing its answer, and report what survives scrutiny rather than what would be most publishable.
+
+\textbf{Family-level conservation situates persulfidation targeting among a small, recurring set of redox and metabolic proteins, not a random draw from the proteome.} Two of three plant/fungal pairwise comparisons, and the eight-family three-species intersection, are robust to conservative multiple-testing correction, and the identity of the conserved targets, fructose-1,6-bisphosphatase, glycine dehydrogenase, mitochondrial complex I, and the sorbitol and L-threonate dehydrogenases among them, points toward central carbon and energy metabolism -- NAD(P)-dependent dehydrogenases, the NADH-oxidizing module of mitochondrial complex I, and Calvin-cycle and photorespiratory enzymes -- rather than an unstructured set of targets, consistent with proposals that H$_2$S signaling favors reactive, catalytically important thiols \citep{aroca2018h2s,corpas2021modus}. This is associational evidence: it says the same protein families are independently rediscovered as targets by unrelated laboratories and chemistries, not that persulfidation at any individual site is functionally important, and it does not license any claim that a model could predict site B from data on species A; the two questions are evaluated by entirely different tests in this paper, and only the second is subject to the limitation quoted in the Introduction. Tomato's absence from the significant pairs is a power statement, not a biological one: given tomato's own shallow rate of ortholog-level targeting (8 subfamilies among those shared with any other species), no attainable observation in any tomato pairwise test could have reached conventional significance, and we report the exact detection threshold alongside each null result (Table~\ref{tab:conservation}) rather than let the absence of $p<0.05$ read as an absence of conservation.
+
+\textbf{A model-confidence confound, caught and corrected within this study, is a methodological result in its own right.} Our first pass at the structural-context question found a directionally inconsistent, and in tomato reversed, accessibility signal that traced substantially to systematic differences in AlphaFold confidence between detected and undetected cysteines: higher confidence, and therefore artefactually lower predicted solvent accessibility \citep{ruff2021alphafold}, where mass spectrometry favored well-folded regions \citep{fontana2004proteolysis,mallick2007proteotypic}, and the opposite pattern in tomato's wild-type-only stratum. Restricting every comparison to confident residues removed the signal. We report this correction, rather than the more publishable naive result, because the same coupling between detection method and model confidence threatens any structure-based reanalysis of proteomics-derived site sets, and because it directly motivated a design decision in the modeling strand of this paper: the frozen tomato candidate release excludes a real, already-downloaded set of 76 AlphaFold structures specifically because those structures are drawn only from published-positive proteins and would have let ``has a structure'' leak protein-level label information into an ostensibly orthogonal feature (Results). The same audit discipline, freeze first, then test whether an apparent signal survives an obvious confound, runs through both halves of this paper.
+
+\textbf{The within-dataset signal is real but its meaning is bounded.} Under literature-comparable splits the gated-fusion PU ranker leads five alternatives by a wide margin (macro AP 0.386 vs ${\leq}$ 0.047), and its per-species pattern (Arabidopsis 0.49, rice 0.65, tomato 0.019) is itself informative: performance tracks the availability of training positives and structure features per species, not any intrinsic learnability of the modification. Tomato combines the fewest positives (79, all from one paper) with zero structure coverage and yields near-baseline within-dataset AP; on the one-shot strict frozen test its AP fell below the base rate, and the preregistered claim gate accordingly refused any stronger claim class. The model nonetheless ranks previously unseen confirmed tomato sites moderately above the list median, consistent with a weak but real sequence-context signal. We make no claim beyond these within-dataset statements; the mandated limitation quoted in the Introduction applies to every number in this paper.
+
+\textbf{Calibration before validation is the contribution other fields call registered reporting.} The mock-blind diagnostic told us, before any validation data existed, that the enrichment to expect is modest (prior OR ${\sim}$ 1.5--2.5) and that success criteria built on list-top concentration would be misleading. The consequence was not to tune the model, a path closed by the freeze, but to choose success criteria that a modest effect can credibly meet or fail \citep{nosek2018preregistration,chambers2013registered}, and, when the originally planned blind-MS design proved a worse match to the wet-laboratory partner's throughput than a within-protein mutation design, to amend the design rather than the model or the criteria (Results). We suggest this discipline, calibrating on published sites, sizing the experiment to the calibrated effect, and recording rather than hiding any subsequent design amendment, is reusable for any candidate-ranking tool in low-data proteomics.
+
+\textbf{Limitations.} (i) The ortholog-subfamily proxy used for the conservation test is coarse and incomplete: PANTHER subfamily calls cover 77.2\% of the Arabidopsis, 61.6\% of the rice, 68.0\% of the tomato, and 56.7\% of the UniProt-mapped \textit{Magnaporthe} proteome, so persulfidated proteins without a subfamily call are excluded from the comparison rather than assumed non-orthologous, and any true co-persulfidation confined to the uncovered fraction is invisible to this test. (ii) The conservation test's tomato cell is underpowered by construction rather than informative of absence (Results); a larger tomato persulfidome, rather than a joint multi-study panel of the kind available for the other three species, is the direct lever to close this gap and is registered as such in the project's deferred-improvement register. (iii) Tomato structure coverage in the frozen candidate release is 0\%, not because AlphaFold models are unavailable but because the 76 available tomato structures are drawn only from published-positive proteins and would leak protein-level labels (Results); the structure branch, which contributes within-dataset value for Arabidopsis and rice, is therefore inert for tomato, and ranking rests on three sequence features. (iv) All training positives trace to four studies, two of them same-laboratory Arabidopsis; the dataset cannot support cross-study statements, and none are made. (v) The flat score distribution (top-200 within 0.01 score units) means rank order at the very top is fragile to small perturbations; we mitigate by reporting enrichment over $K = 200$--300 rather than any small top-N. (vi) MC-dropout uncertainty is deterministic per device but not bit-identical across CPU and GPU (different random-number streams); point scores are bit-identical. (vii) The matched-control design controls sequence-feature strata, not expression, localization, or assay detectability; residual confounding by detectability cannot be excluded and is why process controls are part of the primary report. (viii) The PU setting treats unlabeled sites as negatives, so within-protein control cysteines chosen as ``negative'' can in principle themselves carry an undetected functional role; such contamination biases the enrichment estimate toward the null, making a positive validation result conservative. (ix) A validation failure would not falsify persulfidation biology; it would bound the usefulness of this feature set for this species, which is itself the published answer this design guarantees. (x) The within-protein design tests site localization within an already-implicated protein, not proteome-wide discovery; it is a strictly narrower claim than the original blind-cohort design would have supported, and this narrowing is itself part of what changed in the 2026-08-16 amendment (Results).
+
+\textbf{What happens next is already written down.} Per the preregistered decision matrix: validation success plus a complete mechanism chain upgrades the submission target; validation success without mechanism stands as a resource and validation report; validation failure with intact resources stands as the same, with the negative result reported as a primary finding. No model development is permitted to rescue a failed endpoint; any improved model (for example with tomato structure coverage, recalibrated scores, or expanded training positives, all registered in the project's deferred-improvement register) requires a new release number and a new preregistration.
+
+\section{Materials and Methods}
+
+\subsection{Cross-kingdom conservation analysis}
+
+Ortholog subfamily assignments were obtained from UniProt's PANTHER cross-reference field (\texttt{xref\_panther}) \citep{thomas2003panther,mi2021panther} for each species' reference proteome, retaining only subfamily-level calls (\texttt{PTHR\#\#\#\#\#:SF\#}); family-only calls without a subfamily were treated as unannotated, not as evidence of non-orthology. \textit{Magnaporthe} site-table accessions use EnsemblFungi gene identifiers; these were bridged to UniProt PANTHER calls via the \texttt{Gene Names (ORF)} field (12,656/12,755 MG8 proteins resolved, 99.2\%). For each of the six species pairs, subfamilies present in both proteomes were retained as the shared universe, and a $2\times2$ contingency table of ``family persulfidated in species A'' $\times$ ``family persulfidated in species B'' was tested by a one-sided Fisher's exact test computed exactly via the hypergeometric tail (no scipy dependency, consistent with the project's existing from-scratch statistics). Raw $p$-values across the six pairs were corrected by both Bonferroni (family-wise error rate) and Benjamini-Hochberg (false discovery rate); both are reported because they can, and here do, disagree on a borderline pair. The \emph{detectability floor} for a pair is the smallest co-persulfidated-family count that would have reached $p<0.05$ given that pair's own marginal counts, obtained by evaluating the same hypergeometric tail at increasing counts; it quantifies what a non-significant result could, at best, have detected. The $n$-way conservation spectrum counts, among subfamilies shared by all four proteomes, how many are persulfidated in $k$ of the four species, against an independence null in which each species' own persulfidated-family count is held fixed (a Poisson-binomial distribution over $k$ built from the four per-species rates); a permutation test on each cumulative cell ($k\geq2$, $k\geq3$, $k\geq4$) redraws each species' persulfidated-family set uniformly without replacement from the shared universe, holding that species' count fixed, and reports an add-one-smoothed $p$-value (10,000 replicates, seed 20260814). The three cumulative cells are nested and were treated as secondary to the pairwise layer; their significances also survive a three-cell Bonferroni correction. Family identities for the three- and four-species intersections were annotated manually via UniProt PANTHER entry names on one representative accession per family.
+
+\subsection{Structural context and model-confidence control}
+
+For every protein containing at least one persulfidated cysteine and a registered AlphaFold structure \citep{jumper2021alphafold}, structural features were extracted for every cysteine of that protein, not only the persulfidated ones, so that persulfidated and other cysteines of the same protein are compared under identical structural coverage. Two independent pathways were used: a C$\alpha$ contact-number accessibility proxy, and whole-residue and thiol (S$\gamma$)-atom-specific solvent-accessible surface area (SASA) computed by the Shrake-Rupley algorithm \citep{shrake1973sasa} on full heavy-atom geometry (92 sphere points). Both pathways were tested by a two-sided permutation test on the absolute mean difference between persulfidated and other cysteines (1,000 permutations, seed 0). The tomato AlphaFold structures used here (76, covering 76/88 kiae271 proteins) were initially registered at AlphaFold DB model version v4 and re-fetched at the current version (v6) to confirm the result was not a model-version artefact; the re-fetch reproduced every downstream statistic to the byte level. Per-residue model confidence (pLDDT) was compared between persulfidated and other cysteines of the same protein by an identical permutation test, and every accessibility comparison was then repeated after restricting to residues with pLDDT $\geq70$, using the pLDDT value already extracted for the contact-proxy pathway (the SASA pathway parses full heavy-atom geometry and does not itself read a confidence value). kiae271, a differential rather than steady-state dataset (\textit{SlLCD1}-overexpression versus wild-type tomato leaf; \citealt{zhang2024kiae271}), was additionally stratified by regulation class (H$_2$S-induced gain, wild-type-only, and both) and each class re-tested independently through the same pipeline, including the confidence-restricted retest.
+
+\subsection{Dataset assembly and provenance}
+
+Site-level positives and unlabeled cysteine pools were integrated from PXD006140 and PXD024061 (Arabidopsis) \citep{aroca2017persulfidation,jurado2021nitrogen}, PXD072089 (rice) \citep{lin2026rice}, PXD063170 (\textit{M. oryzae}) \citep{hu2025magnaporthe}, and kiae271 (tomato) \citep{zhang2024kiae271} into the multispecies v2 dataset with per-row study provenance; coordinates were verified against SHA-pinned reference proteomes (tomato reference proteome SHA256 \texttt{1a46efe6...}). The release training panel (389,609 rows, 2,334 positives; SHA256 \texttt{30e432fb...}) is the union of the ten literature-random-track seed panels, development split only. The exclusion ledger (8 entries) and the full input inventory (243 files with SHA256) are in the data archive.
+
+\subsection{Features}
+
+Per-site input features: three sequence-window features (local hydrophobicity, cysteine density, local positive charge density; exact definitions frozen in \texttt{feature\_schema.json}) and two AlphaFold-derived structure features \citep{jumper2021alphafold} (contact proxy, pLDDT) with an explicit availability mask; missing structures are masked, never mean-imputed. ESM-2 embeddings \citep{lin2023esm2} and study-context features are implemented but disabled in this release (\texttt{use\_esm = 0}, \texttt{use\_study\_context = false}).
+
+\subsection{Model and training}
+
+\texttt{structure\_ranker} is a gated-fusion PU ranker (branch encoders with gated combination; PU objective \citep{elkan2008pu}). Frozen hyperparameters: hidden width 16, dropout 0.2, 200 epochs, learning rate 0.05, holdout fraction 0.2, 16 MC-dropout passes for uncertainty. The model was trained once on the full panel with seed 20260813 (the freeze date; not performance-selected) on CUDA and serialized as \texttt{StructureRankerBundle} (PyTorch, pickle protocol 4, atomic write; SHA256 \texttt{ab8a0353...}). Point scores are bit-identical across CPU and GPU; MC-dropout uncertainty is deterministic per device. Code revision \texttt{d0c740c...} (full hash in \texttt{fit\_manifest.json}).
+
+\subsection{Benchmark protocols}
+
+The literature-comparable track used random protein-level holdout with 10 seeds and 6 models; the metric is macro AP across the three crop species (scripts and manifests in \texttt{results/experiments/multispecies\_v2\_global\_clusters\_v11/}). The strict track used 5-fold homology-cluster development splits (MMseqs2, 30\% identity \citep{steinegger2017mmseqs2,steinegger2018clustering}) with a 20\% frozen test partition locked under a hash-verified unlock procedure (\texttt{scripts/score\_v2\_frozen\_test.py} with a dated unlock record binding the config SHA256, code revision, and split SHA256) and a full run-manifest audit (training log, per-arm checkpoints, artifact hash re-verification). The frozen test was scored exactly once per the unlock record; the preregistered statistics are a cluster bootstrap (10,000 replicates, seed 20260813) of the pooled-primary difference in average precision against the strongest baseline, with the homology-robust claim upgrade requiring a positive bootstrap lower bound and a positive difference in every crop species.
+
+\subsection{Candidate table and matched controls}
+
+\texttt{scripts/generate\_tomato\_topk\_candidates.py} verifies the config against the frozen manifest, rebuilds and hash-verifies the training panel, scans every cysteine of the tomato reference proteome, drops panel sites, extracts features, scores with the frozen bundle, and writes the ranked table (179,736 rows; SHA256 \texttt{36963c71...}) plus matched controls (top-200 head; at most 5 controls per candidate; same structure-availability stratum; z-scored sequence-feature Euclidean distance; caliper 0.25 SD; no reuse; 966 pairs; SHA256 \texttt{c1752b07...}). Arabidopsis and rice diagnostic scans used the identical script with species-specific proteomes.
+
+\subsection{Pre-blind calibration}
+
+kiae271 sites (99 coordinate-verified) and 7 registered Arabidopsis independent-laboratory controls were scored with the frozen bundle and ranked by percentile within the respective frozen candidate tables (scripts \texttt{evaluate\_kiae271\_with\_release\_bundle.py}, \texttt{evaluate\_arabidopsis\_controls\_with\_release\_bundle.py}); two-sided binomial tests against the 50th percentile; panel overlap computed by exact key match. Per-site results are in the project archive (\texttt{results/known\_controls/}).
+
+\subsection{Original blind-cohort design (superseded)}
+
+The original preregistered primary test, retained here for the record (Results), was a one-sided Fisher exact test on the $2\times2$ (candidate/control $\times$ confirmed/not-confirmed) table over a 200-candidate, 393-control cohort, with the odds ratio and exact 95\% CI at $\alpha = 0.05$. Power was estimated by Monte-Carlo simulation (10,000 replicates per cell, seed 20260813) over a 144-cell grid of candidate count, control ratio, background confirmation rate, and assumed odds ratio (\texttt{scripts/compute\_release\_power\_table.py}; \texttt{power\_table.json}; Table~\ref{tab:power}, Fig.~\ref{fig:power}). This design was superseded 2026-08-16 by the within-protein validation design below.
+
+\subsection{Within-protein validation statistics (current design)}
+
+The preregistered primary test is a one-sided Fisher exact test on the $2\times2$ (predicted-site/within-protein-control $\times$ phenotype-present/absent) table, with the odds ratio and 95\% CI at $\alpha = 0.05$, over the 25 assayable proteins and their within-protein rank-2..4 controls (\texttt{zhang\_assayable\_proteins\_v2.tsv}). A formal power calculation for this small-$N$, per-protein design has not yet been run and is noted as an open item rather than assumed; the honest prior expectation (Results) is drawn directly from the existing within-protein Hit@2 rates on gold-standard and clean unseen controls, not from a simulation. Sensitivity analyses: exclusion of proteins with fewer than 2 usable controls; joint rank-1/rank-2 predicted-site definition; exclusion of training-panel proteins.
+
+\subsection{Reproducibility and wording governance}
+
+All frozen artifacts carry SHA256 sums (\texttt{SHA256SUMS}, \texttt{manifest.json}); \texttt{scripts/audit\_candidate\_release.py} re-verifies hashes, bundle determinism, document signatures, and wording-gate compliance in one pass. The environment lock (\texttt{pip freeze}) and reproduction command index are in the data archive. All outward text of this project, this manuscript included, must pass the project's automated wording gate before release. The preregistration record (SAP protocol and analysis plan, co-signed versions) is deposited with the Open Science Framework (DOI to be inserted at submission).
+
+\section{Data and code availability}
+
+Frozen release package: \texttt{results/\allowbreak candidates/\allowbreak multispecies\_\allowbreak v2\_\allowbreak candidate\_\allowbreak release\_\allowbreak v1/} (Table~\ref{tab:registry} hashes). Conservation and structural-context analysis outputs, with full per-pair and per-species statistics: \texttt{results/\allowbreak cross\_\allowbreak species\_\allowbreak conservation/\allowbreak conservation\_\allowbreak v2.json} and \texttt{structural\_\allowbreak context\_\allowbreak v2.json}. Data archive (inventories, exclusion ledger including the tomato-structure leakage accounting (EX-009), negative-results register including the model-confidence correction, environment lock): \texttt{results/\allowbreak data\_archive/\allowbreak nc\_entry\_gates/}. Code repository and permanent DOI (Zenodo) to be inserted at submission; the frozen state of the candidate release is pinned by the annotated git tag \texttt{gate0-release-v1-20260813}, and the conservation/structural-context analyses by the commit recorded in the archive's reproduction command index. Preregistration DOI to be inserted at submission. Proteomics data: PXD006140, PXD024061, PXD072089, PXD063170 (ProteomeXchange); kiae271 \citep{zhang2024kiae271}. Ortholog annotations: UniProt PANTHER cross-references for the four reference proteomes (Methods).
+
+\section{Author contributions}
+% [CONFIRM WITH ALL CO-AUTHORS BEFORE SUBMISSION]
+G.L.: conceptualization, methodology, software, formal analysis, data curation, visualization, writing -- original draft. Y.X.: data curation, validation, writing -- review and editing. H.L.: data curation, investigation, writing -- review and editing. X.Z.: methodology, writing -- review and editing. S.Y.: validation, writing -- review and editing. A.Z.: supervision, funding acquisition, writing -- review and editing. L.G.: supervision, project administration, funding acquisition, writing -- review and editing.
+
+\section{Funding}
+
+This work was supported by the National Natural Science Foundation of China (32472007, 62301006, and 62301008), the Natural Science Foundation of Anhui Province (2308085MF217 and 2308085QF202), and the Anhui Province Key Laboratory of Intelligent Agricultural Technology and Equipment.
+
+\section{Conflict of interest}
+
+The authors declare no conflict of interest.
+
+\section{Acknowledgements}
+
+We thank the Zhang Hua laboratory (South China Agricultural University) for its role as the wet-laboratory validation partner, for co-signing the original preregistered blind-cohort protocol, and for its ongoing engagement with the amended within-protein validation design, and the laboratories who deposited the public persulfidome datasets used here.
+
+\begin{thebibliography}{10}
+
+\bibitem[Aroca et al.(2015)]{aroca2015ssulfhydration}
+Aroca Á, Serna A, Gotor C, Romero LC.
+\newblock S-sulfhydration: a cysteine posttranslational modification in plant systems.
+\newblock {\em Plant Physiol}, 168: 334--342, 2015. doi:10.1104/pp.15.00009.
+
+\bibitem[Aroca et al.(2017)]{aroca2017persulfidation}
+Aroca Á, Benito JM, Gotor C, Romero LC.
+\newblock Persulfidation proteome reveals the regulation of protein function by hydrogen sulfide in diverse biological processes in Arabidopsis.
+\newblock {\em J Exp Bot}, 68: 4915--4927, 2017. doi:10.1093/jxb/erx294.
+
+\bibitem[Aroca et al.(2018)]{aroca2018h2s}
+Aroca Á, Gotor C, Romero LC.
+\newblock Hydrogen sulfide signaling in plants: emerging roles of protein persulfidation.
+\newblock {\em Front Plant Sci}, 9: 1369, 2018. doi:10.3389/fpls.2018.01369.
+
+\bibitem[Benjamini and Hochberg(1995)]{benjamini1995fdr}
+Benjamini Y, Hochberg Y.
+\newblock Controlling the false discovery rate: a practical and powerful approach to multiple testing.
+\newblock {\em J R Stat Soc Series B}, 57: 289--300, 1995. doi:10.1111/j.2517-6161.1995.tb02031.x.
+
+\bibitem[Chambers(2013)]{chambers2013registered}
+Chambers CD.
+\newblock Registered Reports: a new publishing initiative at Cortex.
+\newblock {\em Cortex}, 49: 609--610, 2013. doi:10.1016/j.cortex.2012.12.016.
+
+\bibitem[Corpas et al.(2021)]{corpas2021modus}
+Corpas FJ, González-Gordo S, Muñoz-Vargas MA, Rodríguez-Ruiz M, Palma JM.
+\newblock The modus operandi of hydrogen sulfide (H$_2$S)-dependent protein persulfidation in higher plants.
+\newblock {\em Antioxidants (Basel)}, 10: 1686, 2021. doi:10.3390/antiox10111686.
+
+\bibitem[Elkan and Noto(2008)]{elkan2008pu}
+Elkan C, Noto K.
+\newblock Learning classifiers from only positive and unlabeled data.
+\newblock In {\em Proceedings of the 14th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, pages 213--220, 2008. doi:10.1145/1401890.1401920.
+
+\bibitem[Fontana et al.(2004)]{fontana2004proteolysis}
+Fontana A, de Laureto PP, Spolaore B, Frare E, Picotti P, Zambonin M.
+\newblock Probing protein structure by limited proteolysis.
+\newblock {\em Acta Biochim Pol}, 51: 299--321, 2004. doi:10.18388/abp.2004\_3573.
+
+\bibitem[Hu et al.(2025)]{hu2025magnaporthe}
+Hu H, Qin M, Zhang J, Jiang J, Su Z, Guan L, et al.
+\newblock H$_2$S-mediated protein S-sulfhydration modulates infectivity and autophagy in the rice blast fungus.
+\newblock {\em Nat Commun}, 16: 6222, 2025. doi:10.1038/s41467-025-61582-8.
+
+\bibitem[Jumper et al.(2021)]{jumper2021alphafold}
+Jumper J, Evans R, Pritzel A, Green T, Figurnov M, Ronneberger O, et al.
+\newblock Highly accurate protein structure prediction with AlphaFold.
+\newblock {\em Nature}, 596: 583--589, 2021. doi:10.1038/s41586-021-03819-2.
+
+\bibitem[Jurado-Flores et al.(2021)]{jurado2021nitrogen}
+Jurado-Flores A, Romero LC, Gotor C.
+\newblock Label-free quantitative proteomic analysis of nitrogen starvation in Arabidopsis root reveals new aspects of H$_2$S signaling by protein persulfidation.
+\newblock {\em Antioxidants (Basel)}, 10: 508, 2021. doi:10.3390/antiox10040508.
+
+\bibitem[Li et al.(2021)]{li2021pcysmod}
+Li S, Yu K, Wu G, Zhang Q, Wang P, Zheng J, Liu Z-X, Wang J, Liu Y, Yu J.
+\newblock pCysMod: prediction of multiple cysteine modifications based on deep learning framework.
+\newblock {\em Front Cell Dev Biol}, 9: 617366, 2021. doi:10.3389/fcell.2021.617366.
+
+\bibitem[Lin et al.(2023)]{lin2023esm2}
+Lin Z, Akin H, Rao R, Hie B, Zhu Z, Lu W, et al.
+\newblock Evolutionary-scale prediction of atomic-level protein structure with a language model.
+\newblock {\em Science}, 379: 1123--1130, 2023. doi:10.1126/science.ade2574.
+
+\bibitem[Lin et al.(2026)]{lin2026rice}
+Lin Z, Zhou M, Ma X, Li M, Fu L, Li H, Liu Y, Zhu F-Y, Van Montagu M, Van Breusegem F, Huang J, Xie Y.
+\newblock H$_2$S-mediated protein persulfidation regulates redox metabolic flux underlying salt-stress resilience in rice.
+\newblock {\em Proc Natl Acad Sci USA}, 123: e2608150123, 2026. doi:10.1073/pnas.2608150123.
+
+\bibitem[Mallick et al.(2007)]{mallick2007proteotypic}
+Mallick P, Schirle M, Chen SS, Flory MR, Lee H, Martin D, Ranish J, Raught B, Schmitt R, Werner T, Kuster B, Aebersold R.
+\newblock Computational prediction of proteotypic peptides for quantitative proteomics.
+\newblock {\em Nat Biotechnol}, 25: 125--131, 2007. doi:10.1038/nbt1275.
+
+\bibitem[Mi et al.(2021)]{mi2021panther}
+Mi H, Ebert D, Muruganujan A, Mills C, Albou L-P, Mushayamaha T, Thomas PD.
+\newblock PANTHER version 16: a revised family classification, tree-based classification tool, enhancer regions and extensive API.
+\newblock {\em Nucleic Acids Res}, 49: D394--D403, 2021. doi:10.1093/nar/gkaa1106.
+
+\bibitem[Nosek et al.(2018)]{nosek2018preregistration}
+Nosek BA, Ebersole CR, DeHaven AC, Mellor DT.
+\newblock The preregistration revolution.
+\newblock {\em Proc Natl Acad Sci USA}, 115: 2600--2606, 2018. doi:10.1073/pnas.1708274114.
+
+\bibitem[Ruff and Pappu(2021)]{ruff2021alphafold}
+Ruff KM, Pappu RV.
+\newblock AlphaFold and implications for intrinsically disordered proteins.
+\newblock {\em J Mol Biol}, 433: 167208, 2021. doi:10.1016/j.jmb.2021.167208.
+
+\bibitem[Shrake and Rupley(1973)]{shrake1973sasa}
+Shrake A, Rupley JA.
+\newblock Environment and exposure to solvent of protein atoms. Lysozyme and insulin.
+\newblock {\em J Mol Biol}, 79: 351--371, 1973. doi:10.1016/0022-2836(73)90011-9.
+
+\bibitem[Steinegger and Söding(2017)]{steinegger2017mmseqs2}
+Steinegger M, Söding J.
+\newblock MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets.
+\newblock {\em Nat Biotechnol}, 35: 1026--1028, 2017. doi:10.1038/nbt.3988.
+
+\bibitem[Steinegger and Söding(2018)]{steinegger2018clustering}
+Steinegger M, Söding J.
+\newblock Clustering huge protein sequence sets in linear time.
+\newblock {\em Nat Commun}, 9: 2542, 2018. doi:10.1038/s41467-018-04964-5.
+
+\bibitem[Thomas et al.(2003)]{thomas2003panther}
+Thomas PD, Campbell MJ, Kejariwal A, Mi H, Karlak B, Daverman R, Diemer K, Muruganujan A, Narechania A.
+\newblock PANTHER: a library of protein families and subfamilies indexed by function.
+\newblock {\em Genome Res}, 13: 2129--2141, 2003. doi:10.1101/gr.772403.
+
+\bibitem[Wang et al.(2021)]{wang2021icysmod}
+Wang P, Zhang Q, Li S, Cheng B, Xue H, Wei Z, Shao T, Liu Z-X, Xue Y, Yu J.
+\newblock iCysMod: an integrative database for protein cysteine modifications in eukaryotes.
+\newblock {\em Brief Bioinform}, 22: bbaa400, 2021. doi:10.1093/bib/bbaa400.
+
+\bibitem[Wei et al.(2025)]{wei2025sulbertgru}
+Wei X, Ning Q, Che K, Liu Z, Li H, Guo S.
+\newblock Sul-BertGRU: an ensemble deep learning method integrating information entropy-enhanced BERT and directional multi-GRU for S-sulfhydration sites prediction.
+\newblock {\em Bioinformatics}, 41: btaf078, 2025. doi:10.1093/bioinformatics/btaf078.
+
+\bibitem[Zhang et al.(2021)]{zhang2021h2s}
+Zhang J, Zhou M, Zhou H, Zhao D, Gotor C, Romero LC, Shen J, Ge Z, Zhang Z, Shen W, Yuan X, Xie Y.
+\newblock Hydrogen sulfide, a signaling molecule in plant stress responses.
+\newblock {\em J Integr Plant Biol}, 63: 146--160, 2021. doi:10.1111/jipb.13022.
+
+\bibitem[Zhang et al.(2024)]{zhang2024kiae271}
+Zhang M, Hu K, Ma L, Geng M, Zhang C, Yao G, Zhang H.
+\newblock Persulfidation and phosphorylation of transcription factor SlWRKY6 differentially regulate tomato fruit ripening.
+\newblock {\em Plant Physiol}, 196: 210--227, 2024. doi:10.1093/plphys/kiae271.
+
+\bibitem[Zhang et al.(2026)]{zhang2026pad3}
+Zhang W, Zhang J, Bo S, Zhan L, Xue Q, Fan L, Pei Y, Jin Z.
+\newblock H$_2$S-induced PAD3 persulfidation balances H$_2$S--HCN homoeostasis for osmotic stress tolerance in Arabidopsis.
+\newblock {\em Plant Cell Environ}, 49: 5965--5978, 2026. doi:10.1111/pce.70593.
+
+\end{thebibliography}
+
+\clearpage
+
+\section*{Tables}
+
+\begin{table*}[!t]
+\caption{Pairwise cross-kingdom conservation of persulfidation targeting among shared PANTHER ortholog subfamilies (one-sided Fisher exact test; Bonferroni and Benjamini-Hochberg correction over the $m=6$ pairs). Detectability floor: the smallest co-persulfidated-family count that would have reached $p<0.05$ given that pair's own marginal counts, with the fold enrichment that count represents.}
+\label{tab:conservation}
+\begin{tabular}{@{}lrrrrrrrl@{}}
+\toprule
+Species pair & Shared & Co-pers. & Expected & Fold & $p$ & Bonferroni & BH $q$ & Detectability floor \\
+\midrule
+Arabidopsis $\times$ Rice & 9,188 & 21 & 7.11 & 2.96$\times$ & 8.0e-06 & 4.8e-05 & 2.4e-05 & 13 (1.8$\times$) \\
+Rice $\times$ \textit{Magnaporthe} & 2,320 & 67 & 30.22 & 2.22$\times$ & 1.3e-12 & 7.9e-12 & 7.9e-12 & 39 (1.3$\times$) \\
+Arabidopsis $\times$ \textit{Magnaporthe} & 2,204 & 20 & 12.63 & 1.58$\times$ & 1.7e-02 & 1.0e-01 & 3.5e-02 & 19 (1.5$\times$) \\
+Arabidopsis $\times$ Tomato & 9,976 & 0 & 0.75 & 0$\times$ & 1.00 & 1.00 & 1.00 & 3 (4.0$\times$) \\
+Rice $\times$ Tomato & 9,243 & 2 & 1.53 & 1.31$\times$ & 4.6e-01 & 1.00 & 5.5e-01 & 5 (3.3$\times$) \\
+Tomato $\times$ \textit{Magnaporthe} & 2,186 & 3 & 1.62 & 2.37$\times$ & 2.1e-01 & 1.00 & 3.1e-01 & 5 (3.1$\times$) \\
+\botrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+\caption{$n$-way conservation spectrum: shared PANTHER subfamilies (universe = 2,012, present in all four proteomes) persulfidated in at least $k$ of the four species, against a Poisson-binomial independence null built from each species' own marginal rate. Permutation $p$: 10,000 replicates, seed 20260814, add-one smoothed.}
+\label{tab:spectrum}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Persulfidated in $\geq k$ of 4 species & Observed & Expected (independence) & Permutation $p$ \\
+\midrule
+$k \geq 2$ & 74 & 43.24 & 1.0e-04 \\
+$k \geq 3$ & 8 & 0.93 & 1.0e-04 \\
+$k \geq 4$ & 0 & 0.003 & 1.00 \\
+\botrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+\caption{Proteome-wide candidate scans with the frozen model.}
+\label{tab:scans}
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Species & Role & Panel sites excluded & Candidate sites & Structure-covered & Max score \\
+\midrule
+Tomato (\textit{S. lycopersicum}) & frozen release & 72,051 & 179,736 & 0 (0\%) & 0.3053 \\
+Arabidopsis & diagnostic & 111,496 & 284,387 & 3,050 (1.07\%) & 0.3615 \\
+Rice (\textit{O. sativa}) & diagnostic & 185,379 & 469,748 & 3,539 (0.75\%) & 0.3614 \\
+\botrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+\caption{Within-dataset literature-comparable benchmark (macro average precision over the three crop species, 10 seeds). Claim class for this table (verbatim, binding): ``Literature-comparable within-dataset performance improvement.'' These numbers are within-dataset evidence only.}
+\label{tab:benchmark}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Model & Mean & SD & Min & Max \\
+\midrule
+\texttt{structure\_ranker} & 0.386 & 0.173 & 0.166 & 0.554 \\
+ESM-2 linear head & 0.047 & 0.007 & 0.037 & 0.055 \\
+XGBoost & 0.036 & 0.008 & 0.030 & 0.059 \\
+PU logistic & 0.035 & 0.007 & 0.028 & 0.050 \\
+Random forest & 0.030 & 0.004 & 0.026 & 0.038 \\
+Sul-BertGRU (retrained) & 0.021 & 0.002 & 0.018 & 0.024 \\
+\botrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+\caption{Frozen artifact registry (release \texttt{multispecies-\allowbreak v2-\allowbreak candidate-\allowbreak release-\allowbreak v1}, 2026-08-13).}
+\label{tab:registry}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Artifact & SHA256 \\
+\midrule
+Model bundle (\texttt{structure\_ranker\_bundle.pt}) & \texttt{ab8a03532898726b765d3da18fe34736e7920cfed82134ec06195dc21b156cd3} \\
+Fit manifest & \texttt{caf3c7f4d82b7dc88836bc2c16a48f5209ef95ac600bc0fbfc7a8722d07f8dbb} \\
+Training panel (389,609 rows) & \texttt{30e432fb3c558c69e92362fb36d26abe1dee0f25bd23df417ad40886449156cd} \\
+Tomato candidate table (179,736 rows) & \texttt{36963c7144792752a6d6b6e197da6c24fc0c8844d9540d8b63cf861dc7b7e949} \\
+Matched controls (966 pairs) & \texttt{c1752b071e4413b17e41e4206d013c3c32759a6d7825da6cc299520abaefb404} \\
+Frozen experiment config (v11) & \texttt{ed8b76bef0b201bb669322ff5610e84c42ba422aa8cf5b9eb274427325f7dbaf} \\
+Tomato reference proteome & \texttt{1a46efe6461b239ec80b915a4c23ea39bbe39e37d43f9cc7c38b648523efca0f} \\
+Training seed & \texttt{20260813} \\
+Code revision & \texttt{d0c740cc24a0ce81157d23921f7875ea5f862606} \\
+\botrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+\caption{\textbf{[Original blind-cohort design, superseded 2026-08-16 by the within-protein design; retained for the record.]} Preregistered design options and power (2\% background confirmation rate; one-sided Fisher exact test, $\alpha = 0.05$; 10,000 simulations per cell, seed 20260813). The full 144-cell grid is reported unfiltered in \texttt{power\_table.json} per the original analysis plan.}
+\label{tab:power}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Design & $K$ & Controls/candidate & Total sites & Power OR = 2 & Power OR = 3 & Power OR = 5 \\
+\midrule
+Recommended & 200 & 2 & 600 & 0.305 & 0.677 & 0.978 \\
+Escalation (if throughput allows) & 300 & 2 & 900 & --- & 0.850 & --- \\
+Minimum viable & 200 & 1 & 400 & --- & 0.524 & --- \\
+\botrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+\caption{\textbf{[GATE 3 PLACEHOLDER]} Primary $2\times2$ table, within-protein validation design: predicted-site vs within-protein-control mutants $\times$ phenotype present/absent, with Fisher exact $p$ and odds ratio (95\% CI).}
+\label{tab:primary}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Arm & Phenotype present & Phenotype absent \\
+\midrule
+Predicted-site mutants ($n \leq 25$, one per assayed protein) & [Gate 3] & [Gate 3] \\
+Within-protein control mutants (rank-2..4, 2--3 per protein) & [Gate 3] & [Gate 3] \\
+\botrule
+\end{tabular}
+\end{table*}
+
+\clearpage
+
+\section*{Figure legends}
+
+\begin{itemize}
+\item[\textbf{Fig.~\ref{fig:conservation}.}] \textbf{Cross-kingdom conservation of persulfidation targeting.} (a) Fold enrichment of co-persulfidated PANTHER subfamilies for each of the six species pairs (Table~\ref{tab:conservation}), with detectability floor annotated; filled points, significant after Bonferroni correction; open points, significant only under Benjamini-Hochberg correction or not significant. (b) Observed versus independence-expected number of shared subfamilies persulfidated in at least $k$ of the four species ($k=2$ and $k=3$ as bars; $k=4$, for which no family qualifies, annotated below the axis), with permutation-test $p$-values (Table~\ref{tab:spectrum}). (c) Identity of the eight subfamilies persulfidated in at least three species (grey points: the two exceptions outside redox and central metabolism).\par\textbf{Alt text:} Panel (a) plots fold enrichment of co-persulfidated PANTHER subfamilies for each of six species pairs, with detectability floors marked and filled versus open points indicating multiple-testing significance. Panel (b) bars compare observed and independence-expected numbers of shared subfamilies persulfidated in at least k of four species, with permutation p-values. Panel (c) lists the eight subfamilies persulfidated in at least three species.
+\item[\textbf{Fig.~\ref{fig:structural}.}] \textbf{A model-confidence confound in the structural context of persulfidation targeting.} (a) Naive mean difference (persulfidated vs other cysteines of the same protein) for the contact-number proxy and residue/S$\gamma$ SASA, by species; sign and significance differ across species. (b) Per-residue AlphaFold pLDDT difference (persulfidated vs other cysteines); its sign tracks the naive accessibility signal in every species. (c) The same accessibility comparisons restricted to pLDDT $\geq70$ residues; the signal is removed in all four species.\par\textbf{Alt text:} Panels compare persulfidated and other cysteines of the same protein across four species. Panel (a) shows naive mean differences for a contact-number proxy and solvent-accessible surface area. Panel (b) shows per-residue AlphaFold pLDDT differences. Panel (c) repeats the accessibility comparisons restricted to residues with pLDDT 70 or greater, where the signal disappears in all four species.
+\item[\textbf{Fig.~\ref{fig:pipeline}.}] \textbf{Study design and gate pipeline.} Every stage of the study is frozen or preregistered before any validation data exist: dataset assembly, within-dataset benchmark, SHA256-registered freeze with co-signature, pre-blind calibration, OSF preregistration, and the validation experiment (originally a blind MS cohort, amended 2026-08-16 to a within-protein mutation design; Results). The binding no-backfitting rule and the preregistered decision matrix are shown below the pipeline.\par\textbf{Alt text:} A six-stage left-to-right pipeline diagram, from dataset assembly and benchmark through hash-registered freeze, pre-blind calibration, preregistration, and the validation experiment, each stage labeled as frozen or preregistered; below, the binding no-backfitting rule and the preregistered decision matrix.
+\item[\textbf{Fig.~\ref{fig:benchmark}.}] \textbf{Within-dataset literature-comparable benchmark.} (a) Per-seed macro average precision (AP; mean over the three crop species) for six models under random protein-level holdout (10 seeds; dots, per-seed values; horizontal bar, mean; whiskers, $\pm$1 SD). (b) Per-species AP of the frozen ranker across seeds; dashed red lines mark each species' positive base rate. All values are within-dataset evidence.\par\textbf{Alt text:} Panel (a) shows per-seed macro average precision for six models under random protein-level holdout, with mean and plus-minus one standard deviation marked. Panel (b) shows per-species average precision of the frozen ranker with dashed base-rate reference lines.
+\item[\textbf{Fig.~\ref{fig:release}.}] \textbf{Frozen tomato candidate release.} (a) Score distribution of all 179,736 candidate sites (log-scale counts); the red band marks the top 200, and the inset shows the flat score head across ranks 1--200. (b) Distance distribution of the 966 matched control--candidate pairs in z-scored sequence-feature space; the dashed line marks the frozen 0.25 SD caliper.\par\textbf{Alt text:} Panel (a) plots the score distribution of 179,736 tomato candidate sites on a log scale, highlights the top-200 band in red, and insets the flat score head across ranks 1 to 200. Panel (b) plots the distance distribution of 966 matched control--candidate pairs in z-scored sequence-feature space with the 0.25 standard-deviation caliper marked.
+\item[\textbf{Fig.~\ref{fig:calibration}.}] \textbf{Pre-blind calibration against published sites.} (a) Percentile ranks of the 20 kiae271 tomato sites the frozen model never saw within the frozen tomato candidate table (blue, above median; grey, below). 79 of 99 published sites sit in the training panel and are excluded from interpretation; 0 of 99 appear in the candidate-table top 2,000. (b) Percentile ranks of 7 Arabidopsis control sites from laboratories independent of all training data. Dashed red lines mark the table median.\par\textbf{Alt text:} Two dot plots of percentile ranks within the frozen candidate tables: 20 kiae271 tomato sites never seen in training, and 7 independent Arabidopsis control sites; dashed red lines mark the table median.
+\item[\textbf{Fig.~\ref{fig:power}.}] \textbf{Power landscape of the original, superseded blind-cohort design.} Simulated power (one-sided Fisher exact test, $\alpha = 0.05$) over candidate count $K$ and assumed odds ratio at the 2\% background confirmation rate, shown for 1, 2, and 5 controls per candidate (10,000 simulations per cell, seed 20260813). The white frame marks the design that was recommended before the 2026-08-16 amendment ($K = 200$, 2 controls); retained for the record (Results, Methods).\par\textbf{Alt text:} Simulated statistical power for a one-sided Fisher exact test across candidate count and assumed odds ratio, shown for 1, 2, and 5 controls per candidate, for the original superseded blind-cohort design; a white frame marks the previously recommended 200-candidate two-control design.
+\item[\textbf{Figure 8.}] \textbf{[GATE 3 PLACEHOLDER] Within-protein validation result.} Phenotype rate in predicted-site mutants vs within-protein control mutants with exact confidence intervals, and the per-protein outcome list.
+\end{itemize}
+
+\clearpage
+
+\begin{figure*}[!t]
+\center{\includegraphics[width=\textwidth]{fig1_conservation.pdf}}
+\caption{Cross-kingdom conservation of persulfidation targeting.}
+\label{fig:conservation}
+\end{figure*}
+
+\begin{figure*}[!t]
+\center{\includegraphics[width=\textwidth]{fig2_structural_context.pdf}}
+\caption{A model-confidence confound in the structural context of persulfidation targeting.}
+\label{fig:structural}
+\end{figure*}
+
+\begin{figure*}[!t]
+\center{\includegraphics[width=\textwidth]{fig3_design_pipeline.pdf}}
+\caption{Study design and gate pipeline.}
+\label{fig:pipeline}
+\end{figure*}
+
+\begin{figure*}[!t]
+\center{\includegraphics[width=\textwidth]{fig4_benchmark.pdf}}
+\caption{Within-dataset literature-comparable benchmark.}
+\label{fig:benchmark}
+\end{figure*}
+
+\begin{figure*}[!t]
+\center{\includegraphics[width=0.94\textwidth]{fig5_frozen_release.pdf}}
+\caption{Frozen tomato candidate release.}
+\label{fig:release}
+\end{figure*}
+
+\begin{figure*}[!t]
+\center{\includegraphics[width=0.94\textwidth]{fig6_preblind_calibration.pdf}}
+\caption{Pre-blind calibration against published sites.}
+\label{fig:calibration}
+\end{figure*}
+
+\begin{figure*}[!t]
+\center{\includegraphics[width=0.94\textwidth]{fig7_power_landscape.pdf}}
+\caption{Power landscape of the original, superseded blind-cohort design.}
+\label{fig:power}
+\end{figure*}
+
+% [GATE 3 PLACEHOLDER] Figure 8 (within-protein validation result) is added
+% after the wet-laboratory results are returned.
+%\begin{figure*}[!t]
+%\center{\includegraphics[width=\textwidth]{fig8_within_protein_validation.pdf}}
+%\caption{Within-protein validation result.}
+%\label{fig:withinprotein}
+%\end{figure*}
+
+\end{document}

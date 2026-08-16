@@ -1,0 +1,5 @@
+species	panel_rows	positives	rate_percent	published_sites	source_datasets
+arabidopsis	111496	327	0.2933	390	PXD006140, PXD024061
+rice	185379	739	0.3986	929	PXD072089
+tomato	72051	79	0.1096	99	kiae271
+magnaporthe	20683	1189	5.7487	1482	PXD063170
